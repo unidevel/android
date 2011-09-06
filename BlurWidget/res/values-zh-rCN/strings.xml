@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">桌面小吧</string>
+    <string name="progress_title_loadapps"></string>
+    <string name="progress_msg_loadapps">处理中，请稍候......</string>
+    <string name="category_apps">应用设置</string>
+    <string name="category_title">标签设置</string>
+	<string name="title_select_app">选择应用，最多%d个</string>
+	<string name="add_app">添加</string>
+	<string name="summary_title">标签</string>
+	<string name="title_side">标签位置</string>
+	<string name="summary_side_false">上面或左边</string>
+	<string name="summary_side_true">下面或右边</string>
+	<string name="prefdlg_title">设置标签</string>
+	<string name="widget1x1">桌面小吧(1x1)</string>
+	<string name="widget1x2">桌面小吧(1x2)</string>
+	<string name="widget1x3">桌面小吧(1x3)</string>
+	<string name="widget1x4">桌面小吧(1x4)</string>
+	<string name="widget2x1">桌面小吧(2x1)</string>
+	<string name="widget3x1">桌面小吧(3x1)</string>
+	<string name="widget4x1">桌面小吧(4x1)</string>
+	<string name="widget2x2">桌面小吧(2x2)</string>
+	<string name="widget2x3">桌面小吧(2x3)</string>
+	<string name="widget2x4">桌面小吧(2x4)</string>
+	<string name="widget4x4">桌面小吧(4x4)</string>
+	<string name="widget4x2">桌面小吧(4x2)</string>
+	<string name="wp2x2">桌面单元(2x2)</string>
+
+	<string name="menu_clear">清除程序</string>
+	<string name="menu_set_icon">设置图标</string>
+	
+	<string name="menu_export">导出</string>
+	<string name="menu_import">导入</string>
+	<string name="menu_export_icons">仅导出图标设置</string>
+	<string name="menu_export_all">导出应用和图标设置</string>
+	<string name="menu_import_icons">仅导入图标设置</string>
+	<string name="menu_import_all">导入应用和图标设置</string>
+	<string name="menu_comment">问题反馈</string>
+	<string name="menu_upgrade">软件升级</string>
+	
+	<string name="title_error">错误</string>
+	<string name="error_export">导出失败!</string>
+	<string name="success_export">成功导出!</string>
+	<string name="error_import">导入失败!</string>
+	<string name="success_import">成功导入!</string>
+
+	<string name="title_export">导出</string>
+	<string name="title_import">导入</string>
+
+	<string name="title_select_color">文本颜色</string>
+	<string name="title_remove_app">删除应用</string>
+	<string name="msg_remove_app">是否从列表中删除应用 "%s"?</string>
+	
+	<string name="msg_have_update">有可用更新!</string>
+	<string name="msg_no_update">没有更新!</string>
+	<string name="msg_not_wifi">请在wifi连接时更新!</string>
+	<string name="msg_update_timeout">检查更新超时!</string>
+	
+	<string name="error_max_apps">已经选取%d个应用，请取消一些再选择!</string>
+	<string name="error_save_icon">保存图标失败!</string>
+</resources>

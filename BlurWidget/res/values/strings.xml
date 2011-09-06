@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">BarWidget</string>
+    <string name="progress_title_loadapps">Loading</string>
+    <string name="progress_msg_loadapps">Loading apps, please wait.</string>
+    <string name="category_apps">App Settings</string>
+    <string name="category_title">Label Settings</string>
+	<string name="title_select_app">Select App, %d at most</string>
+	<string name="add_app">Add</string>
+	<string name="summary_title">Label</string>
+	<string name="title_side">Label Position</string>
+	<string name="summary_side_false">Top or Left</string>
+	<string name="summary_side_true">Bottom or Right</string>
+	<string name="prefdlg_title">Set Label</string>
+	<string name="widget1x1">Bar Widget(1x1)</string>
+	<string name="widget1x2">Bar Widget(1x2)</string>
+	<string name="widget1x3">Bar Widget(1x3)</string>
+	<string name="widget1x4">Bar Widget(1x4)</string>
+	<string name="widget2x1">Bar Widget(2x1)</string>
+	<string name="widget3x1">Bar Widget(3x1)</string>
+	<string name="widget4x1">Bar Widget(4x1)</string>
+	<string name="widget2x2">Bar Widget(2x2)</string>
+	<string name="widget2x3">Bar Widget(2x3)</string>
+	<string name="widget2x4">Bar Widget(2x4)</string>
+	<string name="widget4x4">Bar Widget(4x4)</string>
+	<string name="widget4x2">Bar Widget(4x2)</string>
+	<string name="wp2x2">Cell(2x2)</string>
+	
+	<string name="menu_clear">Clear App</string>
+	<string name="menu_set_icon">Set Icon</string>
+	
+	
+	<string name="menu_export">Export</string>
+	<string name="menu_export_icons">Export Icon Settings only</string>
+	<string name="menu_export_all">Export App and Icon Settings</string>
+	<string name="menu_import">Import</string>
+	<string name="menu_import_icons">Import Icon Settings only</string>
+	<string name="menu_import_all">Import App and Icon Settings</string>
+	<string name="menu_comment">Feedback</string>
+	<string name="menu_upgrade">Upgrade</string>
+	
+	<string name="title_error">Error</string>
+	<string name="error_export">Failed to export!</string>
+	<string name="success_export">Export successfully!</string>
+	<string name="error_import">Failed to import!</string>
+	<string name="success_import">Import successfully!</string>
+
+	<string name="title_export">Export</string>
+	<string name="title_import">Import</string>
+
+	<string name="title_select_color">Text Color</string>
+	<string name="title_remove_app">Confirm remove</string>
+	<string name="msg_remove_app">Remove application "%s" from list?</string>
+	
+	<string name="msg_have_update">New update available!</string>
+	<string name="msg_no_update">No update available!</string>
+	<string name="msg_not_wifi">Not using wifi!</string>
+	<string name="msg_update_timeout">Checking for update timeout!</string>
+	
+	<string name="error_max_apps">You have selected %d apps, please unselect old ones first and then select some new ones!</string>
+	<string name="error_save_icon">Save icon failed!</string>
+</resources>

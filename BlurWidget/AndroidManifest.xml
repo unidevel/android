@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+	package="com.unidevel.barwidget" android:versionCode="9" android:versionName="1.0.6">
+	<application android:icon="@drawable/icon" android:label="@string/app_name">
+		<!-- 
+		<activity android:name=".Main" android:label="@string/app_name">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity>
+ 		 -->
+ 		
+		<receiver android:icon="@drawable/icon"
+			android:name="Widget1x1" android:label="@string/widget1x1">
+			<meta-data android:resource="@xml/widget1x1" android:name="android.appwidget.provider"></meta-data>
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_UPDATE"></action>
+			</intent-filter>
+			<intent-filter>
+				<action android:name="android.intent.action.MEDIA_MOUNTED"></action>				
+				<data android:scheme="file"></data>
+			</intent-filter>
+		</receiver>
+		<receiver android:icon="@drawable/icon"
+			android:label="@string/widget1x2" android:name="Widget1x2">
+			<meta-data android:resource="@xml/widget1x2" android:name="android.appwidget.provider"></meta-data>
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_UPDATE"></action>
+			</intent-filter>
+			<intent-filter>
+				<action android:name="android.intent.action.MEDIA_MOUNTED"></action>				
+				<data android:scheme="file"></data>
+			</intent-filter>
+		</receiver>
+		<receiver android:icon="@drawable/icon"
+			android:label="@string/widget1x3" android:name="Widget1x3">
+			<meta-data android:resource="@xml/widget1x3" android:name="android.appwidget.provider"></meta-data>
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_UPDATE"></action>
+			</intent-filter>
+			<intent-filter>
+				<action android:name="android.intent.action.MEDIA_MOUNTED"></action>				
+				<data android:scheme="file"></data>
+			</intent-filter>
+		</receiver>
+		<receiver android:icon="@drawable/icon"
+			android:label="@string/widget1x4" android:name="Widget1x4">
+			<meta-data android:resource="@xml/widget1x4" android:name="android.appwidget.provider"></meta-data>
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_UPDATE"></action>
+			</intent-filter>
+			<intent-filter>
+				<action android:name="android.intent.action.MEDIA_MOUNTED"></action>				
+				<data android:scheme="file"></data>
+			</intent-filter>
+		</receiver>
+		<receiver android:icon="@drawable/icon"
+			android:label="@string/widget2x1" android:name="Widget2x1">
+			<meta-data android:resource="@xml/widget2x1" android:name="android.appwidget.provider"></meta-data>
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_UPDATE"></action>
+			</intent-filter>
+			<intent-filter>
+				<action android:name="android.intent.action.MEDIA_MOUNTED"></action>				
+				<data android:scheme="file"></data>
+			</intent-filter>
+		</receiver>
+		<receiver android:icon="@drawable/icon"
+			android:label="@string/widget3x1" android:name="Widget3x1">
+			<meta-data android:resource="@xml/widget3x1" android:name="android.appwidget.provider"></meta-data>
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_UPDATE"></action>
+			</intent-filter>
+			<intent-filter>
+				<action android:name="android.intent.action.MEDIA_MOUNTED"></action>				
+				<data android:scheme="file"></data>
+			</intent-filter>
+		</receiver>
+		<receiver android:icon="@drawable/icon"
+			android:label="@string/widget4x1" android:name="Widget4x1">
+			<meta-data android:resource="@xml/widget4x1" android:name="android.appwidget.provider"></meta-data>
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_UPDATE"></action>
+			</intent-filter>
+			<intent-filter>
+				<action android:name="android.intent.action.MEDIA_MOUNTED"></action>				
+				<data android:scheme="file"></data>
+			</intent-filter>
+		</receiver>
+		<receiver android:icon="@drawable/icon"
+			android:label="@string/widget2x2" android:name="Widget2x2">
+			<meta-data android:resource="@xml/widget2x2" android:name="android.appwidget.provider"></meta-data>
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_UPDATE"></action>
+			</intent-filter>
+			<intent-filter>
+				<action android:name="android.intent.action.MEDIA_MOUNTED"></action>				
+				<data android:scheme="file"></data>
+			</intent-filter>
+		</receiver>
+		<receiver android:icon="@drawable/icon"
+			android:label="@string/widget2x3" android:name="Widget2x3">
+			<meta-data android:resource="@xml/widget2x3" android:name="android.appwidget.provider"></meta-data>
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_UPDATE"></action>
+			</intent-filter>
+			<intent-filter>
+				<action android:name="android.intent.action.MEDIA_MOUNTED"></action>				
+				<data android:scheme="file"></data>
+			</intent-filter>
+		</receiver>
+		<receiver android:icon="@drawable/icon"
+			android:label="@string/widget2x4" android:name="com.unidevel.barwidget.Widget2x4">
+			<meta-data android:resource="@xml/widget2x4" android:name="android.appwidget.provider"></meta-data>
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_UPDATE"></action>
+			</intent-filter>
+			<intent-filter>
+				<action android:name="android.intent.action.MEDIA_MOUNTED"></action>				
+				<data android:scheme="file"></data>
+			</intent-filter>
+		</receiver>
+		<receiver android:icon="@drawable/icon"
+			android:label="@string/widget4x4" android:name="com.unidevel.barwidget.Widget4x4">
+			<meta-data android:resource="@xml/widget4x4" android:name="android.appwidget.provider"></meta-data>
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_UPDATE"></action>
+			</intent-filter>
+			<intent-filter>
+				<action android:name="android.intent.action.MEDIA_MOUNTED"></action>				
+				<data android:scheme="file"></data>
+			</intent-filter>
+		</receiver>
+		<receiver android:icon="@drawable/icon"
+			android:label="@string/widget4x2" android:name="com.unidevel.barwidget.Widget4x2">
+			<meta-data android:resource="@xml/widget4x2" android:name="android.appwidget.provider"></meta-data>
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_UPDATE"></action>
+			</intent-filter>
+			<intent-filter>
+				<action android:name="android.intent.action.MEDIA_MOUNTED"></action>				
+				<data android:scheme="file"></data>
+			</intent-filter>
+		</receiver>
+		<receiver android:icon="@drawable/icon"
+			android:label="@string/wp2x2" android:name="com.unidevel.barwidget.WP2x2">
+			<meta-data android:resource="@xml/wp2x2" android:name="android.appwidget.provider"></meta-data>
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_UPDATE"></action>
+			</intent-filter>
+			<intent-filter>
+				<action android:name="android.intent.action.MEDIA_MOUNTED"></action>				
+				<data android:scheme="file"></data>
+			</intent-filter>
+		</receiver>
+		
+		<activity android:name="WP2x2Configure" android:clearTaskOnLaunch="true">
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+			</intent-filter>
+		</activity>					
+		<activity android:name="Widget1x1Configure" android:clearTaskOnLaunch="true">
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+			</intent-filter>
+		</activity>
+		<activity android:name="Widget1x2Configure" android:clearTaskOnLaunch="true">
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+			</intent-filter>
+		</activity>
+		<activity android:name="Widget1x3Configure" android:clearTaskOnLaunch="true">
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+			</intent-filter>
+		</activity>
+		<activity android:name="Widget1x4Configure" android:clearTaskOnLaunch="true">
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+			</intent-filter>
+		</activity>
+		<activity android:name="Widget2x1Configure" android:clearTaskOnLaunch="true">
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+			</intent-filter>
+		</activity>
+		<activity android:name="Widget3x1Configure" android:clearTaskOnLaunch="true">
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+			</intent-filter>
+		</activity>
+		<activity android:name="Widget4x1Configure" android:clearTaskOnLaunch="true">
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+			</intent-filter>
+		</activity>
+		<activity android:name="Widget2x2Configure" android:clearTaskOnLaunch="true">
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+			</intent-filter>
+		</activity>
+		<activity android:name="Widget2x3Configure" android:clearTaskOnLaunch="true">
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+			</intent-filter>
+		</activity>
+		<activity android:name="com.unidevel.barwidget.Widget2x4Configure" android:clearTaskOnLaunch="true">
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+			</intent-filter>
+		</activity>
+		<activity android:name="com.unidevel.barwidget.Widget4x4Configure" android:clearTaskOnLaunch="true">
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+			</intent-filter>
+		</activity>
+		<activity android:name="com.unidevel.barwidget.Widget4x2Configure" android:clearTaskOnLaunch="true">
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+			</intent-filter>
+		</activity>
+		
+		<!-- 
+		<activity android:name="com.gfan.sdk.statistics.CommentActivity" /> 
+		<meta-data android:name="gfan_cpid" android:value="GFAN"/>
+        <meta-data android:name="gfan_statistics_appkey" android:value="N7C0RP8E1HHBBMBLHDFCSECCQ7"/>
+        <meta-data android:name="gfan_type" android:value="tongjisdk"/>  
+        -->
+        
+        <activity android:name="com.mobclick.android.UmengFeedback"></activity>
+		<meta-data android:value="4dc00c0c112cf7366800000e" android:name="UMENG_APPKEY"></meta-data>
+	</application>
+	<uses-permission android:name="android.permission.INTERNET"/>
+	<uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+	<user-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+	<user-permission android:name="android.permission.READ_LOGS"/>
+	<uses-sdk></uses-sdk>
+	
+	
+</manifest> 

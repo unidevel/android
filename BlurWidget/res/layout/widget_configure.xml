@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:wiyun="http://schemas.android.com/apk/res/com.unidevel.barwidget"  
+  android:layout_width="fill_parent" 
+  android:layout_height="fill_parent"
+  android:orientation="vertical">
+  <ListView android:id="@android:id/list" android:layout_height="wrap_content" android:layout_width="fill_parent"></ListView>
+  <com.unidevel.barwidget.AppListView android:id="@+id/listApps" android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_weight="1"/>
+  <LinearLayout android:layout_width="fill_parent"
+		android:layout_height="wrap_content" 
+		android:orientation="vertical"
+		>
+		<com.wiyun.ad.AdView android:id="@+id/ad_view" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" wiyun:resId="4ce7b25ff1715819"
+			wiyun:showLoadingHint="false" wiyun:refreshInterval="30"
+			wiyun:goneIfFail="true" wiyun:autoStart="true" android:layout_weight="1"/>
+	</LinearLayout>
+  <LinearLayout android:orientation="horizontal" android:layout_height="wrap_content" android:layout_width="fill_parent">
+  	<Button android:id="@+id/btn_ok" android:text="@android:string/ok" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_weight="1" android:textSize="16dp"></Button>
+  	<Button android:id="@+id/btn_cancel" android:text="@android:string/cancel" android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_weight="1" android:textSize="16dp"></Button>
+  </LinearLayout>
+</LinearLayout>

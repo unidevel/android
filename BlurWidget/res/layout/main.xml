@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:wiyun="http://schemas.android.com/apk/res/com.unidevel.barwidget"  
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+<TextView  
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    />
+  <ListView android:id="@android:id/list" android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_weight="1"></ListView>    
+<com.unidevel.barwidget.AppListView android:layout_width="fill_parent" android:id="@+id/listApps" android:layout_height="fill_parent"/>
+  <LinearLayout android:layout_width="fill_parent"
+		android:layout_height="wrap_content" 
+		android:orientation="vertical"
+		>
+		<com.wiyun.ad.AdView android:id="@+id/ad_view" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" wiyun:resId="4ce7b25ff1715819"
+			wiyun:showLoadingHint="false" wiyun:refreshInterval="30"
+			wiyun:goneIfFail="true" wiyun:autoStart="true" android:layout_weight="1"/>
+	</LinearLayout>
+
+</LinearLayout>

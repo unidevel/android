@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider
+  xmlns:android="http://schemas.android.com/apk/res/android" android:configure="com.unidevel.barwidget.Widget2x1Configure" android:minWidth="146dp" android:initialLayout="@layout/widget2x1" android:minHeight="72dp">
+</appwidget-provider>
