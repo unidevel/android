@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/menuFind"></item>
+    <item android:id="@+id/menuDelete"></item>
+    <item android:id="@+id/menuUninstall"></item>
+    <item android:title="Run" android:id="@+id/menuRun"></item>
+    <item android:title="Backup" android:id="@+id/menuBackup"></item>
+</menu>
