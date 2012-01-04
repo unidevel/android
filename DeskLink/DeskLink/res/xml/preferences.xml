@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+  <PreferenceCategory android:title="@string/categorySettings">
+  	<CheckBoxPreference
+                        android:title="@string/keyUpdateTitle"
+                        android:defaultValue="false"
+                        android:summary="@string/summaryUpdateTitle"
+                        android:key="keyUpdateTitle" />
+  </PreferenceCategory>
+  <PreferenceCategory android:title="@string/categoryAbout">
+      <Preference android:key="keyVersion" android:title="@string/keyVersion"/>
+      <Preference android:key="keyAuthor" android:title="@string/keyAuthor" android:summary="unidevel"/> 
+      <Preference android:key="keyRate" android:title="@string/keyRate" android:summary="@string/summaryRate"/>
+      <Preference android:key="keyUpdateSelf" android:title="@string/keyUpdateSelf" android:summary="@string/summaryUpdateSelf"/>
+  </PreferenceCategory>
+
+</PreferenceScreen>

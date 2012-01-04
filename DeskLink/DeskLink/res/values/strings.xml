@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello!</string>
+    <string name="app_name">DeskLink</string>
+    <string name="share_name">Add link to desktop</string>
+    <string name="labelTitle">Title:</string>
+    <string name="labelLink">Link:</string>
+    <string name="errorTitle">Title can\'t be empty!</string>
+    <string name="errorLink">Link can\'t be empty!</string>
+    <string name="errorLinkForm">Link can\'t paste correctly!</string>
+    <string name="errorConnect">Connect to the link failed!</string>
+    <string name="categorySettings">Settings</string>
+    <string name="keyUpdateTitle">Update title</string>
+    <string name="summaryUpdateTitle">Download the title from the link</string>
+    <string name="categoryAbout">About</string>
+    <string name="keyVersion">Version</string>
+    <string name="keyAuthor">Author</string>
+    <string name="keyRate">Feedback</string>
+    <string name="summaryRate">Give feedback to author</string>
+    <string name="keyUpdateSelf">Update</string>
+    <string name="summaryUpdateSelf">Check whether latest version available</string>
+    <string name="updating">Updating title</string>
+    <string name="noUpdate">No update available</string>
+    <string name="timeout">Connection timeout</string>
+</resources>
