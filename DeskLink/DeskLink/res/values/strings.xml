@@ -22,4 +22,5 @@
     <string name="updating">Updating title</string>
     <string name="noUpdate">No update available</string>
     <string name="timeout">Connection timeout</string>
+    <string name="updatingSelf">Finding update...</string>
 </resources>

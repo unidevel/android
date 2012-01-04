@@ -1,5 +1,6 @@
 package com.unidevel.desklink;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -10,10 +11,12 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Toast;
 
 import com.feedback.NotificationType;
 import com.feedback.UMFeedbackService;
 import com.mobclick.android.MobclickAgent;
+import com.mobclick.android.UmengUpdateListener;
 
 public class DeskLinkSettings extends PreferenceActivity implements
 		OnClickListener {
@@ -62,29 +65,28 @@ public class DeskLinkSettings extends PreferenceActivity implements
 				@Override
 				public boolean onPreferenceClick(Preference preference) {
 					MobclickAgent.update(DeskLinkSettings.this);
-//					MobclickAgent.updateAutoPopup = false;
-//					MobclickAgent.setUpdateListener(new UmengUpdateListener() {
-//						@Override
-//						public void onUpdateReturned(int arg) {
-//							switch (arg) {
-//							case 0: // has update
-//								MobclickAgent.showUpdateDialog(DeskLinkSettings.this);
-//								break;
-//							case 1: // has no update
-//								Toast.makeText(getParent(), getString(R.string.noUpdate),
-//										Toast.LENGTH_SHORT).show();
-//								break;
-//							case 2: // none wifi
-//								Toast.makeText(getParent(), getString(R.string.noUpdate),
-//										Toast.LENGTH_SHORT).show();
-//								break;
-//							case 3: // time out
-//								Toast.makeText(getParent(), getString(R.string.timeout),
-//										Toast.LENGTH_SHORT).show();
-//								break;
-//							}
-//						}
-//					});
+					MobclickAgent.updateAutoPopup = false;
+					final ProgressDialog dialog = ProgressDialog.show(DeskLinkSettings.this, null, getString(R.string.updatingSelf));
+					MobclickAgent.setUpdateListener(new UmengUpdateListener() {
+						@Override
+						public void onUpdateReturned(int arg) {
+							dialog.dismiss();
+							switch (arg) {
+							case 0: // has update
+								MobclickAgent.showUpdateDialog(DeskLinkSettings.this);
+								break;
+							case 1: // has no update
+								Toast.makeText(DeskLinkSettings.this, getString(R.string.noUpdate), 3).show();
+								break;
+							case 2: // none wifi
+								Toast.makeText(DeskLinkSettings.this, getString(R.string.noUpdate), 3).show();
+								break;
+							case 3: // time out
+								Toast.makeText(DeskLinkSettings.this, getString(R.string.timeout), 3).show();
+								break;
+							}
+						}
+					});
 					return true;
 				}
 			});

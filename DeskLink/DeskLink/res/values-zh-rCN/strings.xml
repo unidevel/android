@@ -21,5 +21,6 @@
     <string name="summaryUpdateSelf">检查是否有最新版本</string>
     <string name="updating">更新标题</string>    
 	<string name="noUpdate">没有更新</string>
-    <string name="timeout">连接超时</string>	
+    <string name="timeout">连接超时</string>
+    <string name="updatingSelf">查找更新...</string>	
 </resources>
