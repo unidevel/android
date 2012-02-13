@@ -1,5 +1,7 @@
 package com.unidevel.desklink;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -8,14 +10,17 @@ import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.mobclick.android.MobclickAgent;
-import com.unidevel.desklink.R;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -28,14 +33,20 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.mobclick.android.MobclickAgent;
+
 public class DeskLink extends Activity implements OnClickListener {
-	String URL_PATTERN = "((https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|])";
+	String URL_PATTERN = "((https?)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|])";
 	/** Called when the activity is first created. */
 	EditText editUrl, editLabel;
+	ImageView imgIcon;
 	Button btnOk, btnCancel;
-
+	File favFile;
+	boolean autoUpdateTitle;
+	boolean autoUpdateIcon;
 	public boolean isNetworkAvailable() {
 		Context context = getApplicationContext();
 		ConnectivityManager connectivity = (ConnectivityManager) context
@@ -62,7 +73,7 @@ public class DeskLink extends Activity implements OnClickListener {
 		String url = null;
 		super.onCreate(savedInstanceState);
 		Pattern pattern = Pattern.compile(URL_PATTERN);
-
+		favFile = new File(getFilesDir(),"favicon.ico");
 		requestWindowFeature(Window.FEATURE_LEFT_ICON);
 		setContentView(R.layout.main);
 		getWindow().setFeatureDrawableResource(Window.FEATURE_LEFT_ICON,
@@ -70,12 +81,18 @@ public class DeskLink extends Activity implements OnClickListener {
 
 		editUrl = (EditText) findViewById(R.id.editUrl);
 		editLabel = (EditText) findViewById(R.id.editLabel);
+		imgIcon = (ImageView)findViewById(R.id.imgIcon);
 
 		btnOk = (Button) findViewById(R.id.btnOk);
 		btnCancel = (Button) findViewById(R.id.btnCancel);
 
 		btnOk.setOnClickListener(this);
 		btnCancel.setOnClickListener(this);
+
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+		autoUpdateTitle = pref.getBoolean("keyUpdateTitle", false);
+		autoUpdateIcon = pref.getBoolean("keyUpdateIcon", false);
+
 		Intent intent = getIntent();
 		if (Intent.ACTION_SEND.equals(intent.getAction())) {
 			Bundle extras = intent.getExtras();
@@ -114,13 +131,17 @@ public class DeskLink extends Activity implements OnClickListener {
 //				}
 			}
 
-			if (isNetworkAvailable()) {
-				SharedPreferences pref = PreferenceManager
-						.getDefaultSharedPreferences(getBaseContext());
-				if (pref.getBoolean("keyUpdateTitle", false)) {
-					updateTitle(url);
+			if (url != null && isNetworkAvailable() ) {
+				if (autoUpdateTitle || autoUpdateIcon){
+					updateFromLink(url);
 				}
 			}
+			
+			if ( url == null ) {
+				Toast.makeText(this, getString(R.string.noUrl), 3).show();
+				this.finish();
+			}
+			
 			// TextView txtDump = (TextView)findViewById(R.id.txtDump);
 			// txtDump.setText(buf.toString());
 			// if ( url != null ){
@@ -167,7 +188,7 @@ public class DeskLink extends Activity implements OnClickListener {
 	Handler handler;
 	boolean isCanceled;
 
-	public void updateTitle(final String url) {
+	public void updateFromLink(final String url) {
 		if (dialog != null)
 			dialog.dismiss();
 		isCanceled = false;
@@ -181,6 +202,7 @@ public class DeskLink extends Activity implements OnClickListener {
 				try {
 					String encoding = null;
 					URL urlLink = new URL(url);
+					URL favLink = new URL(urlLink.getProtocol(), urlLink.getHost(), urlLink.getPort(), "/favicon.ico");
 					HttpURLConnection conn = (HttpURLConnection) urlLink
 							.openConnection();
 					conn.setConnectTimeout(5000);
@@ -229,6 +251,24 @@ public class DeskLink extends Activity implements OnClickListener {
 					}
 					in.close();
 					conn.disconnect();
+					
+					conn = (HttpURLConnection)favLink.openConnection();
+					conn.setConnectTimeout(5000);
+					conn.setReadTimeout(5000);
+					conn.setDoOutput(true);
+					conn.setRequestMethod("GET");
+					conn.setRequestProperty("User-Agent",
+							"Mozilla/5.0 (Windows NT 5.1; rv:7.0.1) Gecko/20100101 Firefox/7.0.1");
+					in = conn.getInputStream();
+					File favFile = new File(getFilesDir(),"favicon.ico");
+					FileOutputStream out = new FileOutputStream(favFile);
+					byte[] data = new byte[1024];
+					while ( (len = in.read(data)) > 0 ) {
+						out.write(data, 0, len);
+					}
+					in.close();
+					out.close();
+					conn.disconnect();
 				} catch (Throwable ex) {
 					Log.e("ToDesktop", ex.getMessage(),ex);
 				}
@@ -236,9 +276,29 @@ public class DeskLink extends Activity implements OnClickListener {
 				handler.post(new Runnable() {
 					@Override
 					public void run() {
-						if ( theTitle != null ) {
+						if ( autoUpdateTitle && theTitle != null ) {
 							editLabel.setText(theTitle);
 						}
+						if ( autoUpdateIcon )
+						try {
+							Bitmap bitmap = BitmapFactory.decodeFile(favFile.getPath());
+							Bitmap source = BitmapFactory.decodeResource(getResources(), R.drawable.link);
+							source = source.copy(Bitmap.Config.ARGB_8888, true);
+							Canvas canvas = new Canvas(source);
+							Paint paint = new Paint();
+							int x = source.getWidth()*4/7;
+							int y = source.getHeight()*4/7;
+							int w = source.getWidth()/4;
+							int h = source.getHeight()/4;
+//							canvas.drawBitmap(bitmap, w, h, paint);
+							canvas.drawBitmap(bitmap, new Rect(0,0,bitmap.getWidth(),bitmap.getHeight()), new Rect(x,y,x+w,y+h), paint);
+							imgIcon.setImageBitmap(source);
+						}catch(Throwable ex){
+							Log.w("ToDesktop", ex.getMessage(),ex);
+						}finally{
+							favFile.delete();							
+						}
+						
 						dialog.dismiss();
 					}
 				});
@@ -272,11 +332,18 @@ public class DeskLink extends Activity implements OnClickListener {
 				showError(getString(R.string.errorLinkForm));
 				return;
 			}
+			
 			Intent shortcutIntent = new Intent(Intent.ACTION_VIEW);
 			shortcutIntent.setData(uri);
 			Intent createIntent = new Intent();
 			createIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
 			createIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, title);
+			try {
+				BitmapDrawable drawable = (BitmapDrawable)imgIcon.getDrawable();
+				createIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON, drawable.getBitmap());
+			}catch(Throwable ex){
+				Log.w("ToDesktop", ex.getMessage(),ex);
+			}
 			createIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,
 					Intent.ShortcutIconResource.fromContext(this,
 							R.drawable.link));

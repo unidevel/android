@@ -6,6 +6,7 @@
                         android:defaultValue="false"
                         android:summary="@string/summaryUpdateTitle"
                         android:key="keyUpdateTitle" />
+  	<CheckBoxPreference android:summary="@string/summaryUpdateIcon" android:title="@string/keyUpdateIcon" android:key="keyUpdateIcon"/>
   </PreferenceCategory>
   <PreferenceCategory android:title="@string/categoryAbout">
       <Preference android:key="keyVersion" android:title="@string/keyVersion"/>

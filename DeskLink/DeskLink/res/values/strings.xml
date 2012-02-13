@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="hello">Hello!</string>
-    <string name="app_name">DeskLink</string>
-    <string name="share_name">Add link to desktop</string>
+    <string name="app_name">DeskLink Setting</string>
+    <string name="share_name">Create Desktop Shortcut</string>
     <string name="labelTitle">Title:</string>
     <string name="labelLink">Link:</string>
     <string name="errorTitle">Title can\'t be empty!</string>
@@ -12,6 +12,8 @@
     <string name="categorySettings">Settings</string>
     <string name="keyUpdateTitle">Update title</string>
     <string name="summaryUpdateTitle">Download the title from the link</string>
+    <string name="keyUpdateIcon">Update icon</string>
+    <string name="summaryUpdateIcon">Download favorite icon from site</string>
     <string name="categoryAbout">About</string>
     <string name="keyVersion">Version</string>
     <string name="keyAuthor">Author</string>
@@ -21,6 +23,7 @@
     <string name="summaryUpdateSelf">Check whether latest version available</string>
     <string name="updating">Updating title</string>
     <string name="noUpdate">No update available</string>
+	<string name="noUrl">Can\'t find any link</string>
     <string name="timeout">Connection timeout</string>
     <string name="updatingSelf">Finding update...</string>
 </resources>

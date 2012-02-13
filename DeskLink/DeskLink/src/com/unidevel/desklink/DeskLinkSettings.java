@@ -40,7 +40,7 @@ public class DeskLinkSettings extends PreferenceActivity implements
 			prefAuthor.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 				@Override
 				public boolean onPreferenceClick(Preference preference) {
-					Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://search?q=pub:Zhou%20Li"));
+					Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://search?q=pub:x2derr"));
 					startActivity(intent);
 					return true;
 				}

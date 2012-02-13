@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="hello">Hello!</string>
-    <string name="app_name">桌面链接</string>
-    <string name="share_name">添加桌面链接</string>
+    <string name="app_name">桌面链接设置</string>
+    <string name="share_name">创建桌面链接</string>
     <string name="labelTitle">标题:</string>
     <string name="labelLink">链接:</string>
     <string name="errorTitle">标题不能为空！</string>
@@ -10,8 +10,10 @@
     <string name="errorLinkForm">链接格式错误！</string>
     <string name="errorConnect">访问链接失败!</string>
     <string name="categorySettings">设置</string>
-    <string name="keyUpdateTitle">自动获取标题</string>
+    <string name="keyUpdateTitle">下载链接标题</string>
     <string name="summaryUpdateTitle">从链接自动获取标题</string>
+    <string name="keyUpdateIcon">下载链接图标</string>
+    <string name="summaryUpdateIcon">自动从链接获得网站图标</string>
     <string name="categoryAbout">关于</string>
     <string name="keyVersion">版本</string>
     <string name="keyAuthor">作者</string>
@@ -21,6 +23,7 @@
     <string name="summaryUpdateSelf">检查是否有最新版本</string>
     <string name="updating">更新标题</string>    
 	<string name="noUpdate">没有更新</string>
-    <string name="timeout">连接超时</string>
+	<string name="noUrl">没有找到任何链接</string>
+	<string name="timeout">连接超时</string>
     <string name="updatingSelf">查找更新...</string>	
 </resources>

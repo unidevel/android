@@ -18,11 +18,25 @@
             android:text="@string/labelTitle"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
-        <EditText
-            android:id="@+id/editLabel"
+        <LinearLayout
+            android:id="@+id/linearLayout3"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content" 
-            android:singleLine="true"/>
+            android:layout_height="wrap_content" android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/imgIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/link" android:adjustViewBounds="false" android:scaleType="fitCenter"/>
+
+            <EditText
+                android:id="@+id/editLabel"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:singleLine="true" />
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/textUrl"
