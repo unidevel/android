@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">程序名备份</string>
+    <string name="menu_export">备份</string>
+    <string name="menu_refresh">刷新</string>
+    <string name="menu_run">启动</string>
+    <string name="menu_remove">取消保存</string>
+    <string name="menu_uninstall">卸载</string>
+    <string name="menu_find">在市场中查找</string>
+    <string name="menu_backup">备份</string>
+    <string name="menu_about">关于</string>
+    <string name="tab_system">系统程序</string>
+    <string name="tab_user">用户程序</string>
+    <string name="tab_saved">未安装程序</string>
+    <string name="title_loading">扫描中</string>
+    <string name="msg_loading">正在扫描应用，请稍后</string>
+</resources>

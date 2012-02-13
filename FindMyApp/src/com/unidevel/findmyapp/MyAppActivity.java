@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -20,7 +21,11 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Bitmap.CompressFormat;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -28,14 +33,15 @@ import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -61,7 +67,7 @@ public class MyAppActivity extends Activity {
 		handler = new Handler();
 		appView = new ListView(this);
 		setContentView(appView);
-
+		
 		loadInstalled(appFile, appView);
 
 		registerForContextMenu(appView);
@@ -115,6 +121,14 @@ public class MyAppActivity extends Activity {
 		}
 	}
 
+	public void saveDrawable(BitmapDrawable image, File file) throws IOException{
+		FileOutputStream out = new FileOutputStream(file);
+		Bitmap bitmap = image.getBitmap();
+		bitmap.compress(CompressFormat.PNG, 80, out);
+		out.flush();
+		out.close();
+	}
+	
 	public class LoadAppsThread extends Thread {
 		ListView view;
 		File file;
@@ -152,6 +166,8 @@ public class MyAppActivity extends Activity {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+			
+			File dir = file.getParentFile();
 			for (Object key : props.keySet()) {
 				AppInfo info = new AppInfo();
 				info.packageName = String.valueOf(key);
@@ -163,6 +179,13 @@ public class MyAppActivity extends Activity {
 				else {
 					info = apps.get(info.packageName);
 					info.isNew = false;
+				}
+				if ( info.icon == null ) {
+					File file = new File(dir, info.packageName+".png");
+					if ( file.exists() ) {
+						Bitmap bitmap = BitmapFactory.decodeFile(file.getPath());
+						info.icon = new BitmapDrawable(bitmap);
+					}
 				}
 			}
 			
@@ -265,12 +288,12 @@ public class MyAppActivity extends Activity {
 		public View getView(int position, View convertView, ViewGroup group) {
 			View view = convertView;
 			if (view == null) {
-				view = inflater.inflate(android.R.layout.simple_list_item_2,
-						null);
+//				view = inflater.inflate(android.R.layout.simple_list_item_2, null);
+				view = inflater.inflate(R.layout.fma_appitem, null);
 			}
+			view.findViewById(android.R.id.checkbox).setVisibility(View.GONE);
 			AppInfo info = (AppInfo) getItem(position);
 			if (info.installed) {
-				
 				if (info.isNew) {
 					((TextView) view.findViewById(android.R.id.text1))
 						.setTextColor(Color.CYAN);						
@@ -282,6 +305,12 @@ public class MyAppActivity extends Activity {
 			} else {
 				((TextView) view.findViewById(android.R.id.text1))
 						.setTextColor(Color.WHITE);
+			}
+			if ( info.icon != null ) {
+				((ImageView)view.findViewById(android.R.id.icon)).setImageDrawable(info.icon);
+			}
+			else {
+				((ImageView)view.findViewById(android.R.id.icon)).setImageResource(R.drawable.icon);
 			}
 			((TextView) view.findViewById(android.R.id.text1))
 					.setText(info.name);
@@ -387,8 +416,18 @@ public class MyAppActivity extends Activity {
 			AppAdapter adapter = (AppAdapter) appView.getAdapter();
 			List<AppInfo> apps = adapter.getApps();
 			Properties props = new Properties();
+			File dir = appFile.getParentFile();
 			for (AppInfo app : apps) {
 				props.setProperty(app.packageName, app.name);
+				File file = new File(dir, app.packageName+".png");
+				if ( !file.exists() && app.icon != null ){
+					try {
+						saveDrawable((BitmapDrawable) app.icon, file);
+					}
+					catch(IOException ex){
+						Log.e("Export", ex.getMessage(), ex);
+					}
+				}
 			}
 			FileOutputStream out;
 			try {

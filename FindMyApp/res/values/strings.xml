@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, MyAppActivty!</string>
     <string name="app_name">FindMyApp</string>
+    <string name="menu_export">Backup</string>
+    <string name="menu_refresh">Refresh</string>
+    <string name="menu_run">Launch</string>
+    <string name="menu_remove">Delete Entry</string>
+    <string name="menu_uninstall">Uninstall</string>
+    <string name="menu_find">Find in market</string>
+    <string name="menu_backup">Backup</string>
+    <string name="menu_about">About</string>
+    <string name="tab_system">System</string>
+    <string name="tab_user">User</string>
+    <string name="tab_saved">Not installed</string>
+    <string name="title_loading">Scanning</string>
+    <string name="msg_loading">Scanning applications, please wait!</string>
 </resources>

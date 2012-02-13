@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu
   xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/menuFind"></item>
-    <item android:id="@+id/menuDelete"></item>
-    <item android:id="@+id/menuUninstall"></item>
-    <item android:title="Run" android:id="@+id/menuRun"></item>
-    <item android:title="Backup" android:id="@+id/menuBackup"></item>
+    <item android:id="@+id/menuFind" android:title="@string/menu_find"></item>
+    <item android:id="@+id/menuDelete" android:title="@string/menu_remove"></item>
+    <item android:id="@+id/menuUninstall" android:title="@string/menu_uninstall"></item>
+    <item android:title="@string/menu_run" android:id="@+id/menuRun"></item>
+    <item android:title="@string/menu_backup" android:id="@+id/menuBackup"></item>
 </menu>
