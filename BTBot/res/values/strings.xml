@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">BTCallControl</string>
+    <string name="automatic_incoming">Incoming calls</string>
+    <string name="automatic_outgoing">Outgoing calls</string>
+	<string name="automatic_on">Enable bluetooth auto-control</string>
+    <string name="automatic_off">Disable bluetooth auto-control</string>
+    <string name="cat_bluetooth">BlueTooth Settings</string>
+    <string name="cat_volume">Volume Settings</string>
+    <string name="type_call">Call Volume</string>
+    <string name="type_ring">Ring Volume</string>
+    <string name="type_music">Music Volume</string>
+</resources>

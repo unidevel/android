@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">通话蓝牙控制</string>
+    <string name="automatic_incoming">来电蓝牙控制</string>
+    <string name="automatic_outgoing">去电蓝牙控制</string>
+    <string name="automatic_on">自动管理</string>
+    <string name="automatic_off">手动管理</string>
+    <string name="cat_bluetooth">蓝牙设置</string>
+    <string name="cat_volume">音量设置</string>
+    <string name="type_call">通话音量</string>
+    <string name="type_ring">铃声音量</string>
+    <string name="type_music">媒体音量</string>
+        
+</resources>
