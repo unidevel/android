@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/select_same_thread" android:title="@string/menu_same_thread"></item>
+    <item android:id="@+id/select_same_address" android:title="@string/menu_same_address"></item>
+    <item android:id="@+id/select_same_date" android:title="@string/menu_same_date"></item>
+    <item android:id="@+id/select_before_this" android:title="@string/menu_before_this"></item>
+    <item android:id="@+id/select_after_this" android:title="@string/menu_after_this"></item>
+    <item android:id="@+id/select_except_this" android:title="@string/menu_except_this"></item>
+</menu>

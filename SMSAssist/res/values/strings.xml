@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello World, SMSAssistActivity!</string>
+    <string name="app_name">SMSAssist</string>
+    <string name="menu_delete">Delete</string>
+    <string name="menu_setting">Settings</string>
+    <string name="menu_about">About</string>
+    <string name="menu_reload">Reload</string>
+    <string name="menu_exit">Exit</string>
+    <string name="menu_select">Select</string>
+    <string name="menu_same_address">Same address</string>
+    <string name="menu_same_thread">Same thread</string>
+    <string name="menu_same_date">Same date</string>
+    <string name="menu_before_this">Before this</string>
+    <string name="menu_after_this">After this</string>
+    <string name="menu_except_this">Except this</string>
+    <string name="menu_select_all">Select All</string>
+    <string name="menu_invert">Unselect All</string>
+    <string name="menu_clear">Invert Selection</string>
+    <string name="title_delete">Confirm deletion</string>
+    <string name="message_delete">Are you sure to delete selected messages?</string>
+    <string name="menu_filter_type">Filter Type</string>
+    <string name="menu_start_with">Number starts with</string>
+    <string name="menu_end_with">Number ends with</string>
+    <string name="menu_contains">Number contains</string>
+    <string name="menu_fulltext">Full text search</string>
+</resources>

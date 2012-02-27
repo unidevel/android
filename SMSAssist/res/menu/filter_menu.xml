@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/filter_start_with" android:title="@string/menu_start_with"></item>
+    <item android:id="@+id/filter_end_with" android:title="@string/menu_end_with"></item>
+    <item android:id="@+id/filter_contains" android:title="@string/menu_contains"></item>
+    <item android:id="@+id/filter_fulltext" android:title="@string/menu_fulltext"></item>
+</menu>

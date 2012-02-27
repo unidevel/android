@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello World, SMSAssistActivity!</string>
+    <string name="app_name">短信助手</string>
+    <string name="menu_delete">删除</string>
+    <string name="menu_setting">设置</string>
+    <string name="menu_about">关于</string>
+    <string name="menu_reload">刷新</string>
+    <string name="menu_exit">退出</string>
+    <string name="menu_select">选中</string>
+    <string name="menu_same_address">同一号码</string>
+    <string name="menu_same_thread">同一对话</string>
+    <string name="menu_same_date">同一天</string>
+    <string name="menu_before_this">在此之前</string>
+    <string name="menu_after_this">在此之后</string>
+    <string name="menu_except_this">除此之外</string>
+    <string name="menu_select_all">全选</string>
+    <string name="menu_invert">反选</string>
+    <string name="menu_clear">清除</string>
+    <string name="title_delete">删除确认</string>
+    <string name="message_delete">确定要删除所选短信？</string>
+    <string name="menu_filter_type">过滤方式</string>
+    <string name="menu_start_with">打头数字</string>
+    <string name="menu_end_with">结尾数字</string>
+    <string name="menu_contains">包含数字</string>
+    <string name="menu_fulltext">全文检索</string>
+</resources>
