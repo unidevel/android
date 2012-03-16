@@ -30,8 +30,13 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.google.ads.AdRequest;
+import com.google.ads.AdSize;
+import com.google.ads.AdView;
 
 public class SMSAssistActivity extends Activity implements TextWatcher, OnClickListener, OnCheckedChangeListener, OnItemClickListener, OnLongClickListener {
 	SMSAdapter adapter ;
@@ -62,22 +67,28 @@ public class SMSAssistActivity extends Activity implements TextWatcher, OnClickL
 		registerForContextMenu(list);
 		registerForContextMenu(filterButton);
 		reloadSMS();
+	
+		AdView adView = new AdView(this, AdSize.BANNER, "a14f4b35981e2b7");
+		LinearLayout layout = (LinearLayout) findViewById(R.id.adLayout);
+		layout.addView(adView);
+		AdRequest req  = new AdRequest();
+		adView.loadAd(req);
 	}
 
 	public void reloadSMS(){
 		final Handler handler = new Handler();
 		final ListView list = (ListView)findViewById(R.id.list);
-		adapter = null;
+		final List<SMS> oldItems = adapter!=null?adapter.getAll():null;
 		Thread thread = new Thread(){
 			@Override
 			public void run() {
 				Uri smsUri = Uri.parse("content://sms");
 				final List<SMS> items = new ArrayList<SMS>();
 				Cursor cursor = SMSAssistActivity.this.getContentResolver().query(
-						smsUri, new String[] { "_id", "thread_id", "address", "person", "date",
-								"body" }, null, null, null);
+						smsUri, new String[] { "_id", "thread_id", "address", "person", "date", "type", "body" }, null, null, null);
 				if ( cursor != null ) {
 					Log.i("count", ""+cursor.getCount());
+					int size = oldItems == null? 0: oldItems.size();
 					for( boolean hasNext = cursor.moveToFirst(); hasNext; hasNext = cursor.moveToNext() ){
 						SMS sms = new SMS();
 						sms.id = cursor.getInt(0);
@@ -85,7 +96,19 @@ public class SMSAssistActivity extends Activity implements TextWatcher, OnClickL
 						sms.address = cursor.getString(2);
 						sms.person = cursor.getInt(3);
 						sms.date = cursor.getLong(4);
-						sms.body = cursor.getString(5);
+						sms.type = cursor.getInt(5);
+						sms.body = cursor.getString(6);
+						if ( sms.address == null ) sms.address = "";
+						if ( sms.body == null ) sms.body = "";
+						for (int i = 0; i < size; ++i){
+							SMS oldSMS = oldItems.get(i);
+							if (oldSMS.id==sms.id){
+								sms.selected=oldSMS.selected;
+								oldItems.remove(i);
+								break;
+							}
+						}
+						
 						items.add(sms);
 					}
 					cursor.close();
@@ -98,6 +121,7 @@ public class SMSAssistActivity extends Activity implements TextWatcher, OnClickL
 							progressDialog.dismiss();
 							progressDialog = null;
 						}
+						Toast.makeText(SMSAssistActivity.this, getString(R.string.msg_reload), 3);
 					}
 				});
 			}
@@ -141,8 +165,14 @@ public class SMSAssistActivity extends Activity implements TextWatcher, OnClickL
 
 	public void onClick(View view) {
 		if (view.getId() == R.id.filterButton){
-			EditText filter = (EditText)findViewById(R.id.filter);
-			refreshFilter(filter.getText().toString(), filterType);
+			if( !adapter.isAllSelected() ) {
+				adapter.showSelected();
+				Toast.makeText(this, getString(R.string.msg_showselected), 2).show();
+			}
+			else {
+				EditText filter = (EditText)findViewById(R.id.filter);
+				refreshFilter(filter.getText().toString(), filterType);	
+			}
 		}
 	}
 
@@ -270,7 +300,7 @@ public class SMSAssistActivity extends Activity implements TextWatcher, OnClickL
 		else if ( item.getItemId() == R.id.filter_fulltext){
 			filterType = FilterType.FULLTEXT;
 			filter.setHint(R.string.menu_fulltext);
-			filter.setInputType(InputType.TYPE_NULL);
+			filter.setInputType(InputType.TYPE_CLASS_TEXT);
 			refreshFilter(filter.getText().toString(), filterType);			
 		}		
 		if ( adapter == null ) return false;
@@ -304,6 +334,9 @@ public class SMSAssistActivity extends Activity implements TextWatcher, OnClickL
 			SMS sms = (SMS)adapter.getItem(menuInfo.position);
 			adapter.selectExcept(sms.id);
 		}
+		else if ( item.getItemId() == R.id.select_not_from_contact ) {
+			if ( adapter != null )adapter.selectNotFromContact();
+		}		
 		else return super.onContextItemSelected(item);
 		return true;
 	}

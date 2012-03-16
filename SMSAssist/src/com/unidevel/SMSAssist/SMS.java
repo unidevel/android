@@ -6,6 +6,7 @@ public class SMS {
 	String address;
 	int person;
 	long date;
+	int type;
 	String body;
 	boolean selected;
 	public SMS(){

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item android:id="@+id/select_same_thread" android:title="@string/menu_same_thread"></item>
+    <item android:id="@+id/select_not_from_contact" android:title="@string/menu_not_from_contact"></item>
     <item android:id="@+id/select_same_address" android:title="@string/menu_same_address"></item>
     <item android:id="@+id/select_same_date" android:title="@string/menu_same_date"></item>
     <item android:id="@+id/select_before_this" android:title="@string/menu_before_this"></item>

@@ -5,8 +5,15 @@
     android:orientation="vertical" >
 
     <LinearLayout
+        android:id="@+id/adLayout"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
 
         <AutoCompleteTextView
             android:id="@+id/filter"
@@ -18,18 +25,17 @@
             <requestFocus />
         </AutoCompleteTextView>
 
-        <ImageButton 
+        <ImageButton
             android:id="@+id/filterButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/filter"/>
+            android:src="@drawable/filter" />
     </LinearLayout>
 
     <ListView
         android:id="@+id/list"
         android:layout_width="match_parent"
-        android:layout_height="fill_parent" 
-        >
+        android:layout_height="fill_parent" >
     </ListView>
 
 </LinearLayout>

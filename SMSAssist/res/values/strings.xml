@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, SMSAssistActivity!</string>
-    <string name="app_name">SMSAssist</string>
+    <string name="app_name">SMSCleaner</string>
     <string name="menu_delete">Delete</string>
     <string name="menu_setting">Settings</string>
     <string name="menu_about">About</string>
@@ -15,6 +14,7 @@
     <string name="menu_after_this">After this</string>
     <string name="menu_except_this">Except this</string>
     <string name="menu_select_all">Select All</string>
+    <string name="menu_not_from_contact">Not form contact</string>
     <string name="menu_invert">Unselect All</string>
     <string name="menu_clear">Invert Selection</string>
     <string name="title_delete">Confirm deletion</string>
@@ -24,4 +24,7 @@
     <string name="menu_end_with">Number ends with</string>
     <string name="menu_contains">Number contains</string>
     <string name="menu_fulltext">Full text search</string>
+    <string name="msg_showselected">Show selected only, click again show filtered, long click to see filter options</string>
+    <string name="msg_showfiltered">Show filtered, click again show selected</string>
+    <string name="msg_reload">SMS reloaded.</string>
 </resources>

@@ -173,7 +173,7 @@ public class SMSAdapter extends BaseAdapter{
 		Calendar end = Calendar.getInstance();
 		Date d = new Date(date);
 		start.set(d.getYear()+1900, d.getMonth(), d.getDate(), 0, 0, 0);
-		end.set(d.getYear()+1900, d.getMonth(), d.getDate());
+		end = (Calendar)start.clone();
 		end.add(Calendar.DATE, 1);
 		selectByTime(start, end);
 	}
@@ -246,6 +246,14 @@ public class SMSAdapter extends BaseAdapter{
 		this.notifyDataSetChanged();		
 	}
 	
+	public boolean isAllSelected(){
+		boolean selected = true;
+		for (SMS sms:filteredItems){
+			selected &= sms.isSelected();
+		}
+		return selected;
+	}
+	
 	public void showSelected(){
 		filteredItems = getSelected();
 		this.notifyDataSetChanged();
@@ -259,7 +267,23 @@ public class SMSAdapter extends BaseAdapter{
 	public void deleteSelected(){
 		List<SMS> items = getSelected();
 		filteredItems.removeAll(items);
-		items.removeAll(items);
+		this.items.removeAll(items);
 		notifyDataSetChanged();
+	}
+	
+	public List<SMS> getAll(){
+		return items;
+	}
+
+	public void selectNotFromContact() {
+		for (SMS sms: filteredItems){
+			if(sms.person<=0 && sms.type == 1){
+				sms.setSelected(true);
+			}
+			else {
+				sms.setSelected(false);
+			}
+		}
+		this.notifyDataSetChanged();		
 	}
 }

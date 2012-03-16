@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, SMSAssistActivity!</string>
-    <string name="app_name">短信助手</string>
+    <string name="app_name">短信清洁工</string>
     <string name="menu_delete">删除</string>
     <string name="menu_setting">设置</string>
     <string name="menu_about">关于</string>
@@ -14,6 +13,7 @@
     <string name="menu_before_this">在此之前</string>
     <string name="menu_after_this">在此之后</string>
     <string name="menu_except_this">除此之外</string>
+    <string name="menu_not_from_contact">非来自联系人</string>
     <string name="menu_select_all">全选</string>
     <string name="menu_invert">反选</string>
     <string name="menu_clear">清除</string>
@@ -24,4 +24,7 @@
     <string name="menu_end_with">结尾数字</string>
     <string name="menu_contains">包含数字</string>
     <string name="menu_fulltext">全文检索</string>
+    <string name="msg_showselected">只显示选中的，再次点击显示过滤后的，长按显示过滤选项</string>
+    <string name="msg_showfiltered">显示过滤后的，再次点击显示选中的</string>
+    <string name="msg_reload">短信重载完毕</string>
 </resources>
