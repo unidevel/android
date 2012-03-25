@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">短信日志</string>
+    <string name="title_format">短信: %s</string>
+    <string name="from_format">来自: %s</string>
+    <string name="body_format">内容: %s</string>
+    <string name="flag_format">标志: %s</string>
+    <string name="key_enable">启用短信记录</string>
+    <string name="enable_on">启用</string>
+    <string name="enable_off">停用</string>
+    <string name="key_entry">日历项</string>
+    <string name="key_sms_option">记录来自联系人的短信</string>
+    <string name="summary_contact_only">仅来自联系人的短信</string>
+    <string name="summary_all_sms">所有的短信</string>
+</resources>

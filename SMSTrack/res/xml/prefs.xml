@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <CheckBoxPreference android:key="keyEnableSMS" android:title="@string/key_enable" android:summaryOn="@string/enable_on" android:summaryOff="@string/enable_off" android:defaultValue="true"/>
+    <CheckBoxPreference android:key="keyFromContact" android:title="@string/key_sms_option" android:summaryOn="@string/summary_contact_only" android:summaryOff="@string/summary_all_sms"/>
+    <ListPreference android:key="keyCalendarEntry" android:title="@string/key_entry" android:defaultValue="1"/>
+</PreferenceScreen>

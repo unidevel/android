@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SMSTrack</string>
+    <string name="title_format">SMS from %s</string>
+    <string name="from_format">From: %s</string>
+    <string name="body_format">Body: %s</string>
+    <string name="flag_format">Flag: %s</string>
+    <string name="key_enable">Enable SMS Logging</string>
+    <string name="enable_on">Enabled</string>
+    <string name="enable_off">Disabled</string>
+    <string name="key_entry">Calendar Entry</string>
+    <string name="key_sms_option">Only SMS From Contacts</string>
+    <string name="summary_contact_only">Only From Contacts</string>
+    <string name="summary_all_sms">All SMS</string>
+</resources>
