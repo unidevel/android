@@ -5,6 +5,7 @@ public class SMS {
 	int threadId;
 	String address;
 	int person;
+	String name;
 	long date;
 	int type;
 	String body;

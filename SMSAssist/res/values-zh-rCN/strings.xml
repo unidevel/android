@@ -5,6 +5,9 @@
     <string name="menu_setting">设置</string>
     <string name="menu_about">关于</string>
     <string name="menu_reload">刷新</string>
+    <string name="menu_range">范围</string>
+    <string name="menu_inbox">仅收件箱</string>
+    <string name="menu_all">所有短信</string>
     <string name="menu_exit">退出</string>
     <string name="menu_select">选中</string>
     <string name="menu_same_address">同一号码</string>
@@ -27,4 +30,5 @@
     <string name="msg_showselected">只显示选中的，再次点击显示过滤后的，长按显示过滤选项</string>
     <string name="msg_showfiltered">显示过滤后的，再次点击显示选中的</string>
     <string name="msg_reload">短信重载完毕</string>
+    <string name="msg_total">共%d条短信</string>
 </resources>

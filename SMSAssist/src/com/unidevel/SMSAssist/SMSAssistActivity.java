@@ -1,7 +1,9 @@
 package com.unidevel.SMSAssist;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -12,6 +14,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.ContactsContract;
+import android.provider.ContactsContract.Contacts;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -42,6 +46,7 @@ public class SMSAssistActivity extends Activity implements TextWatcher, OnClickL
 	SMSAdapter adapter ;
 	CheckBox selectAll;
 	ProgressDialog progressDialog;
+	Uri smsUri;
 	enum FilterType {STARTS_WITH, ENDS_WITH, CONTAINS, FULLTEXT};
 	FilterType filterType;
 	/** Called when the activity is first created. */
@@ -53,6 +58,7 @@ public class SMSAssistActivity extends Activity implements TextWatcher, OnClickL
 		EditText filter = (EditText)findViewById(R.id.filter);
 		filter.addTextChangedListener(this);
 		
+		smsUri = Uri.parse("content://sms");
 		filterType = FilterType.STARTS_WITH;
 		filter.setHint(R.string.menu_start_with);
 		filter.setInputType(InputType.TYPE_CLASS_PHONE);
@@ -75,6 +81,7 @@ public class SMSAssistActivity extends Activity implements TextWatcher, OnClickL
 		adView.loadAd(req);
 	}
 
+	
 	public void reloadSMS(){
 		final Handler handler = new Handler();
 		final ListView list = (ListView)findViewById(R.id.list);
@@ -82,10 +89,13 @@ public class SMSAssistActivity extends Activity implements TextWatcher, OnClickL
 		Thread thread = new Thread(){
 			@Override
 			public void run() {
-				Uri smsUri = Uri.parse("content://sms");
+				Map<String, String> cache = new HashMap<String, String>();
+//				Uri smsUri = Uri.parse("content://sms");
 				final List<SMS> items = new ArrayList<SMS>();
-				Cursor cursor = SMSAssistActivity.this.getContentResolver().query(
+				ContentResolver resolver = getContentResolver();
+				Cursor cursor = resolver.query(
 						smsUri, new String[] { "_id", "thread_id", "address", "person", "date", "type", "body" }, null, null, null);
+				String[] contactCols = new String[]{Contacts.DISPLAY_NAME};
 				if ( cursor != null ) {
 					Log.i("count", ""+cursor.getCount());
 					int size = oldItems == null? 0: oldItems.size();
@@ -105,10 +115,39 @@ public class SMSAssistActivity extends Activity implements TextWatcher, OnClickL
 							if (oldSMS.id==sms.id){
 								sms.selected=oldSMS.selected;
 								oldItems.remove(i);
+								size--;
 								break;
 							}
 						}
-						
+						if ( sms.person > 0 ){
+							if(cache.containsKey(sms.address) ) {
+								sms.name = cache.get(sms.address);
+							}
+							else {
+							Cursor contactCursor = null;
+								try {
+									Uri contactUri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, sms.address);  
+	//								Uri contactUri= ContentUris.withAppendedId(Contacts.CONTENT_URI, sms.person);
+	//						        Uri lookUpUri=Contacts.getLookupUri(resolver, contactUri);
+	//						        Uri personUri = Contacts.lookupContact(resolver, lookUpUri);
+	//						        Uri contactUri = Uri.withAppendedPath(Contacts.CONTENT_STREQUENT_URI, String.valueOf(sms.person));
+									contactCursor = resolver.query(contactUri, contactCols, null, null, null);
+									if ( contactCursor.moveToFirst() ) {
+										sms.name = contactCursor.getString(0);
+										cache.put(sms.address,sms.name);
+									}
+									else {
+										sms.name = null;
+									}
+								}
+								catch(Throwable ex){
+									Log.e("SMSAssist", ex.getMessage(), ex);
+								}
+								finally{
+									try { contactCursor.close();}catch(Throwable ex){}
+								}
+							}
+						}
 						items.add(sms);
 					}
 					cursor.close();
@@ -121,7 +160,8 @@ public class SMSAssistActivity extends Activity implements TextWatcher, OnClickL
 							progressDialog.dismiss();
 							progressDialog = null;
 						}
-						Toast.makeText(SMSAssistActivity.this, getString(R.string.msg_reload), 3);
+						String msg = String.format(getString(R.string.msg_total), items.size());
+						Toast.makeText(SMSAssistActivity.this, msg, 3).show();
 					}
 				});
 			}
@@ -221,7 +261,15 @@ public class SMSAssistActivity extends Activity implements TextWatcher, OnClickL
 //		else if ( item.getItemId() == R.id.about ){
 //			
 //		}
-		else if ( item.getItemId() == R.id.reload) {
+//		else if ( item.getItemId() == R.id.reload_sms) {
+//			reloadSMS();
+//		}
+		else if ( item.getItemId() == R.id.inbox_sms ) {
+			smsUri = Uri.parse("content://sms/inbox");
+			reloadSMS();
+		}
+		else if ( item.getItemId() == R.id.all_sms ) {
+			smsUri = Uri.parse("content://sms");
 			reloadSMS();
 		}
 		else {
@@ -282,7 +330,7 @@ public class SMSAssistActivity extends Activity implements TextWatcher, OnClickL
 		if ( item.getItemId() == R.id.filter_start_with){
 			filterType = FilterType.STARTS_WITH;
 			filter.setHint(R.string.menu_start_with);
-			filter.setInputType(InputType.TYPE_CLASS_PHONE);
+			filter.setInputType(InputType.TYPE_CLASS_PHONE );
 			refreshFilter(filter.getText().toString(), filterType);
 		}
 		else if ( item.getItemId() == R.id.filter_end_with){
@@ -294,7 +342,7 @@ public class SMSAssistActivity extends Activity implements TextWatcher, OnClickL
 		else if ( item.getItemId() == R.id.filter_contains){
 			filterType = FilterType.CONTAINS;
 			filter.setHint(R.string.menu_contains);
-			filter.setInputType(InputType.TYPE_CLASS_PHONE);
+			filter.setInputType(InputType.TYPE_CLASS_TEXT);
 			refreshFilter(filter.getText().toString(), filterType);
 		}
 		else if ( item.getItemId() == R.id.filter_fulltext){

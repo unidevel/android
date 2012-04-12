@@ -5,6 +5,9 @@
     <string name="menu_setting">Settings</string>
     <string name="menu_about">About</string>
     <string name="menu_reload">Reload</string>
+    <string name="menu_range">Range</string>
+    <string name="menu_inbox">Inbox Only</string>
+    <string name="menu_all">All SMS</string>
     <string name="menu_exit">Exit</string>
     <string name="menu_select">Select</string>
     <string name="menu_same_address">Same address</string>
@@ -27,4 +30,5 @@
     <string name="msg_showselected">Show selected only, click again show filtered, long click to see filter options</string>
     <string name="msg_showfiltered">Show filtered, click again show selected</string>
     <string name="msg_reload">SMS reloaded.</string>
+    <string name="msg_total">Total %d messages.</string>
 </resources>

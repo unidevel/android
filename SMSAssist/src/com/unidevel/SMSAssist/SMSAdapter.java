@@ -65,7 +65,11 @@ public class SMSAdapter extends BaseAdapter{
 		}
 		
 		SMS sms = (SMS)getItem(position);
-		holder.address.setText(sms.address);
+		String address = sms.address;
+		if ( sms.name != null ){
+			address = sms.name+"<"+address+">";
+		}
+		holder.address.setText(address);
 		holder.date.setText(format.format(new Date(sms.date)));
 		holder.body.setText(sms.body);
 		holder.select.setChecked(sms.isSelected());
@@ -113,6 +117,10 @@ public class SMSAdapter extends BaseAdapter{
 				filteredItems.add(sms);
 				continue;
 			}
+			if ( sms.name != null && sms.name.contains(filter) ){
+				filteredItems.add(sms);
+				continue;				
+			}
 		}
 		this.notifyDataSetInvalidated();
 	}
@@ -121,6 +129,9 @@ public class SMSAdapter extends BaseAdapter{
 		this.filteredItems = new ArrayList<SMS>();
 		for ( SMS sms: items) {
 			if ( sms.address.contains(filter) ) {
+				filteredItems.add(sms);
+			}
+			else if ( sms.name != null && sms.name.contains(filter) ){
 				filteredItems.add(sms);
 			}
 			else if ( sms.body.contains(filter) ) {

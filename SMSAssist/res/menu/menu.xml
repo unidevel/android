@@ -3,7 +3,14 @@
     <item android:id="@+id/select_all" android:title="@string/menu_select_all"></item>
     <item android:id="@+id/invert" android:title="@string/menu_invert"></item>
     <!-- item android:id="@+id/clear" android:title="@string/menu_clear"></item -->
-    <item android:id="@+id/reload" android:title="@string/menu_reload"></item>
+    <!-- item android:id="@+id/reload" android:title="@string/menu_reload"></item -->
+    <item android:id="@+id/range" android:title="@string/menu_range">
+        <menu>
+            <!-- item android:id="@+id/reload_sms" android:title="@string/menu_reload"/ -->
+            <item android:id="@+id/inbox_sms" android:title="@string/menu_inbox"/>
+            <item android:id="@+id/all_sms" android:title="@string/menu_all"/>
+        </menu>
+    </item>
     <item android:id="@+id/delete" android:title="@string/menu_delete"></item>
     <!--  item android:id="@+id/about" android:title="@string/menu_about"></item -->
     <item android:id="@+id/exit" android:title="@string/menu_exit"></item>
