@@ -6,7 +6,7 @@ import android.util.Log;
 
 public class MazeActivity extends Activity {
     
-	private MainMap mMainMapView;
+	private MazeMap mMainMapView;
 
 	public static final String TAG = "Maze";
     
@@ -21,21 +21,21 @@ public class MazeActivity extends Activity {
 
         int rows = getIntent().getIntExtra("rows", 20);
         int cols = getIntent().getIntExtra("cols", 40);
-        mMainMapView = (MainMap) findViewById(R.id.gameMap);
+        mMainMapView = (MazeMap) findViewById(R.id.gameMap);
         mMainMapView.initNewGame(rows, cols);
         
         //TextView myText = (TextView) findViewById(R.id.txt);
         
         if (savedInstanceState == null) {
             // We were just launched -- set up a new game
-        	mMainMapView.setMode(MainMap.READY);
+        	mMainMapView.setState(MazeMap.STATE.READY);
         } else {
             // We are being restored
             Bundle map = savedInstanceState.getBundle(ICICLE_KEY);
             if (map != null) {
-            	mMainMapView.restoreState(map);
+            	//mMainMapView.restoreState(map);
             } else {
-            	mMainMapView.setMode(MainMap.PAUSE);
+            	mMainMapView.setState(MazeMap.STATE.PAUSE);
             }
         }
     }
@@ -44,19 +44,19 @@ public class MazeActivity extends Activity {
     protected void onPause() {
         super.onPause();
         // Pause the game along with the activity
-        mMainMapView.setMode(MainMap.PAUSE);
+        mMainMapView.setState(MazeMap.STATE.PAUSE);
     }
     
     @Override
     protected void onStop() {
         super.onPause();
         // Pause the game along with the activity
-        mMainMapView.setMode(MainMap.PAUSE);
+        mMainMapView.setState(MazeMap.STATE.PAUSE);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         //Store the game state
-        outState.putBundle(ICICLE_KEY, mMainMapView.saveState());
+        //outState.putBundle(ICICLE_KEY, mMainMapView.saveState());
     }
 }

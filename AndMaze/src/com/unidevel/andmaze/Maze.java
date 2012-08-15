@@ -13,9 +13,11 @@ public class Maze {
                    // visitedCode if it has already been explored without finding
                    // a solution, and by emptyCode if it has not yet been explored.
 
-    final static int wallCode = 1;
-    final static int emptyCode = 0;
-    
+    public final static int wallCode = 1;
+    public final static int emptyCode = 0;
+    public final static int manCode = 2;
+	public final static int doorCode = 3;
+	public final static int pathCode = 5;
        // the next six items are set up in init(), and can be specified 
        // using applet parameters
     int rows;          // number of rows of cells in maze, including a wall around edges
@@ -23,7 +25,7 @@ public class Maze {
 
     boolean mazeExists = false;  // set to true when maze[][] is valid; used in
                                  // redrawMaze(); set to true in createMaze(), and
-
+	int manX, manY;
     public Maze(int rows, int columns){
         if (rows % 2 == 0)
             rows++;
@@ -35,7 +37,10 @@ public class Maze {
     
     public void generateMaze(){
     	makeMaze();
-    	makeWalls();
+		maze[1][0]=2;
+		maze[rows-2][columns-1]=3;
+		manX = 0; manY=1;
+    	//makeWalls();
     }
     
     private void makeMaze() {
@@ -135,6 +140,26 @@ public class Maze {
         }
     }
     
+	public boolean move(int x, int y){
+		int newX, newY;
+		newX = manX+x;
+		newY = manY+y;
+		if(newX<0||newX>=columns)return false;
+		if(newY<0||newY>=rows)return false;
+		if(maze[newY][newX]==wallCode)return false;
+		if(maze[manY][manX]==pathCode)
+			maze[manY][manX]=emptyCode;
+		else
+			maze[manY][manX]=pathCode;
+		manX=newX; manY=newY;
+		maze[manY][manX]=manCode;
+		return true;
+	}
+	
+	public boolean isOut(){
+		return manX==columns-1;
+	}
+	
     public int getRows()
     {
     	return rows;
