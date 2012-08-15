@@ -17,7 +17,7 @@ public class Maze {
     public final static int emptyCode = 0;
     public final static int manCode = 2;
 	public final static int doorCode = 3;
-	public final static int pathCode = 5;
+	public final static int pathCode = 4;
        // the next six items are set up in init(), and can be specified 
        // using applet parameters
     int rows;          // number of rows of cells in maze, including a wall around edges
@@ -147,7 +147,7 @@ public class Maze {
 		if(newX<0||newX>=columns)return false;
 		if(newY<0||newY>=rows)return false;
 		if(maze[newY][newX]==wallCode)return false;
-		if(maze[manY][manX]==pathCode)
+		if(maze[newY][newX]==pathCode)
 			maze[manY][manX]=emptyCode;
 		else
 			maze[manY][manX]=pathCode;

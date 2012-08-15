@@ -22,7 +22,7 @@ public class MazeActivity extends Activity {
         int rows = getIntent().getIntExtra("rows", 20);
         int cols = getIntent().getIntExtra("cols", 40);
         mMainMapView = (MazeMap) findViewById(R.id.gameMap);
-        mMainMapView.initNewGame(rows, cols);
+        mMainMapView.initNewGame(this, rows, cols);
         
         //TextView myText = (TextView) findViewById(R.id.txt);
         

@@ -1,16 +1,26 @@
 package com.unidevel.andmaze;
 
-import android.content.*;
-import android.content.res.*;
-import android.graphics.*;
-import android.graphics.drawable.*;
-import android.os.*;
-import android.util.*;
-import android.view.*;
+import android.app.Activity;
+import android.app.AlertDialog.Builder;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import android.os.Handler;
+import android.os.Message;
+import android.util.AttributeSet;
+import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
 
 public class MazeMap extends View {
 	static final String TAG = "MazeMap";
 	RefreshHandler refreshHandler;
+	Activity activity;
 	Maze maze;
 
 	private int yInitRaw;
@@ -44,15 +54,17 @@ public class MazeMap extends View {
 		super(context);
 	}
 	
-	public void initNewGame(int rows, int cols) {
+	public void initNewGame(Activity activity, int rows, int cols) {
 		//mTileList.clear();
 		Log.d(TAG, "game init");
 		maze = new Maze(rows, cols);
 		maze.generateMaze();
 		maze.dump();
+		this.activity = activity;
 		this.rows = maze.getRows();
 		this.columns = maze.getColumns();
-		
+		this.refreshHandler = new RefreshHandler();
+		this.refreshHandler.sendEmptyMessage(0);
 	}
 	
 	@Override
@@ -68,15 +80,17 @@ public class MazeMap extends View {
     	ySpan = (int)Math.floor((h)/rows);
         xOffset = 0;
         yOffset = 0;
-		moveSens =(float) xSpan>ySpan?ySpan/2:xSpan/2;
+		moveSens =(int)(xSpan>ySpan?ySpan/2.5f:xSpan/2.5f);
     }
 
     protected void loadBitmaps(){
-    	bitmaps = new Bitmap[4];
+    	bitmaps = new Bitmap[5];
     	Resources r = this.getContext().getResources();
-    	loadBitmap(1, r.getDrawable(R.drawable.wall), xSpan/3+1, ySpan/3+1);
-		loadBitmap(3, r.getDrawable(R.drawable.door), xSpan, ySpan);
-		loadBitmap(2, r.getDrawable(R.drawable.man), xSpan, ySpan);
+    	loadBitmap(Maze.emptyCode, r.getDrawable(R.drawable.empty), xSpan, ySpan);
+    	loadBitmap(Maze.wallCode, r.getDrawable(R.drawable.wall), xSpan/3+1, ySpan/3+1);
+		loadBitmap(Maze.manCode, r.getDrawable(R.drawable.man), xSpan, ySpan);
+		loadBitmap(Maze.doorCode, r.getDrawable(R.drawable.door), xSpan, ySpan);
+    	loadBitmap(Maze.pathCode, r.getDrawable(R.drawable.path), xSpan/3+1, ySpan/3+1);
     }
     
     public void loadBitmap(int key, Drawable tile, int w, int h) {
@@ -189,9 +203,10 @@ public class MazeMap extends View {
 		super.onDraw(canvas);
 		Rect rect = new Rect(0,0,getWidth(),getHeight());
 		canvas.drawRect(rect, paint);
-		drawMaze(canvas,maze,1);
-		drawBitmap(canvas,maze,2);
-		drawBitmap(canvas,maze,3);
+		drawMaze(canvas,maze,Maze.wallCode);
+		drawMaze(canvas,maze,Maze.pathCode);
+		drawBitmap(canvas,maze,Maze.manCode);
+		drawBitmap(canvas,maze,Maze.doorCode);
 	}
 	
 	//	@Override
@@ -217,18 +232,28 @@ public class MazeMap extends View {
 					yCurRaw = (int)Math.floor(event.getRawY());
 					int dx= 0;
 					int dy= 0;
+					boolean needUpdate = false;
+					boolean tryAgain = true;
 					if (Math.abs(xInitRaw - xCurRaw) > moveSens ) {
 						dx = xCurRaw-xInitRaw>0?1:-1;
-						maze.move(dx,0);
-						update();
-						xInitRaw = xCurRaw;
+						needUpdate = maze.move(dx,0);
+						if ( needUpdate ) tryAgain = false;
 					}
 					if( Math.abs(yInitRaw - yCurRaw) > moveSens ) {
 						dy = yCurRaw - yInitRaw>0?1:-1;
-						maze.move(0,dy);
-						update();
+						needUpdate |= maze.move(0,dy);
+					}
+					if ( needUpdate && tryAgain ) {
+						if (Math.abs(xInitRaw - xCurRaw) > moveSens ) {
+							dx = xCurRaw-xInitRaw>0?1:-1;
+							needUpdate |= maze.move(dx,0);
+						}
+					}
+					if ( needUpdate ) {
+						xInitRaw = xCurRaw;
 						yInitRaw = yCurRaw;
-					}					
+						update();
+					}
 				}
 				Log.i(TAG, "Raw("+xInitRaw+","+yInitRaw+"), Cur("+xCurRaw+","+yCurRaw+")");
 //						int q = (xCurRaw - xInitRaw)/xMoveSens;
@@ -308,7 +333,28 @@ public class MazeMap extends View {
 
 	private void update()
 	{
-		// TODO: Implement this method
-		this.invalidate();
+		this.refreshHandler.sendEmptyMessage(0);
+		if ( maze.isOut() ) {
+			this.refreshHandler.post(new Runnable(){
+				@Override
+				public void run() {
+					Builder builder = new Builder(MazeMap.this.getContext());
+					builder.setMessage("Congratulations! Do you want to play again?");
+					builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							activity.finish();
+						}
+					});
+					builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							System.exit(0);
+						}
+					});
+					builder.create().show();
+				}
+			});
+		}
 	}
 }
