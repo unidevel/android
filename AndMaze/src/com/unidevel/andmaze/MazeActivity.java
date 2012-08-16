@@ -10,8 +10,6 @@ public class MazeActivity extends Activity {
 
 	public static final String TAG = "Maze";
     
-	private static String ICICLE_KEY = "maze-view";
-    
 	/** Called when the activity is first created. */    
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -22,7 +20,7 @@ public class MazeActivity extends Activity {
         int rows = getIntent().getIntExtra("rows", 20);
         int cols = getIntent().getIntExtra("cols", 40);
         mMainMapView = (MazeMap) findViewById(R.id.gameMap);
-        mMainMapView.initNewGame(this, rows, cols);
+        mMainMapView.initNewGame(rows, cols);
         
         //TextView myText = (TextView) findViewById(R.id.txt);
         
@@ -31,11 +29,11 @@ public class MazeActivity extends Activity {
         	mMainMapView.setState(MazeMap.STATE.READY);
         } else {
             // We are being restored
-            Bundle map = savedInstanceState.getBundle(ICICLE_KEY);
+            Bundle map = savedInstanceState.getBundle("maze");
             if (map != null) {
-            	//mMainMapView.restoreState(map);
+            	mMainMapView.loadState(map);
             } else {
-            	mMainMapView.setState(MazeMap.STATE.PAUSE);
+            //	mMainMapView.setState(MazeMap.STATE.PAUSE);
             }
         }
     }
@@ -44,19 +42,20 @@ public class MazeActivity extends Activity {
     protected void onPause() {
         super.onPause();
         // Pause the game along with the activity
-        mMainMapView.setState(MazeMap.STATE.PAUSE);
+       // mMainMapView.setState(MazeMap.STATE.PAUSE);
     }
     
     @Override
     protected void onStop() {
         super.onPause();
         // Pause the game along with the activity
-        mMainMapView.setState(MazeMap.STATE.PAUSE);
+        //mMainMapView.setState(MazeMap.STATE.PAUSE);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         //Store the game state
         //outState.putBundle(ICICLE_KEY, mMainMapView.saveState());
-    }
+    	outState.putBundle("maze",mMainMapView.saveState());
+	}
 }

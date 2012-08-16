@@ -16,21 +16,25 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.os.*;
+import java.util.*;
 
 public class MazeMap extends View {
 	static final String TAG = "MazeMap";
 	RefreshHandler refreshHandler;
-	Activity activity;
 	Maze maze;
 
 	private int yInitRaw;
 
 	private int xInitRaw;
+	
+	Path path;
 
 	private static int moveSens=15;
 	public enum STATE { READY, PAUSE } ;
 	STATE state;
 	long refreshDelay;
+	long gameTime;
 	int rows;
 	int columns;
 
@@ -54,17 +58,18 @@ public class MazeMap extends View {
 		super(context);
 	}
 	
-	public void initNewGame(Activity activity, int rows, int cols) {
+	public void initNewGame(int rows, int cols) {
 		//mTileList.clear();
 		Log.d(TAG, "game init");
 		maze = new Maze(rows, cols);
 		maze.generateMaze();
 		maze.dump();
-		this.activity = activity;
 		this.rows = maze.getRows();
 		this.columns = maze.getColumns();
 		this.refreshHandler = new RefreshHandler();
 		this.refreshHandler.sendEmptyMessage(0);
+		this.gameTime = System.currentTimeMillis();
+		this.path = new Path();
 	}
 	
 	@Override
@@ -80,7 +85,7 @@ public class MazeMap extends View {
     	ySpan = (int)Math.floor((h)/rows);
         xOffset = 0;
         yOffset = 0;
-		moveSens =(int)(xSpan>ySpan?ySpan/2.5f:xSpan/2.5f);
+		moveSens =(int)(xSpan>ySpan?ySpan/1.1f:xSpan/1.1f);
     }
 
     protected void loadBitmaps(){
@@ -123,6 +128,17 @@ public class MazeMap extends View {
 	
 	public void setState(STATE state) {
 		this.state = state;
+	}
+	
+	public Bundle saveState(){
+		Bundle bundle = new Bundle();
+		bundle.putIntArray("maze",maze.toArray());
+		return bundle;
+	}
+	
+	public void loadState(Bundle bundle){
+		maze.fromArray(bundle.getIntArray("maze"));
+		this.state = STATE.READY;
 	}
 	
 	private void drawMazeXLine(Canvas canvas, Bitmap bitmap, int startX, int endX, int y){
@@ -208,6 +224,33 @@ public class MazeMap extends View {
 		drawBitmap(canvas,maze,Maze.manCode);
 		drawBitmap(canvas,maze,Maze.doorCode);
 	}
+	boolean stopped;
+	class PlaybackThread extends Thread{
+		public void run(){
+			maze.reset();
+			for(Iterator<Path.Item> it = path.iterator(); it.hasNext(); ){
+				Path.Item item = it.next();
+				maze.moveTo(item.x, item.y);
+				refreshHandler.post(new Runnable(){
+
+						public void run()
+						{
+							MazeMap.this.invalidate();
+						}
+				});
+				try
+				{
+					sleep(100);
+				}
+				catch (InterruptedException e)
+				{}
+			}
+		}
+	}
+	
+	public void playback(){
+		maze.reset();
+	}
 	
 	//	@Override
 	public boolean onTouchEvent(MotionEvent event)
@@ -234,19 +277,31 @@ public class MazeMap extends View {
 					int dy= 0;
 					boolean needUpdate = false;
 					boolean tryAgain = true;
+					boolean moved = false;
 					if (Math.abs(xInitRaw - xCurRaw) > moveSens ) {
 						dx = xCurRaw-xInitRaw>0?1:-1;
-						needUpdate = maze.move(dx,0);
+						moved = maze.move(dx,0);
+						needUpdate |= moved;
 						if ( needUpdate ) tryAgain = false;
+						if ( moved ) {
+							path.addMove(maze.getManX(),maze.getManY());
+						}
 					}
 					if( Math.abs(yInitRaw - yCurRaw) > moveSens ) {
 						dy = yCurRaw - yInitRaw>0?1:-1;
-						needUpdate |= maze.move(0,dy);
+						moved = maze.move(0,dy);
+						needUpdate |= moved;
+						if (moved){
+							path.addMove(maze.getManX(),maze.getManY());
+						}
 					}
 					if ( needUpdate && tryAgain ) {
 						if (Math.abs(xInitRaw - xCurRaw) > moveSens ) {
 							dx = xCurRaw-xInitRaw>0?1:-1;
-							needUpdate |= maze.move(dx,0);
+							moved = maze.move(dx,0);
+							if ( moved ){
+								path.addMove(maze.getManX(),maze.getManY());
+							}
 						}
 					}
 					if ( needUpdate ) {
@@ -256,72 +311,6 @@ public class MazeMap extends View {
 					}
 				}
 				Log.i(TAG, "Raw("+xInitRaw+","+yInitRaw+"), Cur("+xCurRaw+","+yCurRaw+")");
-//						int q = (xCurRaw - xInitRaw)/xMoveSens;
-//						if(q > 1)
-//							Log.d(TAG, "move left q = " + Integer.toString(q));
-//						wasMoved = true;
-//						xInitRaw = xCurRaw;
-//						mapCur.resetMap();
-//						mapCur.copyFrom(mapOld);
-//						for (int i = 0; i < q; i++) {
-//							if(curTetrino.moveRight(mapCur) &&
-//									!curTetrino.isColusionY(curTetrino.getYPos()+1, curTetrino.getXPos(), curTetrino.sMap, mapCur, false)) {
-//								if (mRedrawHandler.hasMessages(1) == true) {//TODO change to final Name
-//									mRedrawHandler.removeMessages(1);
-//									mRedrawHandler.sendEmptyMessageDelayed(0, 400);//TODO convert to parameter and change to final Name
-//								}
-//							}
-//							mapCur.putTetrinoOnMap(curTetrino);
-//						}
-//						update();
-//						
-//					}
-//					if ((yCurRaw - yInitRaw) > xMoveSens) {
-//						long timeDelta = Math.abs(initTime - SystemClock.uptimeMillis());
-//						if(timeDelta > deltaTh) {
-//							yInitDrop = yCurRaw;
-//							initTime = SystemClock.uptimeMillis();
-//						}
-//						wasMoved = true;
-//						yInitRaw = yCurRaw;
-//						//yInitDrop = yInitRaw;
-//						mapCur.resetMap();
-//						mapCur.copyFrom(mapOld);
-//						curTetrino.moveDown(mapCur);
-//						mapCur.putTetrinoOnMap(curTetrino);
-//						update();
-//						
-//					}
-//				}
-//					
-//				//when screen is released
-//				if(event.getAction() == MotionEvent.ACTION_UP)
-//				{
-//					long timeDelta = Math.abs(initTime - SystemClock.uptimeMillis()); 
-//					if(mGameState == READY && !pausePressed){
-//						int yCurRaw = (int) Math.floor(event.getRawY());
-//						if(yCurRaw - yInitDrop > dropSensativity && timeDelta < deltaTh) {
-//							mapCur.resetMap();
-//							mapCur.copyFrom(mapOld);
-//							curTetrino.drop(mapCur);
-//							mapCur.putTetrinoOnMap(curTetrino);
-//							update();
-//							mRedrawHandler.removeMessages(0);
-//							mRedrawHandler.sendEmptyMessage(1);//TODO change to final name
-//						}
-//						//Rotate tetrino (release on same x pos) 
-//						else if (!wasMoved && Math.abs(yCurRaw - yInitRaw) < rotateSens ) {
-//							mapCur.resetMap();
-//							mapCur.copyFrom(mapOld);
-//							curTetrino.rotateTetrino(mapCur);
-//							mapCur.putTetrinoOnMap(curTetrino);
-//							update();
-//						}
-//					}
-//					else
-//						pausePressed = false;
-//				}
-//				
 			}
 			catch (InterruptedException e)
 			{
@@ -335,21 +324,23 @@ public class MazeMap extends View {
 	{
 		this.refreshHandler.sendEmptyMessage(0);
 		if ( maze.isOut() ) {
+			this.gameTime=System.currentTimeMillis()-this.gameTime;
 			this.refreshHandler.post(new Runnable(){
 				@Override
 				public void run() {
 					Builder builder = new Builder(MazeMap.this.getContext());
-					builder.setMessage("Congratulations! Do you want to play again?");
+					builder.setMessage("Congratulations! Do you want to playback?");
 					builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							activity.finish();
+							PlaybackThread thread = new PlaybackThread();
+							thread.start();
 						}
 					});
 					builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							System.exit(0);
+							
 						}
 					});
 					builder.create().show();

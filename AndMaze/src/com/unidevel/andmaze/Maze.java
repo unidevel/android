@@ -37,8 +37,8 @@ public class Maze {
     
     public void generateMaze(){
     	makeMaze();
-		maze[1][0]=2;
-		maze[rows-2][columns-1]=3;
+		maze[1][0]=manCode;
+		maze[rows-2][columns-1]=doorCode;
 		manX = 0; manY=1;
     	//makeWalls();
     }
@@ -140,10 +140,14 @@ public class Maze {
         }
     }
     
-	public boolean move(int x, int y){
+	public boolean move(int dx, int dy){
 		int newX, newY;
-		newX = manX+x;
-		newY = manY+y;
+		newX = manX+dx;
+		newY = manY+dy;
+		return moveTo(newX,newY);
+	}
+	
+	public boolean moveTo(int newX, int newY){
 		if(newX<0||newX>=columns)return false;
 		if(newY<0||newY>=rows)return false;
 		if(maze[newY][newX]==wallCode)return false;
@@ -190,6 +194,55 @@ public class Maze {
     	}
     }
     
+	public int getManX(){
+		return manX;
+	}
+	
+	public int getManY(){
+		return manY;
+	}
+	
+	public int[] toArray(){
+		int[] array = new int[rows*columns+4];
+		int n = 0;
+		array[n++] = rows;
+		array[n++] = columns;
+		array[n++] = manX;
+		array[n++] = manY;
+		for ( int y = 0; y < rows; ++y){
+			for( int x = 0; x < columns; ++x){
+				array[n++] = maze[y][x];
+			}
+		}
+		return array;
+	}
+	
+	public void fromArray(int[] data){
+		int n = 0;
+		rows = data[n++];
+		columns = data[n++];
+		manX = data[n++];
+		manY = data[n++];
+		for ( int y = 0; y < rows; ++y){
+			for( int x = 0; x < columns; ++x){
+				maze[y][x] = data[n++];
+			}
+		}
+	}
+	
+	public void reset(){
+		manX = 0;
+		manY = 1;
+		maze[manY][manX]=manCode;
+		maze[rows-2][columns-1]=doorCode;
+		for ( int y = 0; y < rows; ++y){
+			for( int x = 0; x < columns; ++x){
+				if (maze[y][x]==pathCode)
+					maze[y][x]=emptyCode;
+			}
+		}
+	}
+	
     public static void main(String[] args)
     {
     	Maze maze = new Maze(20, 40);

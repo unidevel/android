@@ -27,17 +27,7 @@
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
         </activity>
-        <activity
-            android:name=".NewGameActivity" 
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
-        </activity>
-        <activity
-            android:name=".ManageProfile" 
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
-        </activity>
-        
+  
         <activity
             android:name=".MazeActivity"
             android:screenOrientation="landscape"
