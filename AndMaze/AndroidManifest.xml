@@ -23,22 +23,9 @@
             </intent-filter>
         </activity>  
         <activity
-            android:name=".ConnectionActivity" 
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
-        </activity>
-  
-        <activity
             android:name=".MazeActivity"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"/>
-        
-        <activity android:name=".DeviceListActivity"
-                  android:label="@string/select_device"
-                  android:screenOrientation="portrait"
-                  android:theme="@android:style/Theme.Dialog"
-                  android:configChanges="orientation|keyboardHidden" />
-    
     </application>
 
 </manifest>

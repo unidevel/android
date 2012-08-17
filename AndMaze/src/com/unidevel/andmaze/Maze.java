@@ -140,10 +140,81 @@ public class Maze {
         }
     }
     
+	public boolean move2(int dx, int dy){
+		int newX, newY;
+		newX = manX+dx;
+		newY = manY+dy;
+		return moveTo(newX,newY);
+	}
+	
 	public boolean move(int dx, int dy){
 		int newX, newY;
 		newX = manX+dx;
 		newY = manY+dy;
+		
+		if(newX<0||newX>=columns)return false;
+		if(newY<0||newY>=rows)return false;
+		
+		if(moveTo(newX,newY))return true;
+		if (dx!=0){
+		/*	int try1 = newY-1;
+			int try2 = newY+1;
+			if(try1>=0 && try2<rows){
+				if(maze[try1][newX]!=wallCode && maze[try2][newX]==wallCode){
+					newY=try1;
+				}
+				else if(maze[try1][newX]==wallCode && maze[try2][newX]!=wallCode){
+					newY=try2;
+				}
+			}
+			newX=manX;
+			*/
+			int d = rows;
+			for (int n = 0;n < rows;n++){
+				if(maze[n][newX]!=wallCode){
+					if (Math.abs(manY-n)<Math.abs(d)){
+						d=n-manY;
+					}
+				}
+			}
+			if(d<0){
+				dy=-1;dx=0;
+			}
+			else{
+				dy=1;dx=0;
+			}
+		}
+		else if (dy!=0){
+		/*	int try1 = newX-1;
+			int try2 = newX+1;
+			if(try1>=0 && try2<columns){
+				if(maze[newY][try1]!=wallCode && maze[newY][try2]==wallCode){
+					newX=try1;
+				}
+				else if(maze[newY][try1]==wallCode && maze[newY][try2]!=wallCode){
+					newX=try2;
+				}
+			}
+			newY=manY;*/
+			
+			int d = columns;
+			for (int n = 0;n < columns;n++){
+				if(maze[newY][n]!=wallCode){
+					if (Math.abs(manX-n)<Math.abs(d)){
+						d=n-manX;
+					}
+				}
+			}
+			if(d>0){
+				dy=0;dx=1;
+			}
+			else{
+				dy=0;dx=-1;
+			}
+		}
+		newX = manX+dx;
+		newY = manY+dy;
+		
 		return moveTo(newX,newY);
 	}
 	
