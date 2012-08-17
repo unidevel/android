@@ -18,6 +18,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.os.*;
 import java.util.*;
+import android.graphics.*;
+import android.text.format.*;
+import android.text.*;
 
 public class MazeMap extends View {
 	static final String TAG = "MazeMap";
@@ -42,9 +45,11 @@ public class MazeMap extends View {
 	int ySpan;
 	int xOffset;
 	int yOffset;
+	int panelHeight;
 	
 	private Bitmap[] bitmaps; 
 	Paint paint = new Paint();
+	Paint textPaint = new Paint();
 	
 	public MazeMap(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
@@ -66,6 +71,7 @@ public class MazeMap extends View {
 		maze.dump();
 		this.rows = maze.getRows();
 		this.columns = maze.getColumns();
+		this.refreshDelay = 500;
 		this.refreshHandler = new RefreshHandler();
 		this.refreshHandler.sendEmptyMessage(0);
 		this.gameTime = System.currentTimeMillis();
@@ -81,21 +87,34 @@ public class MazeMap extends View {
 	
     protected void calculateTileSize(int w, int h) {
     	Log.d(TAG, "OnSize changed, w = " + Integer.toString(w)+"h = " + Integer.toString(h));
-    	xSpan = (int)Math.floor((w)/columns);
+    	if(h<360)panelHeight=20;
+		else if(h<420)panelHeight=30;
+		else if(h<610)panelHeight=40;
+		else panelHeight=50;
+		h-=panelHeight;
+		xSpan = (int)Math.floor((w)/columns);
     	ySpan = (int)Math.floor((h)/rows);
         xOffset = 0;
-        yOffset = 0;
+        yOffset = panelHeight;
 		moveSens =(int)(xSpan>ySpan?ySpan/1.1f:xSpan/1.1f);
+		this.textPaint.setColor(Color.WHITE);
+		this.textPaint.setTextSize(panelHeight*0.8f);
     }
 
+	int imagePause=5;
+	int imagePlay=6;
+	int imageExit=7;
     protected void loadBitmaps(){
-    	bitmaps = new Bitmap[5];
+    	bitmaps = new Bitmap[8];
     	Resources r = this.getContext().getResources();
     	loadBitmap(Maze.emptyCode, r.getDrawable(R.drawable.empty), xSpan, ySpan);
     	loadBitmap(Maze.wallCode, r.getDrawable(R.drawable.wall), xSpan/3+1, ySpan/3+1);
 		loadBitmap(Maze.manCode, r.getDrawable(R.drawable.man), xSpan, ySpan);
 		loadBitmap(Maze.doorCode, r.getDrawable(R.drawable.door), xSpan, ySpan);
     	loadBitmap(Maze.pathCode, r.getDrawable(R.drawable.path), xSpan/3+1, ySpan/3+1);
+		loadBitmap(imagePause, r.getDrawable(android.R.drawable.ic_media_pause),panelHeight,panelHeight);
+		loadBitmap(imagePlay, r.getDrawable(android.R.drawable.ic_media_play),panelHeight,panelHeight);
+		loadBitmap(imageExit, r.getDrawable(android.R.drawable.ic_lock_power_off),panelHeight,panelHeight);
     }
     
     public void loadBitmap(int key, Drawable tile, int w, int h) {
@@ -111,42 +130,46 @@ public class MazeMap extends View {
 		@Override
 		public void handleMessage(Message msg) {
 			if(state == STATE.READY) {
-				if(msg.what == 1) {//TODO change to final Name
-					refreshHandler.sleep(refreshDelay);
-				}
-				else {
-					MazeMap.this.invalidate();
-				}
+				MazeMap.this.invalidate();
+				removeMessages(0);
+				sendEmptyMessageDelayed(0,refreshDelay);
 			}
-		}
-
-		public void sleep(long delayMillis) {
-			this.removeMessages(0);
-			sendEmptyMessageDelayed(0, delayMillis);
+			else{
+				MazeMap.this.invalidate();
+			}
 		}
 	};
 	
 	public void setState(STATE state) {
 		this.state = state;
+		if (state==STATE.READY){
+			path.resume();
+		}
+		else{
+			path.pause();
+		}
 	}
 	
 	public Bundle saveState(){
 		Bundle bundle = new Bundle();
 		bundle.putIntArray("maze",maze.toArray());
+		bundle.putBundle("path",path.store());
+		setState(STATE.PAUSE);
 		return bundle;
 	}
 	
 	public void loadState(Bundle bundle){
 		maze.fromArray(bundle.getIntArray("maze"));
-		this.state = STATE.READY;
+		path.load(bundle.getBundle("path"));
+		//setState(STATE.READY);
 	}
 	
 	private void drawMazeXLine(Canvas canvas, Bitmap bitmap, int startX, int endX, int y){
 		float xx, yy;
 		float dx = (float)xSpan/3.0f;
 		float dy = (float)ySpan/3.0f;
-		xx = startX * xSpan + dx;
-		yy = y * ySpan + dy;
+		xx = xOffset + startX * xSpan + dx;
+		yy = yOffset + y * ySpan + dy;
 		canvas.drawBitmap(bitmap, xx, yy, paint);
 		for ( int x = startX+1; x < endX; ++ x ) {
 			xx+=dx;
@@ -162,8 +185,8 @@ public class MazeMap extends View {
 		float xx, yy;
 		float dx = (float)xSpan/3.0f;
 		float dy = (float)ySpan/3.0f;
-		xx = x * xSpan + dx;
-		yy = startY * ySpan + dy;
+		xx = xOffset + x * xSpan + dx;
+		yy = yOffset + startY * ySpan + dy;
 		canvas.drawBitmap(bitmap, xx, yy, paint);
 		for ( int y = startY+1; y < endY; ++y ) {
 			yy+=dy;
@@ -208,7 +231,7 @@ public class MazeMap extends View {
 		for(int y=0; y<rows;++y){
 			for(int x=0; x<columns; ++x){
 				if (data[y][x]==id){
-					canvas.drawBitmap(bitmap,x*xSpan,y*ySpan,paint);
+					canvas.drawBitmap(bitmap,xOffset+x*xSpan,yOffset+y*ySpan,paint);
 				}
 			}
 		}
@@ -219,11 +242,13 @@ public class MazeMap extends View {
 		super.onDraw(canvas);
 		Rect rect = new Rect(0,0,getWidth(),getHeight());
 		canvas.drawRect(rect, paint);
+		drawPanel(canvas);
 		drawMaze(canvas,maze,Maze.wallCode);
 		drawMaze(canvas,maze,Maze.pathCode);
 		drawBitmap(canvas,maze,Maze.manCode);
 		drawBitmap(canvas,maze,Maze.doorCode);
 	}
+	
 	boolean stopped;
 	class PlaybackThread extends Thread{
 		public void run(){
@@ -231,13 +256,7 @@ public class MazeMap extends View {
 			for(Iterator<Path.Item> it = path.iterator(); it.hasNext(); ){
 				Path.Item item = it.next();
 				maze.moveTo(item.x, item.y);
-				refreshHandler.post(new Runnable(){
-
-						public void run()
-						{
-							MazeMap.this.invalidate();
-						}
-				});
+				refreshHandler.sendEmptyMessage(0);
 				try
 				{
 					sleep(100);
@@ -270,7 +289,7 @@ public class MazeMap extends View {
 					xInitRaw = (int) Math.floor(event.getRawX());
 					yInitRaw = (int) Math.floor(event.getRawY());
 				}
-				else if(event.getAction() == MotionEvent.ACTION_MOVE ) {
+				else if(event.getAction() == MotionEvent.ACTION_MOVE&&state==STATE.READY ) {
 					xCurRaw = (int) Math.floor(event.getRawX());
 					yCurRaw = (int)Math.floor(event.getRawY());
 					int dx= 0;
@@ -310,6 +329,17 @@ public class MazeMap extends View {
 						update();
 					}
 				}
+				else if(event.getAction()==MotionEvent.ACTION_UP){
+					xCurRaw = (int) Math.floor(event.getRawX());
+					yCurRaw = (int)Math.floor(event.getRawY());
+					if(xCurRaw>this.getWidth()-panelHeight-10&&yCurRaw<panelHeight){
+						if (state==STATE.READY)
+							setState(STATE.PAUSE);
+						else
+							setState(STATE.READY);
+						update();
+					}
+				}
 				Log.i(TAG, "Raw("+xInitRaw+","+yInitRaw+"), Cur("+xCurRaw+","+yCurRaw+")");
 			}
 			catch (InterruptedException e)
@@ -318,6 +348,31 @@ public class MazeMap extends View {
 			}
 		}
 		return true;
+	}
+	
+	private void drawPanel(Canvas canvas){
+		String s="Playing";
+		int id=imagePause;
+		if(state==STATE.PAUSE){
+			s="Pause";
+			id=imagePlay;
+		}
+		float x=0,y=0;
+		x=this.getWidth()-panelHeight-10;
+		canvas.drawBitmap(bitmaps[id],x,y,paint);
+		x=this.getWidth()/2-20;y=panelHeight*0.8f;
+		if(s.length()>0){
+			canvas.drawText(s,x,y,textPaint);
+		}
+		long d = path.getMoveTime();
+		d+=System.currentTimeMillis()-path.getLastMoveTime();
+		DateFormat fmt = new DateFormat();
+		s=fmt.format("hh:mm ss",new Date(d)).toString();
+		//s=String.valueOf(d);
+		Rect b = new Rect();
+		textPaint.getTextBounds(s,0,s.length(),b);
+		x=10;
+		canvas.drawText(s,x,y,textPaint);
 	}
 
 	private void update()

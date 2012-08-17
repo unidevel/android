@@ -167,12 +167,12 @@ public class Maze {
 				}
 				else if(n>manY){
 					if (maze[n][manX]==wallCode){
-						continue;
+						break;
 					}
 				}
 				else continue;
 				if(maze[n][newX]!=wallCode){
-					if (Math.abs(manY-n)<Math.abs(d)){
+					if (Math.abs(manY-n)<=Math.abs(d)){
 						d=n-manY;
 					}
 				}
@@ -195,12 +195,12 @@ public class Maze {
 				}
 				else if(n>manX){
 					if (maze[manY][n]==wallCode){
-						continue;
+						break;
 					}
 				}
 				else continue;
 				if(maze[newY][n]!=wallCode){
-					if (Math.abs(manX-n)<Math.abs(d)){
+					if (Math.abs(manX-n)<=Math.abs(d)){
 						d=n-manX;
 					}
 				}
