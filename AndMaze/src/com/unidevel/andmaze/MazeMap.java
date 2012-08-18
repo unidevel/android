@@ -21,6 +21,7 @@ import java.util.*;
 import android.graphics.*;
 import android.text.format.*;
 import android.text.*;
+import java.text.*;
 
 public class MazeMap extends View {
 	static final String TAG = "MazeMap";
@@ -46,6 +47,7 @@ public class MazeMap extends View {
 	int xOffset;
 	int yOffset;
 	int panelHeight;
+	int level;
 	
 	private Bitmap[] bitmaps; 
 	Paint paint = new Paint();
@@ -53,7 +55,8 @@ public class MazeMap extends View {
 	
 	public static final int EASY=0;
 	public static final int NORMAL=1;
-	
+	public static final int HARD=2;
+	int[] initialSize=new int[]{15,35,21,45,31,69};
 	public MazeMap(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 	}
@@ -66,9 +69,11 @@ public class MazeMap extends View {
 		super(context);
 	}
 	
-	public void initNewGame(int rows, int cols) {
+	public void initNewGame(int level) {
 		//mTileList.clear();
 		Log.d(TAG, "game init");
+		int rows=initialSize[2*level];
+		int cols=initialSize[2*level+1];
 		maze = new Maze(rows, cols);
 		maze.generateMaze();
 		maze.dump();
@@ -79,6 +84,7 @@ public class MazeMap extends View {
 		this.refreshHandler.sendEmptyMessage(0);
 		this.gameTime = System.currentTimeMillis();
 		this.path = new Path();
+		this.level=level;
 	}
 	
 	@Override
@@ -255,14 +261,15 @@ public class MazeMap extends View {
 	boolean stopped;
 	class PlaybackThread extends Thread{
 		public void run(){
+			stopped=false;
 			maze.reset();
-			for(Iterator<Path.Item> it = path.iterator(); it.hasNext(); ){
+			for(Iterator<Path.Item> it = path.iterator(); it.hasNext()&&!stopped; ){
 				Path.Item item = it.next();
 				maze.moveTo(item.x, item.y);
 				refreshHandler.sendEmptyMessage(0);
 				try
 				{
-					sleep(100);
+					sleep(50);
 				}
 				catch (InterruptedException e)
 				{}
@@ -338,8 +345,13 @@ public class MazeMap extends View {
 					if(xCurRaw>this.getWidth()-panelHeight-10&&yCurRaw<panelHeight){
 						if (state==STATE.READY)
 							setState(STATE.PAUSE);
-						else
+						else if(state==STATE.PAUSE)
 							setState(STATE.READY);
+						else if(state==STATE.DONE){
+							stopped=true;
+							initNewGame(this.level);
+							setState(STATE.READY);
+						}
 						update();
 					}
 				}
@@ -354,10 +366,14 @@ public class MazeMap extends View {
 	}
 	
 	private void drawPanel(Canvas canvas){
-		String s="Playing";
+		String s="";
 		int id=imagePause;
 		if(state==STATE.PAUSE){
 			s="Pause";
+			id=imagePlay;
+		}
+		else if(state==STATE.DONE){
+			s="Done!";
 			id=imagePlay;
 		}
 		float x=0,y=0;
@@ -368,9 +384,11 @@ public class MazeMap extends View {
 			canvas.drawText(s,x,y,textPaint);
 		}
 		long d = path.getMoveTime();
-		d+=System.currentTimeMillis()-path.getLastMoveTime();
-		DateFormat fmt = new DateFormat();
-		s=fmt.format("hh:mm ss",new Date(d)).toString();
+		if(state!=STATE.DONE)
+			d+=System.currentTimeMillis()-path.getLastMoveTime();
+		SimpleDateFormat fmt = new SimpleDateFormat("HH:mm ss");
+		fmt.setTimeZone(TimeZone.getTimeZone("GMT"));
+		s=fmt.format(new Date(d));
 		//s=String.valueOf(d);
 		Rect b = new Rect();
 		textPaint.getTextBounds(s,0,s.length(),b);
@@ -382,6 +400,7 @@ public class MazeMap extends View {
 	{
 		this.refreshHandler.sendEmptyMessage(0);
 		if ( maze.isOut() ) {
+			state=STATE.DONE;
 			this.gameTime=System.currentTimeMillis()-this.gameTime;
 			this.refreshHandler.post(new Runnable(){
 				@Override

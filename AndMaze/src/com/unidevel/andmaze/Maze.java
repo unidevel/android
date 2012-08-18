@@ -118,13 +118,13 @@ public class Maze {
        // wall already have the same code, then tearing down that wall would 
        // create a loop, so the wall is left in place.
             if (row % 2 == 1 && maze[row][col-1] != maze[row][col+1]) {
-                       // row is odd; wall separates rooms horizontally
+                // row is odd; wall separates rooms horizontally
                 fill(row, col-1, maze[row][col-1], maze[row][col+1]);
                 maze[row][col] = maze[row][col+1];
              }
             else if (row % 2 == 0 && maze[row-1][col] != maze[row+1][col]) {
-                      // row is even; wall separates rooms vertically
-                fill(row-1, col, maze[row-1][col], maze[row+1][col]);
+                // row is even; wall separates rooms vertically
+              	fill(row-1, col, maze[row-1][col], maze[row+1][col]);
                 maze[row][col] = maze[row+1][col];
              }
     }

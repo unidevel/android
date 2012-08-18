@@ -17,10 +17,9 @@ public class MazeActivity extends Activity {
         setContentView(R.layout.main);
         Log.d(TAG, "Create main layout");
 
-        int rows = getIntent().getIntExtra("rows", 20);
-        int cols = getIntent().getIntExtra("cols", 40);
+        int level = getIntent().getIntExtra("level", MazeMap.EASY);
         mMainMapView = (MazeMap) findViewById(R.id.gameMap);
-        mMainMapView.initNewGame(rows, cols);
+        mMainMapView.initNewGame(level);
         
         //TextView myText = (TextView) findViewById(R.id.txt);
         

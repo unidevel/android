@@ -33,30 +33,29 @@ public class MainMenu extends Activity{
         easyBtn.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				startGame(15, 35);
+				startGame(MazeMap.EASY);
 			}
 		});
         
         normalBtn.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				startGame(20, 55);
+				startGame(MazeMap.NORMAL);
 			}
 		});
         
         hardBtn.setOnClickListener(new OnClickListener(){
         	@Override
         	public void onClick(View v) {
-        		startGame(25, 65);
+        		startGame(MazeMap.HARD);
         	}
         });
     }
     
-    private void startGame(int rows, int cols)
+    private void startGame(int level)
     {
     	Intent intent = new Intent(me, MazeActivity.class);
-    	intent.putExtra("rows", rows);
-    	intent.putExtra("cols", cols);
+    	intent.putExtra("level", level);
 		startActivity(intent);
     }
 }
