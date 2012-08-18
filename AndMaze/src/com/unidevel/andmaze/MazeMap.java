@@ -34,7 +34,7 @@ public class MazeMap extends View {
 	Path path;
 
 	private static int moveSens=15;
-	public enum STATE { READY, PAUSE } ;
+	public enum STATE { READY, PAUSE, DONE } ;
 	STATE state;
 	long refreshDelay;
 	long gameTime;
@@ -50,6 +50,9 @@ public class MazeMap extends View {
 	private Bitmap[] bitmaps; 
 	Paint paint = new Paint();
 	Paint textPaint = new Paint();
+	
+	public static final int EASY=0;
+	public static final int NORMAL=1;
 	
 	public MazeMap(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
@@ -145,7 +148,7 @@ public class MazeMap extends View {
 		if (state==STATE.READY){
 			path.resume();
 		}
-		else{
+		else if (state == STATE.PAUSE) {
 			path.pause();
 		}
 	}
