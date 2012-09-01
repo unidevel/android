@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" android:background="#ffeeeeee">
+
+    <TableLayout
+        android:id="@+id/tableLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" android:stretchColumns="2" android:shrinkColumns="0,1">
+
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:gravity="center_vertical">
+
+            <TextView
+                android:layout_column="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/total2"
+                android:textAppearance="?android:attr/textAppearanceLarge" android:textColor="#FF000000"/>
+
+            <EditText
+                android:id="@+id/editCost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" 
+                android:text="0"
+                android:textColor="#ff000000" android:inputType="numberDecimal">
+                <requestFocus />            </EditText>
+
+        </TableRow>
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:gravity="center_vertical">
+
+            <TextView
+                android:layout_column="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/price1"
+                android:textAppearance="?android:attr/textAppearanceLarge" android:textColor="#FF000000"/>
+
+            <EditText
+                android:id="@+id/editPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" 
+                android:text="0"
+                android:textColor="#ff000000" android:inputType="numberDecimal">
+                <requestFocus />
+            </EditText>
+
+        </TableRow>
+		
+		<TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:gravity="center_vertical">
+            <TextView
+                android:layout_column="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/period"
+                android:textAppearance="?android:attr/textAppearanceLarge" android:textColor="#FF000000"/>
+
+            <Spinner
+                android:id="@+id/spPeriod"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:entries="@array/period"/>
+
+        </TableRow>
+		<TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:gravity="center_vertical" android:visibility="gone">
+            <TextView
+                android:layout_column="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/firstReturn"
+                android:textAppearance="?android:attr/textAppearanceLarge" android:textColor="#FF000000"/>
+            <EditText
+                android:id="@+id/editFirstReturn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" 
+                android:text="0"
+                android:textColor="#ff000000" 
+                android:inputType="numberDecimal">
+            </EditText>
+        </TableRow>        
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:gravity="center_vertical">
+            <TextView
+                android:layout_column="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/paid1"
+                android:textAppearance="?android:attr/textAppearanceLarge" android:textColor="#FF000000"/>
+            <EditText
+                android:id="@+id/editPaid"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" 
+                android:text="0"
+                android:textColor="#ff000000" 
+                android:inputType="numberDecimal">
+            </EditText>
+        </TableRow>
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:gravity="center_vertical">
+            <TextView
+                android:layout_column="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/price2"
+                android:textAppearance="?android:attr/textAppearanceLarge" android:textColor="#FF000000"/>
+            <EditText
+                android:id="@+id/editMarketPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" 
+                android:text="0"
+                android:textColor="#ff000000" 
+                android:inputType="numberDecimal">
+            </EditText>
+        </TableRow>
+        
+		<View android:layout_height="2dip"
+        	android:background="#FF000090" />
+            
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"  android:background="#FFFFFFFF">
+            <TextView
+                android:layout_column="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/return1"
+                android:textAppearance="?android:attr/textAppearanceLarge" android:textColor="#FF000000"/>
+
+            <TextView
+                android:id="@+id/textReturn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" 
+                android:text="0"
+                android:textColor="#ff000000" 
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:gravity="right" android:paddingRight="20dp">
+            </TextView>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:background="#FFFFFFFF">
+            <TextView
+                android:layout_column="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/extra"
+                android:textAppearance="?android:attr/textAppearanceLarge" android:textColor="#FF900000"/>
+
+            <TextView
+                android:id="@+id/textExtra"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0.00"
+                android:textAppearance="?android:attr/textAppearanceLarge" android:textColor="#FF900000"
+                android:gravity="right" android:paddingRight="20dp"/>
+            
+        </TableRow>
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:background="#FFFFFFFF">
+            <TextView
+                android:layout_column="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/total1"
+                android:textAppearance="?android:attr/textAppearanceLarge" android:textColor="#FF000000"/>
+
+            <TextView
+                android:id="@+id/textTotal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0.00"
+                android:textAppearance="?android:attr/textAppearanceLarge" android:textColor="#FF000000"
+                android:gravity="right" android:paddingRight="20dp"/>
+        </TableRow>
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:background="#FFFFFFFF">
+            <TextView
+                android:layout_column="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/paid2"
+                android:textAppearance="?android:attr/textAppearanceLarge" android:textColor="#FF009000"/>
+
+            <TextView
+                android:id="@+id/textActual"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0.00"
+                android:textAppearance="?android:attr/textAppearanceLarge" android:textColor="#FF009000"
+                android:gravity="right" android:paddingRight="20dp"/>
+        </TableRow>
+  	</TableLayout>
+
+    <CheckBox
+        android:id="@+id/checkWorth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/worth" android:layout_gravity="center_horizontal" android:textColor="#ff000000"/>
+
+    <Button
+        android:id="@+id/btnShare"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/share" android:layout_gravity="center_horizontal" android:layout_margin="10dp"/>
+
+</LinearLayout>

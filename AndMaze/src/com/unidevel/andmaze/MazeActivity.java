@@ -4,7 +4,14 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 
-public class MazeActivity extends Activity {
+public class MazeActivity extends Activity implements Maze.Listener
+{
+
+	public void done()
+	{
+		this.finish();
+	}
+
     
 	private MazeMap mMainMapView;
 
@@ -20,7 +27,7 @@ public class MazeActivity extends Activity {
         int level = getIntent().getIntExtra("level", MazeMap.EASY);
         mMainMapView = (MazeMap) findViewById(R.id.gameMap);
         mMainMapView.initNewGame(level);
-        
+        mMainMapView.setListener(this);
         //TextView myText = (TextView) findViewById(R.id.txt);
         
         if (savedInstanceState == null) {

@@ -1,7 +1,12 @@
 package com.unidevel.andmaze;
 
 public class Maze {
-
+	public interface Listener{
+		void done();
+	}
+	
+	Listener listener;
+	
     int[][] maze;  // Description of state of maze.  The value of maze[i][j]
                    // is one of the constants wallCode, pathcode, emptyCode,
                    // or visitedCode.  (Value can also be negative, temporarily,
@@ -228,6 +233,9 @@ public class Maze {
 			maze[manY][manX]=pathCode;
 		manX=newX; manY=newY;
 		maze[manY][manX]=manCode;
+		if (manX==columns-1){
+			notifyDone();
+		}
 		return true;
 	}
 	
@@ -314,6 +322,14 @@ public class Maze {
 		}
 	}
 	
+	public void setListener(Listener l){
+		this.listener = l;
+	}
+	
+	public void notifyDone(){
+		if(this.listener!=null)
+			this.listener.done();
+	}
     public static void main(String[] args)
     {
     	Maze maze = new Maze(20, 40);

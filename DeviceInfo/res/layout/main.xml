@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" android:background="#ffeeeeee">
+
+    <TableLayout
+        android:id="@+id/tableLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" android:stretchColumns="2" android:shrinkColumns="0,1">
+
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:gravity="center_vertical">
+
+            <TextView
+                android:layout_column="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="android_id"
+                android:textAppearance="?android:attr/textAppearanceLarge" android:textColor="#FF000000"/>
+
+            <EditText
+                android:id="@+id/android_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" 
+                android:text="0"
+                android:textColor="#ff000000" android:inputType="">
+                <requestFocus />
+            </EditText>
+
+        </TableRow>
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:gravity="center_vertical">
+
+            <TextView
+                android:layout_column="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="android_id(GSF)"
+                android:textAppearance="?android:attr/textAppearanceLarge" android:textColor="#FF000000"/>
+
+            <EditText
+                android:id="@+id/android_id_gsf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" 
+                android:text=""
+                android:textColor="#ff000000" android:inputType="">
+                <requestFocus />
+            </EditText>
+
+        </TableRow>
+		
+		<TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:gravity="center_vertical">
+            <TextView
+                android:layout_column="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="device_id"
+                android:textAppearance="?android:attr/textAppearanceLarge" android:textColor="#FF000000"/>
+
+            <EditText
+                android:id="@+id/device_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" 
+                android:text=""
+                android:textColor="#ff000000" android:inputType="">
+                <requestFocus />
+            </EditText>
+        </TableRow>
+		<TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:gravity="center_vertical">
+            <TextView
+                android:layout_column="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="serial_no"
+                android:textAppearance="?android:attr/textAppearanceLarge" android:textColor="#FF000000"/>
+            <EditText
+                android:id="@+id/serial_no"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" 
+                android:text="0"
+                android:textColor="#ff000000" 
+                android:inputType="numberDecimal">
+            </EditText>
+        </TableRow>        
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:gravity="center_vertical">
+            <TextView
+                android:layout_column="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="mac_address"
+                android:textAppearance="?android:attr/textAppearanceLarge" android:textColor="#FF000000"/>
+            <EditText
+                android:id="@+id/mac_address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" 
+                android:text="0"
+                android:textColor="#ff000000" 
+                android:inputType="numberDecimal">
+            </EditText>
+        </TableRow>        
+		<View android:layout_height="2dip"
+        	android:background="#FF000090" />
+  	</TableLayout>
+
+    <Button
+        android:id="@+id/btnShare"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Save" android:layout_gravity="center_horizontal" android:layout_margin="10dp"/>
+
+</LinearLayout>

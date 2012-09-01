@@ -23,7 +23,7 @@ import android.text.format.*;
 import android.text.*;
 import java.text.*;
 
-public class MazeMap extends View {
+public class MazeMap extends View implements Maze.Listener{
 	static final String TAG = "MazeMap";
 	RefreshHandler refreshHandler;
 	Maze maze;
@@ -33,6 +33,8 @@ public class MazeMap extends View {
 	private int xInitRaw;
 	
 	Path path;
+	
+	Maze.Listener listener;
 
 	private static int moveSens=15;
 	public enum STATE { READY, PAUSE, DONE } ;
@@ -48,6 +50,8 @@ public class MazeMap extends View {
 	int yOffset;
 	int panelHeight;
 	int level;
+	
+	Scores scores;
 	
 	private Bitmap[] bitmaps; 
 	Paint paint = new Paint();
@@ -76,7 +80,7 @@ public class MazeMap extends View {
 		int cols=initialSize[2*level+1];
 		maze = new Maze(rows, cols);
 		maze.generateMaze();
-		maze.dump();
+		maze.setListener(this);
 		this.rows = maze.getRows();
 		this.columns = maze.getColumns();
 		this.refreshDelay = 500;
@@ -85,6 +89,7 @@ public class MazeMap extends View {
 		this.gameTime = System.currentTimeMillis();
 		this.path = new Path();
 		this.level=level;
+		this.scores = new Scores(this.getContext());
 	}
 	
 	@Override
@@ -126,6 +131,10 @@ public class MazeMap extends View {
 		loadBitmap(imageExit, r.getDrawable(android.R.drawable.ic_lock_power_off),panelHeight,panelHeight);
     }
     
+	public void setListener(Maze.Listener listener)	{
+		this.listener = listener;
+	}
+	
     public void loadBitmap(int key, Drawable tile, int w, int h) {
         Bitmap bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
@@ -163,6 +172,7 @@ public class MazeMap extends View {
 		Bundle bundle = new Bundle();
 		bundle.putIntArray("maze",maze.toArray());
 		bundle.putBundle("path",path.store());
+		bundle.putInt("level",level);
 		setState(STATE.PAUSE);
 		return bundle;
 	}
@@ -170,6 +180,7 @@ public class MazeMap extends View {
 	public void loadState(Bundle bundle){
 		maze.fromArray(bundle.getIntArray("maze"));
 		path.load(bundle.getBundle("path"));
+		level=bundle.getInt("level");
 		//setState(STATE.READY);
 	}
 	
@@ -256,6 +267,11 @@ public class MazeMap extends View {
 		drawMaze(canvas,maze,Maze.pathCode);
 		drawBitmap(canvas,maze,Maze.manCode);
 		drawBitmap(canvas,maze,Maze.doorCode);
+		if(state==STATE.PAUSE){
+			paint.setAlpha(160);
+			canvas.drawRect(0,panelHeight,this.getWidth(),this.getHeight(),paint);
+			paint.setAlpha(255);
+		}
 	}
 	
 	boolean stopped;
@@ -399,30 +415,41 @@ public class MazeMap extends View {
 	private void update()
 	{
 		this.refreshHandler.sendEmptyMessage(0);
-		if ( maze.isOut() ) {
-			state=STATE.DONE;
-			this.gameTime=System.currentTimeMillis()-this.gameTime;
-			this.refreshHandler.post(new Runnable(){
+	}
+	
+	public void done(){
+		if (state==STATE.DONE){
+			notifyDone();
+			return;
+		}
+		state=STATE.DONE;
+		this.gameTime=System.currentTimeMillis()-this.gameTime;
+		this.refreshHandler.post(new Runnable(){
 				@Override
 				public void run() {
 					Builder builder = new Builder(MazeMap.this.getContext());
 					builder.setMessage("Congratulations! Do you want to playback?");
 					builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							PlaybackThread thread = new PlaybackThread();
-							thread.start();
-						}
-					});
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								PlaybackThread thread = new PlaybackThread();
+								thread.start();
+							}
+						});
 					builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							
-						}
-					});
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								notifyDone();
+							}
+						});
 					builder.create().show();
 				}
 			});
+	}
+	
+	public void notifyDone(){
+		if (this.listener!=null){
+			this.listener.done();
 		}
 	}
 }
