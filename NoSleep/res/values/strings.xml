@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <string name="app_name">KeepAlive</string>
+<string name="about">&lt;a href=&quot;http://unidevel.appspot.com/&quot;&gt;KeepAlive&lt;/a&gt;</string>    
+<string name="btnStart">Start</string>
+<string name="btnStop">Stop</string>
+<string name="btnLock">Screen Off</string>
+<string name="btnQuit">Quit</string>
+<string name="btnAbout">Help</string>
+<string name="btnReturn">Return</string>
+<string name="btnBattery">Battery</string>
+<string name="btnSettings">Settings</string>
+<string name="btnSetStart">Set</string>
+<string name="btnSetStop">Set</string>
+<string name="btnCancel">Cancel</string>
+<string name="btnApply">Apply</string>
+<string name="checkStop">Stop when</string>
+<string name="checkStart">Start when</string>
+<string name="checkTimeout">Enable</string>
+<string name="labelTimeout">Time to deep sleep(minutes):</string>
+<string name="labelAD">If you like this program, please help to click the AD below, that will help me a lot, thank your very much!</string>
+<string name="infoStart">Battery Start: </string>
+<string name="infoNow">Battery Now: </string>
+<string name="infoTime">Time: %H hours %M minutes</string>
+<string name="version">Version: 1.7</string>
+<string name="readme">USAGE: Click "Start" button on main window to enable, click "Stop" button to disable. You can schedule enable and disable in settings window.</string>
+<string name="titleBattery">Battery information</string>
+<string name="titleSettings">Settings</string>
+</resources>

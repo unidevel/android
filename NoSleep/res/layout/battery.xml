@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:myapp="http://schemas.android.com/apk/res/com.unidevel.nosleep" 
+  android:layout_height="fill_parent" android:layout_width="fill_parent">
+  <TextView android:id="@+id/infoStart" android:layout_height="wrap_content" android:layout_width="fill_parent" android:textSize="32dp" android:layout_marginLeft="25dp" android:layout_marginRight="25dp" android:layout_marginBottom="10dp" android:layout_centerVertical="false" android:layout_marginTop="60dp"></TextView>
+  <TextView android:id="@+id/infoNow" android:layout_height="wrap_content" android:layout_below="@+id/infoStart" android:layout_width="fill_parent" android:textSize="32dp" android:layout_marginLeft="25dp" android:layout_marginRight="25dp" android:layout_marginBottom="20dp"></TextView>
+  <TextView android:layout_below="@+id/infoNow" android:layout_height="wrap_content" android:textSize="20dp" android:layout_width="fill_parent" android:layout_marginLeft="25dp" android:layout_marginRight="25dp" android:layout_marginBottom="20dp" android:id="@+id/infoTime"></TextView><Button android:layout_height="wrap_content" android:layout_below="@+id/infoNow" android:id="@+id/btnLock" android:layout_width="fill_parent" android:layout_margin="20dp" android:text="@string/btnLock" android:visibility="invisible"></Button>
+  <Button android:layout_height="wrap_content" android:layout_marginLeft="20dp" android:layout_marginRight="20dp" android:layout_marginTop="20dp" android:layout_width="fill_parent" android:textSize="28dp" android:layout_above="@+id/ad" android:text="@string/btnReturn" android:id="@+id/btnReturn"></Button>
+  <com.admob.android.ads.AdView android:id="@+id/ad" android:layout_width="fill_parent" android:layout_height="wrap_content" myapp:backgroundColor="#000000" myapp:primaryTextColor="#FFFFFF" myapp:secondaryTextColor="#CCCCCC" android:layout_alignParentBottom="true"/>  
+</RelativeLayout>

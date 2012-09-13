@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+	package="com.unidevel.nosleep" android:versionCode="7" android:versionName="1.7.2">
+	<application android:icon="@drawable/icon" android:label="@string/app_name">
+    
+<activity android:name="com.unidevel.nosleep.Main" android:label="@string/app_name" android:theme="@android:style/Theme.NoTitleBar">
+	<intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+</activity>
+<activity android:name="Settings" android:label="@string/titleSettings"></activity>
+<service android:name="com.unidevel.nosleep.NoSleepService"><intent-filter><action android:name="NoSleepService"></action></intent-filter></service>
+
+<receiver android:name="com.unidevel.nosleep.NoSleepReceiver">
+	<intent-filter>
+		<action android:name="android.intent.action.BOOT_COMPLETED"></action>
+		<category android:name="android.intent.category.LAUNCHER"></category>
+	</intent-filter>
+</receiver>
+
+<receiver android:name="KeepAliveWidget" android:label="@string/app_name">
+	<intent-filter>
+		<action android:name="android.appwidget.action.APPWIDGET_UPDATE"></action>
+		<action android:name="com.unidevel.nosleep.stop"></action>
+		<action android:name="com.unidevel.nosleep.start"></action>
+	</intent-filter>
+	<meta-data android:name="android.appwidget.provider" android:resource="@xml/keepalive"></meta-data>
+</receiver>
+<activity android:name="About" android:theme="@android:style/Theme.NoTitleBar"></activity>
+<meta-data android:value="a14cb24a873b927" android:name="ADMOB_PUBLISHER_ID" />
+</application>
+
+
+<uses-permission android:name="android.permission.WAKE_LOCK"></uses-permission>
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>
+<uses-permission android:name="android.permission.INTERNET"></uses-permission>
+<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"></uses-permission>
+<uses-permission android:name="android.permission.BATTERY_STATS"></uses-permission>
+<!-- <uses-permission android:name="android.permission.CHANGE_CONFIGURATION"></uses-permission>  -->
+
+
+
+</manifest> 

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  	xmlns:myapp="http://schemas.android.com/apk/res/com.unidevel.nosleep" 
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+
+<TextView android:id="@+id/labelLink" android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_marginLeft="20dp" android:layout_marginRight="20dp" android:layout_marginTop="80dp" android:textSize="32dp" android:gravity="center" android:text="@string/app_name"></TextView><Button android:layout_height="wrap_content" android:id="@+id/btnStart" android:layout_gravity="center" android:layout_width="fill_parent" android:layout_margin="20dp" android:layout_centerVertical="true" android:text="@string/btnStart" android:textSize="36dp" android:padding="20dp"></Button>
+<Button android:layout_height="wrap_content" android:layout_below="@+id/btnStart" android:layout_width="fill_parent" android:id="@+id/btnSettings" android:layout_marginLeft="20dp" android:layout_marginRight="20dp" android:textSize="28dp" android:text="@string/btnSettings"></Button>
+<Button android:layout_height="wrap_content" android:layout_below="@+id/btnSettings" android:layout_marginLeft="20dp" android:layout_marginRight="20dp" android:layout_marginTop="20dp" android:layout_width="fill_parent" android:textSize="28dp" android:id="@+id/btnAbout" android:text="@string/btnAbout"></Button>
+<!-- com.admob.android.ads.AdView android:id="@+id/ad" android:layout_width="fill_parent" android:layout_height="wrap_content" myapp:backgroundColor="#000000" myapp:primaryTextColor="#FFFFFF" myapp:secondaryTextColor="#CCCCCC" android:layout_alignParentBottom="true"/ -->
+
+
+
+
+
+</RelativeLayout>

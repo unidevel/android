@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:wiyun="http://schemas.android.com/apk/res/com.unidevel.app"
+	android:orientation="vertical" android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+
+	<TextView android:id="@+id/title" android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:textSize="24dip"
+		android:text="@string/label_ticket_list" android:gravity="center_horizontal" />
+	<ListView android:layout_width="fill_parent" android:id="@+id/ticket_list"
+		android:layout_height="wrap_content" android:layout_weight="1"></ListView>
+
+
+
+	<!-- LinearLayout android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:orientation="vertical">
+		<com.wiyun.ad.AdView android:layout_width="fill_parent"
+			android:layout_height="wrap_content" wiyun:resId="f8aef8336767d2a"
+			wiyun:showLoadingHint="false" wiyun:refreshInterval="30"
+			wiyun:goneIfFail="true" wiyun:autoStart="true" />
+	</LinearLayout-->
+</LinearLayout>

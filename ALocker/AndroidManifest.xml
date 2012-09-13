@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      package="com.unidevel.tools.locker"
+      android:sharedUserId="android.uid.system" android:versionCode="2" android:versionName="1.1">
+    <application android:icon="@drawable/icon" android:label="@string/app_name">
+	<!-- <activity android:name=".Main" android:label="@string/app_name">
+		<intent-filter>
+        	<action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+		</intent-filter>
+	</activity>
+     -->
+    <receiver android:icon="@drawable/icon" android:name="LockWidget" android:label="@string/widgetLock">
+		<intent-filter>
+			<action android:name="android.appwidget.action.APPWIDGET_UPDATE"></action>
+		</intent-filter>
+    	<meta-data android:name="android.appwidget.provider" android:resource="@xml/lockwidget"></meta-data>
+	</receiver>
+    <receiver android:icon="@drawable/reboot" android:name="RebootWidget" android:label="@string/widgetReboot">
+		<intent-filter>
+			<action android:name="android.appwidget.action.APPWIDGET_UPDATE"></action>
+		</intent-filter>
+    	<meta-data android:name="android.appwidget.provider" android:resource="@xml/rebootwidget"></meta-data>
+	</receiver>
+<service android:name="LockService"><intent-filter><action android:name="LockService"></action>
+</intent-filter>
+</service>
+<activity android:name="RebootActivity" android:theme="@android:style/Theme.Dialog"><intent-filter><action android:name="UniReboot"></action>
+</intent-filter>
+</activity>
+</application>
+
+<uses-permission android:name="android.permission.WAKE_LOCK"></uses-permission>
+<uses-permission android:name="android.permission.DEVICE_POWER"></uses-permission>
+<uses-permission android:name="android.permission.REBOOT"></uses-permission>
+<uses-permission android:name="android.permission.SHUTDOWN"></uses-permission>
+</manifest> 

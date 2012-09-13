@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:wiyun="http://schemas.android.com/apk/res/com.unidevel.app"
+	android:layout_width="fill_parent" android:layout_height="fill_parent"
+	android:orientation="vertical" android:gravity="center_horizontal">
+
+
+	<LinearLayout android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:orientation="horizontal">
+		<TextView android:text="@string/label_name"
+			android:layout_height="wrap_content" android:textSize="24dip"
+			android:layout_width="wrap_content" android:minEms="4"></TextView>
+		<EditText android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:id="@+id/name"></EditText>
+	</LinearLayout>
+
+	<LinearLayout android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:orientation="horizontal">
+		<TextView android:text="@string/label_id"
+			android:layout_height="wrap_content" android:textSize="24dip"
+			android:layout_width="wrap_content" android:minEms="4"></TextView>
+		<EditText android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:id="@+id/id"></EditText>
+	</LinearLayout>
+
+	<LinearLayout android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:orientation="horizontal">
+		<TextView android:text="@string/label_tickets"
+			android:layout_height="wrap_content" android:textSize="24dip"
+			android:layout_width="wrap_content" android:minEms="4"></TextView>
+		<Spinner android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:id="@+id/tickets"></Spinner>
+	</LinearLayout>
+	<DatePicker android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:id="@+id/date"></DatePicker>
+
+	<Button android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		 android:textSize="24dip" 
+		android:id="@+id/submit"
+		android:text="@string/label_submit"></Button>
+
+	<!-- LinearLayout android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:orientation="vertical">
+		<com.wiyun.ad.AdView android:layout_width="fill_parent"
+			android:layout_height="wrap_content" wiyun:resId="f8aef8336767d2a"
+			wiyun:showLoadingHint="false" wiyun:refreshInterval="30"
+			wiyun:goneIfFail="true" wiyun:autoStart="true" />
+	</LinearLayout -->
+	
+</LinearLayout>

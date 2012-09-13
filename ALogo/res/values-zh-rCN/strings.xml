@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">LOGO编程</string>
+	<string name="btnFD">FD</string>
+	<string name="btnRT">RT</string>
+	<string name="btnREPEAT">REPT</string>
+	<string name="btnQUOTE"> \'\' </string>
+	<string name="btnLBRACE"> [ </string>
+	<string name="btnRBRACE"> ] </string>
+	<string name="btnCOLON"> : </string>
+	<string name="btnNL">NL</string>
+	<string name="btnTO">TO</string>
+	<string name="menuNew">新建脚本</string>
+	<string name="menuRun">运行脚本</string>	
+	<string name="menuSave">保存</string>
+	<string name="menuDelete">删除</string>
+	<string name="btnOk">确定</string>
+	<string name="btnCancel">取消</string>
+	<string name="btnYes">是</string>
+	<string name="btnNo">否</string>
+	<string name="btnQuit">退出</string>
+	<string name="btnSave">保存</string>
+	<string name="btnLast">打开最近编辑脚本</string>
+	<string name="msgExists">文件已经存在！</string>				
+	<string name="msgClearScript">清空脚本？</string>		
+	<string name="msgQuit">文件被修改，现在保存？</string>	
+	<string name="msgSaveTitle">保存</string>		
+	<string name="msgSaveName">文件名: </string>
+		
+</resources>

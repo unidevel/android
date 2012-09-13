@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_height="wrap_content" android:layout_width="fill_parent" android:orientation="horizontal">
+<TextView android:layout_height="wrap_content" android:id="@+id/labelName" android:layout_width="wrap_content" android:layout_weight="1" android:textSize="32dp"></TextView>
+<TextView android:layout_height="wrap_content" android:id="@+id/labelSize" android:layout_width="wrap_content" android:textSize="24dp" android:gravity="bottom|right"></TextView>
+</LinearLayout>

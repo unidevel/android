@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ALogo</string>
+	<string name="btnFD">FD</string>
+	<string name="btnRT">RT</string>
+	<string name="btnREPEAT">REPT</string>
+	<string name="btnQUOTE"> \'\' </string>
+	<string name="btnLBRACE"> [ </string>
+	<string name="btnRBRACE"> ] </string>
+	<string name="btnCOLON"> : </string>
+	<string name="btnNL">NL</string>
+	<string name="btnTO">TO</string>
+	<string name="menuNew">New Logo Script</string>
+	<string name="menuRun">Run</string>
+	<string name="menuSave">Save</string>
+	<string name="menuDelete">Delete</string>
+	<string name="btnLast">Open last</string>					
+	<string name="btnOk">OK</string>
+	<string name="btnCancel">Cancel</string>	
+	<string name="btnYes">Yes</string>
+	<string name="btnNo">No</string>	
+	<string name="btnQuit">Quit</string>
+	<string name="btnSave">Save</string>
+	<string name="msgExists">File already exists!</string>
+	<string name="msgClearScript">Clear script?</string>		
+	<string name="msgQuit">File modified, save it now?</string>
+	<string name="msgSaveTitle">Save</string>		
+	<string name="msgSaveName">Name: </string>
+</resources>

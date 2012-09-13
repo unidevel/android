@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Desktop Tools</string>
+    <string name="widgetLock">One-key Locker</string>
+    <string name="widgetReboot">Two-key Tools</string>
+    <string name="labelReboot">Really reboot?</string>
+    <string name="btnLock">Lock</string>
+    <string name="btnReboot">Reboot</string>
+    <string name="btnCancel">Cancel</string>
+    <string name="btnShutdown">Shutdown</string>
+    <string name="btnYes">Yes</string>
+    <string name="btnNo">No</string>
+    <string name="titleReboot">Reboot</string>
+</resources>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="version">1.0</string>
+    <string name="app_name">博物馆订票</string>
+	<string name="cat_userinfo">用户设置</string>
+	<string name="cat_ticketinfo">订票设置</string>
+	<string name="label_name">姓名</string>
+	<string name="label_id">身份证</string>
+	<string name="label_date">预约时间</string>
+	<string name="desc_date_this_saturday">周六</string>
+	<string name="desc_date_this_sunday">周日</string>
+	<string name="desc_date_tomorrow">明天</string>
+	<string name="label_tickets">票数</string>
+	<string name="label_phone">电话</string>
+	<string name="desc_max_tickets">最多</string>
+	<string name="site_bmnh">北京自然博物馆</string>
+	<string name="city_beijing">北京</string>
+	<string name="label_ticket_list">我的预约</string>
+	<string name="label_submit"> 预约 </string>
+	
+	<string name="error_save_pref">保存设置失败!</string>
+	<string name="error_save_ticket">保存预约失败!</string>
+	<string name="error_get_ticket">获取预约失败!</string>
+	
+	<string name="title_book_ticket">预约门票</string>
+	<string name="title_ticket_detail">预约信息</string>
+	<string name="title_settings">设置</string>
+	<string name="title_about">关于</string>
+	
+	<string name="msg_terminate_ticket">中止预约...</string>
+	<string name="msg_tickets">张</string>
+	<string name="msg_ticket_id">预约号</string>
+	<string name="msg_success">成功预订</string>
+	
+	<string name="menu_book">预约订票</string>
+	<string name="menu_clear">清理过期</string>
+	<string name="menu_setting">设置</string>
+	<string name="menu_about">关于</string>
+	<string name="menu_exit">退出</string>
+	
+	<string name="menu_add_calendar">添加到日历</string>
+	<string name="menu_send_sms">发送短信</string>
+	<string name="menu_delete">删除</string>
+	
+	<string name="readme"></string>
+</resources>

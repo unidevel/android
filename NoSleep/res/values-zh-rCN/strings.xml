@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <string name="app_name">任意键唤醒</string>
+<string name="about">&lt;a href=&quot;http://unidevel.appspot.com/&quot;&gt;任意键唤醒&lt;/a&gt;</string> 
+<string name="btnStart">启动</string>
+<string name="btnStop">停止</string>
+<string name="btnLock">关闭屏幕</string>
+<string name="btnQuit">退出</string>
+<string name="btnAbout">帮助</string>
+<string name="btnReturn">返回</string>
+<string name="btnBattery">电量信息</string>
+<string name="btnSettings">配置</string>
+<string name="btnSetStart">设置</string>
+<string name="btnSetStop">设置</string>
+<string name="btnCancel">取消</string>
+<string name="btnApply">保存</string>
+<string name="checkStop">定时关闭</string>
+<string name="checkStart">定时启动</string>
+<string name="checkTimeout">启用</string>
+<string name="labelTimeout">关屏后进入深度睡眠时间(分钟):</string>
+<string name="labelAD">支持的话帮忙点一下下面的广告，多谢啦!</string>
+<string name="infoStart">启动电量: </string>
+<string name="infoNow">当前电量: </string>
+<string name="infoTime">运行时间: %H小时%M分钟</string>
+<!-- <string name="version">&lt;a href=&quot;http://unidevel.appspot.com/&quot;&gt;版本: 1.7&lt;/a&gt;</string>  -->
+<string name="version">版本: 1.7</string>
+<string name="readme">使用说明：主界面点击启动按钮，启用任意键唤醒，同时按钮文本变为停止，再次点击禁用任意键唤醒，配置界面可以配置启用和禁用的时间，定时启用和禁用</string>
+<string name="titleBattery">电量信息</string>
+<string name="titleSettings">配置</string>
+</resources>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<item android:title="@string/menu_add_calendar" android:id="@+id/menu_add_calendar"></item>
+	<item android:title="@string/menu_send_sms" android:id="@+id/menu_send_sms"></item>
+	<item android:title="@string/menu_delete" android:id="@+id/menu_delete"></item>
+</menu>
