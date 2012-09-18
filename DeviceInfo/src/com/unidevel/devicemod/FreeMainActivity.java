@@ -97,7 +97,7 @@ public class FreeMainActivity extends Activity implements View.OnClickListener
 		final EditText text=new EditText(me);
 		text.setText(value);
 		builder.setCancelable(true).setTitle(item.getLabel())
-			.setPositiveButton("Apply", new DialogInterface.OnClickListener(){
+			.setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener(){
 				public void onClick(DialogInterface dialog, int button)
 				{
 					String newValue=text.getText().toString();
@@ -126,7 +126,7 @@ public class FreeMainActivity extends Activity implements View.OnClickListener
 					System.exit(0);
 				}
 			})
-			.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+			.setNegativeButton(getString(android.R.string.cancel), new DialogInterface.OnClickListener(){
 
 				public void onClick(DialogInterface dialog, int button)
 				{
@@ -197,32 +197,14 @@ public class FreeMainActivity extends Activity implements View.OnClickListener
 		loadDeviceInfo();
 		root.addView(deviceInfoList, LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 		deviceInfoList.setAdapter(this.adapter);
-
-		if (false)
-		{
-			LinearLayout layout = new LinearLayout(me);
-			layout.setGravity(Gravity.CENTER_HORIZONTAL);
-			layout.setOrientation(LinearLayout.HORIZONTAL);
-			root.addView(layout, LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-			final Button saveButton=new Button(me);
-			saveButton.setText("Save Current");
-			layout.addView(saveButton, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-			saveButton.setOnClickListener(this);
-			saveButton.setId(SAVE_BUTTON_ID);
-			final Button refreshButton=new Button(this);
-			refreshButton.setText("Refresh");
-			refreshButton.setOnClickListener(this);
-			refreshButton.setId(REFRESH_ID);
-			layout.addView(refreshButton, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-		}
 	}
 
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
 		super.onCreateOptionsMenu(menu);
-		menu.add(Menu.NONE, SAVE_BUTTON_ID, Menu.NONE, "Save");
-		menu.add(Menu.NONE, REFRESH_ID, Menu.NONE, "Refresh");
-		menu.add(Menu.NONE, EXIT_ID, Menu.NONE, "Exit");
+		menu.add(Menu.NONE, SAVE_BUTTON_ID, Menu.NONE, r(R.string.save));
+		menu.add(Menu.NONE, REFRESH_ID, Menu.NONE, r(R.string.refresh));
+		menu.add(Menu.NONE, EXIT_ID, Menu.NONE, r(R.string.exit));
 		return true;
 	}
 
@@ -291,7 +273,7 @@ public class FreeMainActivity extends Activity implements View.OnClickListener
 
 		public String getLabel()
 		{
-			return "Android ID";
+			return r(R.string.android_id);
 		}
 
 		public String getKey()
@@ -319,7 +301,7 @@ public class FreeMainActivity extends Activity implements View.OnClickListener
 
 		public String getLabel()
 		{
-			return "Google Service ID";
+			return r(R.string.gsf_id);
 		}
 
 		public String getKey()
@@ -359,7 +341,7 @@ public class FreeMainActivity extends Activity implements View.OnClickListener
 
 		public String getLabel()
 		{
-			return "Device ID";
+			return r(R.string.device_id);
 		}
 
 		public String getValue()
@@ -388,7 +370,7 @@ public class FreeMainActivity extends Activity implements View.OnClickListener
 
 		public String getLabel()
 		{
-			return "Serial No.";
+			return r(R.string.serial_no);
 		}
 
 		public String getValue()
@@ -423,7 +405,7 @@ public class FreeMainActivity extends Activity implements View.OnClickListener
 
 		public String getLabel()
 		{
-			return "Subscriber ID";
+			return r(R.string.subscriber_id);
 		}
 
 		public String getValue()
@@ -452,7 +434,7 @@ public class FreeMainActivity extends Activity implements View.OnClickListener
 
 		public String getLabel()
 		{
-			return "Mac Address";
+			return r(R.string.mac_address);
 		}
 
 		public String getValue()
@@ -484,8 +466,9 @@ public class FreeMainActivity extends Activity implements View.OnClickListener
 	class DeviceListAdapter extends BaseAdapter
 	{
 		DeviceInfoItem[] items=new DeviceInfoItem[]
-		{new AndroidIdItem(), new GoogleServiceIdItem(),new DeviceIdItem(),
-			new SubscriberIdItem(),new SerialNoItem(),new MacAddressItem()};
+		{new AndroidIdItem(), new GoogleServiceIdItem(),
+			new SubscriberIdItem(),new DeviceIdItem(),
+			new SerialNoItem(),new MacAddressItem()};
 		public int getCount()
 		{
 			return items.length;
@@ -509,19 +492,19 @@ public class FreeMainActivity extends Activity implements View.OnClickListener
 			}
 			DeviceInfoItem item=(DeviceInfoItem)getItem(index);
 			((TextView)view.findViewById(LABEL_ID)).setText(item.getLabel());
-			((TextView)view.findViewById(NEWVALUE_ID)).setText("Current:  " + s(item.getValue()));
-			//((TextView)view.findViewById(OLDVALUE_ID)).setText("Saved  :  " + s(item.getOldValue()));
+			((TextView)view.findViewById(NEWVALUE_ID)).setText(r(R.string.current, s(item.getValue())));
+			((TextView)view.findViewById(OLDVALUE_ID)).setText(r(R.string.saved, s(item.getOldValue())));
 			View editButton=view.findViewById(EDIT_ID);
 			//editButton.setVisibility(item.canEdit()?View.VISIBLE:View.GONE);
 			editButton.setTag(item);
 			editButton.setOnClickListener(me);
 			editButton.setVisibility(item.canEdit() ?View.VISIBLE: View.GONE);
-			/*View applyButton=view.findViewById(APPLY_ID);
+			View applyButton=view.findViewById(APPLY_ID);
 			//applyButton.setEnabled(item.canApply());
 			applyButton.setTag(item);
 			applyButton.setOnClickListener(me);
 			applyButton.setVisibility(item.canApply() ?View.VISIBLE: View.GONE);
-			*/
+			
 			return view;
 		}
 
@@ -588,6 +571,14 @@ public class FreeMainActivity extends Activity implements View.OnClickListener
 			}
 		}
 	}
+	
+	private String r(int resourceId){
+		return this.getString(resourceId);
+	}
+	
+	private String r(int resourceId, Object... args){
+		return this.getString(resourceId,args);
+	}
 
 	private String s(Object o)
 	{
@@ -624,16 +615,16 @@ public class FreeMainActivity extends Activity implements View.OnClickListener
 			subLayout.addView(label, params);
 			label.setTextSize(18.0f);
 			label.setId(NEWVALUE_ID);
-			label.setText("Current:");
+			label.setText(r(R.string.current));
 
 			Button button = new Button(me);
-			button.setText("Edit ");
+			button.setText(r(R.string.edit));
 			button.setId(EDIT_ID);
 			params = new LinearLayout.LayoutParams(80, LinearLayout.LayoutParams.WRAP_CONTENT);
 			subLayout.addView(button, params);
 		}
 
-		/*{
+		{
 			LinearLayout subLayout = new LinearLayout(me);
 			subLayout.setOrientation(LinearLayout.HORIZONTAL);
 			subLayout.setPadding(20, 0, 10, 0);
@@ -645,14 +636,14 @@ public class FreeMainActivity extends Activity implements View.OnClickListener
 			subLayout.addView(label, params);
 			label.setTextSize(18.0f);
 			label.setId(OLDVALUE_ID);
-			label.setText("Saved:");
+			label.setText(r(R.string.saved));
 
 			Button button = new Button(me);
-			button.setText("Apply");
+			button.setText(r(R.string.apply));
 			button.setId(APPLY_ID);
 			params = new LinearLayout.LayoutParams(80, LinearLayout.LayoutParams.WRAP_CONTENT);
 			subLayout.addView(button, params);
-		}*/
+		}
 		return layout;
 	}
 

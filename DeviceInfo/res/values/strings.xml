@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="hello">Hello World, MainActivity!</string>
-    <string name="app_name">DeviceInfo</string>
-    <string name="hello">Hello World, MainActivity!</string>
-    <string name="app_name">DeviceInfo</string>
-	<string name="hello">Hello World, MainActivity!</string>
-    <string name="app_name">DeviceInfo</string>
-	<string name="hello">Hello World, MainActivity!</string>
-    <string name="app_name">DeviceInfo</string>
-	<string name="hello">Hello World, MainActivity!</string>
-    <string name="app_name">DeviceInfo</string>
-	<string name="hello">Hello World, MainActivity!</string>
-    <string name="app_name">DeviceInfo</string>
-	<string name="hello">Hello World, MainActivity!</string>
-    <string name="app_name">DeviceInfo</string>
-	
+    <string name="app_name">DeviceMod</string>
+    <string name="android_id">Android ID</string>
+    <string name="device_id">Device ID</string>
+	<string name="gsf_id">Google Service ID</string>
+    <string name="mac_address">Mac Address</string>
+	<string name="serial_no">Serial No.</string>
+	<string name="subscriber_id">Subscriber ID</string>
+    <string name="save">Save</string>
+	<string name="exit">Exit</string>
+    <string name="refresh">Refresh</string>
+	<string name="edit">Edit</string>
+	<string name="apply">Apply</string>
+    <string name="current">Current: %s</string>
+	<string name="saved">Saved: %s</string>
 </resources>

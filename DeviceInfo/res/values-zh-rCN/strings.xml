@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello World, MainActivity!</string>
+    <string name="app_name">设备修改器</string>
+    <string name="android_id">系统标识</string>
+    <string name="device_id">设备标识</string>
+	<string name="gsf_id">谷歌标识</string>
+    <string name="mac_address">网络地址</string>
+	<string name="serial_no">设备序列号</string>
+	<string name="subscriber_id">订阅标识</string>
+    <string name="save">保存</string>
+	<string name="exit">退出</string>
+    <string name="refresh">刷新</string>
+	<string name="edit">编辑</string>
+	<string name="apply">应用</string>
+    <string name="current">当前值: %s</string>
+	<string name="saved">保存值: %s</string>
+</resources>
