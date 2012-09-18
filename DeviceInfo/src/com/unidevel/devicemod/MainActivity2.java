@@ -1,4 +1,4 @@
-package com.unidevel.deviceinfo;
+package com.unidevel.devicemod;
 
 import java.lang.reflect.Method;
 
@@ -20,7 +20,7 @@ import java.io.*;
 import android.view.*;
 import android.os.*;
 
-public class MainActivity extends PreferenceActivity implements View.OnClickListener
+public class MainActivity2 extends PreferenceActivity implements View.OnClickListener
 {
 
 	public void onClick(View view)
@@ -64,7 +64,7 @@ public class MainActivity extends PreferenceActivity implements View.OnClickList
 		this.setPreferenceScreen(screen);
 		loadDeviceInfo();
 		refreshInfo();
-    }
+    } 
 	
 	private void createPreference(String key, String summary, PreferenceScreen screen){
 		EditTextPreference pref = new EditTextPreference(this);

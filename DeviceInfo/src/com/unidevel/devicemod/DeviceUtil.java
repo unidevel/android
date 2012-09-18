@@ -1,4 +1,4 @@
-package com.unidevel.deviceinfo;
+package com.unidevel.devicemod;
 
 import android.content.*;
 import android.database.*;
@@ -76,6 +76,11 @@ public class DeviceUtil
 	public static void setSerialNo(String serialNo)
 	{
 		String cmd = "setprop ro.serialno "+serialNo;
+		RootUtil.run(cmd);
+	}
+	
+	public static void setMacAddress(String mac){
+		String cmd="busybox ifconfig wlan0 down\nbusybox iplink set wlan0 address "+mac+"\nbusybox ifconfig wlan0 up";
 		RootUtil.run(cmd);
 	}
 }

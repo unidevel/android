@@ -1,34 +1,38 @@
-package com.unidevel.deviceinfo;
+package com.unidevel.devicemod;
 import android.app.*;
+import android.content.*;
 import android.os.*;
 import android.view.*;
 import android.widget.*;
-import java.util.*;
+import com.google.ads.*;
 import java.io.*;
-import android.content.*;
+import java.util.*;
+import android.opengl.*;
 
-public class TestActivity extends Activity implements View.OnClickListener
+public class FreeMainActivity extends Activity implements View.OnClickListener
 {
 
 	private static final int SAVE_BUTTON_ID = 6;
 
 	private static final int REFRESH_ID = 7;
 
+	private static final int EXIT_ID = 8;
+
 	public void onClick(View view)
 	{
 		DeviceInfoItem item;
-		switch(view.getId())
+		switch (view.getId())
 		{
 			case SAVE_BUTTON_ID:
 				saveDeviceInfo();
 				return;
 			case EDIT_ID:
-				item=(DeviceInfoItem) view.getTag();
-				showEditDialog(item,item.getValue());
+				item = (DeviceInfoItem) view.getTag();
+				showEditDialog(item, item.getValue());
 				break;
 			case APPLY_ID:
-				item=(DeviceInfoItem) view.getTag();
-				showEditDialog(item,item.getOldValue());
+				item = (DeviceInfoItem) view.getTag();
+				showEditDialog(item, item.getOldValue());
 				break;
 			case REFRESH_ID:
 				this.adapter.notifyDataSetInvalidated();
@@ -39,14 +43,16 @@ public class TestActivity extends Activity implements View.OnClickListener
 	private void saveDeviceInfo()
 	{
 		File file =getSaveFile();
-		try{
+		try
+		{
 			adapter.save(file);
-			adapter.load(file);
-			adapter.notifyDataSetChanged();
-			showMessage("Succeeded!Save to file "+file.getPath());
+			//adapter.load(file);
+			//adapter.notifyDataSetChanged();
+			showMessage("Succeeded!Save to file " + file.getPath());
 		}
-		catch(Exception ex){
-			showError("Failed!Can't save to file "+file.getPath());
+		catch (Exception ex)
+		{
+			showError("Failed!Can't save to file " + file.getPath());
 		}
 	}
 
@@ -59,20 +65,20 @@ public class TestActivity extends Activity implements View.OnClickListener
 		catch (IOException e)
 		{}
 	}
-	
+
 	private void showError(String msg)
 	{
-		Toast.makeText(me,msg,Toast.LENGTH_LONG).show();
+		Toast.makeText(me, msg, Toast.LENGTH_LONG).show();
 	}
 
 	private void showMessage(String msg)
 	{
-		Toast.makeText(me,msg,Toast.LENGTH_LONG).show();
+		Toast.makeText(me, msg, Toast.LENGTH_LONG).show();
 	}
 
 	private File getSaveFile()
 	{
-		File file=new File(me.getExternalFilesDir(null),"info.txt");
+		File file=new File(me.getExternalFilesDir(null), "info.txt");
 		return file;
 	}
 
@@ -84,7 +90,7 @@ public class TestActivity extends Activity implements View.OnClickListener
 		}
 		catch (IOException e)
 		{
-			showError("install binary file failed!");
+			showError("Install binary file failed!Maybe not rooted!");
 			return;
 		}
 		AlertDialog.Builder builder=new AlertDialog.Builder(me);
@@ -102,11 +108,11 @@ public class TestActivity extends Activity implements View.OnClickListener
 						item.edit();
 						Thread.sleep(2000);
 						me.adapter.notifyDataSetChanged();
-						showMessage("Set "+item.getLabel()+" to "+newValue);
+						showMessage("Set " + item.getLabel() + " to " + newValue);
 					}
 					catch (Exception e)
 					{
-						showError("Set "+item.getLabel()+" error!");
+						showError("Set " + item.getLabel() + " error!");
 						return;
 					}
 					//Intent intent=new Intent(me,me.getClass());
@@ -114,7 +120,7 @@ public class TestActivity extends Activity implements View.OnClickListener
 					//startActivity(intent);
 					//me.finish();
 					//System.exit(0);
-					PendingIntent intent = PendingIntent.getActivity(me, 0,new Intent(getIntent()), getIntent().getFlags());
+					PendingIntent intent = PendingIntent.getActivity(me, 0, new Intent(getIntent()), getIntent().getFlags());
 					AlarmManager mgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 					mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 500, intent);
 					System.exit(0);
@@ -132,27 +138,27 @@ public class TestActivity extends Activity implements View.OnClickListener
 			;
 		builder.show();
 	}
-	
+
 	private void installBinary() throws IOException
 	{
-		File file=new File(me.getFilesDir(),"sqlite3");
-		DeviceUtil.SQLITE_PATH=file.getPath();
-		if(file.exists())return;
+		File file=new File(me.getFilesDir(), "sqlite3");
+		DeviceUtil.SQLITE_PATH = file.getPath();
+		if (file.exists())return;
 		InputStream in=me.getAssets().open("sqlite3");
 		OutputStream out=new FileOutputStream(file);
 		byte[] buf=new byte[4096];
 		int len;
-		while((len=in.read(buf))>0)
+		while ((len = in.read(buf)) > 0)
 		{
-			out.write(buf,0,len);
+			out.write(buf, 0, len);
 		}
 		in.close();out.close();
-		String cmd="chmod 0755 "+file.getPath();
+		String cmd="chmod 0755 " + file.getPath();
 		RootUtil.run(cmd);
-	
+
 	}
-	
-	final TestActivity me=this;
+
+	final FreeMainActivity me=this;
 	TextView view;
 
 	private static final int LABEL_ID = 1;
@@ -164,10 +170,10 @@ public class TestActivity extends Activity implements View.OnClickListener
 	private static final int EDIT_ID = 4;
 
 	private static final int APPLY_ID = 5;
-	
+
 	private DeviceListAdapter adapter;
 	private ListView deviceInfoList;
-	
+
 	public void onCreate(Bundle bundle)
 	{
 		super.onCreate(bundle);
@@ -176,31 +182,68 @@ public class TestActivity extends Activity implements View.OnClickListener
 		LinearLayout root = new LinearLayout(me);
 		root.setOrientation(LinearLayout.VERTICAL);
 		this.setContentView(root);
-		
+
+		LinearLayout adLayout = new LinearLayout(me);
+		adLayout.setGravity(Gravity.CENTER_HORIZONTAL);
+		adLayout.setOrientation(LinearLayout.HORIZONTAL);
+		root.addView(adLayout, LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+		AdView adView = new AdView(this, AdSize.BANNER, " a1505186784b936"); 
+		adLayout.addView(adView); 
+		AdRequest req = new AdRequest(); 
+		adView.loadAd(req);
+
 		this.deviceInfoList = new ListView(me);
-		this.adapter=new DeviceListAdapter();
+		this.adapter = new DeviceListAdapter();
 		loadDeviceInfo();
-		root.addView(deviceInfoList,LinearLayout.LayoutParams.FILL_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+		root.addView(deviceInfoList, LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 		deviceInfoList.setAdapter(this.adapter);
-		
+
+		if (false)
 		{
 			LinearLayout layout = new LinearLayout(me);
 			layout.setGravity(Gravity.CENTER_HORIZONTAL);
 			layout.setOrientation(LinearLayout.HORIZONTAL);
-			root.addView(layout,LinearLayout.LayoutParams.FILL_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+			root.addView(layout, LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 			final Button saveButton=new Button(me);
 			saveButton.setText("Save Current");
-			layout.addView(saveButton,LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+			layout.addView(saveButton, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 			saveButton.setOnClickListener(this);
 			saveButton.setId(SAVE_BUTTON_ID);
 			final Button refreshButton=new Button(this);
 			refreshButton.setText("Refresh");
 			refreshButton.setOnClickListener(this);
 			refreshButton.setId(REFRESH_ID);
-			layout.addView(refreshButton,LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+			layout.addView(refreshButton, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 		}
 	}
-	
+
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		super.onCreateOptionsMenu(menu);
+		menu.add(Menu.NONE, SAVE_BUTTON_ID, Menu.NONE, "Save");
+		menu.add(Menu.NONE, REFRESH_ID, Menu.NONE, "Refresh");
+		menu.add(Menu.NONE, EXIT_ID, Menu.NONE, "Exit");
+		return true;
+	}
+
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		if (item.getItemId() == SAVE_BUTTON_ID)
+		{
+			saveDeviceInfo();
+		}
+		else if (item.getItemId() == REFRESH_ID)
+		{
+			this.adapter.notifyDataSetChanged();
+		}
+		else if (item.getItemId() == EXIT_ID)
+		{
+			this.finish();
+			System.exit(0);
+		}
+		return true;
+	}
+
 	abstract class DeviceInfoItem
 	{
 		String oldValue;
@@ -209,8 +252,8 @@ public class TestActivity extends Activity implements View.OnClickListener
 		public abstract String getKey();
 		public DeviceInfoItem()
 		{
-			oldValue="";
-			newValue="";
+			oldValue = "";
+			newValue = "";
 		}
 		public String getOldValue()
 		{
@@ -218,7 +261,7 @@ public class TestActivity extends Activity implements View.OnClickListener
 		}
 		public void setOldValue(String oldValue)
 		{
-			this.oldValue=oldValue;
+			this.oldValue = oldValue;
 		}
 		public String getNewValue()
 		{
@@ -226,21 +269,23 @@ public class TestActivity extends Activity implements View.OnClickListener
 		}
 		public void setNewValue(String newValue)
 		{
-			this.newValue=newValue;
+			this.newValue = newValue;
 		}
 		public abstract String getValue();
-		public void apply() throws Exception{}
-		public void edit() throws Exception{}
+		public void apply() throws Exception
+		{}
+		public void edit() throws Exception
+		{}
 		public boolean canApply()
 		{
-			return oldValue!=null&&oldValue.length()>0;
+			return oldValue != null && oldValue.length() > 0;
 		}
 		public boolean canEdit()
 		{
 			return true;
 		}
 	}
-	
+
 	class AndroidIdItem extends DeviceInfoItem
 	{
 
@@ -248,7 +293,7 @@ public class TestActivity extends Activity implements View.OnClickListener
 		{
 			return "Android ID";
 		}
-		
+
 		public String getKey()
 		{
 			return "android_id";
@@ -303,7 +348,7 @@ public class TestActivity extends Activity implements View.OnClickListener
 			DeviceUtil.setGoogleServiceId(getNewValue());
 		}
 	}
-	
+
 	class DeviceIdItem extends DeviceInfoItem
 	{
 
@@ -321,8 +366,18 @@ public class TestActivity extends Activity implements View.OnClickListener
 		{
 			return DeviceUtil.getDeviceId(me);
 		}
+
+		public boolean canEdit()
+		{
+			return false;
+		}
+
+		public boolean canApply()
+		{
+			return false;
+		}
 	}
-	
+
 	class SerialNoItem extends DeviceInfoItem
 	{
 
@@ -380,13 +435,13 @@ public class TestActivity extends Activity implements View.OnClickListener
 		{
 			return false;
 		}
-		
+
 		public boolean canApply()
 		{
 			return false;
 		}
 	}
-	
+
 	class MacAddressItem extends DeviceInfoItem
 	{
 
@@ -407,19 +462,29 @@ public class TestActivity extends Activity implements View.OnClickListener
 
 		public boolean canEdit()
 		{
-			return false;
+			return true;
 		}
 
 		public boolean canApply()
 		{
-			return false;
+			return true;
+		}
+
+		public void apply() throws Exception
+		{
+			DeviceUtil.setMacAddress(getOldValue());
+		}
+
+		public void edit() throws Exception
+		{
+			DeviceUtil.setMacAddress(getNewValue());
 		}
 	}
-	
+
 	class DeviceListAdapter extends BaseAdapter
 	{
 		DeviceInfoItem[] items=new DeviceInfoItem[]
-			{new AndroidIdItem(), new GoogleServiceIdItem(),new DeviceIdItem(),
+		{new AndroidIdItem(), new GoogleServiceIdItem(),new DeviceIdItem(),
 			new SubscriberIdItem(),new SerialNoItem(),new MacAddressItem()};
 		public int getCount()
 		{
@@ -438,70 +503,87 @@ public class TestActivity extends Activity implements View.OnClickListener
 
 		public View getView(int index, View view, ViewGroup parent)
 		{
-			if (view==null)
+			if (view == null)
 			{
-				view=createView(parent);
+				view = createView(parent);
 			}
 			DeviceInfoItem item=(DeviceInfoItem)getItem(index);
 			((TextView)view.findViewById(LABEL_ID)).setText(item.getLabel());
-			((TextView)view.findViewById(NEWVALUE_ID)).setText("Current:  "+s(item.getValue()));
-			((TextView)view.findViewById(OLDVALUE_ID)).setText("Saved  :  "+s(item.getOldValue()));
+			((TextView)view.findViewById(NEWVALUE_ID)).setText("Current:  " + s(item.getValue()));
+			//((TextView)view.findViewById(OLDVALUE_ID)).setText("Saved  :  " + s(item.getOldValue()));
 			View editButton=view.findViewById(EDIT_ID);
-			editButton.setEnabled(item.canEdit());
+			//editButton.setVisibility(item.canEdit()?View.VISIBLE:View.GONE);
 			editButton.setTag(item);
 			editButton.setOnClickListener(me);
-			//.setVisibility(item.canEdit()?View.VISIBLE:View.GONE);
-			View applyButton=view.findViewById(APPLY_ID);
-			applyButton.setEnabled(item.canApply());
+			editButton.setVisibility(item.canEdit() ?View.VISIBLE: View.GONE);
+			/*View applyButton=view.findViewById(APPLY_ID);
+			//applyButton.setEnabled(item.canApply());
 			applyButton.setTag(item);
 			applyButton.setOnClickListener(me);
-			//.setVisibility(item.canApply()?View.VISIBLE:View.GONE);
+			applyButton.setVisibility(item.canApply() ?View.VISIBLE: View.GONE);
+			*/
 			return view;
 		}
-		
+
+		public int getViewTypeCount()
+		{
+			return 1;
+		}
+
+		public int getItemViewType(int position)
+		{
+			return 0;
+		}
+
 		public DeviceListAdapter()
 		{
-			
+
 		}
-		
+
 		public void save(File file) throws FileNotFoundException
 		{
 			Properties prop = new Properties();
 			FileOutputStream out=null;
-			try{
-				out=new FileOutputStream(file);
-				for(DeviceInfoItem item:items){
-					prop.put(item.getKey(),s(item.getValue()));
+			try
+			{
+				out = new FileOutputStream(file);
+				for (DeviceInfoItem item:items)
+				{
+					prop.put(item.getKey(), s(item.getValue()));
 				}
-				prop.save(out,"");
+				prop.save(out, "");
 			}
-			finally{
+			finally
+			{
 				try
 				{
 					out.close();
 				}
-				catch (IOException e)
+				catch (Exception e)
 				{}
 			}
 		}
-		
+
 		public void load(File file) throws FileNotFoundException, IOException
 		{
 			Properties prop=new Properties();
 			FileInputStream in=null;
-			try{
-				in=new FileInputStream(file);
+			try
+			{
+				in = new FileInputStream(file);
 				prop.load(in);
-				for(DeviceInfoItem item:items){
+				for (DeviceInfoItem item:items)
+				{
 					item.setOldValue(prop.getProperty(item.getKey()));
 				}
 			}
-			finally{
+			finally
+			{
 				try
 				{
 					in.close();
 				}
-				catch (IOException e)
+				catch (Exception e)
 				{}
 			}
 		}
@@ -509,10 +591,10 @@ public class TestActivity extends Activity implements View.OnClickListener
 
 	private String s(Object o)
 	{
-		if(o==null)return "";
+		if (o == null)return "";
 		return o.toString();
 	}
-	
+
 	private View createView(ViewGroup root)
 	{
 		LinearLayout layout = new LinearLayout(me);
@@ -551,7 +633,7 @@ public class TestActivity extends Activity implements View.OnClickListener
 			subLayout.addView(button, params);
 		}
 
-		{
+		/*{
 			LinearLayout subLayout = new LinearLayout(me);
 			subLayout.setOrientation(LinearLayout.HORIZONTAL);
 			subLayout.setPadding(20, 0, 10, 0);
@@ -570,7 +652,7 @@ public class TestActivity extends Activity implements View.OnClickListener
 			button.setId(APPLY_ID);
 			params = new LinearLayout.LayoutParams(80, LinearLayout.LayoutParams.WRAP_CONTENT);
 			subLayout.addView(button, params);
-		}
+		}*/
 		return layout;
 	}
 
