@@ -7,11 +7,9 @@ import android.widget.*;
 import com.google.ads.*;
 import java.io.*;
 import java.util.*;
-import android.opengl.*;
 
 public class MainActivity extends Activity implements View.OnClickListener
 {
-
 	final MainActivity me=this;
 
 	private static final int LABEL_ID = 1;
@@ -23,106 +21,32 @@ public class MainActivity extends Activity implements View.OnClickListener
 	private static final int EDIT_ID = 4;
 
 	private static final int APPLY_ID = 5;
-	
-	private static final int SAVE_BUTTON_ID = 6;
+
+	private static final int SAVE_ID = 6;
 
 	private static final int REFRESH_ID = 7;
 
 	private static final int EXIT_ID = 8;
-	
+
 	private DeviceListAdapter adapter;
-	
+
 	private ListView deviceInfoList;
-	
-	ActionBar.Tab tabSystem;
-	ActionBar.Tab tabDevice;
-	
-	class SystemFragment extends Fragment
-	{
-		
-	}
-	
-	class DeviceFragment extends Fragment
-	{
-		
-	}
-	
-	public void onCreate(Bundle bundle)
-	{
-		super.onCreate(bundle);
-		/*
-		LinearLayout root = new LinearLayout(me);
-		root.setOrientation(LinearLayout.VERTICAL);
-		this.setContentView(root);
 
-		LinearLayout adLayout = new LinearLayout(me);
-		adLayout.setGravity(Gravity.CENTER_HORIZONTAL);
-		adLayout.setOrientation(LinearLayout.HORIZONTAL);
-		root.addView(adLayout, LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-		AdView adView = new AdView(this, AdSize.BANNER, " a1505186784b936"); 
-		adLayout.addView(adView); 
-		AdRequest req = new AdRequest(); 
-		adView.loadAd(req);
-
-		this.deviceInfoList = new ListView(me);
-		this.adapter = new DeviceListAdapter();
-		loadDeviceInfo();
-		root.addView(deviceInfoList, LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-		deviceInfoList.setAdapter(this.adapter);
-		*/
-		ActionBar bar=this.getActionBar();	
-		bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-		this.tabSystem=bar.newTab().setText("System");
-		this.tabDevice=bar.newTab().setText("Device");
-		bar.addTab(tabSystem);
-		bar.addTab(tabDevice);
-	//	tabSystem.setTabListener(this);
-		tabSystem.setTabListener(new TabListener<SystemFragment>(this,"System",SystemFragment.class));
-		tabDevice.setTabListener(new TabListener<DeviceFragment>(this,"Device",DeviceFragment.class));
-	}
-
-	public boolean onCreateOptionsMenu(Menu menu)
-	{
-		super.onCreateOptionsMenu(menu);
-		menu.add(Menu.NONE, SAVE_BUTTON_ID, Menu.NONE, r(R.string.save));
-		menu.add(Menu.NONE, REFRESH_ID, Menu.NONE, r(R.string.refresh));
-		menu.add(Menu.NONE, EXIT_ID, Menu.NONE, r(R.string.exit));
-		return true;
-	}
-
-	public boolean onOptionsItemSelected(MenuItem item)
-	{
-		if (item.getItemId() == SAVE_BUTTON_ID)
-		{
-			saveDeviceInfo();
-		}
-		else if (item.getItemId() == REFRESH_ID)
-		{
-			this.adapter.notifyDataSetChanged();
-		}
-		else if (item.getItemId() == EXIT_ID)
-		{
-			this.finish();
-			System.exit(0);
-		}
-		return true;
-	}
-	
 	public void onClick(View view)
 	{
-		DeviceInfoItem item;
+		AbstractDeviceInfoItem item;
 		switch (view.getId())
 		{
-			case SAVE_BUTTON_ID:
+			case SAVE_ID:
 				saveDeviceInfo();
 				return;
 			case EDIT_ID:
-				item = (DeviceInfoItem) view.getTag();
+				item = (AbstractDeviceInfoItem) view.getTag();
 				showEditDialog(item, item.getValue());
 				break;
 			case APPLY_ID:
-				item = (DeviceInfoItem) view.getTag();
-				showEditDialog(item, item.getOldValue());
+				item = (AbstractDeviceInfoItem) view.getTag();
+				showEditDialog(item, item.getSavedValue());
 				break;
 			case REFRESH_ID:
 				this.adapter.notifyDataSetInvalidated();
@@ -136,8 +60,7 @@ public class MainActivity extends Activity implements View.OnClickListener
 		try
 		{
 			adapter.save(file);
-			//adapter.load(file);
-			//adapter.notifyDataSetChanged();
+			adapter.load(file);
 			showMessage("Succeeded!Save to file " + file.getPath());
 		}
 		catch (Exception ex)
@@ -171,8 +94,8 @@ public class MainActivity extends Activity implements View.OnClickListener
 		File file=new File(me.getExternalFilesDir(null), "info.txt");
 		return file;
 	}
-
-	private void showEditDialog(final DeviceInfoItem item, String value)
+	
+	private void showEditDialog(final AbstractDeviceInfoItem item, String value)
 	{
 		try
 		{
@@ -192,10 +115,9 @@ public class MainActivity extends Activity implements View.OnClickListener
 				{
 					String newValue=text.getText().toString();
 					dialog.dismiss();
-					item.setNewValue(newValue);
 					try
 					{
-						item.edit();
+						item.setValue(newValue);
 						Thread.sleep(2000);
 						me.adapter.notifyDataSetChanged();
 						showMessage("Set " + item.getLabel() + " to " + newValue);
@@ -247,13 +169,65 @@ public class MainActivity extends Activity implements View.OnClickListener
 		RootUtil.run(cmd);
 
 	}
-	
+
+	public void onCreate(Bundle bundle)
+	{
+		super.onCreate(bundle);
+
+		LinearLayout root = new LinearLayout(me);
+		root.setOrientation(LinearLayout.VERTICAL);
+		this.setContentView(root);
+
+		LinearLayout adLayout = new LinearLayout(me);
+		adLayout.setGravity(Gravity.CENTER_HORIZONTAL);
+		adLayout.setOrientation(LinearLayout.HORIZONTAL);
+		root.addView(adLayout, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+		AdView adView = new AdView(this, AdSize.BANNER, " a1505186784b936"); 
+		adLayout.addView(adView); 
+		AdRequest req = new AdRequest(); 
+		adView.loadAd(req);
+
+		this.deviceInfoList = new ListView(me);
+		this.adapter = new DeviceListAdapter();
+		loadDeviceInfo();
+		root.addView(deviceInfoList, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+		deviceInfoList.setAdapter(this.adapter);
+	}
+
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		super.onCreateOptionsMenu(menu);
+		menu.add(Menu.NONE, SAVE_ID, Menu.NONE, r(R.string.save));
+		menu.add(Menu.NONE, REFRESH_ID, Menu.NONE, r(R.string.refresh));
+		menu.add(Menu.NONE, EXIT_ID, Menu.NONE, r(R.string.exit));
+		return true;
+	}
+
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		if (item.getItemId() == SAVE_ID)
+		{
+			saveDeviceInfo();
+		}
+		else if (item.getItemId() == REFRESH_ID)
+		{
+			this.adapter.notifyDataSetChanged();
+		}
+		else if (item.getItemId() == EXIT_ID)
+		{
+			this.finish();
+			System.exit(0);
+		}
+		return true;
+	}
+
 	class DeviceListAdapter extends BaseAdapter
 	{
-		DeviceInfoItem[] items=new DeviceInfoItem[]
-		{new AndroidIdItem(), new GoogleServiceIdItem(),
-			new SubscriberIdItem(),new DeviceIdItem(),
-			new SerialNoItem(),new MacAddressItem()};
+		AbstractDeviceInfoItem[] items=new AbstractDeviceInfoItem[]
+		{new AndroidIdItem(me), new GoogleServiceIdItem(me),
+			new SubscriberIdItem(me),new DeviceIdItem(me),
+			new SerialNoItem(me),new MacAddressItem(me)};
+		
 		public int getCount()
 		{
 			return items.length;
@@ -275,22 +249,33 @@ public class MainActivity extends Activity implements View.OnClickListener
 			{
 				view = createView(parent);
 			}
-			DeviceInfoItem item=(DeviceInfoItem)getItem(index);
+			AbstractDeviceInfoItem item=(AbstractDeviceInfoItem)getItem(index);
 			((TextView)view.findViewById(LABEL_ID)).setText(item.getLabel());
 			((TextView)view.findViewById(NEWVALUE_ID)).setText(r(R.string.current, s(item.getValue())));
-			((TextView)view.findViewById(OLDVALUE_ID)).setText(r(R.string.saved, s(item.getOldValue())));
+			((TextView)view.findViewById(OLDVALUE_ID)).setText(r(R.string.saved, s(item.getSavedValue())));
 			View editButton=view.findViewById(EDIT_ID);
-			//editButton.setVisibility(item.canEdit()?View.VISIBLE:View.GONE);
 			editButton.setTag(item);
 			editButton.setOnClickListener(me);
-			editButton.setVisibility(item.canEdit() ?View.VISIBLE: View.GONE);
 			View applyButton=view.findViewById(APPLY_ID);
-			//applyButton.setEnabled(item.canApply());
 			applyButton.setTag(item);
 			applyButton.setOnClickListener(me);
-			applyButton.setVisibility(item.canApply() ?View.VISIBLE: View.GONE);
-
+			if ( item.supportEdit() )
+			{
+				editButton.setVisibility(View.VISIBLE);
+				applyButton.setVisibility(View.VISIBLE);
+				applyButton.setEnabled(!isEmpty(item.getSavedValue()));				
+			}
+			else
+			{
+				editButton.setVisibility(View.GONE);
+				applyButton.setVisibility(View.GONE);				
+			}
 			return view;
+		}
+		
+		protected boolean isEmpty(String s)
+		{
+			return s==null || s.length() == 0;
 		}
 
 		public int getViewTypeCount()
@@ -308,18 +293,18 @@ public class MainActivity extends Activity implements View.OnClickListener
 
 		}
 
-		public void save(File file) throws FileNotFoundException
+		public void save(File file) throws IOException
 		{
 			Properties prop = new Properties();
 			FileOutputStream out=null;
 			try
 			{
 				out = new FileOutputStream(file);
-				for (DeviceInfoItem item:items)
+				for (AbstractDeviceInfoItem item:items)
 				{
 					prop.put(item.getKey(), s(item.getValue()));
 				}
-				prop.save(out, "");
+				prop.store(out, "");
 			}
 			finally
 			{
@@ -340,10 +325,11 @@ public class MainActivity extends Activity implements View.OnClickListener
 			{
 				in = new FileInputStream(file);
 				prop.load(in);
-				for (DeviceInfoItem item:items)
+				for (AbstractDeviceInfoItem item:items)
 				{
-					item.setOldValue(prop.getProperty(item.getKey()));
+					item.setSavedValue(prop.getProperty(item.getKey()));
 				}
+				this.notifyDataSetInvalidated();
 			}
 			finally
 			{
@@ -356,11 +342,11 @@ public class MainActivity extends Activity implements View.OnClickListener
 			}
 		}
 	}
-
+	
 	private String r(int resourceId){
 		return this.getString(resourceId);
 	}
-
+	
 	private String r(int resourceId, Object... args){
 		return this.getString(resourceId,args);
 	}
@@ -379,11 +365,11 @@ public class MainActivity extends Activity implements View.OnClickListener
 
 		View span = new View(me);
 		span.setBackgroundColor(0xFF000090);
-		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, 2);
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 2);
 		layout.addView(span, params);
 
 		TextView label=new TextView(me);
-		params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+		params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 		layout.addView(label, params);
 		label.setTextSize(24.0f);
 		label.setText("Label");
@@ -392,7 +378,7 @@ public class MainActivity extends Activity implements View.OnClickListener
 			LinearLayout subLayout = new LinearLayout(me);
 			subLayout.setOrientation(LinearLayout.HORIZONTAL);
 			subLayout.setPadding(20, 0, 10, 0);
-			params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+			params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 			layout.addView(subLayout, params);
 
 			label = new TextView(me);
@@ -413,7 +399,7 @@ public class MainActivity extends Activity implements View.OnClickListener
 			LinearLayout subLayout = new LinearLayout(me);
 			subLayout.setOrientation(LinearLayout.HORIZONTAL);
 			subLayout.setPadding(20, 0, 10, 0);
-			params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+			params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 			layout.addView(subLayout, params);
 
 			label = new TextView(me);
@@ -430,242 +416,5 @@ public class MainActivity extends Activity implements View.OnClickListener
 			subLayout.addView(button, params);
 		}
 		return layout;
-	}
-	
-	abstract class DeviceInfoItem
-	{
-		String oldValue;
-		String newValue;
-		public abstract String getLabel();
-		public abstract String getKey();
-		public DeviceInfoItem()
-		{
-			oldValue = "";
-			newValue = "";
-		}
-		public String getOldValue()
-		{
-			return oldValue;
-		}
-		public void setOldValue(String oldValue)
-		{
-			this.oldValue = oldValue;
-		}
-		public String getNewValue()
-		{
-			return this.newValue;
-		}
-		public void setNewValue(String newValue)
-		{
-			this.newValue = newValue;
-		}
-		public abstract String getValue();
-		public void apply() throws Exception
-		{}
-		public void edit() throws Exception
-		{}
-		public boolean canApply()
-		{
-			return oldValue != null && oldValue.length() > 0;
-		}
-		public boolean canEdit()
-		{
-			return true;
-		}
-	}
-
-	class AndroidIdItem extends DeviceInfoItem
-	{
-
-		public String getLabel()
-		{
-			return r(R.string.android_id);
-		}
-
-		public String getKey()
-		{
-			return "android_id";
-		}
-
-		public String getValue()
-		{
-			return DeviceUtil.getAndroidId(me);
-		}
-
-		public void apply() throws Exception
-		{
-			DeviceUtil.setAndroidId(getOldValue());
-		}
-
-		public void edit() throws Exception
-		{
-			DeviceUtil.setAndroidId(getNewValue());
-		}
-	}
-	class GoogleServiceIdItem extends DeviceInfoItem
-	{
-
-		public String getLabel()
-		{
-			return r(R.string.gsf_id);
-		}
-
-		public String getKey()
-		{
-			return "gsf_id";
-		}
-
-		public String getValue()
-		{
-			try
-			{
-				return DeviceUtil.getGoogleServiceId(me);
-			}
-			catch (Exception e)
-			{}
-			return null;
-		}
-
-		public void apply() throws Exception
-		{
-			DeviceUtil.setGoogleServiceId(getOldValue());
-		}
-
-		public void edit() throws Exception
-		{
-			DeviceUtil.setGoogleServiceId(getNewValue());
-		}
-	}
-
-	class DeviceIdItem extends DeviceInfoItem
-	{
-
-		public String getKey()
-		{
-			return "device_id";
-		}
-
-		public String getLabel()
-		{
-			return r(R.string.device_id);
-		}
-
-		public String getValue()
-		{
-			return DeviceUtil.getDeviceId(me);
-		}
-
-		public boolean canEdit()
-		{
-			return false;
-		}
-
-		public boolean canApply()
-		{
-			return false;
-		}
-	}
-
-	class SerialNoItem extends DeviceInfoItem
-	{
-
-		public String getKey()
-		{
-			return "serial_no";
-		}
-
-		public String getLabel()
-		{
-			return r(R.string.serial_no);
-		}
-
-		public String getValue()
-		{
-			try
-			{
-				return DeviceUtil.getSerialNo();
-			}
-			catch (Exception e)
-			{}
-			return null;
-		}
-
-		public void apply() throws Exception
-		{
-			DeviceUtil.setSerialNo(getOldValue());
-		}
-
-		public void edit() throws Exception
-		{
-			DeviceUtil.setSerialNo(getNewValue());
-		}
-	}
-
-	class SubscriberIdItem extends DeviceInfoItem
-	{
-
-		public String getKey()
-		{
-			return "subscriber_id";
-		}
-
-		public String getLabel()
-		{
-			return r(R.string.subscriber_id);
-		}
-
-		public String getValue()
-		{
-			return DeviceUtil.getSubscriberId(me);
-		}
-
-		public boolean canEdit()
-		{
-			return false;
-		}
-
-		public boolean canApply()
-		{
-			return false;
-		}
-	}
-
-	class MacAddressItem extends DeviceInfoItem
-	{
-
-		public String getKey()
-		{
-			return "mac_address";
-		}
-
-		public String getLabel()
-		{
-			return r(R.string.mac_address);
-		}
-
-		public String getValue()
-		{
-			return DeviceUtil.getMacAddress(me);
-		}
-
-		public boolean canEdit()
-		{
-			return true;
-		}
-
-		public boolean canApply()
-		{
-			return true;
-		}
-
-		public void apply() throws Exception
-		{
-			DeviceUtil.setMacAddress(getOldValue());
-		}
-
-		public void edit() throws Exception
-		{
-			DeviceUtil.setMacAddress(getNewValue());
-		}
 	}
 }

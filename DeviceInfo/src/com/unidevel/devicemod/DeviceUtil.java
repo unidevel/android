@@ -1,12 +1,13 @@
 package com.unidevel.devicemod;
 
-import android.content.*;
-import android.database.*;
-import android.net.*;
-import android.net.wifi.*;
-import android.provider.*;
-import android.telephony.*;
-import java.lang.reflect.*;
+import java.lang.reflect.Method;
+
+import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
+import android.net.wifi.WifiManager;
+import android.provider.Settings;
+import android.telephony.TelephonyManager;
 
 public class DeviceUtil
 {
@@ -31,7 +32,7 @@ public class DeviceUtil
     public static String getSerialNo() throws Exception
 	{
     	String serialNo;
-    	Class localClass1 = Class.forName("android.os.SystemProperties");
+    	Class<?> localClass1 = Class.forName("android.os.SystemProperties");
         Method localMethod1 = localClass1.getMethods()[2];
         Object[] arrayOfObject1 = new Object[2];
         arrayOfObject1[0] = "ro.serialno";
