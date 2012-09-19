@@ -15,4 +15,10 @@
 	<string name="apply">Apply</string>
     <string name="current">Current: %s</string>
 	<string name="saved">Saved: %s</string>
+	<string name="error">Error</string>
+	<string name="save_failed">Save failed! %s</string>
+	<string name="save_success">Save successfully to file: %s</string>
+	<string name="install_binary_failed">Install binary file failed!Make sure device rooted!</string>
+	<string name="set_success">Set successfully!</string>
+	<string name="set_failed">Set value failed! %s</string>
 </resources>

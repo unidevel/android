@@ -1,12 +1,39 @@
 package com.unidevel.devicemod;
-import android.app.*;
-import android.content.*;
-import android.os.*;
-import android.view.*;
-import android.widget.*;
-import com.google.ads.*;
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Properties;
+
+import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.app.Dialog;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.ads.AdRequest;
+import com.google.ads.AdSize;
+import com.google.ads.AdView;
 
 public class MainActivity extends Activity implements View.OnClickListener
 {
@@ -61,11 +88,11 @@ public class MainActivity extends Activity implements View.OnClickListener
 		{
 			adapter.save(file);
 			adapter.load(file);
-			showMessage("Succeeded!Save to file " + file.getPath());
+			showMessage(me.getString(R.string.save_success, file.getPath()));
 		}
 		catch (Exception ex)
 		{
-			showError("Failed!Can't save to file " + file.getPath());
+			showError(me.getString(R.string.save_failed,ex.getLocalizedMessage()));
 		}
 	}
 
@@ -81,7 +108,13 @@ public class MainActivity extends Activity implements View.OnClickListener
 
 	private void showError(String msg)
 	{
-		Toast.makeText(me, msg, Toast.LENGTH_LONG).show();
+		Builder builder = new Builder(this);
+		builder.setTitle(R.string.error).
+			setMessage(msg).setPositiveButton(android.R.string.ok, new Dialog.OnClickListener(){
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		}).create().show();
 	}
 
 	private void showMessage(String msg)
@@ -103,7 +136,7 @@ public class MainActivity extends Activity implements View.OnClickListener
 		}
 		catch (IOException e)
 		{
-			showError("Install binary file failed!Maybe not rooted!");
+			showError(me.getString(R.string.install_binary_failed));
 			return;
 		}
 		AlertDialog.Builder builder=new AlertDialog.Builder(me);
@@ -118,20 +151,13 @@ public class MainActivity extends Activity implements View.OnClickListener
 					try
 					{
 						item.setValue(newValue);
-						Thread.sleep(2000);
-						me.adapter.notifyDataSetChanged();
-						showMessage("Set " + item.getLabel() + " to " + newValue);
+						showMessage(me.getString(R.string.set_success));
 					}
 					catch (Exception e)
 					{
-						showError("Set " + item.getLabel() + " error!");
+						showError(me.getString(R.string.set_failed, e.getLocalizedMessage()));
 						return;
 					}
-					//Intent intent=new Intent(me,me.getClass());
-					//intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-					//startActivity(intent);
-					//me.finish();
-					//System.exit(0);
 					PendingIntent intent = PendingIntent.getActivity(me, 0, new Intent(getIntent()), getIntent().getFlags());
 					AlarmManager mgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 					mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 500, intent);

@@ -15,4 +15,10 @@
 	<string name="apply">应用</string>
     <string name="current">当前值: %s</string>
 	<string name="saved">保存值: %s</string>
+	<string name="error">错误</string>
+	<string name="save_failed">保存失败! %s</string>
+	<string name="save_success">成功保存到文件: %s</string>
+	<string name="install_binary_failed">安装依赖文件失败，请确保机器已被ROOT！</string>
+	<string name="set_success">设置成功!</string>
+	<string name="set_failed">设置失败! %s</string>
 </resources>

@@ -36,7 +36,7 @@ public class DeviceUtil
         Method localMethod1 = localClass1.getMethods()[2];
         Object[] arrayOfObject1 = new Object[2];
         arrayOfObject1[0] = "ro.serialno";
-        arrayOfObject1[1] = "Unknown";
+        arrayOfObject1[1] = "";
         serialNo = (String)localMethod1.invoke(localClass1, arrayOfObject1);
         return serialNo; 
     }
@@ -69,8 +69,9 @@ public class DeviceUtil
 	
 	public static void setGoogleServiceId(String serviceId)
 	{
-		String cmd = SQLITE_PATH+" /data/data/com.android.google.gsf/databases/gservices.db "+
-			"\"update main set value='"+serviceId+"' where name='android_id';\"";
+		long id = Long.parseLong(serviceId, 16);
+		String cmd = SQLITE_PATH+" /data/data/com.google.android.gsf/databases/gservices.db "+
+			"\"update main set value='"+id+"' where name='android_id';\"";
 		RootUtil.run(cmd);
 	}
 	
