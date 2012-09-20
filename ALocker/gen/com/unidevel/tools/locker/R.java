@@ -44,12 +44,15 @@ public final class R {
         public static final int btnShutdown=0x7f050007;
         public static final int btnYes=0x7f050008;
         public static final int labelReboot=0x7f050003;
+        public static final int lock_admin=0x7f05000b;
+        public static final int lock_admin_description=0x7f05000c;
         public static final int titleReboot=0x7f05000a;
         public static final int widgetLock=0x7f050001;
         public static final int widgetReboot=0x7f050002;
     }
     public static final class xml {
-        public static final int lockwidget=0x7f040000;
-        public static final int rebootwidget=0x7f040001;
+        public static final int admin=0x7f040000;
+        public static final int lockwidget=0x7f040001;
+        public static final int rebootwidget=0x7f040002;
     }
 }

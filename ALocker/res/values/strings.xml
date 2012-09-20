@@ -11,4 +11,6 @@
     <string name="btnYes">Yes</string>
     <string name="btnNo">No</string>
     <string name="titleReboot">Reboot</string>
+	<string name="lock_admin">ALocker</string>
+	<string name="lock_admin_description">Lock device</string>
 </resources>
