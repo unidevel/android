@@ -6,15 +6,11 @@ import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import com.unidevel.util.DialogUtil;
 import com.unidevel.util.RootUtil;
 
 public class ActionActivity extends Activity {
-	private static final String ACTION_REQUEST_SHUTDOWN = "android.intent.action.ACTION_REQUEST_SHUTDOWN";
-	private static final String EXTRA_KEY_CONFIRM = "android.intent.extra.KEY_CONFIRM";
-
 	private DialogUtil dialogs;
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
@@ -25,9 +21,6 @@ public class ActionActivity extends Activity {
 			lock();
 			break;
 		case 2:
-			reboot();
-			break;
-		case 3:
 			shutdown();
 			break;
 		case 9:
@@ -35,27 +28,15 @@ public class ActionActivity extends Activity {
 			break;
 		}
 		finish();
-		// System.exit(0);
 	}
 
 	private void shutdown() {
-		Intent shutdown = new Intent(ACTION_REQUEST_SHUTDOWN); 
-		shutdown.putExtra(EXTRA_KEY_CONFIRM, true); 
-		shutdown.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK); 
-		startActivity(shutdown); 
-	}
-
-	private void reboot() {
-		dialogs.confirm("确定重启？", new Runnable() {
-			@Override
-			public void run() {
-				RootUtil.run("reboot");
-			}
-		});
-	}
-
-	public void msg(String s) {
-		Toast.makeText(this, s, 3).show();
+		String cmd = "sendevent /dev/input/event1 1 116 1\n"+
+				"sendevent /dev/input/event1 0 0 0\n"+
+				"sleep 1\n"+
+				"sendevent /dev/input/event1 1 116 0\n"+
+				"sendevent /dev/input/event1 0 0 0\n";
+		RootUtil.run(cmd);
 	}
 
 	public void cancel(int id) {

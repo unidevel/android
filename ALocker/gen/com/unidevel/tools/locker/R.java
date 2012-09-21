@@ -20,17 +20,16 @@ public final class R {
         public static final int LinearLayout01=0x7f060003;
         public static final int btnNo=0x7f060005;
         public static final int btnYes=0x7f060004;
-        public static final int imgCancel=0x7f06000c;
+        public static final int imgCancel=0x7f06000b;
         public static final int imgLock=0x7f060000;
         public static final int imgReboot=0x7f060001;
-        public static final int imgShutdown=0x7f06000a;
-        public static final int labelCancel=0x7f06000d;
+        public static final int imgShutdown=0x7f060009;
+        public static final int labelCancel=0x7f06000c;
         public static final int labelLock=0x7f060007;
         public static final int labelReboot=0x7f060002;
-        public static final int labelShutdown=0x7f06000b;
+        public static final int labelShutdown=0x7f06000a;
         public static final int v1=0x7f060006;
         public static final int v2=0x7f060008;
-        public static final int v3=0x7f060009;
     }
     public static final class layout {
         public static final int lock=0x7f030000;
