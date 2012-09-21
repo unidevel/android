@@ -1,9 +1,9 @@
 package com.unidevel;
 
-import android.app.*;
-import android.os.*;
-import android.view.*;
-import android.widget.*;
+import android.app.Activity;
+import android.os.Bundle;
+
+import com.unidevel.util.DialogUtil;
 
 public class MainActivity extends Activity
 {
@@ -13,5 +13,16 @@ public class MainActivity extends Activity
 	{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        final DialogUtil util = new DialogUtil(this);
+//        util.alert("HELLO WORLD");
+        util.prompt("Test", new DialogUtil.OnPromptCallback() {
+			
+			@Override
+			public void onResult(String value) {
+				util.toast(value);
+			}
+		});
+        	
+        System.err.println("Finally");
     }
 }
