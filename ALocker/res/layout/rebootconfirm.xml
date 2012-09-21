@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_height="wrap_content" android:layout_width="fill_parent" android:gravity="center" android:orientation="vertical">
-<TextView android:layout_height="wrap_content" android:layout_width="fill_parent" android:textSize="32dp" android:layout_margin="10dp" android:id="@+id/labelReboot" android:text="@string/labelReboot"></TextView>
-
-
-<LinearLayout android:id="@+id/LinearLayout01" android:layout_height="wrap_content" android:layout_width="fill_parent" android:gravity="center"><Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_margin="10dp" android:id="@+id/btnYes" android:text="@string/btnYes" android:minEms="3" android:paddingLeft="15dp" android:paddingRight="15dp"></Button><Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_margin="10dp" android:id="@+id/btnNo" android:minEms="3" android:text="@string/btnNo" android:paddingLeft="15dp" android:paddingRight="15dp"></Button></LinearLayout>
-</LinearLayout>

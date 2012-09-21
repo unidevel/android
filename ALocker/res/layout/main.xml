@@ -3,5 +3,11 @@
     android:orientation="vertical"
     android:layout_height="wrap_content" android:layout_width="wrap_content">
 
-<ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/icon" android:id="@+id/imgLock"></ImageView>
+    <CheckBox
+        android:id="@+id/checkBoot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:text="启动时运行" />
+
 </LinearLayout>

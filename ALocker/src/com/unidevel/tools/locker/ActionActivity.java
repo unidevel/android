@@ -38,6 +38,14 @@ public class ActionActivity extends Activity {
 				"sendevent /dev/input/event1 0 0 0\n";
 		RootUtil.run(cmd);
 	}
+	
+	private void lock() {
+		String cmd = "sendevent /dev/input/event1 1 116 1\n"+
+				"sendevent /dev/input/event1 0 0 0\n"+
+				"sendevent /dev/input/event1 1 116 0\n"+
+				"sendevent /dev/input/event1 0 0 0\n";
+		RootUtil.run(cmd);
+	}
 
 	public void cancel(int id) {
 		NotificationManager nm = (NotificationManager) this
@@ -45,7 +53,7 @@ public class ActionActivity extends Activity {
 		nm.cancel(id);
 	}
 
-	public void lock() {
+	public void lock2() {
 		DevicePolicyManager dpm = null;
 		dpm = (DevicePolicyManager) this
 				.getSystemService(DEVICE_POLICY_SERVICE);

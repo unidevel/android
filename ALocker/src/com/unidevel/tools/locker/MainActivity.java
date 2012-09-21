@@ -32,20 +32,12 @@ public class MainActivity extends Activity
 			i.putExtra("action", 1);
 			i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK);
 			PendingIntent pi = PendingIntent.getActivity(this, 0, i,0);
-			view.setOnClickPendingIntent(R.id.imgLock, pi);
+			view.setOnClickPendingIntent(R.id.layoutLock, pi);
 		}
 		
 		{
 			Intent i = new Intent(this, ActionActivity.class);
 			i.putExtra("action", 2);
-			i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK);
-			PendingIntent pi = PendingIntent.getActivity(this, 1, i, 0);
-			view.setOnClickPendingIntent(R.id.imgReboot, pi);
-		}
-		
-		{
-			Intent i = new Intent(this, ActionActivity.class);
-			i.putExtra("action", 3);
 			i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK);
 			PendingIntent pi = PendingIntent.getActivity(this, 2, i, 0);
 			view.setOnClickPendingIntent(R.id.imgShutdown, pi);
