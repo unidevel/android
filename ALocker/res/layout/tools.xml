@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_height="wrap_content" android:gravity="center" android:padding="10dp" android:layout_width="wrap_content">
-<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:gravity="center" android:orientation="vertical" android:padding="5dp"><ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/imgLock" android:src="@drawable/icon"></ImageView>
-<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/labelLock" android:text="@string/btnLock"></TextView>
-</LinearLayout>
-<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:gravity="center" android:orientation="vertical" android:padding="5dp"><ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/imgReboot" android:src="@drawable/reboot"></ImageView>
-<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/labelReboot" android:text="@string/btnReboot"></TextView>
-</LinearLayout>
-<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:gravity="center" android:orientation="vertical" android:padding="5dp"><ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/imgShutdown" android:src="@drawable/shutdown"></ImageView>
-<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/labelShutdown" android:text="@string/btnShutdown"></TextView>
-</LinearLayout>
-<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:gravity="center" android:orientation="vertical" android:padding="5dp" android:layout_marginLeft="10dp"><ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/imgCancel" android:src="@drawable/cancel"></ImageView>
-<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/labelCancel" android:text="@string/btnCancel"></TextView>
-</LinearLayout>
-</LinearLayout>
+<RelativeLayout
+	android:orientation="horizontal"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_height="wrap_content" android:gravity="center" android:padding="10dp" android:layout_width="wrap_content">
+	<LinearLayout android:id="@+id/v1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:gravity="center" android:orientation="vertical" android:padding="5dp"><ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/imgLock" android:src="@drawable/icon"></ImageView>
+		<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/labelLock" android:text="@string/btnLock"></TextView>
+	</LinearLayout>
+	<LinearLayout android:id="@+id/v2" android:layout_toRightOf="@id/v1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:gravity="center" android:orientation="vertical" android:padding="5dp"><ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/imgReboot" android:src="@drawable/reboot"></ImageView>
+		<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/labelReboot" android:text="@string/btnReboot"></TextView>
+	</LinearLayout>
+	<LinearLayout android:id="@+id/v3" android:layout_toRightOf="@id/v2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:gravity="center" android:orientation="vertical" android:padding="5dp"><ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/imgShutdown" android:src="@drawable/shutdown"></ImageView>
+		<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/labelShutdown" android:text="@string/btnShutdown"></TextView>
+	</LinearLayout>
+	<!--LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_weight="1"/-->
+	<LinearLayout android:layout_alignParentRight="true" android:layout_width="wrap_content" android:layout_height="wrap_content" android:gravity="center" android:orientation="vertical" android:padding="5dp" android:layout_marginLeft="10dp"><ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/imgCancel" android:src="@drawable/cancel"></ImageView>
+		<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/labelCancel" android:text="@string/btnCancel"></TextView>
+	</LinearLayout>
+</RelativeLayout>
