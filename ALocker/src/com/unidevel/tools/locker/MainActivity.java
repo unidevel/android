@@ -13,6 +13,7 @@ public class MainActivity extends Activity
 	public void onCreate(Bundle bundle)
 	{
 		super.onCreate(bundle);
+		this.setContentView(R.layout.main);
 		NotificationManager nm=(NotificationManager) this.getSystemService(NOTIFICATION_SERVICE);
 
 		Notification n = new Notification();
