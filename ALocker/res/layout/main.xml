@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:layout_height="wrap_content" android:layout_width="wrap_content">
-
+    android:layout_height="wrap_content"
+	android:layout_width="wrap_content">
+	
+    <LinearLayout
+        android:id="@+id/adLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+    </LinearLayout>
+	
     <CheckBox
         android:id="@+id/checkBoot"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:checked="true"
+		android:textAppearance="?android:attr/textAppearanceLarge" 
         android:text="启动时运行" />
 
 </LinearLayout>

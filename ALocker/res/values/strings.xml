@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Desktop Tools</string>
+    <string name="app_name">aLocker</string>
     <string name="widgetLock">One-key Locker</string>
     <string name="widgetReboot">Two-key Tools</string>
     <string name="labelReboot">Really reboot?</string>
