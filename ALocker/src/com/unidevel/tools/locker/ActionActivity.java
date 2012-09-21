@@ -46,7 +46,7 @@ public class ActionActivity extends Activity {
 	}
 
 	private void reboot() {
-		dialogs.confirm("È·¶¨ÖØĞÂÆô¶¯Âğ£¿", new Runnable() {
+		dialogs.confirm("ç¡®å®šé‡å¯ï¼Ÿ", new Runnable() {
 			@Override
 			public void run() {
 				RootUtil.run("reboot");
@@ -70,7 +70,7 @@ public class ActionActivity extends Activity {
 				.getSystemService(DEVICE_POLICY_SERVICE);
 		ComponentName cn = new ComponentName(this, LockAdminReceiver.class);
 		if (!dpm.isAdminActive(cn)) {
-			dialogs.alert("Ê×´ÎÊ¹ÓÃËøÆÁ¹¦ÄÜĞè½«±¾³ÌĞò¼¤»îÎªÉè±¸¹ÜÀíÆ÷£¬µã»÷È·¶¨¿ªÊ¼ÉèÖÃ");
+			dialogs.alert("é¦–æ¬¡å…è®¸éœ€è¦å°†æœ¬ç¨‹åºè®¾ç½®æ¿€æ´»ä¸ºè®¾å¤‡ç®¡ç†å™¨.");
 			ComponentName dpmSettings = new ComponentName(
 					"com.android.settings",
 					"com.android.settings.DeviceAdminSettings");

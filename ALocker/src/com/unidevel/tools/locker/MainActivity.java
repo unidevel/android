@@ -22,7 +22,7 @@ public class MainActivity extends Activity
 		{
 			Intent i = new Intent(this, ActionActivity.class);
 			i.putExtra("action", 0);
-			PendingIntent pi = PendingIntent.getActivity(this, -1, i,0);
+			PendingIntent pi = PendingIntent.getActivity(this, 10, i,0);
 			n.contentIntent = pi;	
 		}
 		
@@ -55,7 +55,7 @@ public class MainActivity extends Activity
 			Intent i = new Intent(this, ActionActivity.class);
 			i.putExtra("action", 9);
 			i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK);
-			PendingIntent pi = PendingIntent.getActivity(this, 2, i, 0);
+			PendingIntent pi = PendingIntent.getActivity(this, 3, i, 0);
 			view.setOnClickPendingIntent(R.id.imgCancel, pi);
 		}
 		n.contentView = view;
