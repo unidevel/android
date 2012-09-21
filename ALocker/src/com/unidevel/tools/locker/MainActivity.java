@@ -4,8 +4,10 @@ import android.app.*;
 import android.content.*;
 import android.os.*;
 import android.preference.*;
+import android.view.View;
 import android.widget.*;
 import com.google.ads.*;
+import com.unidevel.util.RootUtil;
 
 public class MainActivity extends Activity
 {
@@ -37,6 +39,10 @@ public class MainActivity extends Activity
 
 	public static void showNotify(Context ctx)
 	{
+		boolean isRooted = RootUtil.isRooted();
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
+		pref.edit().putBoolean("root", isRooted).commit();
+		
 		NotificationManager nm=(NotificationManager) ctx.getSystemService(NOTIFICATION_SERVICE);
 
 		Notification n = new Notification();
@@ -56,15 +62,18 @@ public class MainActivity extends Activity
 			i.putExtra("action", 1);
 			i.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 			PendingIntent pi = PendingIntent.getActivity(ctx, 0, i, 0);
-			view.setOnClickPendingIntent(R.id.layoutLock, pi);
+			view.setOnClickPendingIntent(R.id.labelLock, pi);
 		}
 
-		{
+		if (isRooted){
 			Intent i = new Intent(ctx, ActionActivity.class);
 			i.putExtra("action", 2);
 			i.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 			PendingIntent pi = PendingIntent.getActivity(ctx, 2, i, 0);
-			view.setOnClickPendingIntent(R.id.imgShutdown, pi);
+			view.setOnClickPendingIntent(R.id.labelShutdown, pi);
+		}
+		else {
+			view.setViewVisibility(R.id.labelShutdown, View.GONE);
 		}
 
 		{
@@ -72,7 +81,7 @@ public class MainActivity extends Activity
 			i.putExtra("action", 9);
 			i.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 			PendingIntent pi = PendingIntent.getActivity(ctx, 3, i, 0);
-			view.setOnClickPendingIntent(R.id.imgCancel, pi);
+			view.setOnClickPendingIntent(R.id.labelCancel, pi);
 		}
 		n.contentView = view;
 		nm.notify(1, n);

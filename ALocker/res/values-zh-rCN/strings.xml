@@ -11,4 +11,6 @@
     <string name="btnYes">是</string>
     <string name="btnNo">否</string>
     <string name="titleReboot">重启</string>
+	<string name="lock_admin">一键锁屏</string>
+	<string name="lock_admin_description">锁定设备</string>    
 </resources>

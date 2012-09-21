@@ -5,7 +5,9 @@ import android.app.NotificationManager;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 
 import com.unidevel.util.DialogUtil;
 import com.unidevel.util.RootUtil;
@@ -16,9 +18,13 @@ public class ActionActivity extends Activity {
 		super.onCreate(bundle);
 		dialogs = new DialogUtil(this);
 		int actId = getIntent().getIntExtra("action", 0);
+		SharedPreferences pref;
+		pref = PreferenceManager.getDefaultSharedPreferences(this);
+		boolean isRooted = pref.getBoolean("root", false);
 		switch (actId) {
 		case 1:
-			lock();
+			if ( isRooted ) lockRoot();
+			else lockNonRoot();
 			break;
 		case 2:
 			shutdown();
@@ -39,7 +45,7 @@ public class ActionActivity extends Activity {
 		RootUtil.run(cmd);
 	}
 	
-	private void lock() {
+	private void lockRoot() {
 		String cmd = "sendevent /dev/input/event1 1 116 1\n"+
 				"sendevent /dev/input/event1 0 0 0\n"+
 				"sendevent /dev/input/event1 1 116 0\n"+
@@ -53,7 +59,7 @@ public class ActionActivity extends Activity {
 		nm.cancel(id);
 	}
 
-	public void lock2() {
+	public void lockNonRoot() {
 		DevicePolicyManager dpm = null;
 		dpm = (DevicePolicyManager) this
 				.getSystemService(DEVICE_POLICY_SERVICE);
