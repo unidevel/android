@@ -3,7 +3,13 @@
 	package="com.unidevel.tools.locker"
 	android:versionCode="1" android:versionName="1.0">
 	<uses-sdk android:minSdkVersion="7" android:targetSdkVersion="11" />
-    <application android:icon="@drawable/icon" android:label="@string/app_name">
+	<uses-permission android:name="android.permission.SHUTDOWN"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+	<uses-permission android:name="android.permission.INTERNET" />
+
+	<application android:icon="@drawable/icon" android:label="@string/app_name">
 		<activity android:name=".MainActivity" android:label="@string/app_name">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
@@ -31,9 +37,4 @@
 		</activity-->
 	</application>
 
-	<!--uses-permission android:name="android.permission.WAKE_LOCK"></uses-permission>
-	<uses-permission android:name="android.permission.DEVICE_POWER"></uses-permission>
-	<uses-permission android:name="android.permission.REBOOT"></uses-permission>
-	<uses-permission android:name="android.permission.SHUTDOWN"></uses-permission-->
-	<uses-permission android:name="android.permission.BIND_DEVICE_ADMIN"></uses-permission>
 </manifest> 
