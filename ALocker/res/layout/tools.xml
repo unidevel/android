@@ -28,27 +28,27 @@
         android:gravity="center"
         android:text="@string/btnShutdown" >
     </TextView>
-    <TextView
-        android:id="@+id/labelVolUp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"    
-		android:layout_marginRight="15dp" 
-        android:layout_toRightOf="@id/labelShutdown"
-        android:drawableTop="@drawable/volup"
-        android:gravity="center"
-        android:text="@string/btnVolUp" >
-    </TextView>
 	<TextView
         android:id="@+id/labelVolDown"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"    
 		android:layout_marginRight="15dp" 
-        android:layout_toRightOf="@id/labelVolUp"
+        android:layout_toRightOf="@id/labelShutdown"
         android:drawableTop="@drawable/voldown"
         android:gravity="center"
         android:text="@string/btnVolDown" >
     </TextView>
     <TextView
+        android:id="@+id/labelVolUp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"    
+		android:layout_marginRight="15dp" 
+        android:layout_toRightOf="@id/labelVolDown"
+        android:drawableTop="@drawable/volup"
+        android:gravity="center"
+        android:text="@string/btnVolUp" >
+    </TextView>
+	<TextView
         android:id="@+id/labelCancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
