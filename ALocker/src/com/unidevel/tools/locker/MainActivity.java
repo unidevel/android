@@ -57,19 +57,20 @@ public class MainActivity extends Activity
 		}
 
 		RemoteViews view = new RemoteViews(ctx.getPackageName(), R.layout.tools);
+		int id = 1;
 		{
 			Intent i = new Intent(ctx, ActionActivity.class);
-			i.putExtra("action", 1);
+			i.putExtra("action", ActionActivity.ACTION_LOCK);
 			i.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-			PendingIntent pi = PendingIntent.getActivity(ctx, 1, i, 0);
+			PendingIntent pi = PendingIntent.getActivity(ctx, id++, i, 0);
 			view.setOnClickPendingIntent(R.id.labelLock, pi);
 		}
 
 		if (isRooted){
 			Intent i = new Intent(ctx, ActionActivity.class);
-			i.putExtra("action", 2);
+			i.putExtra("action", ActionActivity.ACTION_SHUTDOWN);
 			i.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-			PendingIntent pi = PendingIntent.getActivity(ctx, 2, i, 0);
+			PendingIntent pi = PendingIntent.getActivity(ctx, id++, i, 0);
 			view.setOnClickPendingIntent(R.id.labelShutdown, pi);
 		}
 		else {
@@ -78,25 +79,25 @@ public class MainActivity extends Activity
 
 		{
 			Intent i = new Intent(ctx, ActionActivity.class);
-			i.putExtra("action", 3);
+			i.putExtra("action", ActionActivity.ACTION_VOLUME_DOWN);
 			i.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-			PendingIntent pi = PendingIntent.getActivity(ctx, 3, i, 0);
+			PendingIntent pi = PendingIntent.getActivity(ctx, id++, i, 0);
 			view.setOnClickPendingIntent(R.id.labelVolDown, pi);
 		}
 
 		{
 			Intent i = new Intent(ctx, ActionActivity.class);
-			i.putExtra("action", 4);
+			i.putExtra("action", ActionActivity.ACTION_VOLUME_UP);
 			i.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-			PendingIntent pi = PendingIntent.getActivity(ctx, 4, i, 0);
+			PendingIntent pi = PendingIntent.getActivity(ctx, id++, i, 0);
 			view.setOnClickPendingIntent(R.id.labelVolUp, pi);
 		}
 		
 		{
 			Intent i = new Intent(ctx, ActionActivity.class);
-			i.putExtra("action", 9);
+			i.putExtra("action", ActionActivity.ACTION_CANCEL);
 			i.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-			PendingIntent pi = PendingIntent.getActivity(ctx, 9, i, 0);
+			PendingIntent pi = PendingIntent.getActivity(ctx, id++, i, 0);
 			view.setOnClickPendingIntent(R.id.labelCancel, pi);
 		}	
 		

@@ -14,8 +14,19 @@ import com.unidevel.util.RootUtil;
 import android.media.*;
 
 public class ActionActivity extends Activity {
+	public static final int ACTION_LOCK = 1;
+
+	public static final int ACTION_SHUTDOWN = 2;
+
+	public static final int ACTION_VOLUME_DOWN = 3;
+
+	public static final int ACTION_VOLUME_UP = 4;
+
+	public static final int ACTION_CANCEL = 9;
+
 	private DialogUtil dialogs;
 	private boolean isRooted;
+
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
 		dialogs = new DialogUtil(this);
@@ -24,20 +35,20 @@ public class ActionActivity extends Activity {
 		pref = PreferenceManager.getDefaultSharedPreferences(this);
 		this.isRooted = pref.getBoolean("root", false);
 		switch (actId) {
-		case 1:
+		case ACTION_LOCK:
 			if ( this.isRooted ) lockRoot();
 			else lockNonRoot();
 			break;
-		case 2:
+		case ACTION_SHUTDOWN:
 			shutdown();
 			break;
-		case 3:
-			volUp();
-			break;
-		case 4:
+		case ACTION_VOLUME_DOWN:
 			volDown();
 			break;
-		case 9:
+		case ACTION_VOLUME_UP:
+			volUp();
+			break;
+		case ACTION_CANCEL:
 			cancel(1);
 			break;
 		}
