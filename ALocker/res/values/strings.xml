@@ -7,7 +7,9 @@
     <string name="btnLock">Lock</string>
     <string name="btnReboot">Reboot</string>
     <string name="btnCancel">Cancel</string>
-    <string name="btnShutdown">Shutdown</string>
+    <string name="btnShutdown">Shutdown</string>    
+	<string name="btnVolUp">Vol++</string>
+    <string name="btnVolDown">Vol--</string>
     <string name="btnYes">Yes</string>
     <string name="btnNo">No</string>
     <string name="titleReboot">Reboot</string>

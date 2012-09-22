@@ -11,23 +11,31 @@ import android.preference.PreferenceManager;
 
 import com.unidevel.util.DialogUtil;
 import com.unidevel.util.RootUtil;
+import android.media.*;
 
 public class ActionActivity extends Activity {
 	private DialogUtil dialogs;
+	private boolean isRooted;
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
 		dialogs = new DialogUtil(this);
 		int actId = getIntent().getIntExtra("action", 0);
 		SharedPreferences pref;
 		pref = PreferenceManager.getDefaultSharedPreferences(this);
-		boolean isRooted = pref.getBoolean("root", false);
+		this.isRooted = pref.getBoolean("root", false);
 		switch (actId) {
 		case 1:
-			if ( isRooted ) lockRoot();
+			if ( this.isRooted ) lockRoot();
 			else lockNonRoot();
 			break;
 		case 2:
 			shutdown();
+			break;
+		case 3:
+			volUp();
+			break;
+		case 4:
+			volDown();
 			break;
 		case 9:
 			cancel(1);
@@ -36,12 +44,33 @@ public class ActionActivity extends Activity {
 		finish();
 	}
 
+	private void volDown()
+	{
+		adjustVolume(AudioManager.ADJUST_LOWER);
+		//sendKey(114,0);
+	}
+
+	private void volUp()
+	{
+		adjustVolume(AudioManager.ADJUST_RAISE);
+		//sendKey(115,0);
+	}
+	
+	private void adjustVolume(int direction){
+		AudioManager am=(AudioManager) getSystemService(AUDIO_SERVICE);
+		am.adjustVolume(direction,AudioManager.FLAG_SHOW_UI|AudioManager.FLAG_PLAY_SOUND|AudioManager.FLAG_ALLOW_RINGER_MODES|AudioManager.FLAG_VIBRATE);
+	}
+
 	private void shutdown() {
-		String cmd = "sendevent /dev/input/event1 1 116 1\n"+
-				"sendevent /dev/input/event1 0 0 0\n"+
-				"sleep 1\n"+
-				"sendevent /dev/input/event1 1 116 0\n"+
-				"sendevent /dev/input/event1 0 0 0\n";
+		sendKey(116,1);
+	}
+	
+	private void sendKey(int key,int sleep){
+		String cmd = "sendevent /dev/input/event1 1 "+key+" 1\n"+
+			"sendevent /dev/input/event1 0 0 0\n";
+		if(sleep>0)cmd+="sleep 1\n";
+		cmd+="sendevent /dev/input/event1 1 "+key+" 0\n"+
+			"sendevent /dev/input/event1 0 0 0\n";
 		RootUtil.run(cmd);
 	}
 	

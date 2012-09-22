@@ -61,7 +61,7 @@ public class MainActivity extends Activity
 			Intent i = new Intent(ctx, ActionActivity.class);
 			i.putExtra("action", 1);
 			i.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-			PendingIntent pi = PendingIntent.getActivity(ctx, 0, i, 0);
+			PendingIntent pi = PendingIntent.getActivity(ctx, 1, i, 0);
 			view.setOnClickPendingIntent(R.id.labelLock, pi);
 		}
 
@@ -78,11 +78,28 @@ public class MainActivity extends Activity
 
 		{
 			Intent i = new Intent(ctx, ActionActivity.class);
-			i.putExtra("action", 9);
+			i.putExtra("action", 3);
 			i.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 			PendingIntent pi = PendingIntent.getActivity(ctx, 3, i, 0);
-			view.setOnClickPendingIntent(R.id.labelCancel, pi);
+			view.setOnClickPendingIntent(R.id.labelVolDown, pi);
 		}
+
+		{
+			Intent i = new Intent(ctx, ActionActivity.class);
+			i.putExtra("action", 4);
+			i.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+			PendingIntent pi = PendingIntent.getActivity(ctx, 4, i, 0);
+			view.setOnClickPendingIntent(R.id.labelVolUp, pi);
+		}
+		
+		{
+			Intent i = new Intent(ctx, ActionActivity.class);
+			i.putExtra("action", 9);
+			i.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+			PendingIntent pi = PendingIntent.getActivity(ctx, 9, i, 0);
+			view.setOnClickPendingIntent(R.id.labelCancel, pi);
+		}	
+		
 		n.contentView = view;
 		nm.notify(1, n);
 	}

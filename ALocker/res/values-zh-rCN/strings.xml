@@ -8,6 +8,8 @@
     <string name="btnReboot">重启</string>
     <string name="btnCancel">取消</string>
     <string name="btnShutdown">关机</string>    
+	<string name="btnVolUp">音量加</string>
+    <string name="btnVolDown">音量减</string>
     <string name="btnYes">是</string>
     <string name="btnNo">否</string>
     <string name="titleReboot">重启</string>
