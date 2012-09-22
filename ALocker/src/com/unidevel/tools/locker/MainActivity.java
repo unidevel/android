@@ -4,10 +4,11 @@ import android.app.*;
 import android.content.*;
 import android.os.*;
 import android.preference.*;
-import android.view.View;
+import android.text.*;
+import android.view.*;
 import android.widget.*;
 import com.google.ads.*;
-import com.unidevel.util.RootUtil;
+import com.unidevel.util.*;
 
 public class MainActivity extends Activity
 {
@@ -16,6 +17,9 @@ public class MainActivity extends Activity
 	{
 		super.onCreate(bundle);
 		this.setContentView(R.layout.main);
+		
+		TextView changelog=(TextView) findViewById(R.id.changelog);
+		changelog.setText(Html.fromHtml(getString(R.string.changelog)));
 		showNotify(this);
 		CheckBox box=(CheckBox) this.findViewById(R.id.checkBoot);
 		box.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){

@@ -6,7 +6,6 @@
     android:orientation="horizontal"
     android:paddingLeft="10dp" 
     android:paddingRight="10dp" >
-
     <TextView
         android:id="@+id/labelLock"
         android:layout_width="wrap_content"
@@ -14,10 +13,9 @@
         android:layout_marginRight="10dp" 
         android:drawableTop="@drawable/icon"
         android:gravity="center"
-        android:text="@string/btnLock" >
-
+        android:text="@string/btnLock" 
+		android:textSize="11dp">
     </TextView>
-
     <TextView
         android:id="@+id/labelShutdown"
         android:layout_width="wrap_content"
@@ -26,7 +24,8 @@
         android:layout_toRightOf="@+id/labelLock"
         android:drawableTop="@drawable/shutdown"
         android:gravity="center"
-        android:text="@string/btnShutdown" >
+        android:text="@string/btnShutdown" 
+		android:textSize="11dp">
     </TextView>
 	<TextView
         android:id="@+id/labelVolDown"
@@ -36,7 +35,8 @@
         android:layout_toRightOf="@id/labelShutdown"
         android:drawableTop="@drawable/voldown"
         android:gravity="center"
-        android:text="@string/btnVolDown" >
+        android:text="@string/btnVolDown" 
+		android:textSize="11dp">
     </TextView>
     <TextView
         android:id="@+id/labelVolUp"
@@ -46,7 +46,8 @@
         android:layout_toRightOf="@id/labelVolDown"
         android:drawableTop="@drawable/volup"
         android:gravity="center"
-        android:text="@string/btnVolUp" >
+        android:text="@string/btnVolUp" 
+		android:textSize="11dp">
     </TextView>
 	<TextView
         android:id="@+id/labelCancel"
@@ -55,6 +56,7 @@
         android:layout_alignParentRight="true"
         android:drawableTop="@drawable/cancel"
         android:gravity="center"
-        android:text="@string/btnCancel" >
+        android:text="@string/btnCancel" 
+		android:textSize="11dp">
     </TextView>
 </RelativeLayout>

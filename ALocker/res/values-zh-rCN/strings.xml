@@ -6,7 +6,7 @@
     <string name="labelReboot">真的要重启?</string>
     <string name="btnLock">锁屏</string>
     <string name="btnReboot">重启</string>
-    <string name="btnCancel">取消</string>
+    <string name="btnCancel">关闭</string>
     <string name="btnShutdown">关机</string>    
 	<string name="btnVolUp">音量加</string>
     <string name="btnVolDown">音量减</string>
@@ -15,4 +15,14 @@
     <string name="titleReboot">重启</string>
 	<string name="lock_admin">一键锁屏</string>
 	<string name="lock_admin_description">锁定设备</string>    
+	<string name="changelog"><![CDATA[
+		<center>版本: 1.3</center><br/>
+		<b>更新日志:</b><br/>
+		<ul>
+		<li>1.0 支持ROOT设备的锁屏和关机</li><br/>
+		<li>1.1 增加对非ROOT设备锁屏的支持</li>	<br/>	
+		<li>1.2 增加音量控制功能</li><br/>
+		<li>1.3 修复图标下文字显示不完全的问题</li>
+		</ul>
+	]]></string>
 </resources>

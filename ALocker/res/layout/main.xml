@@ -20,4 +20,12 @@
 		android:textAppearance="?android:attr/textAppearanceLarge" 
         android:text="启动时运行" />
 
+	<TextView
+        android:id="@+id/changelog"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="15dp"
+        android:text="@string/changelog" 
+		android:textSize="18dp">
+    </TextView>
 </LinearLayout>
