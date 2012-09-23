@@ -50,14 +50,13 @@
 		android:textSize="11dp">
     </TextView>
     <TextView
-        android:id="@+id/labelPlus"
+        android:id="@+id/labelSlot1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"    
 		android:layout_marginRight="15dp" 
         android:layout_toRightOf="@id/labelVolUp"
-        android:drawableTop="@drawable/plus"
         android:gravity="center"
-        android:text="@string/btnAdd" 
+        android:text="" 
 		android:textSize="11dp">
     </TextView>
     

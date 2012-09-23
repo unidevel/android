@@ -97,12 +97,14 @@ public class MainActivity extends Activity
 			view.setOnClickPendingIntent(R.id.labelVolUp, pi);
 		}
 		
+		String pkgName = pref.getString("slot1.pkg", "");
+		String labelName = pref.getString("slot1.name", "");
+		if ( pkgName.length()>0 )
 		{
-			Intent i = new Intent(ctx, AppListActivity.class);
-			i.putExtra("action", ActionActivity.ACTION_ADD);
-			i.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+			Intent i = ctx.getPackageManager().getLaunchIntentForPackage(pkgName);
+//			i.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 			PendingIntent pi = PendingIntent.getActivity(ctx, id++, i, 0);
-			view.setOnClickPendingIntent(R.id.labelPlus, pi);
+			view.setOnClickPendingIntent(R.id.labelSlot1, pi);
 		}
 		
 		{
