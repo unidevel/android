@@ -98,6 +98,14 @@ public class MainActivity extends Activity
 		}
 		
 		{
+			Intent i = new Intent(ctx, AppListActivity.class);
+			i.putExtra("action", ActionActivity.ACTION_ADD);
+			i.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+			PendingIntent pi = PendingIntent.getActivity(ctx, id++, i, 0);
+			view.setOnClickPendingIntent(R.id.labelPlus, pi);
+		}
+		
+		{
 			Intent i = new Intent(ctx, ActionActivity.class);
 			i.putExtra("action", ActionActivity.ACTION_CANCEL);
 			i.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_CLEAR_TASK);

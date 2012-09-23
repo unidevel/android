@@ -17,6 +17,8 @@
 		</activity>
 		
 		<activity android:name=".ActionActivity" android:theme="@android:style/Theme.Dialog"/>
+		<activity android:name=".AppListActivity"/>
+		
         <activity
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:name="com.google.ads.AdActivity" />        

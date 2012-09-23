@@ -4,6 +4,7 @@
     <string name="widgetLock">一键关屏</string>
     <string name="widgetReboot">二键工具</string>
     <string name="labelReboot">真的要重启?</string>
+    <string name="btnAdd">添加</string>
     <string name="btnLock">锁屏</string>
     <string name="btnReboot">重启</string>
     <string name="btnCancel">关闭</string>

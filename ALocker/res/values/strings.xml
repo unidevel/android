@@ -4,12 +4,13 @@
     <string name="widgetLock">One-key Locker</string>
     <string name="widgetReboot">Two-key Tools</string>
     <string name="labelReboot">Really reboot?</string>
+    <string name="btnAdd">Add</string>
     <string name="btnLock">Lock</string>
     <string name="btnReboot">Reboot</string>
     <string name="btnCancel">Close</string>
     <string name="btnShutdown">Shutdown</string>    
-	<string name="btnVolUp">Vol++</string>
-    <string name="btnVolDown">Vol--</string>
+	<string name="btnVolUp">Volume+</string>
+    <string name="btnVolDown"><![CDATA[Volume-]]</string>
     <string name="btnYes">Yes</string>
     <string name="btnNo">No</string>
     <string name="titleReboot">Reboot</string>

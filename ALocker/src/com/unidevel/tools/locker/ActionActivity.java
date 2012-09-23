@@ -22,6 +22,8 @@ public class ActionActivity extends Activity {
 
 	public static final int ACTION_VOLUME_UP = 4;
 
+	public static final int ACTION_ADD = 5;
+
 	public static final int ACTION_CANCEL = 9;
 
 	private DialogUtil dialogs;
@@ -47,6 +49,8 @@ public class ActionActivity extends Activity {
 			break;
 		case ACTION_VOLUME_UP:
 			volUp();
+			break;
+		case ACTION_ADD:
 			break;
 		case ACTION_CANCEL:
 			cancel(1);
