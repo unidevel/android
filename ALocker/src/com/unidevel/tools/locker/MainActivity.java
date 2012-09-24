@@ -86,10 +86,14 @@ public class MainActivity extends Activity
 		TextView text=(TextView) findViewById(R.id.textSlot1);
 		if(pkg.length()==0)
 			text.setText(getString(R.string.add_shortcut));
-		else
+		else if(name!=null)
 			text.setText(name);
 		ImageView image = (ImageView) findViewById(R.id.imageSlot1);
-		image.setImageDrawable(getAppIcon(this,pkg));
+		Drawable icon=getAppIcon(this,pkg);
+		if(icon!=null)
+			image.setImageDrawable(icon);
+		else 
+			image.setImageResource(R.drawable.app);
 		View.OnClickListener l =new View.OnClickListener(){
 
 			public void onClick(View view)
@@ -198,16 +202,27 @@ public class MainActivity extends Activity
 		
 		String pkgName = pref.getString("slot1.pkg", "");
 		String labelName = pref.getString("slot1.name", "");
-		if ( pkgName.length()>0 )
+		if ( pkgName!=null&&pkgName.length()>0 )
 		{
 			Intent i = ctx.getPackageManager().getLaunchIntentForPackage(pkgName);
 //			i.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+			if(i!=null){
 			PendingIntent pi = PendingIntent.getActivity(ctx, id++, i, 0);
 			view.setOnClickPendingIntent(R.id.slot1, pi);
-			view.setTextViewText(R.id.textSlot1,labelName);
-			Bitmap icon=((BitmapDrawable)getAppIcon(ctx,pkgName)).getBitmap();
-			view.setImageViewBitmap(R.id.imageSlot1,icon);
+			if(labelName!=null)view.setTextViewText(R.id.textSlot1,labelName);
+			Drawable img=getAppIcon(ctx,pkgName);
+			if(img!=null){
+				Bitmap icon=((BitmapDrawable)img).getBitmap();
+				view.setImageViewBitmap(R.id.imageSlot1,icon);
+			}
+			else{
+				view.setImageViewResource(R.id.imageSlot1,R.drawable.app);
+			}
 			view.setViewVisibility(R.id.slot1,View.VISIBLE);
+			}
+			else{
+				view.setViewVisibility(R.id.slot1,View.GONE);
+			}
 		}
 		else{
 			view.setViewVisibility(R.id.slot1,View.GONE);
@@ -232,7 +247,7 @@ public class MainActivity extends Activity
 			PackageInfo info=pm.getPackageInfo(pkg, 0);
 			return info.applicationInfo.loadIcon(pm);
 		}
-		catch (PackageManager.NameNotFoundException e)
+		catch(Throwable e)
 		{
 			return ctx.getResources().getDrawable(R.drawable.app);
 		}

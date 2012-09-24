@@ -116,7 +116,7 @@ public class AppListActivity extends Activity{
 			ListView.LayoutParams params = new ListView.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 			layout.setLayoutParams(params);
 			layout.setFocusable(false);
-			int paddingSize = (int)UnitUtil.dip2px(me, 10);
+			int paddingSize = UnitUtil.dip2px(me, 10);
 
 			ImageView imageView = new ImageView(me);
 			imageView.setId(IMAGEVIEW_ID);
@@ -124,7 +124,7 @@ public class AppListActivity extends Activity{
 			imageView.setPadding(paddingSize, 0, 0, 0);
 			imageView.setFocusable(false);
 
-			int pxSize = (int)UnitUtil.dip2px(me, 48);
+			int pxSize = UnitUtil.dip2px(me, 48);
 			layout.addView(imageView, pxSize, pxSize);
 			TextView textView = new TextView(me);
 			textView.setGravity(Gravity.CENTER_VERTICAL);
@@ -155,6 +155,8 @@ public class AppListActivity extends Activity{
 			for (int x=0; x < appinfos.size(); x++){             
 				ApplicationInfo appInfo = appinfos.get(x);
 				if(!appInfo.enabled)continue;
+				Intent intent=pm.getLaunchIntentForPackage(appInfo.packageName);
+				if(intent==null)continue;
 				AppItem item = new AppItem();
 				item.icon = appInfo.loadIcon(pm);
 				if ( item.icon == null ) item.icon = me.getResources().getDrawable(R.drawable.empty_app);
