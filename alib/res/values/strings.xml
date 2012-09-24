@@ -3,5 +3,8 @@
 
     <string name="hello">Hello World, MainActivity!</string>
     <string name="app_name">alib</string>
+    <string name="loading_app_message">Loading application list ...</string>
+    <string name="app_list_title">Select application</string>
+    <string name="empty_app">Empty</string>
 
 </resources>

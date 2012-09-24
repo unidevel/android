@@ -1,10 +1,13 @@
-package com.unidevel.tools.locker;
+package com.unidevel;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.unidevel.util.UnitUtil;
+
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -24,7 +27,6 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.app.*;
 
 public class AppListActivity extends Activity{
 	ListView appList;
@@ -114,16 +116,20 @@ public class AppListActivity extends Activity{
 			ListView.LayoutParams params = new ListView.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 			layout.setLayoutParams(params);
 			layout.setFocusable(false);
+			int paddingSize = (int)UnitUtil.dip2px(me, 10);
+
 			ImageView imageView = new ImageView(me);
 			imageView.setId(IMAGEVIEW_ID);
 			imageView.setScaleType(ScaleType.FIT_CENTER);
-			imageView.setPadding(10, 0, 0, 0);
+			imageView.setPadding(paddingSize, 0, 0, 0);
 			imageView.setFocusable(false);
-			layout.addView(imageView, 48, 48);
+
+			int pxSize = (int)UnitUtil.dip2px(me, 48);
+			layout.addView(imageView, pxSize, pxSize);
 			TextView textView = new TextView(me);
 			textView.setGravity(Gravity.CENTER_VERTICAL);
 			textView.setTextSize(20);
-			textView.setPadding(10, 10, 0, 0);
+			textView.setPadding(paddingSize, paddingSize, 0, 0);
 			textView.setId(TEXTVIEW_ID);
 			textView.setFocusable(false);
 			layout.addView(textView, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
@@ -138,18 +144,12 @@ public class AppListActivity extends Activity{
 		List<AppItem> apps = null;
 		ProgressDialog dialog;
 		protected void onPreExecute(){
-			dialog=ProgressDialog.show(me,"","读取程序列表");
+			dialog=ProgressDialog.show(me,"",me.getString(R.string.loading_app_message));
 		}
 		@Override
 		protected Void doInBackground(Void... params) {
 			PackageManager pm = me.getPackageManager();
 			this.apps = new ArrayList<AppItem>();
-			{
-				AppItem item = new AppItem();
-				item.name="";
-				item.packageName="";
-				apps.add(item);
-			}
 //			List<PackageInfo> packages = pm.getInstalledPackages(PackageManager.GET_UNINSTALLED_PACKAGES);
 			List<ApplicationInfo> appinfos = pm.getInstalledApplications(0);
 			for (int x=0; x < appinfos.size(); x++){             
@@ -157,12 +157,19 @@ public class AppListActivity extends Activity{
 				if(!appInfo.enabled)continue;
 				AppItem item = new AppItem();
 				item.icon = appInfo.loadIcon(pm);
-				if ( item.icon == null ) item.icon = me.getResources().getDrawable(R.drawable.app);
+				if ( item.icon == null ) item.icon = me.getResources().getDrawable(R.drawable.empty_app);
 				item.name = appInfo.loadLabel(pm).toString();
 				item.packageName = appInfo.packageName;
 				apps.add(item);
 			}
 			Collections.sort(this.apps);
+			{
+				AppItem item = new AppItem();
+				item.name = me.getString(R.string.empty_app);
+				item.packageName="";
+				item.icon = me.getResources().getDrawable(R.drawable.empty_app);
+				apps.add(0, item);
+			}
 			return null;
 		}
 		
@@ -182,6 +189,7 @@ public class AppListActivity extends Activity{
 			layout.setOrientation(LinearLayout.VERTICAL);
 			layout.setLayoutParams(params);
 			this.addContentView(layout, params);
+			this.setTitle(R.string.app_list_title);
 		}
 		{
 			appList = new ListView(this);

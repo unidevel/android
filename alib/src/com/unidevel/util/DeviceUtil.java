@@ -6,6 +6,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 
@@ -13,6 +14,15 @@ public class DeviceUtil
 {
 	public static String SQLITE_PATH="sqlite3";
 	private static final Uri GSF_URI = Uri.parse("content://com.google.android.gsf.gservices");
+	public static int getSDKVersion()
+	{
+		return Build.VERSION.SDK_INT;
+	}
+	
+	public static String getManufacturer(){
+		return Build.MANUFACTURER;
+	}
+	
 	public static String getAndroidId(Context context) 
 	{
        	String androidId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);

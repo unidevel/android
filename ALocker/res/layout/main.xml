@@ -17,8 +17,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:checked="true"
-		android:textAppearance="?android:attr/textAppearanceLarge" 
-        android:text="启动时运行" />
+        android:text="@string/start_when_boot"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <CheckBox
+        android:id="@+id/useRoot"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:text="@string/use_root"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
     <LinearLayout
         android:id="@+id/slot1"
         android:layout_width="match_parent"
@@ -31,13 +40,15 @@
 		android:layout_marginLeft="10dp"
 		android:layout_marginRight="10dp"
         android:src="@drawable/plus" />
+
     <TextView
         android:id="@+id/textSlot1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-		android:layout_marginTop="6dp"
+        android:layout_marginTop="6dp"
         android:text="Large Text"
         android:textAppearance="?android:attr/textAppearanceLarge" />
+
 	</LinearLayout>
 	<TextView
         android:id="@+id/changelog"

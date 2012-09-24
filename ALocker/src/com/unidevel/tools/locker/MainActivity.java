@@ -1,26 +1,49 @@
 package com.unidevel.tools.locker;
 
-import android.app.*;
-import android.content.*;
-import android.content.pm.*;
-import android.graphics.*;
-import android.graphics.drawable.*;
-import android.os.*;
-import android.preference.*;
-import android.text.*;
-import android.view.*;
-import android.widget.*;
-import com.google.ads.*;
-import com.unidevel.util.*;
+import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.text.Html;
+import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RemoteViews;
+import android.widget.TextView;
+
+import com.google.ads.AdRequest;
+import com.google.ads.AdSize;
+import com.google.ads.AdView;
+import com.unidevel.AppListActivity;
+import com.unidevel.util.DeviceUtil;
+import com.unidevel.util.RootUtil;
 
 public class MainActivity extends Activity
 {
 	MainActivity ctx=this;
+	boolean isRooted = false;
 	public void onCreate(Bundle bundle)
 	{
 		super.onCreate(bundle);
 		this.setContentView(R.layout.main);
-		
+		isRooted = RootUtil.isRooted();
+		final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
+		boolean useRoot = pref.getBoolean("root", isRooted);
+		pref.edit().putBoolean("root", useRoot).commit();
+
 		TextView changelog=(TextView) findViewById(R.id.changelog);
 		changelog.setText(Html.fromHtml(getString(R.string.changelog)));
 		showNotify(this);
@@ -35,8 +58,19 @@ public class MainActivity extends Activity
 			
 		});
 		loadSlots();
-		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
 		box.setChecked(pref.getBoolean("boot",true));
+		((CheckBox)findViewById(R.id.useRoot)).setChecked(useRoot);
+		if ( !isRooted ) findViewById(R.id.useRoot).setVisibility(View.GONE);
+		else {
+			findViewById(R.id.useRoot).setVisibility(View.VISIBLE);
+			((CheckBox)findViewById(R.id.useRoot)).setOnCheckedChangeListener(new OnCheckedChangeListener(){
+
+				@Override
+				public void onCheckedChanged(CompoundButton button, boolean checked) {
+					pref.edit().putBoolean("root", checked).commit();
+				}
+			});
+		}
 		//ALocker a1505c63891818d
 		AdView adView = new AdView(this, AdSize.BANNER, "a1505c63891818d"); 
 		LinearLayout layout = (LinearLayout) findViewById(R.id.adLayout); 
@@ -51,7 +85,7 @@ public class MainActivity extends Activity
 		String name= pref.getString("slot1.name","");
 		TextView text=(TextView) findViewById(R.id.textSlot1);
 		if(pkg.length()==0)
-			text.setText("点击添加快捷程序");
+			text.setText(getString(R.string.add_shortcut));
 		else
 			text.setText(name);
 		ImageView image = (ImageView) findViewById(R.id.imageSlot1);
@@ -82,12 +116,35 @@ public class MainActivity extends Activity
 		showNotify(ctx);
 	}
 	
-	
 	public static void showNotify(Context ctx)
 	{
-		boolean isRooted = RootUtil.isRooted();
+		int version = DeviceUtil.getSDKVersion();
+		if ( version > 10 )
+			showNotifyForSDK11(ctx);
+		else 
+			showNotifyForSDK8(ctx);
+	}
+	
+	@SuppressWarnings("deprecation")
+	public static void showNotifyForSDK8(Context ctx)
+	{
+		NotificationManager nm=(NotificationManager) ctx.getSystemService(NOTIFICATION_SERVICE);
+		nm.cancel(1);
+		Notification n = new Notification(R.drawable.icon, ctx.getString(R.string.app_name), System.currentTimeMillis());
+		n.flags |= Notification.FLAG_NO_CLEAR;
+		{
+			Intent i = new Intent(ctx, ActionUIActivity.class);
+			i.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+			PendingIntent pi = PendingIntent.getActivity(ctx, 10, i, 0);
+			n.setLatestEventInfo(ctx, ctx.getString(R.string.app_name), "", pi);
+		}
+		nm.notify(1, n);
+	}
+	
+	public static void showNotifyForSDK11(Context ctx)
+	{
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-		pref.edit().putBoolean("root", isRooted).commit();
+		boolean isRooted = pref.getBoolean("root", false);
 		
 		NotificationManager nm=(NotificationManager) ctx.getSystemService(NOTIFICATION_SERVICE);
 		nm.cancel(1);
@@ -168,7 +225,7 @@ public class MainActivity extends Activity
 		nm.notify(1, n);
 	}
 	
-	private static Drawable getAppIcon(Context ctx,String pkg){
+	public static Drawable getAppIcon(Context ctx,String pkg){
 		try
 		{
 			PackageManager pm = ctx.getPackageManager();
