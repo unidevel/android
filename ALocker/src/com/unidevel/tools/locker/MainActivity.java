@@ -68,6 +68,7 @@ public class MainActivity extends Activity
 				@Override
 				public void onCheckedChanged(CompoundButton button, boolean checked) {
 					pref.edit().putBoolean("root", checked).commit();
+					showNotify(ctx);
 				}
 			});
 		}
@@ -138,7 +139,7 @@ public class MainActivity extends Activity
 		n.flags |= Notification.FLAG_NO_CLEAR;
 		{
 			Intent i = new Intent(ctx, ActionUIActivity.class);
-			i.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+			//i.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 			PendingIntent pi = PendingIntent.getActivity(ctx, 10, i, 0);
 			n.setLatestEventInfo(ctx, ctx.getString(R.string.app_name), "", pi);
 		}
@@ -158,7 +159,7 @@ public class MainActivity extends Activity
 		n.flags |= Notification.FLAG_NO_CLEAR;
 		{
 			Intent i = new Intent(ctx, MainActivity.class);
-			i.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+			i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			PendingIntent pi = PendingIntent.getActivity(ctx, 10, i, 0);
 			n.contentIntent = pi;	
 		}
