@@ -2,6 +2,9 @@ package com.unidevel.tools.locker;
 
 import android.app.*;
 import android.content.*;
+import android.content.pm.*;
+import android.graphics.*;
+import android.graphics.drawable.*;
 import android.os.*;
 import android.preference.*;
 import android.text.*;
@@ -31,6 +34,7 @@ public class MainActivity extends Activity
 				}
 			
 		});
+		loadSlots();
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
 		box.setChecked(pref.getBoolean("boot",true));
 		//ALocker a1505c63891818d
@@ -41,6 +45,44 @@ public class MainActivity extends Activity
 		adView.loadAd(req);
 	}
 
+	private void loadSlots(){
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
+		String pkg = pref.getString("slot1.pkg","");
+		String name= pref.getString("slot1.name","");
+		TextView text=(TextView) findViewById(R.id.textSlot1);
+		if(pkg.length()==0)
+			text.setText("点击添加快捷程序");
+		else
+			text.setText(name);
+		ImageView image = (ImageView) findViewById(R.id.imageSlot1);
+		image.setImageDrawable(getAppIcon(this,pkg));
+		View.OnClickListener l =new View.OnClickListener(){
+
+			public void onClick(View view)
+			{
+				Intent i=new Intent(ctx,AppListActivity.class);
+				startActivityForResult(i,0);
+			}
+
+		};
+		
+		image.setOnClickListener(l);
+		text.setOnClickListener(l);
+	}
+	
+	public void onActivityResult(int req,int res,Intent intent){
+		super.onActivityResult(req,res,intent);
+		if(intent==null)return;
+		String name=intent.getStringExtra("name");
+		String pkg=intent.getPackage();
+		if(pkg==null)return;
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
+		pref.edit().putString("slot1.pkg",pkg).putString("slot1.name",name).commit();
+		loadSlots();
+		showNotify(ctx);
+	}
+	
+	
 	public static void showNotify(Context ctx)
 	{
 		boolean isRooted = RootUtil.isRooted();
@@ -48,7 +90,7 @@ public class MainActivity extends Activity
 		pref.edit().putBoolean("root", isRooted).commit();
 		
 		NotificationManager nm=(NotificationManager) ctx.getSystemService(NOTIFICATION_SERVICE);
-
+		nm.cancel(1);
 		Notification n = new Notification();
 		n.icon = R.drawable.icon;
 		n.when = System.currentTimeMillis();
@@ -104,7 +146,14 @@ public class MainActivity extends Activity
 			Intent i = ctx.getPackageManager().getLaunchIntentForPackage(pkgName);
 //			i.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 			PendingIntent pi = PendingIntent.getActivity(ctx, id++, i, 0);
-			view.setOnClickPendingIntent(R.id.labelSlot1, pi);
+			view.setOnClickPendingIntent(R.id.slot1, pi);
+			view.setTextViewText(R.id.textSlot1,labelName);
+			Bitmap icon=((BitmapDrawable)getAppIcon(ctx,pkgName)).getBitmap();
+			view.setImageViewBitmap(R.id.imageSlot1,icon);
+			view.setViewVisibility(R.id.slot1,View.VISIBLE);
+		}
+		else{
+			view.setViewVisibility(R.id.slot1,View.GONE);
 		}
 		
 		{
@@ -117,5 +166,18 @@ public class MainActivity extends Activity
 		
 		n.contentView = view;
 		nm.notify(1, n);
+	}
+	
+	private static Drawable getAppIcon(Context ctx,String pkg){
+		try
+		{
+			PackageManager pm = ctx.getPackageManager();
+			PackageInfo info=pm.getPackageInfo(pkg, 0);
+			return info.applicationInfo.loadIcon(pm);
+		}
+		catch (PackageManager.NameNotFoundException e)
+		{
+			return ctx.getResources().getDrawable(R.drawable.app);
+		}
 	}
 }

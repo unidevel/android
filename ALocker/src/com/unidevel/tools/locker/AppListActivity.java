@@ -24,6 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.app.*;
 
 public class AppListActivity extends Activity{
 	ListView appList;
@@ -98,8 +99,8 @@ public class AppListActivity extends Activity{
 			else {
 				holder = (ViewHolder)convertView.getTag();
 			}
-			holder.image.setImageDrawable(item.icon);
-			holder.text.setText(item.name);
+			if(item.icon!=null)holder.image.setImageDrawable(item.icon);
+			if(item.name!=null)holder.text.setText(item.name);
 			return convertView;
 		}
 		
@@ -112,16 +113,19 @@ public class AppListActivity extends Activity{
 			LinearLayout layout = new LinearLayout(me);
 			ListView.LayoutParams params = new ListView.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 			layout.setLayoutParams(params);
+			layout.setFocusable(false);
 			ImageView imageView = new ImageView(me);
 			imageView.setId(IMAGEVIEW_ID);
 			imageView.setScaleType(ScaleType.FIT_CENTER);
 			imageView.setPadding(10, 0, 0, 0);
+			imageView.setFocusable(false);
 			layout.addView(imageView, 48, 48);
 			TextView textView = new TextView(me);
 			textView.setGravity(Gravity.CENTER_VERTICAL);
 			textView.setTextSize(20);
 			textView.setPadding(10, 10, 0, 0);
 			textView.setId(TEXTVIEW_ID);
+			textView.setFocusable(false);
 			layout.addView(textView, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 			holder.image = imageView;
 			holder.text = textView;
@@ -132,10 +136,20 @@ public class AppListActivity extends Activity{
 	public class LoadAppsTask extends AsyncTask<Void, Void, Void>
 	{
 		List<AppItem> apps = null;
+		ProgressDialog dialog;
+		protected void onPreExecute(){
+			dialog=ProgressDialog.show(me,"","读取程序列表");
+		}
 		@Override
 		protected Void doInBackground(Void... params) {
 			PackageManager pm = me.getPackageManager();
 			this.apps = new ArrayList<AppItem>();
+			{
+				AppItem item = new AppItem();
+				item.name="";
+				item.packageName="";
+				apps.add(item);
+			}
 //			List<PackageInfo> packages = pm.getInstalledPackages(PackageManager.GET_UNINSTALLED_PACKAGES);
 			List<ApplicationInfo> appinfos = pm.getInstalledApplications(0);
 			for (int x=0; x < appinfos.size(); x++){             
@@ -155,6 +169,7 @@ public class AppListActivity extends Activity{
 		@Override
 		protected void onPostExecute(Void result) {
 			appAdapter.setApps(apps);
+			dialog.dismiss();
 		}
 	}
 	
@@ -181,13 +196,13 @@ public class AppListActivity extends Activity{
 					intent.setPackage(item.packageName);
 					intent.putExtra("name", item.name);
 					me.setResult(0, intent);
-					me.finishActivity(0);
+					me.finish();
 				}
 			});
 			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT,1.0f);
 			layout.addView(appList, params);
 		}
-		{
+		if(false){
 			LinearLayout buttonLayout = new LinearLayout(this);
 			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT,0.01f);
 			buttonLayout.setOrientation(LinearLayout.HORIZONTAL);

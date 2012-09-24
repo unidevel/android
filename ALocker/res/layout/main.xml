@@ -23,17 +23,19 @@
         android:id="@+id/slot1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:orientation="horizontal" >
     <ImageView
-        android:id="@+id/imageView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/imageSlot1"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+		android:layout_marginLeft="10dp"
+		android:layout_marginRight="10dp"
         android:src="@drawable/plus" />
-
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/textSlot1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+		android:layout_marginTop="6dp"
         android:text="Large Text"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 	</LinearLayout>

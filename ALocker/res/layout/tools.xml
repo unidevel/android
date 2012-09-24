@@ -49,7 +49,8 @@
         android:text="@string/btnVolUp" 
 		android:textSize="11dp">
     </TextView>
-    <TextView
+	
+    <!--TextView
         android:id="@+id/labelSlot1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"    
@@ -58,8 +59,27 @@
         android:gravity="center"
         android:text="" 
 		android:textSize="11dp">
-    </TextView>
-    
+    </TextView-->
+	<LinearLayout
+        android:id="@+id/slot1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+		android:gravity="center"
+		android:layout_toRightOf="@id/labelVolUp"
+        android:orientation="vertical" >
+		<ImageView
+			android:id="@+id/imageSlot1"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:src="@drawable/plus" />
+		<TextView
+			android:id="@+id/textSlot1"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="text"
+			android:textSize="11dp" />
+	</LinearLayout>
+	
 	<TextView
         android:id="@+id/labelCancel"
         android:layout_width="wrap_content"
