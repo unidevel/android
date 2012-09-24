@@ -11,4 +11,14 @@
     <string name="type_call">Call Volume</string>
     <string name="type_ring">Ring Volume</string>
     <string name="type_music">Music Volume</string>
+    <string name="keyMoreApp">More apps</string>
+    <string name="summaryMoreApp">More apps by author</string>
+    <string name="keyRate">Rate</string>
+    <string name="summaryRate">Rate this app on market</string>
+    <string name="keyUpdate">Update</string>
+    <string name="summaryUpdate">Check for latest version</string>
+    <string name="noUpdate">No update available</string>
+	<string name="noUrl">Can\'t find any link</string>
+    <string name="timeout">Connection timeout</string>
+    <string name="updatingSelf">Finding update...</string>
 </resources>

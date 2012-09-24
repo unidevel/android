@@ -4,5 +4,9 @@
     
     
     <PreferenceCategory android:title="@string/cat_volume" android:key="cat_volume">
+        
     </PreferenceCategory>
+    <!-- PreferenceCategory android:key="cat_about">
+      <Preference android:key="keyMoreApp" android:title="@string/keyMoreApp" android:summary="@string/summaryMoreApp"/> 
+      </PreferenceCategory-->
 </PreferenceScreen>

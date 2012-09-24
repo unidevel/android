@@ -36,6 +36,10 @@ public class BTBotReceiver extends BroadcastReceiver {
 	
 	private void toggleBluetooth(boolean flag){
 		BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
+		if (btAdapter == null ) {
+			Log.i("BT.Device", "Bluetooth device can not be found!");
+			return;
+		}
 		if ( flag && !btAdapter.isEnabled() ){
 			btAdapter.enable();
 		}

@@ -10,5 +10,14 @@
     <string name="type_call">通话音量</string>
     <string name="type_ring">铃声音量</string>
     <string name="type_music">媒体音量</string>
-        
+    <string name="keyMoreApp">应用下载</string>
+    <string name="summaryMoreApp">下载作者的其他应用</string>
+    <string name="keyRate">评价</string>
+    <string name="summaryRate">在市场上做出评价</string>
+    <string name="keyUpdate">更新</string>
+    <string name="summaryUpdate">检查更新</string>    
+	<string name="noUpdate">没有更新</string>
+	<string name="noUrl">没有找到任何链接</string>
+	<string name="timeout">连接超时</string>
+    <string name="updatingSelf">查找更新...</string>	
 </resources>

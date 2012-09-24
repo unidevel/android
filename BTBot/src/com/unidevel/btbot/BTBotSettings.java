@@ -1,18 +1,27 @@
 package com.unidevel.btbot;
 
-import android.bluetooth.BluetoothAdapter;
+import android.content.Intent;
 import android.media.AudioManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
+import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
+import android.util.Log;
+import android.widget.LinearLayout;
+
+import com.google.ads.AdRequest;
+import com.google.ads.AdSize;
+import com.google.ads.AdView;
 
 public class BTBotSettings extends PreferenceActivity {
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.main);
         addPreferencesFromResource(R.xml.preferences);
         PreferenceCategory cat = (PreferenceCategory)this.getPreferenceScreen().getPreference(1);
         int[] volumnNames = new int[]{R.string.type_call, R.string.type_ring, R.string.type_music};
@@ -36,26 +45,27 @@ public class BTBotSettings extends PreferenceActivity {
 				}
 			});
         }
-//        setPreferenceScreen(preferenceScreen)
-//        setContentView(R.layout.main);
-//        
-//        ToggleButton toggleBT = (ToggleButton)findViewById(R.id.toggleBT);
-//        toggleBT.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-//			@Override
-//			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//				toggleBluetooth(isChecked);
-//			}
-//		});
+        
+        /*
+		Preference pref = findPreference("keyMoreApp");
+		pref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+			@Override
+			public boolean onPreferenceClick(Preference preference) {
+				Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://search?q=pub:x2derr"));
+				try { 
+					startActivity(intent); 
+				}
+				catch(Throwable ex){
+					Log.e("BTBot", ex.getMessage(),ex);
+				}
+				return true;
+			}
+		});
+		*/
+		AdView adView = new AdView(this, AdSize.BANNER, "a14f44967d5395d");
+		LinearLayout layout = (LinearLayout) findViewById(R.id.adLayout);
+		layout.addView(adView);
+		AdRequest req  = new AdRequest();
+		adView.loadAd(req);
     }
-    
-	private void toggleBluetooth(boolean flag){
-		BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
-		if ( flag && !btAdapter.isEnabled() ){
-			btAdapter.enable();
-		}
-		if ( !flag && btAdapter.isEnabled() ) {
-			btAdapter.disable();
-		}
-	}	
-
 }
