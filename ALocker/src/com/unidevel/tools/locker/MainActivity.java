@@ -60,9 +60,9 @@ public class MainActivity extends Activity
 		loadSlots();
 		box.setChecked(pref.getBoolean("boot",true));
 		((CheckBox)findViewById(R.id.useRoot)).setChecked(useRoot);
-		if ( !isRooted ) findViewById(R.id.useRoot).setVisibility(View.GONE);
+		if ( !isRooted ) findViewById(R.id.useRoot).setEnabled(false);
 		else {
-			findViewById(R.id.useRoot).setVisibility(View.VISIBLE);
+			findViewById(R.id.useRoot).setEnabled(true);
 			((CheckBox)findViewById(R.id.useRoot)).setOnCheckedChangeListener(new OnCheckedChangeListener(){
 
 				@Override
@@ -100,6 +100,7 @@ public class MainActivity extends Activity
 			public void onClick(View view)
 			{
 				Intent i=new Intent(ctx,AppListActivity.class);
+			//	Intent i=new Intent(Intent.ACTION_ALL_APPS);
 				startActivityForResult(i,0);
 			}
 
