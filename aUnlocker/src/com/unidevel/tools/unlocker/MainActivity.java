@@ -6,7 +6,6 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.view.Menu;
 import android.widget.TextView;
 
 public class MainActivity extends Activity implements SensorEventListener {
