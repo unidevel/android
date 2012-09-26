@@ -1,12 +1,16 @@
-package com.unidevel.tools.locker;
+package com.unidevel.tools.unlocker;
 
-import android.app.*;
-import android.os.*;
-import android.widget.*;
-import android.hardware.*;
+import android.app.Activity;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.os.Bundle;
+import android.view.Menu;
+import android.widget.TextView;
 
-public class TestActivity extends Activity implements SensorEventListener
-{
+public class MainActivity extends Activity implements SensorEventListener {
+
 	class RotationDetector{
 		int count;
 		int state;
@@ -36,12 +40,20 @@ public class TestActivity extends Activity implements SensorEventListener
 						state=3;
 					else state=0;
 					stamp=now;
-					
+				}
+				else if ( now-stamp>1000) {
+					state = 0;
+					stamp = now;
 				}
 				return;
 			}
 			if(z>50&&z<85){
-				if(state==1)now-stamp<1000){
+				if(now-stamp>1000){
+					state = 0;
+					stamp = now;
+					return;
+				}
+				if(state==1){
 					state=2;
 					stamp=now;
 				}
@@ -51,6 +63,10 @@ public class TestActivity extends Activity implements SensorEventListener
 				}
 				return;
 			}
+			if(now-stamp>1000){
+				state = 0;
+				stamp = now;
+			}
 		}
 		
 		public boolean isMatch(){
@@ -59,7 +75,6 @@ public class TestActivity extends Activity implements SensorEventListener
 	}
 	public void onSensorChanged(SensorEvent e)
 	{
-		// TODO: Implement this method
 		msg("x:"+e.values[0]+"\ny:"+e.values[1]+"\nz:"+e.values[2]);
 	}
 
@@ -80,7 +95,7 @@ public class TestActivity extends Activity implements SensorEventListener
 	public void onResume(){
 		super.onResume();
 		sm=(SensorManager) getSystemService(SENSOR_SERVICE);
-		accl=sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+		accl=sm.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
 		sm.registerListener(this,accl,SensorManager.SENSOR_DELAY_NORMAL);
 	}
 	public void onPause(){
