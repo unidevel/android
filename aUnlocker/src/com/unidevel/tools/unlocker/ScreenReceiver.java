@@ -6,8 +6,8 @@ import android.content.Intent;
 import android.util.Log;
 
 public class ScreenReceiver extends BroadcastReceiver {
-	UnlockService service;
-	public ScreenReceiver(UnlockService service){
+	ScreenListener service;
+	public ScreenReceiver(ScreenListener service){
 		this.service = service;
 	}
 	

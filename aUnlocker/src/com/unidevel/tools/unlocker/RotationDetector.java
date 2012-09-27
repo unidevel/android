@@ -2,8 +2,8 @@ package com.unidevel.tools.unlocker;
 public class RotationDetector
 {
 	static final float R_THRESHOLD = 10f;
-	static final float R1_THRESHOLD = -85f;
-	static final float R2_THRESHOLD = -55f;
+	static final float R1_THRESHOLD = -75f;
+	static final float R2_THRESHOLD = -35f;
 	static final long INTERVAL=1000;
 
 	int count;
@@ -14,6 +14,41 @@ public class RotationDetector
 	{
 		this.state = 0;
 	}
+	
+	public void input(float x, float y, float z)
+	{
+		if (state == 0)
+		{
+			stamp = System.currentTimeMillis();
+		}
+		if (y > R_THRESHOLD || y < -R_THRESHOLD)
+		{
+			stamp = System.currentTimeMillis();
+			state = 0;
+			return;
+		}
+		long now=System.currentTimeMillis();
+		if (z > R1_THRESHOLD && z < R2_THRESHOLD)
+		{
+			if (state == 0)
+			{
+				stamp = now;
+				state = 1;
+				return;
+			}
+			else if (state==1){
+				if(now-stamp>INTERVAL){
+					state = 2;
+					return;
+				}
+			}
+		}
+		else{
+			state=0;
+			stamp=now;
+		}
+	}
+	/*
 	public void input(float x, float y, float z)
 	{
 		if (state == 0)
@@ -74,6 +109,7 @@ public class RotationDetector
 			stamp = now;
 		}
 	}
+	*/
 
 	public boolean isMatch()
 	{

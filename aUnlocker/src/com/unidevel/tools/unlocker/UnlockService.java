@@ -12,7 +12,7 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.util.Log;
 
-public class UnlockService extends Service implements SensorEventListener
+public class UnlockService extends Service implements SensorEventListener,ScreenListener
 {	
 	WakeLock lock;
 	RotationDetector rd;
@@ -23,14 +23,18 @@ public class UnlockService extends Service implements SensorEventListener
 	}
 	
 	private void screenOn(){
+		try{
 		PowerManager pm = (PowerManager)getSystemService(POWER_SERVICE);
 		if ( pm == null ) {
 			Log.e("ScreenOn", "Can't get PowerManager");
 			return;
 		}
-		WakeLock lock=pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.ON_AFTER_RELEASE, "TempWakeLock");
+		WakeLock lock=pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.ON_AFTER_RELEASE, "ScreenOnLock");
 		lock.acquire();
 		lock.release();
+		}catch(Throwable ex){
+			Log.e("in screenOn",ex.getMessage(),ex);
+		}
 	}
 	
 	@Override
@@ -61,7 +65,6 @@ public class UnlockService extends Service implements SensorEventListener
 		Log.i("UnlockService","stop");
 		super.onDestroy();
 		unregisterReceiver(this.receiver);
-		//onScreenOn();
 	}
 
 	public void onScreenOn()
@@ -77,7 +80,6 @@ public class UnlockService extends Service implements SensorEventListener
 	public void onSensorChanged(SensorEvent e)
 	{
 		rd.input(e.values[0], e.values[1], e.values[2]);
-		//Log.i("RatationDetector", rd.toString());
 		if ( rd.isMatch() ) {
 			Log.i("sensor","screen on");
 			screenOn();

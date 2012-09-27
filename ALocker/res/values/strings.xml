@@ -26,7 +26,7 @@
 		<b>ChangeLog:</b><br/>
 		<ul>
 		<li>1.5 Add turn-on screen plugin, free the power button. <br/>
-		USAGE: Keep flat in portrait direction, then pick it up and turn it in font of you(about 60 degree), then screen will turn on automatically</li><br/>
+		USAGE: Hold your pad in portrait mode about 45 degree, then screen will turn on automatically</li><br/>
 		<li>1.4 Add one custom slot, support all android devices in non-root mode</li><br/>
 		<li>1.3 Fix icon label display issue</li><br/>
 		<li>1.2 Add audio volume control</li><br/>
