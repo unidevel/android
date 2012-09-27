@@ -14,12 +14,8 @@ import android.util.Log;
 
 public class UnlockService extends Service implements SensorEventListener
 {	
-	
 	WakeLock lock;
-	PowerManager pm;
 	RotationDetector rd;
-	SensorManager sm;
-	Sensor sensor;
 	ScreenReceiver receiver;
 	public IBinder onBind(Intent p1)
 	{
@@ -27,6 +23,11 @@ public class UnlockService extends Service implements SensorEventListener
 	}
 	
 	private void screenOn(){
+		PowerManager pm = (PowerManager)getSystemService(POWER_SERVICE);
+		if ( pm == null ) {
+			Log.e("ScreenOn", "Can't get PowerManager");
+			return;
+		}
 		WakeLock lock=pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.ON_AFTER_RELEASE, "TempWakeLock");
 		lock.acquire();
 		lock.release();
@@ -43,13 +44,14 @@ public class UnlockService extends Service implements SensorEventListener
 		registerReceiver(this.receiver,it);
 	}
 
+	@SuppressWarnings("deprecation")
 	public void onScreenOff()
 	{
 		rd = new RotationDetector();
-		sm = (SensorManager) getSystemService(SENSOR_SERVICE);
-		sensor = sm.getDefaultSensor(Sensor.TYPE_ORIENTATION);
+		SensorManager sm = (SensorManager) getSystemService(SENSOR_SERVICE);
+		Sensor sensor = sm.getDefaultSensor(Sensor.TYPE_ORIENTATION);
 		sm.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
-		pm = (PowerManager) getSystemService(POWER_SERVICE);
+		PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
 		lock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, UnlockService.class.getName());
 		lock.acquire();
 	}
@@ -64,11 +66,12 @@ public class UnlockService extends Service implements SensorEventListener
 
 	public void onScreenOn()
 	{
-		lock.release();
+		if ( lock != null ){
+			lock.release();
+			lock = null;
+		}
+		SensorManager sm = (SensorManager) getSystemService(SENSOR_SERVICE);
 		sm.unregisterListener(this);
-		lock = null;
-		pm = null;
-		sm = null;
 	}
 	
 	public void onSensorChanged(SensorEvent e)
