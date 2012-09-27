@@ -270,7 +270,7 @@ public class MainActivity extends Activity
 	}
 	
 	public static final String UNLOCKER_PKG="com.unidevel.tools.unlocker";
-	public static final String UNLOCKER_SERVICE="UnlockService";
+	public static final String UNLOCKER_SERVICE="com.unidevel.tools.UnlockService";
 	
 	public static boolean checkUnlocker(Context ctx){
 		PackageManager pm=ctx.getPackageManager();

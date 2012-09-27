@@ -1,9 +1,7 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.unidevel.tools.unlocker"
+<manifest package="com.unidevel.tools.unlocker"
     android:versionCode="1"
     android:versionName="1.0"
-	android:sharedUserId="com.unidevel.tools"
-	>
+	android:sharedUserId="com.unidevel.tools" xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-sdk
         android:minSdkVersion="8"
@@ -24,12 +22,12 @@
             </intent-filter>
         </activity-->
         <receiver android:name="ScreenReceiver">
-            <intent-filter>
+            <!-- intent-filter>
                 <action android:name="android.intent.action.SCREEN_OFF"/>
                 <action android:name="android.intent.action.SCREEN_ON"/>
-            </intent-filter>
+            </intent-filter -->
         </receiver>
-        <service android:name="UnlockService" android:exported="true">
+        <service android:name="UnlockService" android:exported="true" android:enabled="true">
 			<intent-filter>
 				<action android:name="com.unidevel.tools.UnlockService"></action>
 			</intent-filter>
