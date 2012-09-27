@@ -15,10 +15,12 @@
     <string name="btnNo">否</string>
     <string name="titleReboot">重启</string>
 	<string name="start_when_boot">启动时运行</string>
+	<string name="start_unlocker_when_boot">启动时运行自动解锁程序</string>
 	<string name="use_root">使用Root模式(支持关机)</string>
 	<string name="add_shortcut">添加快捷方式</string>
     <string name="lock_admin">一键锁屏</string>
 	<string name="lock_admin_description">锁定设备</string>    
+	<string name="download_unlocker"><![CDATA[下载自动解锁:]]></string>
 	<string name="changelog"><![CDATA[
 		<center>版本: 1.4</center><br/>
 		<b>更新日志:</b><br/>

@@ -1,35 +1,20 @@
 package com.unidevel.tools.locker;
 
-import android.app.Activity;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.text.Html;
-import android.view.View;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RemoteViews;
-import android.widget.TextView;
-
-import com.google.ads.AdRequest;
-import com.google.ads.AdSize;
-import com.google.ads.AdView;
-import com.unidevel.AppListActivity;
-import com.unidevel.util.DeviceUtil;
-import com.unidevel.util.RootUtil;
+import android.app.*;
+import android.content.*;
+import android.content.pm.*;
+import android.graphics.*;
+import android.graphics.drawable.*;
+import android.os.*;
+import android.preference.*;
+import android.text.*;
+import android.text.util.*;
+import android.view.*;
+import android.widget.*;
+import android.widget.CompoundButton.*;
+import com.google.ads.*;
+import com.unidevel.*;
+import com.unidevel.util.*;
 
 public class MainActivity extends Activity
 {
@@ -72,6 +57,19 @@ public class MainActivity extends Activity
 				}
 			});
 		}
+		box=(CheckBox) this.findViewById(R.id.checkUnlocker);
+		box.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+
+				public void onCheckedChanged(CompoundButton button, boolean value)
+				{
+					SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
+					pref.edit().putBoolean("unlock",value).commit();
+				}
+			});
+		TextView link=(TextView) findViewById(R.id.textDownloadUnlocker);
+		link.setAutoLinkMask(Linkify.ALL);
+		link.setText(Html.fromHtml(getString(R.string.download_unlocker)));
+		
 		//ALocker a1505c63891818d
 		AdView adView = new AdView(this, AdSize.BANNER, "a1505c63891818d"); 
 		LinearLayout layout = (LinearLayout) findViewById(R.id.adLayout); 
@@ -108,6 +106,22 @@ public class MainActivity extends Activity
 		
 		image.setOnClickListener(l);
 		text.setOnClickListener(l);
+	}
+	
+	public void onResume(){
+		super.onResume();
+		if(checkUnlocker(this)){
+			findViewById(R.id.checkUnlocker).setVisibility(View.VISIBLE);
+			findViewById(R.id.textDownloadUnlocker).setVisibility(View.GONE);
+		}
+		else{
+			findViewById(R.id.checkUnlocker).setVisibility(View.GONE);
+			findViewById(R.id.textDownloadUnlocker).setVisibility(View.VISIBLE);
+		}
+	}
+	
+	public void onPause(){
+		super.onPause();
 	}
 	
 	public void onActivityResult(int req,int res,Intent intent){
@@ -253,5 +267,31 @@ public class MainActivity extends Activity
 		{
 			return ctx.getResources().getDrawable(R.drawable.app);
 		}
+	}
+	
+	public static final String UNLOCKER_PKG="com.unidevel.tools.unlocker";
+	public static final String UNLOCKER_SERVICE="UnlockService";
+	
+	public static boolean checkUnlocker(Context ctx){
+		PackageManager pm=ctx.getPackageManager();
+		try
+		{
+			PackageInfo info=pm.getPackageInfo(UNLOCKER_PKG, 0);
+			return info!=null;
+		}
+		catch (PackageManager.NameNotFoundException e)
+		{
+			return false;
+		}
+	}
+	
+	public static void startUnlocker(Context ctx){
+		Intent intent=new Intent(UNLOCKER_SERVICE);
+		ctx.startService(intent);
+	}
+	
+	public static void stopUnlocker(Context ctx){
+		Intent intent=new Intent(UNLOCKER_SERVICE);
+		ctx.stopService(intent);
 	}
 }

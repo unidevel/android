@@ -6,17 +6,19 @@ import android.content.Intent;
 import android.util.Log;
 
 public class ScreenReceiver extends BroadcastReceiver {
-
+	UnlockService service;
+	public ScreenReceiver(UnlockService service){
+		this.service = service;
+	}
+	
 	@Override
 	public void onReceive(Context ctx, Intent it) {
-		Intent serviceIntent = new Intent(ctx, UnlockService.class);
 		if (it.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
 			Log.i("ScreenService", "screen off");
-			ctx.startService(serviceIntent);
+			this.service.onScreenOff();
         } else if (it.getAction().equals(Intent.ACTION_SCREEN_ON)) {
 			Log.i("ScreenService", "screen on");
-        	ctx.stopService(serviceIntent);
+        	this.service.onScreenOn();
         }
 	}
-
 }

@@ -10,15 +10,17 @@
     <string name="btnCancel">Close</string>
     <string name="btnShutdown">Shutdown</string>    
 	<string name="btnVolUp">Volume+</string>
-    <string name="btnVolDown"><![CDATA[Volume-]]</string>
+    <string name="btnVolDown"><![CDATA[Volume-]]></string>
     <string name="btnYes">Yes</string>
     <string name="btnNo">No</string>
     <string name="titleReboot">Reboot</string>
 	<string name="start_when_boot">Start aLocker when boot</string>
+	<string name="start_unlocker_when_boot">Start aUnlocker when boot</string>
 	<string name="use_root">Use root for locking</string>    
     <string name="add_shortcut">Add shortcut</string>
 	<string name="lock_admin">ALocker</string>
 	<string name="lock_admin_description">Lock device</string>
+	<string name="download_unlocker"><![CDATA[Download aUnlocker:]]></string>
 	<string name="changelog"><![CDATA[
 		<center>Version: 1.4</center><br/>
 		<b>ChangeLog:</b><br/>

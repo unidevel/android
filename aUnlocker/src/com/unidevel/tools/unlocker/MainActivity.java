@@ -7,74 +7,13 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.widget.TextView;
+import android.content.*;
 
 public class MainActivity extends Activity implements SensorEventListener {
-
-	class RotationDetector{
-		int count;
-		int state;
-		long stamp;
-
-		public RotationDetector()
-		{
-			this.state=0;
-		}
-		public void input(float x,float y, float z){
-			if(state==0){
-				stamp=System.currentTimeMillis();
-			}
-			if(y>5||y<-5){
-				stamp=System.currentTimeMillis();
-				state=0;
-				return;
-			}
-			long now=System.currentTimeMillis();
-			if(z>-5||z<5){
-				if(state==0){
-					stamp=now;
-					state=1;
-				}
-				else if(state==2){
-					if(now-stamp<1000)
-						state=3;
-					else state=0;
-					stamp=now;
-				}
-				else if ( now-stamp>1000) {
-					state = 0;
-					stamp = now;
-				}
-				return;
-			}
-			if(z>50&&z<85){
-				if(now-stamp>1000){
-					state = 0;
-					stamp = now;
-					return;
-				}
-				if(state==1){
-					state=2;
-					stamp=now;
-				}
-				else if(state==3){
-					state=4;
-					stamp=now;
-				}
-				return;
-			}
-			if(now-stamp>1000){
-				state = 0;
-				stamp = now;
-			}
-		}
-		
-		public boolean isMatch(){
-			return state==4;
-		}
-	}
 	public void onSensorChanged(SensorEvent e)
 	{
-		msg("x:"+e.values[0]+"\ny:"+e.values[1]+"\nz:"+e.values[2]);
+		rd.input(e.values[0],e.values[1],e.values[2]);
+		msg("x:"+e.values[0]+"\ny:"+e.values[1]+"\nz:"+e.values[2]+"\nState:"+rd);
 	}
 
 	public void onAccuracyChanged(Sensor s, int v)
@@ -86,15 +25,19 @@ public class MainActivity extends Activity implements SensorEventListener {
 	TextView view;
 	SensorManager sm;
 	Sensor accl;
+	RotationDetector rd;
 	public void onCreate(Bundle bundle){
 		super.onCreate(bundle);
 		view=new TextView(this);
 		setContentView(view);
+		Intent it=new Intent(this,UnlockService.class);
+		startService(it);
+		rd=new RotationDetector();
 	}
 	public void onResume(){
 		super.onResume();
 		sm=(SensorManager) getSystemService(SENSOR_SERVICE);
-		accl=sm.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+		accl=sm.getDefaultSensor(Sensor.TYPE_ORIENTATION);
 		sm.registerListener(this,accl,SensorManager.SENSOR_DELAY_NORMAL);
 	}
 	public void onPause(){

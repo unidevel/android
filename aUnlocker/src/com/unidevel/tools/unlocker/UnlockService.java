@@ -1,111 +1,53 @@
 package com.unidevel.tools.unlocker;
 
-import android.app.Service;
-import android.content.Intent;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
-import android.os.IBinder;
-import android.os.PowerManager;
-import android.os.PowerManager.WakeLock;
-import android.util.Log;
+import android.app.*;
+import android.content.*;
+import android.hardware.*;
+import android.os.*;
+import android.os.PowerManager.*;
+import android.util.*;
 
-public class UnlockService extends Service implements SensorEventListener{
-	static final float R_THRESHOLD = 0.05f;
-	static final float R1_THRESHOLD = 0.4f;
-	static final float R2_THRESHOLD = 0.5f;
-	static final long INTERVAL=1000;
-	class RotationDetector{
-		int count;
-		int state;
-		long stamp;
-
-		public RotationDetector()
-		{
-			this.state=0;
-		}
-		public void input(float x,float y, float z){
-			if(state==0){
-				stamp=System.currentTimeMillis();
-			}
-			if(y>R_THRESHOLD||y<-R_THRESHOLD){
-				stamp=System.currentTimeMillis();
-				state=0;
-				return;
-			}
-			long now=System.currentTimeMillis();
-			if(z>-R_THRESHOLD&&z<R_THRESHOLD){
-				if(state==0){
-					stamp=now;
-					state=1;
-				}
-				else if(state==2){
-					if(now-stamp<INTERVAL)
-						state=3;
-					else state=0;
-					stamp=now;
-				}
-				else if ( now-stamp>INTERVAL) {
-					state = 0;
-					stamp = now;
-				}
-				return;
-			}
-			if(z>R1_THRESHOLD&&z<R2_THRESHOLD){
-				if(now-stamp>INTERVAL){
-					state = 0;
-					stamp = now;
-					return;
-				}
-				if(state==1){
-					state=2;
-					stamp=now;
-				}
-				else if(state==3){
-					state=4;
-					stamp=now;
-				}
-				return;
-			}
-			if(now-stamp>INTERVAL){
-				state = 0;
-				stamp = now;
-			}
-		}
-		
-		public boolean isMatch(){
-			return state==4;
-		}
-		
-		public String toString(){
-			return "State:"+state;
-		}
-	}
+public class UnlockService extends Service implements SensorEventListener
+{	
 	
 	WakeLock lock;
 	PowerManager pm;
 	RotationDetector rd;
 	SensorManager sm;
 	Sensor sensor;
-	@Override
-	public IBinder onBind(Intent it) {
+	ScreenReceiver receiver;
+	public IBinder onBind(Intent p1)
+	{
 		return null;
 	}
 	
 	private void screenOn(){
-		if ( !pm.isScreenOn() ) {
-			pm.userActivity(1, false);
-		}
+	//	if ( !pm.isScreenOn() ) {
+		//	pm.userActivity(SystemClock.uptimeMillis()+1, false);
+		//}
+		
+		WakeLock lock=pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.ON_AFTER_RELEASE, "TempWakeLock");
+		lock.acquire();// do the work that needs the visible display...// Release the newest wakelock and fall back to the old oneTempWakeL
+		lock.release();
 	}
 	
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		Log.i("UnlockService","start");
+		receiver=new ScreenReceiver(this);
+		IntentFilter it=new IntentFilter();
+		it.addAction(Intent.ACTION_SCREEN_OFF);
+		it.addAction(Intent.ACTION_SCREEN_ON);
+		registerReceiver(this.receiver,it);
+	}
+
+	public void onScreenOff()
+	{
 		rd = new RotationDetector();
-		sm=(SensorManager) getSystemService(SENSOR_SERVICE);
-		sensor=sm.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
-		sm.registerListener(this,sensor,SensorManager.SENSOR_DELAY_NORMAL);
+		sm = (SensorManager) getSystemService(SENSOR_SERVICE);
+		sensor = sm.getDefaultSensor(Sensor.TYPE_ORIENTATION);
+		sm.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
 		pm = (PowerManager) getSystemService(POWER_SERVICE);
 		lock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, UnlockService.class.getName());
 		lock.acquire();
@@ -113,7 +55,14 @@ public class UnlockService extends Service implements SensorEventListener{
 	
 	@Override
 	public void onDestroy() {
+		Log.i("UnlockService","stop");
 		super.onDestroy();
+		unregisterReceiver(this.receiver);
+		//onScreenOn();
+	}
+
+	public void onScreenOn()
+	{
 		lock.release();
 		sm.unregisterListener(this);
 		lock = null;
@@ -123,12 +72,13 @@ public class UnlockService extends Service implements SensorEventListener{
 	
 	public void onSensorChanged(SensorEvent e)
 	{
-		Log.i("UnlockService", "x:"+e.values[0]+"\ny:"+e.values[1]+"\nz:"+e.values[2]);
+	//	Log.i("UnlockService", "x:"+e.values[0]+"\ny:"+e.values[1]+"\nz:"+e.values[2]);
 		rd.input(e.values[0], e.values[1], e.values[2]);
 		Log.i("RatationDetector", rd.toString());
 		if ( rd.isMatch() ) {
+			Log.i("sensor","screen on");
 			screenOn();
-			stopSelf();
+		//	stopSelf();
 		}
 	}
 

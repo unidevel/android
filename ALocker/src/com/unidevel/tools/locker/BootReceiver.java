@@ -12,6 +12,9 @@ public class BootReceiver extends BroadcastReceiver
 		if(pref.getBoolean("boot",true)){
 			MainActivity.showNotify(ctx);
 		}
+		if(pref.getBoolean("unlock",true)&&MainActivity.checkUnlocker(ctx)){
+			MainActivity.startUnlocker(ctx);
+		}
 	}
 	
 }
