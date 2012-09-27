@@ -113,6 +113,7 @@ public class MainActivity extends Activity
 		if(checkUnlocker(this)){
 			findViewById(R.id.checkUnlocker).setVisibility(View.VISIBLE);
 			findViewById(R.id.textDownloadUnlocker).setVisibility(View.GONE);
+			startUnlocker(ctx);
 		}
 		else{
 			findViewById(R.id.checkUnlocker).setVisibility(View.GONE);
@@ -284,7 +285,7 @@ public class MainActivity extends Activity
 			return false;
 		}
 	}
-	
+
 	public static void startUnlocker(Context ctx){
 		Intent intent=new Intent(UNLOCKER_SERVICE);
 		ctx.startService(intent);
