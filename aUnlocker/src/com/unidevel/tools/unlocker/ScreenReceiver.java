@@ -13,12 +13,17 @@ public class ScreenReceiver extends BroadcastReceiver {
 	
 	@Override
 	public void onReceive(Context ctx, Intent it) {
-		if (it.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
-			Log.i("ScreenService", "screen off");
-			this.service.onScreenOff();
-        } else if (it.getAction().equals(Intent.ACTION_SCREEN_ON)) {
-			Log.i("ScreenService", "screen on");
-        	this.service.onScreenOn();
-        }
+		try {
+			if (it.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
+				Log.i("ScreenService", "screen off");
+				this.service.onScreenOff();
+	        } else if (it.getAction().equals(Intent.ACTION_SCREEN_ON)) {
+				Log.i("ScreenService", "screen on");
+	        	this.service.onScreenOn();
+	        }
+		}
+		catch(Throwable ex){
+			Log.e("onReceive", ex.getMessage(), ex);
+		}
 	}
 }
