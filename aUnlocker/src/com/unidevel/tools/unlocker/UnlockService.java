@@ -23,7 +23,6 @@ public class UnlockService extends Service implements SensorEventListener,Screen
 	}
 	
 	private void screenOn(){
-		try{
 		PowerManager pm = (PowerManager)getSystemService(POWER_SERVICE);
 		if ( pm == null ) {
 			Log.e("ScreenOn", "Can't get PowerManager");
@@ -32,9 +31,6 @@ public class UnlockService extends Service implements SensorEventListener,Screen
 		WakeLock lock=pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.ON_AFTER_RELEASE, "ScreenOnLock");
 		lock.acquire();
 		lock.release();
-		}catch(Throwable ex){
-			Log.e("in screenOn",ex.getMessage(),ex);
-		}
 	}
 	
 	@Override

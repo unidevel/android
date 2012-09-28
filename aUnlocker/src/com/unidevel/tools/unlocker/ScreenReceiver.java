@@ -1,9 +1,8 @@
 package com.unidevel.tools.unlocker;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
+import android.content.*;
+import android.os.*;
+import android.util.*;
 
 public class ScreenReceiver extends BroadcastReceiver {
 	ScreenListener service;

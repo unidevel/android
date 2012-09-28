@@ -18,30 +18,29 @@ public class HoldService extends Service implements ScreenListener,SensorEventLi
 		return null;
 	}
 
-	private void screenOn(){
-		try{
-			PowerManager pm = (PowerManager)getSystemService(POWER_SERVICE);
-			if ( pm == null ) {
-				Log.e("ScreenOn", "Can't get PowerManager");
-				return;
-			}
-			WakeLock lock=pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.ON_AFTER_RELEASE, "ScreenOnLock");
-			lock.acquire();
-			lock.release();
-		}catch(Throwable ex){
-			Log.e("in screenOn",ex.getMessage(),ex);
+	private void screenOn()
+	{
+		PowerManager pm = (PowerManager)getSystemService(POWER_SERVICE);
+		if (pm == null)
+		{
+			Log.e("ScreenOn", "Can't get PowerManager");
+			return;
 		}
+		WakeLock lock=pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.ON_AFTER_RELEASE, "ScreenOnLock");
+		lock.acquire();
+		lock.release();
 	}
 
 	@Override
-	public void onCreate() {
+	public void onCreate()
+	{
 		super.onCreate();
-		Log.i("UnlockService","start");
-		receiver=new ScreenReceiver(this);
+		Log.i("UnlockService", "start");
+		receiver = new ScreenReceiver(this);
 		IntentFilter it=new IntentFilter();
 		it.addAction(Intent.ACTION_SCREEN_OFF);
 		it.addAction(Intent.ACTION_SCREEN_ON);
-		registerReceiver(this.receiver,it);
+		registerReceiver(this.receiver, it);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -57,15 +56,17 @@ public class HoldService extends Service implements ScreenListener,SensorEventLi
 	}
 
 	@Override
-	public void onDestroy() {
-		Log.i("UnlockService","stop");
+	public void onDestroy()
+	{
+		Log.i("UnlockService", "stop");
 		super.onDestroy();
 		unregisterReceiver(this.receiver);
 	}
 
 	public void onScreenOn()
 	{
-		if ( lock != null ){
+		if (lock != null)
+		{
 			lock.release();
 			lock = null;
 		}
@@ -76,8 +77,9 @@ public class HoldService extends Service implements ScreenListener,SensorEventLi
 	public void onSensorChanged(SensorEvent e)
 	{
 		rd.input(e.values[0], e.values[1], e.values[2]);
-		if ( rd.isMatch() ) {
-			Log.i("sensor","screen on");
+		if (rd.isMatch())
+		{
+			Log.i("sensor", "screen on");
 			screenOn();
 		}
 	}
@@ -85,5 +87,4 @@ public class HoldService extends Service implements ScreenListener,SensorEventLi
 	public void onAccuracyChanged(Sensor s, int v)
 	{
 	}
-	
 }
