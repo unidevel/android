@@ -19,6 +19,18 @@
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
+		<activity android:name=".LockActivity" android:label="@string/btnLock" android:icon="@drawable/icon" android:configChanges="orientation|keyboardHidden">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity>
+		<!--activity android:name=".PowerActivity" android:label="@string/btnShutdown" android:icon="@drawable/shutdown" android:configChanges="orientation|keyboardHidden">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity-->
 		
 		<activity android:name=".ActionActivity" android:theme="@android:style/Theme.Dialog" android:configChanges="orientation|keyboardHidden"/>
 		<activity android:name=".ActionUIActivity" android:theme="@android:style/Theme.Dialog" android:label="@string/app_name" android:configChanges="orientation|keyboardHidden"></activity>
