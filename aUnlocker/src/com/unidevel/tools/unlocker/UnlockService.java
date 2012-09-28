@@ -12,11 +12,12 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.util.Log;
 
-public class UnlockService extends Service implements SensorEventListener,ScreenListener
+public class UnlockService extends Service implements SensorEventListener
 {	
 	WakeLock lock;
 	RotationDetector rd;
 	ScreenReceiver receiver;
+	public static final long TIMEOUT=5000;
 	public IBinder onBind(Intent p1)
 	{
 		return null;
@@ -29,8 +30,7 @@ public class UnlockService extends Service implements SensorEventListener,Screen
 			return;
 		}
 		WakeLock lock=pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.ON_AFTER_RELEASE, "ScreenOnLock");
-		lock.acquire();
-		lock.release();
+		if ( lock != null )lock.acquire(TIMEOUT);
 	}
 	
 	@Override
@@ -43,7 +43,7 @@ public class UnlockService extends Service implements SensorEventListener,Screen
 		it.addAction(Intent.ACTION_SCREEN_ON);
 		registerReceiver(this.receiver,it);
 	}
-
+	
 	@SuppressWarnings("deprecation")
 	public void onScreenOff()
 	{
@@ -60,6 +60,7 @@ public class UnlockService extends Service implements SensorEventListener,Screen
 	public void onDestroy() {
 		Log.i("UnlockService","stop");
 		super.onDestroy();
+		stopForeground(true);
 		unregisterReceiver(this.receiver);
 	}
 

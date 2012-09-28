@@ -18,8 +18,6 @@ public class MainActivity extends Activity implements SensorEventListener {
 
 	public void onAccuracyChanged(Sensor s, int v)
 	{
-		// TODO: Implement this method
-		//msg("v:"+v);
 	}
 	
 	TextView view;

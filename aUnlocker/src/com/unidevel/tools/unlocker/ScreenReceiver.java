@@ -5,8 +5,8 @@ import android.os.*;
 import android.util.*;
 
 public class ScreenReceiver extends BroadcastReceiver {
-	ScreenListener service;
-	public ScreenReceiver(ScreenListener service){
+	UnlockService service;
+	public ScreenReceiver(UnlockService service){
 		this.service = service;
 	}
 	
