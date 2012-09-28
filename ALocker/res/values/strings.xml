@@ -22,10 +22,11 @@
 	<string name="lock_admin_description">Lock device</string>
 	<string name="download_unlocker"><![CDATA[Download aUnlocker:http://t.cn/zl4yktG]]></string>
 	<string name="changelog"><![CDATA[
-		<center>Version: 1.5</center><br/>
+		<center>Version: 1.6</center><br/>
 		<b>ChangeLog:</b><br/>
 		<ul>
-		<li>1.5 Add turn-on screen plugin, free the power button. <br/>
+		<li>1.6 Add lock activity, fix screen turn-on issue on some conditions</li><br/>
+		<li>1.5 Add turn-on screen plugin, free the power button. </li><br/>
 		USAGE: Hold your pad in portrait mode about 45 degree, then screen will turn on automatically</li><br/>
 		<li>1.4 Add one custom slot, support all android devices in non-root mode</li><br/>
 		<li>1.3 Fix icon label display issue</li><br/>
