@@ -1,5 +1,5 @@
 package com.unidevel.tools.unlocker;
-public class RotationDetector
+public class RotationDetector extends AbstractDetector
 {
 	static final float R_THRESHOLD = 10f;
 	static final float R1_THRESHOLD = -60f;

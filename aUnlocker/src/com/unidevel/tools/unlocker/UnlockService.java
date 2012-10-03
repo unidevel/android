@@ -11,11 +11,12 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.util.Log;
+import android.content.*;
 
 public class UnlockService extends Service implements SensorEventListener
 {	
 	WakeLock lock;
-	RotationDetector rd;
+	AbstractDetector rd;
 	ScreenReceiver receiver=null;
 	public static final long TIMEOUT=3000;
 	public IBinder onBind(Intent p1)
@@ -31,6 +32,21 @@ public class UnlockService extends Service implements SensorEventListener
 		}
 		WakeLock lock=pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.ON_AFTER_RELEASE, "ScreenOnLock");
 		if ( lock != null )lock.acquire(TIMEOUT);
+	}
+	
+	private void screenOff(){
+		Log.i("unidevel.UnlockService","lock screen");
+		try{
+		Intent intent=new Intent();
+		ComponentName name=new ComponentName("com.unidevel.tools.locker","com.unidevel.tools.locker.ActionActivity");
+		intent.setComponent(name);
+		intent.putExtra("action",1);
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		startActivity(intent);
+		}
+		catch(Throwable ex){
+			Log.e("unidevel.screenOff",ex.getMessage(),ex);
+		}
 	}
 	
 	@Override
@@ -51,10 +67,18 @@ public class UnlockService extends Service implements SensorEventListener
 			it.addAction(Intent.ACTION_SCREEN_OFF);
 			it.addAction(Intent.ACTION_SCREEN_ON);
 			registerReceiver(this.receiver,it);
+
+			SensorManager sm = (SensorManager) getSystemService(SENSOR_SERVICE);
+			Sensor sensor = sm.getDefaultSensor(Sensor.TYPE_ORIENTATION);
+			sm.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
+
 			PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
 			if(!pm.isScreenOn()){
 				Log.i("unidevel.UnlockService","init with screen off");
 				onScreenOff();
+			}
+			else{
+				onScreenOn();
 			}
 		}
 		return Service.START_STICKY;
@@ -64,9 +88,6 @@ public class UnlockService extends Service implements SensorEventListener
 	public void onScreenOff()
 	{
 		rd = new RotationDetector();
-		SensorManager sm = (SensorManager) getSystemService(SENSOR_SERVICE);
-		Sensor sensor = sm.getDefaultSensor(Sensor.TYPE_ORIENTATION);
-		sm.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
 		PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
 		lock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, UnlockService.class.getName());
 		lock.acquire();
@@ -76,8 +97,14 @@ public class UnlockService extends Service implements SensorEventListener
 	public void onDestroy() {
 		Log.i("unidevel.UnlockService","stop");
 		super.onDestroy();
-		unregisterReceiver(this.receiver);
-		this.receiver=null;
+		if(this.receiver!=null){
+			unregisterReceiver(this.receiver);
+			this.receiver=null;
+		}
+		Intent intent=new Intent(ScreenReceiver.BOOT_SERVICE);
+		sendBroadcast(intent);
+		SensorManager sm = (SensorManager) getSystemService(SENSOR_SERVICE);
+		sm.unregisterListener(this);
 	}
 
 	public void onScreenOn()
@@ -86,16 +113,20 @@ public class UnlockService extends Service implements SensorEventListener
 			lock.release();
 			lock = null;
 		}
-		SensorManager sm = (SensorManager) getSystemService(SENSOR_SERVICE);
-		sm.unregisterListener(this);
+		rd=new LockDetector();
 	}
 	
 	public void onSensorChanged(SensorEvent e)
 	{
 		rd.input(e.values[0], e.values[1], e.values[2]);
 		if ( rd.isMatch() ) {
-			Log.i("unidevel.sensor","screen on");
-			screenOn();
+			if ( rd instanceof RotationDetector ){
+				Log.i("unidevel.sensor","screen on");
+				screenOn();
+			}
+			else if ( rd instanceof LockDetector ) {
+				screenOff();
+			}
 		}
 	}
 
