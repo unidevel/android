@@ -1,6 +1,6 @@
 <manifest package="com.unidevel.tools.unlocker"
-    android:versionCode="2"
-    android:versionName="1.1"
+    android:versionCode="3"
+    android:versionName="1.2"
 	android:sharedUserId="com.unidevel.tools" 
 	xmlns:android="http://schemas.android.com/apk/res/android">
 
