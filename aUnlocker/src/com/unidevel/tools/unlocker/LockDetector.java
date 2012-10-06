@@ -5,7 +5,7 @@ public class LockDetector extends AbstractDetector
 	static final float R_THRESHOLD = 10f;
 	static final float R1_THRESHOLD = 165f;
 	static final float R2_THRESHOLD = 180f;
-	static final long INTERVAL=1000;
+	static final long INTERVAL=300;
 
 	int count;
 	int state;

@@ -30,19 +30,24 @@ public class UnlockService extends Service implements SensorEventListener
 			Log.e("unidevel.ScreenOn", "Can't get PowerManager");
 			return;
 		}
-		WakeLock lock=pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.ON_AFTER_RELEASE, "ScreenOnLock");
-		if ( lock != null )lock.acquire(TIMEOUT);
+		WakeLock wakeLock=pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.ON_AFTER_RELEASE, "ScreenOnLock");
+		if ( wakeLock != null ){
+			wakeLock.acquire(TIMEOUT);
+		}
+		else{
+			Log.e("unidevel.ScreenOn", "Can't create new full wake lock");
+		}
 	}
 	
 	private void screenOff(){
 		Log.i("unidevel.UnlockService","lock screen");
 		try{
-		Intent intent=new Intent();
-		ComponentName name=new ComponentName("com.unidevel.tools.locker","com.unidevel.tools.locker.ActionActivity");
-		intent.setComponent(name);
-		intent.putExtra("action",1);
-		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		startActivity(intent);
+			Intent intent=new Intent();
+			ComponentName name=new ComponentName("com.unidevel.tools.locker","com.unidevel.tools.locker.ActionActivity");
+			intent.setComponent(name);
+			intent.putExtra("action",1);
+			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			startActivity(intent);
 		}
 		catch(Throwable ex){
 			Log.e("unidevel.screenOff",ex.getMessage(),ex);
@@ -51,16 +56,18 @@ public class UnlockService extends Service implements SensorEventListener
 	
 	@Override
 	public void onCreate() {
+	//	Intent intent=new Intent(ScreenReceiver.BOOT_SERVICE);
+	//	sendBroadcast(intent);
+		Intent intent=new Intent("com.unidevel.tools.UnlockService");
+		startService(intent);
+		Log.i("unidevel.UnlockService","onCreate");
 		super.onCreate();
-		Log.i("unidevel.UnlockService","start");
-		Intent intent=new Intent(ScreenReceiver.BOOT_SERVICE);
-		sendBroadcast(intent);
 	}
 	
 	public int onStartCommand(Intent intent,int flags, int startId){
 		Log.i("unidevel.UnlockService","onStartCommand");
 		if(this.receiver==null){
-			Log.i("unidevel.UnlockService","registerReceiver");
+			Log.i("unidevel.UnlockService","onStartCommand.registerReceiver");
 			this.receiver=new ScreenReceiver();
 			this.receiver.setService(this);
 			IntentFilter it=new IntentFilter();
@@ -74,10 +81,11 @@ public class UnlockService extends Service implements SensorEventListener
 
 			PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
 			if(!pm.isScreenOn()){
-				Log.i("unidevel.UnlockService","init with screen off");
+				Log.i("unidevel.UnlockService","onStartCommand init with screen off");
 				onScreenOff();
 			}
 			else{
+				Log.i("unidevel.UnlockService","onStartCommand init with screen on");
 				onScreenOn();
 			}
 		}
@@ -89,42 +97,47 @@ public class UnlockService extends Service implements SensorEventListener
 	{
 		rd = new RotationDetector();
 		PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
-		lock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, UnlockService.class.getName());
-		lock.acquire();
+		this.lock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, UnlockService.class.getName());
+		this.lock.acquire();
 	}
 	
 	@Override
 	public void onDestroy() {
-		Log.i("unidevel.UnlockService","stop");
+		Intent intent=new Intent(ScreenReceiver.BOOT_SERVICE);
+		sendBroadcast(intent);
+		Log.i("unidevel.UnlockService","onDestroy");
 		super.onDestroy();
+		if(this.lock!=null){
+			this.lock.release();
+			this.lock=null;
+		}
+		SensorManager sm = (SensorManager) getSystemService(SENSOR_SERVICE);
+		sm.unregisterListener(this);
 		if(this.receiver!=null){
 			unregisterReceiver(this.receiver);
 			this.receiver=null;
 		}
-		Intent intent=new Intent(ScreenReceiver.BOOT_SERVICE);
-		sendBroadcast(intent);
-		SensorManager sm = (SensorManager) getSystemService(SENSOR_SERVICE);
-		sm.unregisterListener(this);
 	}
 
 	public void onScreenOn()
 	{
-		if ( lock != null ){
-			lock.release();
-			lock = null;
-		}
 		rd=new LockDetector();
+		if ( this.lock != null ){
+			this.lock.release();
+			this.lock = null;
+		}
 	}
 	
 	public void onSensorChanged(SensorEvent e)
 	{
 		rd.input(e.values[0], e.values[1], e.values[2]);
-		if ( rd.isMatch() ) {
+		if ( rd !=null && rd.isMatch() ) {
 			if ( rd instanceof RotationDetector ){
 				Log.i("unidevel.sensor","screen on");
 				screenOn();
 			}
 			else if ( rd instanceof LockDetector ) {
+				Log.i("unidevel.sensor","screen off");
 				screenOff();
 			}
 		}

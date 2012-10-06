@@ -4,7 +4,7 @@ public class RotationDetector extends AbstractDetector
 	static final float R_THRESHOLD = 10f;
 	static final float R1_THRESHOLD = -60f;
 	static final float R2_THRESHOLD = -35f;
-	static final long INTERVAL=1000;
+	static final long INTERVAL=600;
 
 	int count;
 	int state;
