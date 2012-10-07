@@ -12,6 +12,7 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.util.Log;
 import android.content.*;
+import android.app.*;
 
 public class UnlockService extends Service implements SensorEventListener
 {	
@@ -56,8 +57,6 @@ public class UnlockService extends Service implements SensorEventListener
 	
 	@Override
 	public void onCreate() {
-	//	Intent intent=new Intent(ScreenReceiver.BOOT_SERVICE);
-	//	sendBroadcast(intent);
 		Intent intent=new Intent("com.unidevel.tools.UnlockService");
 		startService(intent);
 		Log.i("unidevel.UnlockService","onCreate");
@@ -87,7 +86,7 @@ public class UnlockService extends Service implements SensorEventListener
 			else{
 				Log.i("unidevel.UnlockService","onStartCommand init with screen on");
 				onScreenOn();
-			}
+			}			
 		}
 		return Service.START_STICKY;
 	}
@@ -99,6 +98,13 @@ public class UnlockService extends Service implements SensorEventListener
 		PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
 		this.lock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, UnlockService.class.getName());
 		this.lock.acquire();
+		
+		Notification n = new Notification(R.drawable.ic_launcher,"Unlocking",System.currentTimeMillis());
+		Intent i=new Intent();
+		PendingIntent pi=PendingIntent.getActivity(this, 0, i, 0);
+		n.setLatestEventInfo(this, "aUnlocker","waiting for screen on",pi);
+		n.flags|=Notification.FLAG_NO_CLEAR;
+		this.startForeground(1,n);
 	}
 	
 	@Override
@@ -126,6 +132,7 @@ public class UnlockService extends Service implements SensorEventListener
 			this.lock.release();
 			this.lock = null;
 		}
+		this.stopForeground(true);
 	}
 	
 	public void onSensorChanged(SensorEvent e)
