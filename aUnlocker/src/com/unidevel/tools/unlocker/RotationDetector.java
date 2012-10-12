@@ -12,7 +12,7 @@ public class RotationDetector extends AbstractDetector
 
 	public RotationDetector()
 	{
-		this.state = 0;
+		this.state = -1;
 	}
 	
 	public void input(float x, float y, float z)
@@ -41,6 +41,9 @@ public class RotationDetector extends AbstractDetector
 					state = 2;
 					return;
 				}
+			}
+			else {
+				state=-1;
 			}
 		}
 		else{
@@ -113,7 +116,7 @@ public class RotationDetector extends AbstractDetector
 
 	public boolean isMatch()
 	{
-		return state >=2;
+		return state ==2;
 	}
 
 	public String toString()
