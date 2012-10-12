@@ -148,7 +148,7 @@ public class TicketBotBMNH extends Activity implements OnClickListener,
 
 		@Override
 		protected String getURL() {
-			return "http://www.bmnh.org.cn/web/TicketInfo/TicketAddAction.jsp";
+			return "http://211.103.239.83:8090/tb/app/add.jsp";
 		}
 
 		public String getTicket() {
