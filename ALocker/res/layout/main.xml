@@ -3,7 +3,7 @@
     android:orientation="vertical"
     android:layout_height="wrap_content"
 	android:layout_width="match_parent">
-	
+
     <LinearLayout
         android:id="@+id/adLayout"
         android:layout_width="match_parent"
@@ -11,7 +11,7 @@
         android:orientation="vertical" >
 
     </LinearLayout>
-	
+
     <CheckBox
         android:id="@+id/checkBoot"
         android:layout_width="match_parent"
@@ -31,7 +31,7 @@
         android:id="@+id/unlocker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:orientation="vertical" >
 		<CheckBox
 			android:id="@+id/checkUnlocker"
 			android:layout_width="match_parent"
@@ -39,6 +39,46 @@
 			android:checked="true"
 			android:text="@string/start_unlocker_when_boot"
 			android:textAppearance="?android:attr/textAppearanceLarge" />
+		<LinearLayout
+			android:id="@+id/layoutUnlock"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal" >
+			<ToggleButton
+				android:id="@+id/checkFlipUnlock"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:checked="true"
+				android:textOn="@string/enable"
+				android:textOff="@string/disable"
+				android:textAppearance="?android:attr/textAppearanceLarge" />
+			<TextView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="6dp"
+				android:text="@string/flipUnlock"
+				android:textAppearance="?android:attr/textAppearanceLarge" />
+		</LinearLayout>
+		<LinearLayout
+			android:id="@+id/layoutLock"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal" >
+			<ToggleButton
+				android:id="@+id/checkFlipLock"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:checked="true"
+				android:textOn="@string/enable"
+				android:textOff="@string/disable"
+				android:textAppearance="?android:attr/textAppearanceLarge" />
+			<TextView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="6dp"
+				android:text="@string/flipLock"
+				android:textAppearance="?android:attr/textAppearanceLarge" />
+		</LinearLayout>
 		<TextView
 			android:id="@+id/textDownloadUnlocker"
 			android:layout_width="match_parent"
@@ -47,27 +87,27 @@
 			android:text="Large Text"
 			android:textAppearance="?android:attr/textAppearanceLarge" />
 	</LinearLayout>
-    
+
     <LinearLayout
         android:id="@+id/slot1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
-    <ImageView
-        android:id="@+id/imageSlot1"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-		android:layout_marginLeft="10dp"
-		android:layout_marginRight="10dp"
-        android:src="@drawable/plus" />
+		<ImageView
+			android:id="@+id/imageSlot1"
+			android:layout_width="40dp"
+			android:layout_height="40dp"
+			android:layout_marginLeft="10dp"
+			android:layout_marginRight="10dp"
+			android:src="@drawable/plus" />
 
-    <TextView
-        android:id="@+id/textSlot1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
-        android:text="Large Text"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+		<TextView
+			android:id="@+id/textSlot1"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="6dp"
+			android:text="Large Text"
+			android:textAppearance="?android:attr/textAppearanceLarge" />
 
 	</LinearLayout>
 	<TextView

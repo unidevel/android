@@ -13,6 +13,10 @@
     <string name="btnVolDown"><![CDATA[Volume-]]></string>
     <string name="btnYes">Yes</string>
     <string name="btnNo">No</string>
+    <string name="enable">Enable</string>
+    <string name="disable">Disable</string>
+    <string name="flipLock">Flip lock</string>
+    <string name="flipUnlock">Hold unlock</string>
     <string name="titleReboot">Reboot</string>
 	<string name="start_when_boot">Start aLocker when boot</string>
 	<string name="start_unlocker_when_boot">Start aUnlocker when boot</string>

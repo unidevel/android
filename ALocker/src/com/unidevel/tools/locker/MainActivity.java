@@ -9,6 +9,7 @@ import android.os.*;
 import android.preference.*;
 import android.text.*;
 import android.text.util.*;
+import android.util.*;
 import android.view.*;
 import android.widget.*;
 import android.widget.CompoundButton.*;
@@ -31,7 +32,8 @@ public class MainActivity extends Activity
 
 		TextView changelog=(TextView) findViewById(R.id.changelog);
 		changelog.setText(Html.fromHtml(getString(R.string.changelog)));
-		showNotify(this);
+		if(pref.getBoolean("boot",true))
+			showNotify(this);
 		CheckBox box=(CheckBox) this.findViewById(R.id.checkBoot);
 		box.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
 
@@ -39,6 +41,13 @@ public class MainActivity extends Activity
 				{
 					SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
 					pref.edit().putBoolean("boot",value).commit();
+					if(value){
+						showNotify(ctx);
+					}
+					else{
+						NotificationManager nm=(NotificationManager) ctx.getSystemService(NOTIFICATION_SERVICE);
+						nm.cancel(1);
+					}
 				}
 			
 		});
@@ -58,14 +67,46 @@ public class MainActivity extends Activity
 			});
 		}
 		box=(CheckBox) this.findViewById(R.id.checkUnlocker);
+		box.setChecked(pref.getBoolean("unlock",true));
+		
 		box.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
 
 				public void onCheckedChanged(CompoundButton button, boolean value)
 				{
 					SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
 					pref.edit().putBoolean("unlock",value).commit();
+					if(value){
+						stopUnlocker(ctx);
+					}
+					else{
+						startUnlocker(ctx);
+					}
 				}
 			});
+		
+		ToggleButton button=(ToggleButton) this.findViewById(R.id.checkFlipLock);
+		button.setChecked(pref.getBoolean("aunlocker.lock",false));
+		button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+				public void onCheckedChanged(CompoundButton button, boolean value)
+				{
+					pref.edit().putBoolean("aunlocker.lock",value).commit();
+					stopUnlocker(ctx);
+					startUnlocker(ctx);
+				}
+		});
+		
+		button=(ToggleButton) this.findViewById(R.id.checkFlipUnlock);
+		button.setChecked(pref.getBoolean("aunlocker.unlock",true));
+		button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+				public void onCheckedChanged(CompoundButton button, boolean value)
+				{
+					pref.edit().putBoolean("aunlocker.unlock",value).commit();
+					stopUnlocker(ctx);
+					startUnlocker(ctx);
+				}
+			});
+		
+		
 		TextView link=(TextView) findViewById(R.id.textDownloadUnlocker);
 		link.setAutoLinkMask(Linkify.ALL);
 		link.setText(Html.fromHtml(getString(R.string.download_unlocker)));
@@ -94,14 +135,12 @@ public class MainActivity extends Activity
 		else 
 			image.setImageResource(R.drawable.app);
 		View.OnClickListener l =new View.OnClickListener(){
-
 			public void onClick(View view)
 			{
 				Intent i=new Intent(ctx,AppListActivity.class);
 			//	Intent i=new Intent(Intent.ACTION_ALL_APPS);
 				startActivityForResult(i,0);
 			}
-
 		};
 		
 		image.setOnClickListener(l);
@@ -110,13 +149,21 @@ public class MainActivity extends Activity
 	
 	public void onResume(){
 		super.onResume();
+		final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
+
 		if(checkUnlocker(this)){
 			findViewById(R.id.checkUnlocker).setVisibility(View.VISIBLE);
+			findViewById(R.id.layoutLock).setVisibility(View.VISIBLE);
+			findViewById(R.id.layoutUnlock).setVisibility(View.VISIBLE);
 			findViewById(R.id.textDownloadUnlocker).setVisibility(View.GONE);
-			startUnlocker(ctx);
+			if(pref.getBoolean("unlock",true)){
+				startUnlocker(ctx);
+			}
 		}
 		else{
 			findViewById(R.id.checkUnlocker).setVisibility(View.GONE);
+			findViewById(R.id.layoutLock).setVisibility(View.GONE);
+			findViewById(R.id.layoutUnlock).setVisibility(View.GONE);
 			findViewById(R.id.textDownloadUnlocker).setVisibility(View.VISIBLE);
 		}
 	}
@@ -288,6 +335,12 @@ public class MainActivity extends Activity
 
 	public static void startUnlocker(Context ctx){
 		Intent intent=new Intent(UNLOCKER_SERVICE);
+		final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
+		boolean lock= pref.getBoolean("aunlocker.lock",false);
+		boolean unlock=pref.getBoolean("aunlocker.unlock",true);
+		intent.putExtra("lock",lock);
+		intent.putExtra("unlock",unlock);
+		Log.i("startService","Lock:"+lock+",Unlock:"+unlock);
 		ctx.startService(intent);
 	}
 	

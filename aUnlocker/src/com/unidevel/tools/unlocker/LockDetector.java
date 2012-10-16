@@ -43,6 +43,7 @@ public class LockDetector extends AbstractDetector
 					return;
 				}
 			}
+			else state = 0;
 		}
 		else{
 			state=0;
