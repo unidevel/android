@@ -19,6 +19,9 @@ import com.unidevel.util.*;
 
 public class MainActivity extends Activity
 {
+	public static final String PREF_USE_ROOT = "root";
+	public static final String PREF_START_ALOCKER_WHEN_BOOT = "boot";
+	public static final String PREF_ENABLE_AUNLOCKER = "unlock";
 	MainActivity ctx=this;
 	boolean isRooted = false;
 	public void onCreate(Bundle bundle)
@@ -27,20 +30,40 @@ public class MainActivity extends Activity
 		this.setContentView(R.layout.main);
 		isRooted = RootUtil.isRooted();
 		final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-		boolean useRoot = pref.getBoolean("root", isRooted);
-		pref.edit().putBoolean("root", useRoot).commit();
+		boolean useRoot = pref.getBoolean(PREF_USE_ROOT, isRooted);
+		pref.edit().putBoolean(PREF_USE_ROOT, useRoot).commit();
+		
+		// Option use root to lock
+		((CheckBox)findViewById(R.id.useRoot)).setChecked(useRoot);
+		if ( !isRooted ) findViewById(R.id.useRoot).setEnabled(false);
+		else {
+			findViewById(R.id.useRoot).setEnabled(true);
+			((CheckBox)findViewById(R.id.useRoot)).setOnCheckedChangeListener(new OnCheckedChangeListener(){
 
+				@Override
+				public void onCheckedChanged(CompoundButton button, boolean checked) {
+					pref.edit().putBoolean(PREF_USE_ROOT, checked).commit();
+					showNotify(ctx);
+				}
+			});
+		}
+
+		// ChangeLog
 		TextView changelog=(TextView) findViewById(R.id.changelog);
 		changelog.setText(Html.fromHtml(getString(R.string.changelog)));
-		if(pref.getBoolean("boot",true))
+		
+		// Option start alocker when boot
+		if(pref.getBoolean(PREF_START_ALOCKER_WHEN_BOOT,true))
 			showNotify(this);
+
 		CheckBox box=(CheckBox) this.findViewById(R.id.checkBoot);
+		box.setChecked(pref.getBoolean(PREF_START_ALOCKER_WHEN_BOOT,true));
 		box.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
 
 				public void onCheckedChanged(CompoundButton button, boolean value)
 				{
 					SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-					pref.edit().putBoolean("boot",value).commit();
+					pref.edit().putBoolean(PREF_START_ALOCKER_WHEN_BOOT,value).commit();
 					if(value){
 						showNotify(ctx);
 					}
@@ -51,36 +74,28 @@ public class MainActivity extends Activity
 				}
 			
 		});
+		
+		// Option for shortcut
 		loadSlots();
-		box.setChecked(pref.getBoolean("boot",true));
-		((CheckBox)findViewById(R.id.useRoot)).setChecked(useRoot);
-		if ( !isRooted ) findViewById(R.id.useRoot).setEnabled(false);
-		else {
-			findViewById(R.id.useRoot).setEnabled(true);
-			((CheckBox)findViewById(R.id.useRoot)).setOnCheckedChangeListener(new OnCheckedChangeListener(){
 
-				@Override
-				public void onCheckedChanged(CompoundButton button, boolean checked) {
-					pref.edit().putBoolean("root", checked).commit();
-					showNotify(ctx);
-				}
-			});
-		}
+		// Option enable aUnlock service
 		box=(CheckBox) this.findViewById(R.id.checkUnlocker);
-		box.setChecked(pref.getBoolean("unlock",true));
+		box.setChecked(pref.getBoolean(PREF_ENABLE_AUNLOCKER,true));
 		
 		box.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
 
 				public void onCheckedChanged(CompoundButton button, boolean value)
 				{
 					SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-					pref.edit().putBoolean("unlock",value).commit();
+					pref.edit().putBoolean(PREF_ENABLE_AUNLOCKER,value).commit();
 					if(value){
 						stopUnlocker(ctx);
 					}
 					else{
 						startUnlocker(ctx);
 					}
+					findViewById(R.id.checkFlipLock).setEnabled(value);
+					findViewById(R.id.checkFlipUnlock).setEnabled(value);
 				}
 			});
 		
@@ -156,7 +171,7 @@ public class MainActivity extends Activity
 			findViewById(R.id.layoutLock).setVisibility(View.VISIBLE);
 			findViewById(R.id.layoutUnlock).setVisibility(View.VISIBLE);
 			findViewById(R.id.textDownloadUnlocker).setVisibility(View.GONE);
-			if(pref.getBoolean("unlock",true)){
+			if(pref.getBoolean(PREF_ENABLE_AUNLOCKER,true)){
 				startUnlocker(ctx);
 			}
 		}
@@ -212,7 +227,7 @@ public class MainActivity extends Activity
 	public static void showNotifyForSDK11(Context ctx)
 	{
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-		boolean isRooted = pref.getBoolean("root", false);
+		boolean isRooted = pref.getBoolean(PREF_USE_ROOT, false);
 		
 		NotificationManager nm=(NotificationManager) ctx.getSystemService(NOTIFICATION_SERVICE);
 		nm.cancel(1);

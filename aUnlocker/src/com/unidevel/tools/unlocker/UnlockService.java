@@ -1,8 +1,12 @@
 package com.unidevel.tools.unlocker;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -10,10 +14,8 @@ import android.hardware.SensorManager;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
+import android.preference.PreferenceManager;
 import android.util.Log;
-import android.content.*;
-import android.app.*;
-import android.preference.*;
 
 public class UnlockService extends Service implements SensorEventListener
 {	
@@ -91,12 +93,14 @@ public class UnlockService extends Service implements SensorEventListener
 	public int onStartCommand(Intent intent, int flags, int startId)
 	{
 		Log.i("unidevel.UnlockService", "onStartCommand");
-		boolean lock=intent.getBooleanExtra("lock", false);
-		boolean unlock=intent.getBooleanExtra("unlock", true);
-		SharedPreferences pref=PreferenceManager.getDefaultSharedPreferences(this);
-		pref.edit().putBoolean("aunlocker.lock", lock).commit();
-		pref.edit().putBoolean("aunlocker.unlock", unlock).commit();
-
+		if ( intent.hasExtra("lock") && intent.hasExtra("unlock") )
+		{
+			boolean lock=intent.getBooleanExtra("lock", false);
+			boolean unlock=intent.getBooleanExtra("unlock", true);
+			SharedPreferences pref=PreferenceManager.getDefaultSharedPreferences(this);
+			pref.edit().putBoolean("aunlocker.lock", lock).commit();
+			pref.edit().putBoolean("aunlocker.unlock", unlock).commit();
+		}
 		if (this.receiver == null)
 		{
 			Log.i("unidevel.UnlockService", "onStartCommand.registerReceiver");
@@ -210,14 +214,17 @@ public class UnlockService extends Service implements SensorEventListener
 		}
 		else
 		{
-			Log.i("onScreenOn", "lock enabled");
+			Log.i("onScreenOn", "lock disabled");
 			this.stopDetector();
 		}
 	}
 
 	public void onSensorChanged(SensorEvent e)
 	{
-		rd.input(e.values[0], e.values[1], e.values[2]);
+		if ( !isDetectorStarted ) return;
+		AbstractDetector rd = this.rd;
+		if ( rd != null ) rd.input(e.values[0], e.values[1], e.values[2]);
+		else return;
 		if (rd != null && rd.isMatch())
 		{
 			if (rd instanceof RotationDetector)
