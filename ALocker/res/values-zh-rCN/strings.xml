@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">一键锁屏设置</string>
+    <string name="app_name">快捷锁屏设置</string>
     <string name="widgetLock">一键关屏</string>
     <string name="widgetReboot">二键工具</string>
     <string name="labelReboot">真的要重启?</string>
