@@ -8,6 +8,7 @@ import android.graphics.drawable.*;
 import android.os.*;
 import android.preference.*;
 import android.text.*;
+import android.text.method.*;
 import android.text.util.*;
 import android.util.*;
 import android.view.*;
@@ -80,7 +81,10 @@ public class MainActivity extends Activity
 
 		// Option enable aUnlock service
 		box=(CheckBox) this.findViewById(R.id.checkUnlocker);
-		box.setChecked(pref.getBoolean(PREF_ENABLE_AUNLOCKER,true));
+		boolean aUnlockerEnabled=pref.getBoolean(PREF_ENABLE_AUNLOCKER,true);
+		box.setChecked(aUnlockerEnabled);
+		findViewById(R.id.checkFlipLock).setEnabled(aUnlockerEnabled);
+		findViewById(R.id.checkFlipUnlock).setEnabled(aUnlockerEnabled);
 		
 		box.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
 
@@ -89,10 +93,10 @@ public class MainActivity extends Activity
 					SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
 					pref.edit().putBoolean(PREF_ENABLE_AUNLOCKER,value).commit();
 					if(value){
-						stopUnlocker(ctx);
+						startUnlocker(ctx);
 					}
 					else{
-						startUnlocker(ctx);
+						stopUnlocker(ctx);
 					}
 					findViewById(R.id.checkFlipLock).setEnabled(value);
 					findViewById(R.id.checkFlipUnlock).setEnabled(value);
@@ -126,6 +130,10 @@ public class MainActivity extends Activity
 		link.setAutoLinkMask(Linkify.ALL);
 		link.setText(Html.fromHtml(getString(R.string.download_unlocker)));
 		
+		link=(TextView) findViewById(R.id.changelog);
+		//link.setAutoLinkMask(Linkify.ALL);
+		//link.setText(Html.fromHtml(getString(R.string.changelog)));
+		link.setMovementMethod	(LinkMovementMethod.getInstance ());
 		//ALocker a1505c63891818d
 		AdView adView = new AdView(this, AdSize.BANNER, "a1505c63891818d"); 
 		LinearLayout layout = (LinearLayout) findViewById(R.id.adLayout); 

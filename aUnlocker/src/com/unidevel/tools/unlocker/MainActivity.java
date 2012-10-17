@@ -10,14 +10,14 @@ import javax.microedition.khronos.egl.*;
 import javax.microedition.khronos.opengles.*;
 import android.widget.*;
 
-public class MainActivity extends Activity implements SensorEventListener {
-	float x,y,z;
+public class MainActivity extends Activity{// implements SensorEventListener {
+/*	float x,y,z;
 	float pi=3.14159f;
 	public void onSensorChanged(SensorEvent e)
 	{
-		y= e.values[0];//*pi/360f;
-		z= e.values[1];//*pi/360f;
-		x= 90+e.values[2];//*pi/360f;
+		y= e.values[0];
+		z= e.values[1];
+		x= 90+e.values[2];
 		glView.invalidate();
 		rd.input(e.values[0],e.values[1],e.values[2]);
 		msg("x:"+x+", y:"+y+", z:"+z+",e0:"+e.values[0]+",e1:"+e.values[1]+",e2:"+e.values[2]+",rd:"+rd);//+"\nState:"+rd);
@@ -204,5 +204,5 @@ public class MainActivity extends Activity implements SensorEventListener {
 	
 	public void msg(String s){
 		view.setText(s);
-	}
+	}*/
 }

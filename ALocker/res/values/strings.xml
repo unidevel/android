@@ -18,17 +18,18 @@
     <string name="flipLock">Flip lock</string>
     <string name="flipUnlock">Hold unlock</string>
     <string name="titleReboot">Reboot</string>
-	<string name="start_when_boot">Start aLocker when boot</string>
-	<string name="start_unlocker_when_boot">Start aUnlocker when boot</string>
+	<string name="start_when_boot">Show aLocker on Status Bar</string>
+	<string name="start_unlocker_when_boot">Turn on/Lock screen automatically</string>
 	<string name="use_root">Use root for locking</string>    
     <string name="add_shortcut">Add shortcut</string>
 	<string name="lock_admin">ALocker</string>
 	<string name="lock_admin_description">Lock device</string>
 	<string name="download_unlocker"><![CDATA[Download aUnlocker:http://t.cn/zl4yktG]]></string>
 	<string name="changelog"><![CDATA[
-		<center>Version: 1.6</center><br/>
+		<center>Version: 1.7</center><br/>
 		<b>ChangeLog:</b><br/>
 		<ul>
+		<li>1.7 Add more options for turn-on/lock screen, improve battery usage.</li><br/>
 		<li>1.6 Add lock activity, fix screen turn-on issue on some conditions</li><br/>
 		<li>1.5 Add turn-on screen plugin, free the power button. </li><br/>
 		USAGE: Hold your pad in portrait mode about 45 degree, then screen will turn on automatically</li><br/>

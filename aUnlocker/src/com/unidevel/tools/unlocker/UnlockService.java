@@ -16,6 +16,7 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.inputmethod.*;
 
 public class UnlockService extends Service implements SensorEventListener
 {	
@@ -71,8 +72,11 @@ public class UnlockService extends Service implements SensorEventListener
 	@Override
 	public void onCreate()
 	{
-		Intent intent=new Intent("com.unidevel.tools.UnlockService");
-		startService(intent);
+		Intent intent=new Intent(ScreenReceiver.BOOT_SERVICE);
+		sendBroadcast(intent);
+		
+	//	Intent intent=new Intent("com.unidevel.tools.UnlockService");
+	//	startService(intent);
 		Log.i("unidevel.UnlockService", "onCreate");
 		super.onCreate();
 	}
@@ -93,13 +97,17 @@ public class UnlockService extends Service implements SensorEventListener
 	public int onStartCommand(Intent intent, int flags, int startId)
 	{
 		Log.i("unidevel.UnlockService", "onStartCommand");
-		if ( intent.hasExtra("lock") && intent.hasExtra("unlock") )
+		if ( intent!=null&&intent.hasExtra("lock") && intent.hasExtra("unlock") )
 		{
 			boolean lock=intent.getBooleanExtra("lock", false);
 			boolean unlock=intent.getBooleanExtra("unlock", true);
 			SharedPreferences pref=PreferenceManager.getDefaultSharedPreferences(this);
-			pref.edit().putBoolean("aunlocker.lock", lock).commit();
-			pref.edit().putBoolean("aunlocker.unlock", unlock).commit();
+			if(pref!=null){
+				SharedPreferences.Editor edit=pref.edit();
+				edit.putBoolean("aunlocker.lock", lock);
+				edit.putBoolean("aunlocker.unlock", unlock);
+				edit.commit();
+			}
 		}
 		if (this.receiver == null)
 		{
@@ -166,8 +174,8 @@ public class UnlockService extends Service implements SensorEventListener
 	@Override
 	public void onDestroy()
 	{
-		Intent intent=new Intent(ScreenReceiver.BOOT_SERVICE);
-		sendBroadcast(intent);
+	//	Intent intent=new Intent(ScreenReceiver.BOOT_SERVICE);
+	//	sendBroadcast(intent);
 		Log.i("unidevel.UnlockService", "onDestroy");
 		super.onDestroy();
 		if (this.lock != null)
@@ -181,6 +189,7 @@ public class UnlockService extends Service implements SensorEventListener
 			unregisterReceiver(this.receiver);
 			this.receiver = null;
 		}
+		System.exit(0);
 	}
 
 	private void stopDetector()

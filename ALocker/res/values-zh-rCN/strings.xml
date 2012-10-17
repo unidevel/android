@@ -26,9 +26,10 @@
 	<string name="lock_admin_description">锁定设备</string>    
 	<string name="download_unlocker"><![CDATA[下载自动亮屏:http://t.cn/zl4yktG]]></string>
 	<string name="changelog"><![CDATA[
-		<center>版本: 1.6</center><br/>
+		<center>版本: 1.7</center><br/>
 		<b>更新日志:</b><br/>
 		<ul>
+		<li>1.7 增加自动解锁自动锁定选项，减少电池损耗</li><br/>
 		<li>1.6 增加了一个单独的锁屏程序入口，可以拖动到桌面直接锁屏，修复部分情况无法点亮的问题</li><br/>
 		<li>1.5 增加自动点亮屏幕插件，彻底解放电源键<br/>
 		使用说明：竖向把握Pad到正常使的角度（45度左右）1秒左右即可点亮屏幕</li><br/>
@@ -38,7 +39,7 @@
 		<li>1.1 增加对非ROOT设备锁屏的支持</li>	<br/>	
 		<li>1.0 支持ROOT设备的锁屏和关机</li><br/>
 		</ul><br/>
-		<b>问题报告:@unidevel</b><br/>
+		<b>问题报告:<a href="http://weibo.com/unidevel">@unidevel</a></b><br/>
 		<b>捐助:</b><br/>
 		本程序永久免费，如果你喜欢这个程序，请帮忙点击广告（最好在wifi环境下），多谢支持！
 	]]></string>
