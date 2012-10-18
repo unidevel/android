@@ -152,6 +152,7 @@ public class UnlockService extends Service implements SensorEventListener
 		{
 			Log.i("onScreenOff", "unlock enabled");
 			rd = new RotationDetector();
+			rd.setStamp(System.currentTimeMillis()+TIMEOUT);
 			this.startDetector();
 			PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
 			this.lock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, UnlockService.class.getName());

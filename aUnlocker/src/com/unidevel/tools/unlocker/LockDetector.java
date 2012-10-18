@@ -9,7 +9,6 @@ public class LockDetector extends AbstractDetector
 
 	int count;
 	int state;
-	long stamp;
 
 	public LockDetector()
 	{
@@ -20,11 +19,11 @@ public class LockDetector extends AbstractDetector
 	{
 		if (state == 0)
 		{
-			stamp = System.currentTimeMillis();
+			updateStamp();
 		}
 		if (z > R_THRESHOLD || z < -R_THRESHOLD)
 		{
-			stamp = System.currentTimeMillis();
+			updateStamp();
 			state = 0;
 			return;
 		}
@@ -33,7 +32,7 @@ public class LockDetector extends AbstractDetector
 		{
 			if (state == 0)
 			{
-				stamp = now;
+				updateStamp();
 				state = 1;
 				return;
 			}
@@ -47,7 +46,7 @@ public class LockDetector extends AbstractDetector
 		}
 		else{
 			state=0;
-			stamp=now;
+			updateStamp();
 		}
 	}
 	public boolean isMatch()

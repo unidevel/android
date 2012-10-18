@@ -1,17 +1,13 @@
 package com.unidevel.tools.locker;
 
-import android.app.Activity;
-import android.app.NotificationManager;
-import android.app.admin.DevicePolicyManager;
-import android.content.ComponentName;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-
-import com.unidevel.util.DialogUtil;
-import com.unidevel.util.RootUtil;
+import android.app.*;
+import android.app.admin.*;
+import android.content.*;
 import android.media.*;
+import android.os.*;
+import android.preference.*;
+import android.view.*;
+import com.unidevel.util.*;
 
 public class ActionActivity extends Activity {
 	public static final int ACTION_LOCK = 1;
@@ -38,6 +34,12 @@ public class ActionActivity extends Activity {
 		this.isRooted = pref.getBoolean("root", false);
 		switch (actId) {
 		case ACTION_LOCK:
+			{
+				Window w=this.getWindow();
+				w.setFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND,
+						   WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+				w.setDimAmount(1.0f);
+			}
 			if ( this.isRooted ) lockRoot();
 			else lockNonRoot();
 			break;
