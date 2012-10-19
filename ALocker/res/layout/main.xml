@@ -19,7 +19,15 @@
         android:checked="true"
         android:text="@string/start_when_boot"
         android:textAppearance="?android:attr/textAppearanceLarge" />
-
+    <CheckBox
+        android:id="@+id/checkClose"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checked="true"
+		android:layout_marginLeft="20dp"
+        android:text="@string/show_close_button"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+	
     <CheckBox
         android:id="@+id/useRoot"
         android:layout_width="match_parent"

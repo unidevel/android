@@ -17,11 +17,7 @@ public class LockActivity extends Activity
 		if(pref.getBoolean("unlock",true)&&MainActivity.checkUnlocker(this)){
 			MainActivity.startUnlocker(this);
 		}
-		
-		Intent i = new Intent(this, ActionActivity.class);
-		i.putExtra("action", ActionActivity.ACTION_LOCK);
-		i.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-		startActivity(i);
-		this.finish();
+		ActionActivity.lock(this);
+		finish();
 	}
 }

@@ -18,7 +18,9 @@
     <string name="flipLock">Flip lock</string>
     <string name="flipUnlock">Hold unlock</string>
     <string name="titleReboot">Reboot</string>
+	<string name="alertdpm">To enable lock, you need activate this app in device polocy manager.</string>
 	<string name="start_when_boot">Show aLocker on Status Bar</string>
+	<string name="show_close_button">Show "Close" button</string>
 	<string name="start_unlocker_when_boot">Turn on/Lock screen automatically</string>
 	<string name="use_root">Use root for locking</string>    
     <string name="add_shortcut">Add shortcut</string>

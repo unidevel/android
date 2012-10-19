@@ -15,10 +15,12 @@
     <string name="btnNo">否</string>
     <string name="enable">启用</string>
     <string name="disable">禁用</string>
+	<string name="alertdpm">首次运行需要将本程序设置激活为设备管理器.</string>
     <string name="flipLock">翻转自动锁屏</string>
     <string name="flipUnlock">Hold自动亮屏</string>
     <string name="titleReboot">重启</string>
 	<string name="start_when_boot">启用状态栏一键锁屏</string>
+	<string name="show_close_button">显示关闭按钮</string>
 	<string name="start_unlocker_when_boot">启用自动亮屏自动锁屏</string>
 	<string name="use_root">使用ROOT模式锁屏(支持关机)</string>
 	<string name="add_shortcut">添加快捷方式</string>

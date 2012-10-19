@@ -23,6 +23,7 @@ public class MainActivity extends Activity
 	public static final String PREF_USE_ROOT = "root";
 	public static final String PREF_START_ALOCKER_WHEN_BOOT = "boot";
 	public static final String PREF_ENABLE_AUNLOCKER = "unlock";
+	public static final String PREF_SHOW_CLOSE_BUTTON = "show_close";
 	MainActivity ctx=this;
 	boolean isRooted = false;
 	public void onCreate(Bundle bundle)
@@ -33,6 +34,7 @@ public class MainActivity extends Activity
 		final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
 		boolean useRoot = pref.getBoolean(PREF_USE_ROOT, isRooted);
 		pref.edit().putBoolean(PREF_USE_ROOT, useRoot).commit();
+		enableShutdownApp(ctx,useRoot);
 		
 		// Option use root to lock
 		((CheckBox)findViewById(R.id.useRoot)).setChecked(useRoot);
@@ -45,6 +47,7 @@ public class MainActivity extends Activity
 				public void onCheckedChanged(CompoundButton button, boolean checked) {
 					pref.edit().putBoolean(PREF_USE_ROOT, checked).commit();
 					showNotify(ctx);
+					enableShutdownApp(ctx,checked);
 				}
 			});
 		}
@@ -54,9 +57,12 @@ public class MainActivity extends Activity
 		changelog.setText(Html.fromHtml(getString(R.string.changelog)));
 		
 		// Option start alocker when boot
-		if(pref.getBoolean(PREF_START_ALOCKER_WHEN_BOOT,true))
+		boolean showOnStatus=pref.getBoolean(PREF_START_ALOCKER_WHEN_BOOT,true);
+		if(showOnStatus){
 			showNotify(this);
-
+		}
+		findViewById(R.id.checkClose).setEnabled(showOnStatus);
+		
 		CheckBox box=(CheckBox) this.findViewById(R.id.checkBoot);
 		box.setChecked(pref.getBoolean(PREF_START_ALOCKER_WHEN_BOOT,true));
 		box.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
@@ -72,9 +78,25 @@ public class MainActivity extends Activity
 						NotificationManager nm=(NotificationManager) ctx.getSystemService(NOTIFICATION_SERVICE);
 						nm.cancel(1);
 					}
+					findViewById(R.id.checkClose).setEnabled(value);
 				}
 			
 		});
+		
+		//Show close button
+		box=(CheckBox) this.findViewById(R.id.checkClose);
+		box.setChecked(pref.getBoolean(PREF_SHOW_CLOSE_BUTTON,true));
+		box.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+
+				public void onCheckedChanged(CompoundButton button, boolean value)
+				{
+					SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
+					pref.edit().putBoolean(PREF_SHOW_CLOSE_BUTTON,value).commit();
+					showNotify(ctx);
+				}
+
+			});
+		
 		
 		// Option for shortcut
 		loadSlots();
@@ -315,14 +337,21 @@ public class MainActivity extends Activity
 			view.setViewVisibility(R.id.slot1,View.GONE);
 		}
 		
+		boolean showClose=pref.getBoolean(PREF_SHOW_CLOSE_BUTTON,true);
+		if(showClose)
 		{
+			view.setViewVisibility(R.id.labelCancel, View.VISIBLE);
+			
 			Intent i = new Intent(ctx, ActionActivity.class);
 			i.putExtra("action", ActionActivity.ACTION_CANCEL);
 			i.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 			PendingIntent pi = PendingIntent.getActivity(ctx, id++, i, 0);
 			view.setOnClickPendingIntent(R.id.labelCancel, pi);
 		}	
-		
+		else
+		{
+			view.setViewVisibility(R.id.labelCancel, View.GONE);
+		}
 		n.contentView = view;
 		nm.notify(1, n);
 	}
@@ -370,5 +399,24 @@ public class MainActivity extends Activity
 	public static void stopUnlocker(Context ctx){
 		Intent intent=new Intent(UNLOCKER_SERVICE);
 		ctx.stopService(intent);
+	}
+	
+	public static void enableShutdownApp(Context ctx, boolean isEnabled){
+		PackageManager pm=ctx.getPackageManager();
+		ActivityInfo info=null;
+		ComponentName name=new ComponentName(ctx,PowerActivity.class);
+		try
+		{
+			info=pm.getActivityInfo(name, PackageManager.GET_META_DATA);
+		}
+		catch (PackageManager.NameNotFoundException e)
+		{}
+		if (isEnabled&&info==null)
+		{
+			pm.setComponentEnabledSetting(name,PackageManager.COMPONENT_ENABLED_STATE_ENABLED,PackageManager.DONT_KILL_APP);
+		}
+		else if(!isEnabled&&info!=null){
+			pm.setComponentEnabledSetting(name,PackageManager.COMPONENT_ENABLED_STATE_DISABLED,PackageManager.DONT_KILL_APP);
+		}
 	}
 }

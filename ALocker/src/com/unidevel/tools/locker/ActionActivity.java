@@ -40,8 +40,7 @@ public class ActionActivity extends Activity {
 						   WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 				w.setDimAmount(1.0f);
 			}
-			if ( this.isRooted ) lockRoot();
-			else lockNonRoot();
+			lock(this);
 			break;
 		case ACTION_SHUTDOWN:
 			shutdown();
@@ -91,7 +90,7 @@ public class ActionActivity extends Activity {
 		RootUtil.run(cmd);
 	}
 	
-	private void lockRoot() {
+	private static void lockRoot() {
 		String cmd = "sendevent /dev/input/event1 1 116 1\n"+
 				"sendevent /dev/input/event1 0 0 0\n"+
 				"sendevent /dev/input/event1 1 116 0\n"+
@@ -105,13 +104,22 @@ public class ActionActivity extends Activity {
 		nm.cancel(id);
 	}
 
-	public void lockNonRoot() {
+	public static void lock(Context me){
+		SharedPreferences pref;
+		pref = PreferenceManager.getDefaultSharedPreferences(me);
+		boolean isRooted = pref.getBoolean("root", false);
+		if ( isRooted ) lockRoot();
+		else lockNonRoot(me);
+	}
+	
+	private static void lockNonRoot(Context me) {
 		DevicePolicyManager dpm = null;
-		dpm = (DevicePolicyManager) this
+		dpm = (DevicePolicyManager) me
 				.getSystemService(DEVICE_POLICY_SERVICE);
-		ComponentName cn = new ComponentName(this, LockAdminReceiver.class);
+		ComponentName cn = new ComponentName(me, LockAdminReceiver.class);
 		if (!dpm.isAdminActive(cn)) {
-			dialogs.alert("首次允许需要将本程序设置激活为设备管理器.");
+			DialogUtil dialogs=new DialogUtil(me);
+			dialogs.alert(me.getString(R.string.alertdpm));
 			ComponentName dpmSettings = new ComponentName(
 					"com.android.settings",
 					"com.android.settings.DeviceAdminSettings");
@@ -119,7 +127,7 @@ public class ActionActivity extends Activity {
 			intent.setComponent(dpmSettings);
 			intent.setAction("android.intent.action.MAIN");
 			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			startActivity(intent);
+			me.startActivity(intent);
 			return;
 		}
 		if (dpm != null) {
