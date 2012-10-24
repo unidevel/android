@@ -28,9 +28,11 @@
 	<string name="lock_admin_description">Lock device</string>
 	<string name="download_unlocker"><![CDATA[Download aUnlocker:http://t.cn/zl4yktG]]></string>
 	<string name="changelog"><![CDATA[
-		<center>Version: 1.7</center><br/>
+		<center>Version: 1.8</center><br/>
+		<center>Last update: 2012/10/20</center><br/>
 		<b>ChangeLog:</b><br/>
 		<ul>
+		<li>1.8 Add shortcut for shutdown, fix some defects.</li><br/>
 		<li>1.7 Add more options for turn-on/lock screen, improve battery usage.</li><br/>
 		<li>1.6 Add lock activity, fix screen turn-on issue on some conditions</li><br/>
 		<li>1.5 Add turn-on screen plugin, free the power button. </li><br/>

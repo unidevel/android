@@ -2,31 +2,46 @@ package com.unidevel.tools.unlocker;
 
 import android.app.*;
 import android.content.*;
+import android.content.res.*;
 import android.hardware.*;
 import android.opengl.*;
 import android.os.*;
+import android.widget.*;
 import java.nio.*;
 import javax.microedition.khronos.egl.*;
 import javax.microedition.khronos.opengles.*;
-import android.widget.*;
+import android.util.*;
 
-public class MainActivity extends Activity{// implements SensorEventListener {
-/*	float x,y,z;
+public class MainActivity extends Activity implements SensorEventListener {
+	float x,y,z;
 	float pi=3.14159f;
 	public void onSensorChanged(SensorEvent e)
 	{
-		y= e.values[0];
-		z= e.values[1];
-		x= 90+e.values[2];
+		z= e.values[0];
+		y= e.values[1];
+		x= -90-e.values[2];
 		glView.invalidate();
 		rd.input(e.values[0],e.values[1],e.values[2]);
-		msg("x:"+x+", y:"+y+", z:"+z+",e0:"+e.values[0]+",e1:"+e.values[1]+",e2:"+e.values[2]+",rd:"+rd);//+"\nState:"+rd);
+		msg("mode:"+mode+",x:"+x+", y:"+y+", z:"+z+",e0:"+e.values[0]+",e1:"+e.values[1]+",e2:"+e.values[2]+",rd:"+rd);//+"\nState:"+rd);
 	}
 
 	public void onAccuracyChanged(Sensor s, int v)
 	{
+		
 	}
 	
+	public void onConfigurationChanged(Configuration config){
+		this.orientation = config.orientation;
+		if(config.orientation==Configuration.ORIENTATION_PORTRAIT){
+			mode=0;
+		}
+		else{
+			mode=1;
+		}
+		Log.i("orientation",""+config.orientation);
+	}
+	
+	int orientation;
 	TextView view;
 	GLSurfaceView glView;
 	SensorManager sm;
@@ -34,6 +49,7 @@ public class MainActivity extends Activity{// implements SensorEventListener {
 	RotationDetector rd;
 	MyRenderer renderer;
 	int mode=0;
+	float unlockX,unlockY,unlockZ;
 	
 	class MyRenderer implements GLSurfaceView.Renderer
 	{
@@ -94,20 +110,20 @@ public class MainActivity extends Activity{// implements SensorEventListener {
 			return buf;
 		}
 		
-		public void drawPad(GL10 gl)
+		public void drawPad(GL10 gl,float r,float g,float b,float a)
 		{
 			shape.position(0);
 			gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
-			gl.glColor4f(0.7f,0.7f,0.7f,1.0f);
+			gl.glColor4f(r,g,b,a);
 			gl.glVertexPointer(3, GL10.GL_FLOAT, 0, shape);
 			gl.glDrawArrays(GL10.GL_TRIANGLE_FAN, 0,4);
-		//	gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
+			//gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
 			
 			//shape.position(12);
 			//gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
-			gl.glColor4f(0.5f,0.5f,0.9f,1.0f);
+			//gl.glColor4f(0.5f,0.5f,0.9f,1.0f);
 			//gl.glVertexPointer(3, GL10.GL_FLOAT, 0, shape);
-			gl.glDrawArrays(GL10.GL_TRIANGLE_FAN, 4,4);
+			//gl.glDrawArrays(GL10.GL_TRIANGLE_FAN, 4,4);
 			gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
 		}
 		
@@ -128,21 +144,32 @@ public class MainActivity extends Activity{// implements SensorEventListener {
 			gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT); 
 			gl.glLoadIdentity();
 			
-			gl.glTranslatef(2.0f,2.0f,-8.0f);
+			gl.glTranslatef(0.0f,0.0f,-3.0f);
 			
-			drawGround(gl);
+		//	drawGround(gl);
 			
 			//gl.glRotatef(-x,-y,-z,1.0f);
 			//gl.glRotatef(y,0.0f,1.0f,0.0f);
 			if(mode==0)
-				gl.glRotatef(-x,1.0f,0.0f,0.0f);
+			{
+				gl.glPushMatrix();
+				//portaite
+				gl.glRotatef(x,1.0f,0.0f,0.0f);
+				drawPad(gl,0.7f,0.7f,0.7f,1.0f);
+				
+				gl.glPopMatrix();
+			}
 			else
 			{
-				gl.glRotatef(90.0f,0.0f,0.0f,1.0f);
-				gl.glRotatef(90-z,0.0f,1.0f,0.0f);
+				gl.glPushMatrix();
+
+			//	gl.glRotatef(-90.0f,0.0f,0.0f,1.0f);
+				gl.glRotatef(y,1.0f,0.0f,0.0f);
+				drawPad(gl,0.7f,0.7f,0.7f,1.0f);
+				gl.glPopMatrix();
+				
 			}
 		//	drawGround(gl);
-			drawPad(gl);
 		}
 		
 	}
@@ -172,7 +199,9 @@ public class MainActivity extends Activity{// implements SensorEventListener {
 			
 			param=new LinearLayout.LayoutParams(
 				LinearLayout.LayoutParams.MATCH_PARENT,
-				LinearLayout.LayoutParams.MATCH_PARENT);
+				240);
+			//	LinearLayout.LayoutParams.MATCH_PARENT,
+			//	LinearLayout.LayoutParams.MATCH_PARENT);
 			layout.addView(glView,param);
 		}
 		
@@ -204,5 +233,5 @@ public class MainActivity extends Activity{// implements SensorEventListener {
 	
 	public void msg(String s){
 		view.setText(s);
-	}*/
+	}
 }

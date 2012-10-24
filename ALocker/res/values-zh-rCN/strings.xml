@@ -28,9 +28,11 @@
 	<string name="lock_admin_description">锁定设备</string>    
 	<string name="download_unlocker"><![CDATA[下载自动亮屏:http://t.cn/zl4yktG]]></string>
 	<string name="changelog"><![CDATA[
-		<center>版本: 1.7</center><br/>
+		<center>版本: 1.8</center><br/>
+		<center>更新日期: 2012/10/20</center><br/>
 		<b>更新日志:</b><br/>
 		<ul>
+		<li>1.8 ROOT模式下新增关机快捷方式，修复一些已知问题</li></br>
 		<li>1.7 增加自动解锁自动锁定选项，减少电池损耗</li><br/>
 		<li>1.6 增加了一个单独的锁屏程序入口，可以拖动到桌面直接锁屏，修复部分情况无法点亮的问题</li><br/>
 		<li>1.5 增加自动点亮屏幕插件，彻底解放电源键<br/>
