@@ -14,39 +14,10 @@ import android.util.*;
 
 public class MainActivity extends Activity implements SensorEventListener {
 	float x,y,z;
-	float pi=3.14159f;
-	public void onSensorChanged(SensorEvent e)
-	{
-		z= e.values[0];
-		y= e.values[1];
-		x= -90-e.values[2];
-		glView.invalidate();
-		rd.input(e.values[0],e.values[1],e.values[2]);
-		msg("mode:"+mode+",x:"+x+", y:"+y+", z:"+z+",e0:"+e.values[0]+",e1:"+e.values[1]+",e2:"+e.values[2]+",rd:"+rd);//+"\nState:"+rd);
-	}
-
-	public void onAccuracyChanged(Sensor s, int v)
-	{
-		
-	}
-	
-	public void onConfigurationChanged(Configuration config){
-		this.orientation = config.orientation;
-		if(config.orientation==Configuration.ORIENTATION_PORTRAIT){
-			mode=0;
-		}
-		else{
-			mode=1;
-		}
-		Log.i("orientation",""+config.orientation);
-	}
-	
-	int orientation;
 	TextView view;
 	GLSurfaceView glView;
 	SensorManager sm;
 	Sensor accl;
-	RotationDetector rd;
 	MyRenderer renderer;
 	int mode=0;
 	float unlockX,unlockY,unlockZ;
@@ -163,8 +134,8 @@ public class MainActivity extends Activity implements SensorEventListener {
 			{
 				gl.glPushMatrix();
 
-			//	gl.glRotatef(-90.0f,0.0f,0.0f,1.0f);
-				gl.glRotatef(y,1.0f,0.0f,0.0f);
+				gl.glRotatef(-90.0f,0.0f,0.0f,1.0f);
+				gl.glRotatef(y,0.0f,1.0f,0.0f);
 				drawPad(gl,0.7f,0.7f,0.7f,1.0f);
 				gl.glPopMatrix();
 				
@@ -208,9 +179,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 		
 		setContentView(layout);
 		Intent it=new Intent(this,UnlockService.class);
-		startService(it);
-		rd=new RotationDetector();
-		
+		startService(it);		
 	}
 	public void onResume(){
 		super.onResume();
@@ -225,6 +194,32 @@ public class MainActivity extends Activity implements SensorEventListener {
 		glView.onPause();
 		sm.unregisterListener(this);
 	}
+	public void onSensorChanged(SensorEvent e)
+	{
+		z= e.values[0];
+		y= -90-e.values[1];
+		x= -90-e.values[2];
+		glView.invalidate();
+		msg("mode:"+mode+",x:"+x+", y:"+y+", z:"+z+",e0:"+e.values[0]+",e1:"+e.values[1]+",e2:"+e.values[2]+"");//+"\nState:"+rd);
+	}
+
+	public void onAccuracyChanged(Sensor s, int v)
+	{
+
+	}
+
+	public void onConfigurationChanged(Configuration config){
+		super.onConfigurationChanged(config);
+		if(config.orientation==Configuration.ORIENTATION_PORTRAIT){
+			mode=0;
+		}
+		else{
+			mode=1;
+		}
+		Log.i("orientation",""+config.orientation);
+	}
+
+	
 	
 	public void printf(String fmt, Object... args){
 		String s=String.format(fmt,args);
