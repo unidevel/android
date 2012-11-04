@@ -11,10 +11,10 @@ public class HoldDetector extends AbstractDetector
 
 	public HoldDetector()
 	{
-	//	this.xtor=new HoldComparator(-90.0f, 90.0f);
-	//	this.ytor=new HoldComparator(-180.0f, 180.0f);
-		this.xtor=new HoldComparator(-180.0f, 0.0f);
-		this.ytor=new HoldComparator(-270.0f, 90.0f);
+		this.xtor=new HoldComparator(-90.0f, 90.0f);
+		this.ytor=new HoldComparator(-180.0f, 180.0f);
+	//	this.xtor=new HoldComparator(-180.0f, 0.0f);
+	//	this.ytor=new HoldComparator(-270.0f, 90.0f);
 	}
 
 	public void setCondition(int mode, float value, float delta)
@@ -31,10 +31,12 @@ public class HoldDetector extends AbstractDetector
 	
 	public void input(float x, float y, float z)
 	{
+		/*
 		if(state<0){
 			updateStamp();
 			return;
 		}
+		*/
 		HoldComparator ctor,mtor;
 		float value,fval;
 		if(mode==0){
@@ -77,7 +79,7 @@ public class HoldDetector extends AbstractDetector
 		return state==1;
 	}
 
-	public boolean isInRange(){
+	public boolean inRange(){
 		return state==-1||isMatch();
 	}
 }

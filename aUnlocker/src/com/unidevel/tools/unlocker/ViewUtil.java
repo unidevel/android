@@ -18,6 +18,17 @@ public class ViewUtil
 		this.context=activity;
 	}
 	
+	public LinearView addScrollView(boolean vertical){
+		ScrollView view = new ScrollView(context);
+		if(root==null){
+			((Activity)context).setContentView(view);
+			root=view;
+		}
+		else
+			root.addView(view);
+		return addLinearLayout(vertical);
+	}
+	
 	public LinearView addLinearLayout(boolean vertical){
 		int gravity=Gravity.CENTER;
 		if(vertical)
@@ -37,12 +48,14 @@ public class ViewUtil
 		}
 		else
 			root.addView(layout);
-		return new LinearView(layout);
+		LinearView view = new LinearView(layout);
+		view.parent=this;
+		return view;
 	}
 	
 	public class LinearView extends ViewUtil {
 		LinearLayout layout;
-		
+		ViewUtil parent;
 		public LinearView(LinearLayout layout){
 			super(layout);
 			this.layout=layout;
@@ -77,6 +90,10 @@ public class ViewUtil
 		
 		public LinearLayout layout(){
 			return layout;
+		}
+		
+		public ViewUtil parent(){
+			return parent;
 		}
 	}
 }

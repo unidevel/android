@@ -34,9 +34,9 @@ public class PadRenderer implements GLSurfaceView.Renderer
 		gl.glMatrixMode(GL10.GL_MODELVIEW);
 		gl.glLoadIdentity(); 		
 
-		gl.glFrontFace(GL10.GL_CCW);
-		gl.glCullFace(GL10.GL_BACK);
-		gl.glEnable(GL10.GL_CULL_FACE);
+		//gl.glFrontFace(GL10.GL_CCW);
+		//gl.glCullFace(GL10.GL_BACK);
+		//gl.glEnable(GL10.GL_CULL_FACE);
 	}
 
 	private FloatBuffer createShape(){
@@ -83,10 +83,16 @@ public class PadRenderer implements GLSurfaceView.Renderer
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT); 
 		gl.glLoadIdentity();
 
+		float x=-90.0f-this.x;
+		float y=-90.0f-this.y;
+		
+		if(mode==0 && x<-90.0f)x=-180-x;
+		if(mode==1 && y<-90.0f)y=-180-y;
+		
 		gl.glTranslatef(0.0f,0.0f,-3.0f);
 		float r,g,b,a;
 		r=0.7f;g=0.7f;b=0.7f;a=1.0f;
-		if(detector.isInRange()){
+		if(detector.inRange()){
 			r=0.0f;g=0.7f;b=0.0f;a=1.0f;
 		}
 		if(mode==0)
