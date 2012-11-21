@@ -24,12 +24,13 @@ public class SettingActivity  extends Activity implements SensorEventListener
 	GLSurfaceView glLockView,glUnlockView;
 	PadRenderer lockRenderer,unlockRenderer;
 	HoldDetector lockDetector,unlockDetector;
+	CheckBox swapXY;
 	SharedPreferences pref;
 	public void onSensorChanged(SensorEvent e)
 	{
 		z= e.values[0];
-		y= e.values[1];
-		x= e.values[2];
+		x= e.values[1];
+		y= e.values[2];
 		//y= -90-e.values[1];
 		//x= -90-e.values[2];
 		msg("mode:"+mode+",x:"+x+",y:"+y+",z:"+z);
@@ -64,6 +65,8 @@ public class SettingActivity  extends Activity implements SensorEventListener
 		lockDetector.setCondition(0,60,10);
 		unlockDetector = new HoldDetector();
 		text=new TextView(this);
+		swapXY=new CheckBox(this);
+		swapXY.setText("Swap XY");
 		glLockView=new GLSurfaceView(this);
 		glUnlockView=new GLSurfaceView(this);
 		lockRenderer = new PadRenderer(lockDetector);
@@ -71,11 +74,15 @@ public class SettingActivity  extends Activity implements SensorEventListener
 		unlockRenderer = new PadRenderer(unlockDetector);
 		glUnlockView.setRenderer(unlockRenderer);
 		ViewUtil util=new ViewUtil(this);
-		util.addLinearLayout(true)
-			.addChild(text)
+		ViewUtil.LinearView root= util.addLinearLayout(true)
+			.addChild(text);
+		ViewUtil.LinearView settings=root
 			.addLinearLayout(false)
-			.addChild(glLockView)
-			.addChild(glUnlockView);
+			.addChild(glLockView,320,false)
+			.addChild(glUnlockView,320,false);
+			
+	//	Intent it=new Intent(this,UnlockService.class);
+	//	startService(it);
 	}
 	
 	public void onResume(){
