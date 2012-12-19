@@ -116,7 +116,7 @@ public class AppListActivity extends Activity{
 			ListView.LayoutParams params = new ListView.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 			layout.setLayoutParams(params);
 			layout.setFocusable(false);
-			int paddingSize = UnitUtil.dip2px(me, 10);
+			int paddingSize = UnitUtil.d2p(me, 10);
 
 			ImageView imageView = new ImageView(me);
 			imageView.setId(IMAGEVIEW_ID);
@@ -124,7 +124,7 @@ public class AppListActivity extends Activity{
 			imageView.setPadding(paddingSize, 0, 0, 0);
 			imageView.setFocusable(false);
 
-			int pxSize = UnitUtil.dip2px(me, 48);
+			int pxSize = UnitUtil.d2p(me, 48);
 			layout.addView(imageView, pxSize, pxSize);
 			TextView textView = new TextView(me);
 			textView.setGravity(Gravity.CENTER_VERTICAL);
