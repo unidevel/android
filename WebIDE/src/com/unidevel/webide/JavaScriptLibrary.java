@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -14,10 +16,12 @@ import android.preference.PreferenceManager;
 
 public class JavaScriptLibrary
 {
-	final Context ctx;
-	public JavaScriptLibrary(Context context)
+	final Activity ctx;
+	private List<String> callbacks;
+	public JavaScriptLibrary(Activity context)
 	{
 		this.ctx=context;
+		this.callbacks = new ArrayList<String>();
 	}
 	
 	public SharedPreferences pref()
@@ -128,5 +132,68 @@ public class JavaScriptLibrary
 		Uri uri = Uri.parse("market://details?id="+appId);         
 		Intent it = new Intent(Intent.ACTION_VIEW, uri);         
 		this.ctx.startActivity(it);         
+	}
+	
+	public void map(String x, String y)
+	{
+		Uri uri = Uri.parse("geo:"+x+","+y); 
+		Intent it = new Intent(Intent.ACTION_VIEW,uri); 
+		this.ctx.startActivity(it); 
+	}
+	
+	public void select(String type, String callback)
+	{
+		 Intent it = new Intent(); 
+         it.setType(type+"/*"); 
+         it.setAction(Intent.ACTION_GET_CONTENT);
+         int id = addCallback(type+":"+callback);
+         this.ctx.startActivityForResult(it, id); 
+	}
+	
+	public void selectImage(String callback)
+	{
+		select("image", callback);
+	}
+	
+	private int addCallback(String callback)
+	{
+		synchronized (callbacks) {
+			int size = callbacks.size();
+			for ( int i = 0; i < size; ++i )
+			{
+				if ( callbacks.get(i) == null )
+				{
+					callbacks.set(i, callback);
+					return i;
+				}
+			}
+			callbacks.add(callback);
+			return size;
+		}
+	}
+	
+	public String getCallback(int position)
+	{
+		synchronized (callbacks) {
+			if ( position >=0 && position< callbacks.size())
+			{
+				return callbacks.get(position); 
+			}
+		}
+		return null;
+	}
+	
+	public void removeCallback(String callback)
+	{
+		synchronized(callbacks)
+		{
+			int pos = callbacks.indexOf(callback);
+			callbacks.set(pos, null);
+			for ( int i = callbacks.size()-1; i>=pos; --i )
+			{
+				if ( callbacks.get(i)==null)
+					callbacks.remove(i);
+			}
+		}
 	}
 }

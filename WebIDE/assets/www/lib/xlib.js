@@ -85,7 +85,7 @@ function XLibrary()
 	}
 	this.view = function(url)
 	{
-		window.open(url, "_about:blank");
+		window.open(url, "_blank");
 	}
 	this.call = function(number)
 	{
@@ -93,7 +93,19 @@ function XLibrary()
 	}
 	this.market = function(appId)
 	{
-		window.open("https://play.google.com/store/apps/details?id="+appId, "_about:blank");
+		window.open("https://play.google.com/store/apps/details?id="+appId, "_blank");
+	}
+	this.map = function(x,y)
+	{
+		window.open("https://maps.google.com/maps?ll="+x+","+y, "_blank");
+	}
+	this.select = function(type, callback)
+	{
+		window.eval("callback(\"/123\")");
+	}
+	this.selectImage = function(type, callback)
+	{
+		window.eval("callback(\"/123.jpg\")");
 	}
 }
 

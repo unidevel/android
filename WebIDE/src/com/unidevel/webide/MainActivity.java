@@ -1,19 +1,33 @@
 package com.unidevel.webide;
 
-import android.app.*;
-import android.os.*;
-import android.util.*;
-import android.webkit.*;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.provider.MediaStore;
+import android.util.Log;
+import android.webkit.JsResult;
+import android.webkit.WebChromeClient;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 public class MainActivity extends Activity {
 	WebView view;
 	Handler handler;
+	JavaScriptLibrary jsLib;
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		this.handler=new Handler();
+		this.handler = new Handler();
+		this.jsLib = new JavaScriptLibrary(this);
 		view = new WebView(this);
 		setContentView(view);
 		view.getSettings().setJavaScriptEnabled(true);
@@ -34,23 +48,24 @@ public class MainActivity extends Activity {
 				}
 			}
 		});
-		WebChromeClient client=new WebChromeClient(){
-			public boolean onJsAlert(WebView view,String url, String message, JsResult result)
-			{
-				return super.onJsAlert(view,url,message,result);
+		WebChromeClient client = new WebChromeClient() {
+			public boolean onJsAlert(WebView view, String url, String message,
+					JsResult result) {
+				return super.onJsAlert(view, url, message, result);
 			}
 		};
 		view.setWebChromeClient(client);
-		view.addJavascriptInterface(new JavaScriptLibrary(this),"unidevel");
-		view.loadDataWithBaseURL(base, getHtmlData("www/index.html", null), "text/html", null, null);
+		view.addJavascriptInterface(this.jsLib, "unidevel");
+		view.loadDataWithBaseURL(base, getHtmlData("www/index.html", null),
+				"text/html", null, null);
 	}
 
 	public String getHtmlData(String assetPath, String encoding) {
 		InputStream in = null;
 		try {
 			in = this.getAssets().open(assetPath);
-			InputStreamReader reader ;
-			if ( encoding!=null)
+			InputStreamReader reader;
+			if (encoding != null)
 				reader = new InputStreamReader(in, encoding);
 			else
 				reader = new InputStreamReader(in);
@@ -69,14 +84,48 @@ public class MainActivity extends Activity {
 		}
 		return null;
 	}
-	
-	public void callJS(final String javaScript){
-		this.handler.post(new Runnable(){
 
-				public void run()
-				{
-					view.loadUrl("javascript:"+javaScript);
-				}
+	public void callJS(final String javaScript) {
+		this.handler.post(new Runnable() {
+			public void run() {
+				view.loadUrl("javascript:" + javaScript);
+			}
 		});
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		String callback = this.jsLib.getCallback(requestCode);
+		if (callback != null) {
+			if (callback.startsWith("image:")) {
+				callback = callback.substring(6);
+				callJS(callback + "(" + getPath(data) + ")");
+			}
+			this.jsLib.removeCallback(callback);
+		}
+	}
+
+	public String getPath(Intent intent) {
+		Uri selectedImageUri = intent.getData();
+
+		String imagePath = null;
+
+		String[] projection = { MediaStore.Images.Media.DATA };
+		Cursor cursor = managedQuery(selectedImageUri, projection, null, null,
+				null);
+		if (cursor != null) {
+			// HERE YOU WILL GET A NULLPOINTER IF CURSOR IS NULL
+			// THIS CAN BE, IF YOU USED OI FILE MANAGER FOR PICKING THE MEDIA
+			int column_index = cursor
+					.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+			cursor.moveToFirst();
+			imagePath = cursor.getString(column_index);
+		}
+
+		// OI FILE Manager
+		if (imagePath == null)
+			imagePath = selectedImageUri.getPath();
+		return imagePath;
 	}
 }
