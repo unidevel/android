@@ -100,7 +100,9 @@ public class MainActivity extends Activity {
 		if (callback != null) {
 			if (callback.startsWith("image:")) {
 				String function = callback.substring(6);
-				callJS(function + "(" + getPath(data) + ")");
+				String path = getPath(data);
+				Log.i("Image Path:", String.valueOf(path));
+				callJS(function + "(" + path + ")");
 			}
 			this.jsLib.removeCallback(callback);
 		}
