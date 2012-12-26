@@ -83,6 +83,18 @@ function XLibrary()
 	{
 		return true;
 	}
+	this.view = function(url)
+	{
+		window.open(url, "_about:blank");
+	}
+	this.call = function(number)
+	{
+		alert("calling... "+number);
+	}
+	this.market = function(appId)
+	{
+		window.open("https://play.google.com/store/apps/details?id="+appId, "_about:blank");
+	}
 }
 
 if (typeof(window.unidevel)=="undefined")

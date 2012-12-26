@@ -1,8 +1,16 @@
 package com.unidevel.webide;
-import android.content.*;
-import android.preference.*;
-import java.io.*;
-import android.os.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
+import android.os.Environment;
+import android.preference.PreferenceManager;
 
 public class JavaScriptLibrary
 {
@@ -99,5 +107,26 @@ public class JavaScriptLibrary
 			{}
 		}
 		return false;
+	}
+	
+	public void view(String url)
+	{
+		Uri uri = Uri.parse(url); 
+		Intent intent  = new Intent(Intent.ACTION_VIEW,uri); 
+		this.ctx.startActivity(intent); 
+	}
+	
+	public void call(String number)
+	{
+		Uri uri = Uri.parse("tel:"+number); 
+		Intent it = new Intent(Intent.ACTION_DIAL, uri);   
+		this.ctx.startActivity(it); 
+	}
+	
+	public void market(String appId)
+	{
+		Uri uri = Uri.parse("market://details?id="+appId);         
+		Intent it = new Intent(Intent.ACTION_VIEW, uri);         
+		this.ctx.startActivity(it);         
 	}
 }
