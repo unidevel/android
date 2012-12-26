@@ -1,22 +1,20 @@
 package com.unidevel.webide;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
-import android.app.Activity;
-import android.os.Bundle;
-import android.util.Log;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+import android.app.*;
+import android.os.*;
+import android.util.*;
+import android.webkit.*;
+import java.io.*;
 
 public class MainActivity extends Activity {
+	WebView view;
+	Handler handler;
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		WebView view = new WebView(this);
+		this.handler=new Handler();
+		view = new WebView(this);
 		setContentView(view);
 		view.getSettings().setJavaScriptEnabled(true);
 		view.getSettings().setAllowFileAccess(true);
@@ -36,8 +34,15 @@ public class MainActivity extends Activity {
 				}
 			}
 		});
+		WebChromeClient client=new WebChromeClient(){
+			public boolean onJsAlert(WebView view,String url, String message, JsResult result)
+			{
+				return super.onJsAlert(view,url,message,result);
+			}
+		};
+		view.setWebChromeClient(client);
+		view.addJavascriptInterface(new JavaScriptLibrary(this),"unidevel");
 		view.loadDataWithBaseURL(base, getHtmlData("www/index.html", null), "text/html", null, null);
-		
 	}
 
 	public String getHtmlData(String assetPath, String encoding) {
@@ -63,5 +68,15 @@ public class MainActivity extends Activity {
 			}
 		}
 		return null;
+	}
+	
+	public void callJS(final String javaScript){
+		this.handler.post(new Runnable(){
+
+				public void run()
+				{
+					view.loadUrl("javascript:"+javaScript);
+				}
+		});
 	}
 }

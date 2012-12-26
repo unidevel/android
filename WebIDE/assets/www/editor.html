@@ -1,13 +1,7 @@
 <!DOCTYPE html>
-<html> 
-	<head> 
-	<title>My Page</title> 
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1"> 
-	<link rel="stylesheet" href="css/themes/default/jquery.mobile-1.1.1.min.css" />
-	<script src="lib/jquery.js"></script>
-	<script src="lib/jquery.mobile-1.1.1.min.js"></script>
-
+<html lang="en" class=""><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<head>
+    <title>CodeMirror 2: Active Line Demo</title>
     <link rel="stylesheet" href="lib/codemirror.css">
     <script src="lib/codemirror.js"></script>
     <link rel="stylesheet" href="theme/default.css">
@@ -35,7 +29,8 @@
       	border-top: 1px solid black; 
       	border-bottom: 1px solid black; 
       	width:100%;
-     	left: 0;
+      	position: absolute;
+		left: 0;
 		right: 0;
       	}
       .CodeMirror-scroll{
@@ -54,17 +49,6 @@
     </style>
   </head>
 <body>
-<div id="main" data-role="page">
-
-	<div data-role="header" data-position="fixed">
-		<h3>My Title</h3>
-		<a href="index.html#settings" data-icon="gear">Settings</a>
-	</div><!-- /header -->
-
-	<div data-role="content">	
-
-<!--
-
 <button type=button onclick="hideShowControls(true)">Show Controls</button>
 <form id="formo" style="display:none">
 <button type=button onclick="search()">Search</button>
@@ -97,16 +81,7 @@ Select a theme: <select onchange="selectTheme(this)">
 </select>
 <button type=button onclick="hideShowControls(false)">Hide Controls</button>
 </form>
--->
-<button type=button onclick="hello(window.unidevel.getFile('test.txt'))">Test</button>
-<button type=button onclick="alert('world')">Test</button>
 
-<script type="text/javascript">
-    function hello(message){
-        document.getElementById("message").innerHTML = message;
-    }
-</script>
-<div id="message">message</div>
 <textarea id="code" name="code">
 <!DOCTYPE html>
 <head>
@@ -137,68 +112,6 @@ Select a theme: <select onchange="selectTheme(this)">
 </html>
 
 </textarea>
-	</div><!-- /content -->
-	<div data-role="footer" data-position="fixed">
-		<div data-role="controlgroup" data-type="horizontal">
-<select onchange="selectTheme(this)">
-    <option >default</option>
-    <option>night</option>
-    <option>neat</option>
-    <option>elegant</option>
-    <option>cobalt</option>
-    <option selected>eclipse</option>
-</select>
-			<select onchange="changeToCode(this.value)">
-	<option selected value="text/html">HTML mixed</option>
-	<option value="css">CSS</option>
-	<option value="javascript">JavaScript</option>
-	<option value="application/x-httpd-php">PHP</option>
-	<option value="application/xml">XML</option>
-	<option value="python">python</option>
-	<option value="text/x-csrc">C</option>
-	<option value="text/x-c++src">C++</option>
-	<option value="text/x-java">Java</option>
-	<option value="text/x-clojure">Clojure</option>
-	<option value="text/x-coffeescript">CoffeeScript</option>
-	<option value="text/x-haskell">Haskell</option>
-	<option value="text/x-groovy">Groovy</option>
-</select>
-		</div>
-	</div>
-</div><!-- /page -->
-
-<div id="settings" data-role="page">
-
-	<div data-role="header" data-position="fixed">
-		<h3>My Title</h3>
-	</div><!-- /header -->
-	<div data-role="content">	
-	<select onchange="selectTheme(this)">
-    <option >default</option>
-    <option>night</option>
-    <option>neat</option>
-    <option>elegant</option>
-    <option>cobalt</option>
-    <option selected>eclipse</option>
-</select>
-			<select onchange="changeToCode(this.value)">
-	<option selected value="text/html">HTML mixed</option>
-	<option value="css">CSS</option>
-	<option value="javascript">JavaScript</option>
-	<option value="application/x-httpd-php">PHP</option>
-	<option value="application/xml">XML</option>
-	<option value="python">python</option>
-	<option value="text/x-csrc">C</option>
-	<option value="text/x-c++src">C++</option>
-	<option value="text/x-java">Java</option>
-	<option value="text/x-clojure">Clojure</option>
-	<option value="text/x-coffeescript">CoffeeScript</option>
-	<option value="text/x-haskell">Haskell</option>
-	<option value="text/x-groovy">Groovy</option>
-</select>
-<a data-rel="back" data-role="button">Close</a>
-	</div>
-</div>
 
 <script> // <!-- Will hold all the shiz
 var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
