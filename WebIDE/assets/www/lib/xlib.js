@@ -101,11 +101,11 @@ function XLibrary()
 	}
 	this.select = function(type, callback)
 	{
-		window.eval("callback(\"/123\")");
+		window.eval(callback+"(\"/123\")");
 	}
-	this.selectImage = function(type, callback)
+	this.selectImage = function(callback)
 	{
-		window.eval("callback(\"/123.jpg\")");
+		window.eval(callback+"(\"/123.jpg\")");
 	}
 }
 
