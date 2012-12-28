@@ -59,6 +59,26 @@ public class MainActivity extends Activity {
 		view.loadDataWithBaseURL(base, getHtmlData("www/index.html", null),
 				"text/html", null, null);
 	}
+	
+	@Override
+	protected void onPause() {
+		String callback = this.jsLib.getEventCallback("pause");
+		if  ( callback != null )
+		{
+			callJS(callback+"()");
+		}
+		super.onPause();
+	}
+	
+	@Override
+	protected void onResume() {
+		String callback = this.jsLib.getEventCallback("resume");
+		if  ( callback != null )
+		{
+			callJS(callback+"()");
+		}
+		super.onResume();
+	}
 
 	public String getHtmlData(String assetPath, String encoding) {
 		InputStream in = null;

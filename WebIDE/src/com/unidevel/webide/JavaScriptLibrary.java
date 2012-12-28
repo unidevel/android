@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import android.app.Activity;
@@ -20,10 +21,11 @@ import org.json.*;
 public class JavaScriptLibrary {
 	final Activity ctx;
 	private List<String> callbacks;
-
+	private Map<String, String> eventCallbackMap;
 	public JavaScriptLibrary(Activity context) {
 		this.ctx = context;
 		this.callbacks = new ArrayList<String>();
+		this.eventCallbackMap = new HashMap<String, String>();
 	}
 
 	public SharedPreferences pref() {
@@ -214,6 +216,16 @@ public class JavaScriptLibrary {
 				}
 			}
 		}
+	}
+	
+	public void bind(String event, String callback)
+	{
+		eventCallbackMap.put(event, callback);
+	}
+
+	protected String getEventCallback(String event)
+	{
+		return eventCallbackMap.get(event);
 	}
 	
 	public void exit(){
