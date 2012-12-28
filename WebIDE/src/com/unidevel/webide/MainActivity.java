@@ -100,7 +100,16 @@ public class MainActivity extends Activity {
 		if (callback != null) {
 			if (callback.startsWith("image:")) {
 				String function = callback.substring(6);
-				String path = getPath(data);
+				String path = null;
+				if(resultCode==RESULT_OK){
+					path=getPath(data);
+				}
+				if (path!=null){
+					path="'"+path+"'";
+				}
+				else{
+					path="null";
+				}
 				Log.i("Image Path:", String.valueOf(path));
 				callJS(function + "(" + path + ")");
 			}

@@ -53,58 +53,9 @@
       	width:100%;
       }
     </style>
-    <script>
-    var u=window.unidevel;
-    function Editor(){
-    	this.base=u.getPref("base");
-    	this.dir=u.getPref("dir");
-    	this.file=u.getPref("file");
-    	
-    	if(this.base==null){
-    		this.base=u.rootDir();
-    	}
-    	if(this.dir==null){
-    		this.dir="";
-    	}
-    }
-    var e=new Editor();
-    function showFiles(){
-    	var dir=e.base+e.dir;
-    	var files=window.eval(u.listFiles(dir));
-    	var s="";
-    	for(var i=0;i<files.length;++i){
-    		var f=files[i];
-    		var file=f[0];
-    		if(!f[1]){
-    			s+="<li><a href=\"javascript:editFile('"+dir+file+"')\">"+file+"</a></li>";
-    		}
-    		else{
-    			s+="<li><a href=\"javascript:openDir('"+dir+file+"')\">"+file+"/</a></li>";
-    		}
-  		}
-    	$("#files").html(s);
-    	$("#listTitle").html(dir);
-    }
-    
-    </script>
   </head>
 <body>
-<div id="list" data-role="page">
-	<div data-role="header" data-position="fixed">
-		<a href="javascript:window.unidevel.exit();" data-icon="back">Exit</a>
-		<h3 id="listTitle"></h3>
-		<a href="#edit" data-icon="gear">Back</a>
-	</div><!-- /header -->
-	<div data-role="content">	
-		<ul data-role="listview" id="files">
-		</ul>
-	</div>
-	<script>
-	
-	showFiles();
-	</script>
-</div>
-<div id="edit" data-role="page">
+<div id="main" data-role="page">
 
 	<div data-role="header" data-position="fixed">
 		<h3>My Title</h3>

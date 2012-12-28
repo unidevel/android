@@ -14,6 +14,8 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import java.util.*;
+import org.json.*;
 
 public class JavaScriptLibrary {
 	final Activity ctx;
@@ -38,9 +40,50 @@ public class JavaScriptLibrary {
 		pref().edit().putString(name, value).commit();
 	}
 
-	public String[] listDir(String dir) {
+	public String listFiles(String dir) {
 		File d = new File(dir);
-		return d.list();
+		JSONArray r=new JSONArray();
+		File[] files=d.listFiles();
+		Arrays.sort(files, new Comparator<File>(){
+
+				public int compare(File p1, File p2)
+				{
+					if(p1.isDirectory()){
+						if(p2.isFile()){
+							return -1000;
+						}
+						else{
+							return p1.getName().toLowerCase().compareTo(p2.getName().toLowerCase());
+						}
+					}
+					else{
+						if(p2.isDirectory()){
+							return 1000;
+						}
+						else {
+							return p1.getName().toLowerCase().compareTo(p2.getName().toLowerCase());
+						}
+					}
+				}
+		});
+		for(File f:files){
+			JSONArray o=new JSONArray();
+			o.put(f.getName()).put(f.isDirectory()).put(f.length()).put(f.lastModified());
+			r.put(o);
+		}
+		return r.toString();
+	}
+
+	public String listDirs(String dir) {
+		File d = new File(dir);
+		File[] files=d.listFiles();
+		JSONArray r=new JSONArray();
+		for(File file:files){
+			if(file.isDirectory()){
+				r.put(file.getName());
+			}
+		}
+		return r.toString();
 	}
 
 	public boolean isFile(String path) {
@@ -59,7 +102,7 @@ public class JavaScriptLibrary {
 	}
 
 	public String rootDir() {
-		return Environment.getRootDirectory().getPath();
+		return Environment.getExternalStorageDirectory().getPath();
 	}
 
 	public String read(String file) {
@@ -171,5 +214,9 @@ public class JavaScriptLibrary {
 				}
 			}
 		}
+	}
+	
+	public void exit(){
+		this.ctx.finish();
 	}
 }

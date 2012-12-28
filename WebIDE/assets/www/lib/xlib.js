@@ -23,10 +23,10 @@ function XLibrary()
 	this._pref = new XPrefence();
 	this._dataDir = "/sdcard/data";
 	this._rootDir = "/";
-	this._rootFiles = ["dir1","dir2", "dir3", "1.txt", "2.xml"];
-	this._dir1Files = ["a.txt", "b.txt"];
-	this._dir2Files = ["1.txt", "2.txt"];
-	this._dir3Files = ["s.txt", "d.txt"];
+	this._rootFiles = [["dir1",true,0,0],["dir2",true,0,0], ["1.txt",false,44,8]];
+	this._rootDirs = ["dir1","dir2"];
+	this._dir1Files = [["a.txt",false,44,8]];
+	this._dir2Files = [["1.txt",false,44,8]];
 	this.pref = function()
 	{
 		return new XPrefence();
@@ -55,7 +55,14 @@ function XLibrary()
 	{
 		return path.indexOf(".") > 0; 
 	}
-	this.listDir = function(dir)
+	this.listDirs = function(dir)
+	{
+		if ( dir == this._rootDir || dir == this._dataDir || dir == this._dataDir+"/") 
+		{
+			return this._rootDirs;
+		}
+	}
+	this.listFiles = function(dir)
 	{
 		if ( dir == this._rootDir || dir == this._dataDir || dir == this._dataDir+"/") 
 		{
@@ -69,11 +76,7 @@ function XLibrary()
 		{
 			return this._dir1Files;
 		}
-		else if ( dir.endsWith("dir3") ) 
-		{
-			return this._dir1Files;
-		}
-		return {};
+		return [];
 	}
 	this.read = function(file)
 	{
@@ -106,6 +109,10 @@ function XLibrary()
 	this.selectImage = function(callback)
 	{
 		window.eval(callback+"(\"/123.jpg\")");
+	}
+	this.exit=function()
+	{
+		window.close();
 	}
 }
 
