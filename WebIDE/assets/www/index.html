@@ -68,6 +68,20 @@
     	}
     }
     var e=new Editor();
+    u.bind("pause", "onPause");
+    u.bind("resume", "onResume");
+    function onPause()
+    {
+    	u.putPref("base", e.base);
+    	u.putPref("dir", e.dir);
+    	u.putPref("file",e.file);
+    }
+    function onResume()
+    {
+    	e.base = u.getPref("base");
+    	e.dir = u.getPref("dir");
+    	e.file = u.getPref("file");
+    }
     function showFiles(){
     	var dir=e.base+e.dir;
     	var files=window.eval(u.listFiles(dir));
