@@ -112,7 +112,7 @@ function XLibrary()
 	}
 	this.exit=function()
 	{
-		window.close();
+		alert("exit");
 	}
 }
 
