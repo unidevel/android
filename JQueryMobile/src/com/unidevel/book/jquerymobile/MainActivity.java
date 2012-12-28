@@ -35,19 +35,28 @@ public class MainActivity extends Activity {
 		view.getSettings().setAllowFileAccess(true);
 		view.getSettings().setSupportZoom(false);
 		final String base = "file:///android_asset/demos/1.2.0/";
-		// view.setWebViewClient(new WebViewClient() {
-		// @Override
-		// public boolean shouldOverrideUrlLoading(WebView view, String url) {
-		// if (url.startsWith("file:/") || url.startsWith("http:/")
-		// || url.startsWith("https:/")) {
-		// return false;
-		// } else {
-		// url = base + "/" + url;
-		// view.loadUrl(url);
-		// return true;
-		// }
-		// }
-		// });
+		view.setWebViewClient(new WebViewClient() {
+			@Override
+			public boolean shouldOverrideUrlLoading(WebView view, String url) {
+				Log.i("override url", url);
+				if (url.startsWith("file:/") || url.startsWith("http:/")
+						|| url.startsWith("https:/")) {
+					return false;
+				} else {
+					url = base + "/" + url;
+					view.loadUrl(url);
+					return true;
+				}
+			}
+			
+			@Override
+			public void onLoadResource(WebView view, String url) {
+				Log.i("load url", url);
+
+				super.onLoadResource(view, url);
+			}
+		});
+		
 		WebChromeClient client = new WebChromeClient() {
 			public boolean onJsAlert(WebView view, String url, String message,
 					JsResult result) {
@@ -56,9 +65,9 @@ public class MainActivity extends Activity {
 		};
 		view.setWebChromeClient(client);
 		view.addJavascriptInterface(this.jsLib, "unidevel");
-		view.loadDataWithBaseURL(base,
+		view.loadDataWithBaseURL(base+"index.html",
 				getHtmlData("demos/1.2.0/index.html", null), "text/html", null,
-				null);
+				base+"index.html");
 	}
 
 	public String getHtmlData(String assetPath, String encoding) {
