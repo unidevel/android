@@ -17,16 +17,18 @@ function XPrefence()
 		return this.data[name] != null;
 	}
 }
-
+String.prototype.endsWith = function(suffix) {
+    return this.indexOf(suffix, this.length - suffix.length) !== -1;
+};
 function XLibrary()
 {
 	this._pref = new XPrefence();
 	this._dataDir = "/sdcard/data";
 	this._rootDir = "/";
-	this._rootFiles = [["dir1",true,0,0],["dir2",true,0,0], ["1.txt",false,44,8]];
-	this._rootDirs = ["dir1","dir2"];
-	this._dir1Files = [["a.txt",false,44,8]];
-	this._dir2Files = [["1.txt",false,44,8]];
+	this._rootFiles = "[[\"dir1\",true,0,0],[\"dir2\",true,0,0], [\"1.txt\",false,44,8]]";
+	this._rootDirs = "[\"dir1\",\"dir2\"]";
+	this._dir1Files = "[[\"a.txt\",false,44,8]]";
+	this._dir2Files = "[[\"1.txt\",false,44,8]]";
 	this.pref = function()
 	{
 		return new XPrefence();
@@ -64,19 +66,15 @@ function XLibrary()
 	}
 	this.listFiles = function(dir)
 	{
-		if ( dir == this._rootDir || dir == this._dataDir || dir == this._dataDir+"/") 
-		{
-			return this._rootFiles;
-		}
-		else if ( dir.endsWith("dir1") ) 
+		if ( dir.endsWith("dir1") || dir.endsWith("dir1/") ) 
 		{
 			return this._dir1Files;
 		}
-		else if ( dir.endsWith("dir2") ) 
+		else if ( dir.endsWith("dir2")|| dir.endsWith("dir2/") ) 
 		{
 			return this._dir1Files;
 		}
-		return [];
+		return this._rootFiles;
 	}
 	this.read = function(file)
 	{
@@ -113,6 +111,10 @@ function XLibrary()
 	this.exit=function()
 	{
 		alert("exit");
+	}
+	this.bind=function(event,func)
+	{
+		// not implemented
 	}
 }
 

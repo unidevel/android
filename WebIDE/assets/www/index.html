@@ -94,7 +94,9 @@
     function showFiles(){
     	var dir=e.dir;
     	var $page=$("#list");
-    	var files=window.eval(u.listFiles(dir));
+    	var s = u.listFiles(dir);
+    	alert(s);
+    	var files=window.eval(s);
     	var s="<ul data-role=\"listview\" data-insert=\"true\">";
     	for(var i=0;i<files.length;++i){
     		var f=files[i];
