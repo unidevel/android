@@ -147,8 +147,10 @@ public class JavaScriptLibrary {
 	}
 
 	public void view(String url) {
-		Uri uri = Uri.parse(url);
+		Uri uri = Uri.fromFile(new File(url));
 		Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+		intent.setClassName("com.android.browser", "com.android.browser.BrowserActivity");
+		//intent.setType(type);
 		this.ctx.startActivity(intent);
 	}
 

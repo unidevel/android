@@ -1,21 +1,15 @@
 package com.unidevel.webide;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
-import android.app.Activity;
-import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Handler;
-import android.provider.MediaStore;
-import android.util.Log;
-import android.webkit.JsResult;
-import android.webkit.WebChromeClient;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+import android.app.*;
+import android.content.*;
+import android.database.*;
+import android.net.*;
+import android.os.*;
+import android.provider.*;
+import android.util.*;
+import android.view.*;
+import android.webkit.*;
+import java.io.*;
 
 public class MainActivity extends Activity {
 	WebView view;
@@ -158,5 +152,14 @@ public class MainActivity extends Activity {
 		if (imagePath == null)
 			imagePath = selectedImageUri.getPath();
 		return imagePath;
+	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if ((keyCode == KeyEvent.KEYCODE_BACK) && view.canGoBack()) {
+			view.goBack();
+			return true;
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 }

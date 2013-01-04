@@ -114,9 +114,6 @@
     }
     function editFile(file){
     	e.file=file;
-    	var f=u.read(e.file);
-		editor.setValue(f);
-		
        	$.mobile.changePage("#edit");
     }  
     $(document).bind("pagechange", function(e,data){
@@ -124,13 +121,10 @@
     	//alert(typeof(p));
     	if(typeof(p)=="object"){
     		if(p.attr('id')=="edit"){
-    			//var f=u.read(e.file);
+    			var f=u.read(e.file);
 		    	//$("#code").val(f);
-		    	//alert(editor);
-		    	//editor.setValue(f);
-		    	$header = $("#code").children( ":jqmData(role=header)" );
-				$header.find("h3").html(e.file);
-				editor.updateDisplay(true);
+		    	alert(editor);
+		    	editor.setValue(f);
     		}
     	}
     });
@@ -153,21 +147,9 @@
 </div>
 <div id="edit" data-role="page">
 	<div data-role="header" data-position="fixed">
-		<a href="javascript:browse()" data-icon="save">Browse</a>
 		<h3>My Title</h3>
 		<a href="index.html#settings" data-icon="gear">Settings</a>
 	</div><!-- /header -->
-	<script>
-	function browse()
-	{
-		var f=e.file;
-		var s=editor.getValue();
-		alert(f);
-		//u.save(f,s);
-		u.view(f);
-		//("content://com.android.htmlfileprovider"+f);
-	}
-	</script>
 	<div data-role="content">
 <!--
 
@@ -204,36 +186,32 @@ Select a theme: <select onchange="selectTheme(this)">
 <button type=button onclick="hideShowControls(false)">Hide Controls</button>
 
 </form>
-
+-->
 <button type=button onclick="hello(window.unidevel.getFile('test.txt'))">Test</button>
 <button type=button onclick="editor.setValue('hello\nworld')">Test</button>
--->
+
 <script type="text/javascript">
     function hello(message){
         document.getElementById("message").innerHTML = message;
     }
-    function insertCode(role){
-    	var r=role.value;
-    	alert(r);
-    	if(r!=null&&r!=""){
-    		var dr="data-role=\""+r+"\"";
-    		editor.replaceSelection(dr,null);
-    	}
-    	role.options[0].selected=true;
-    }
 </script>
 <div id="message">message</div>
 <textarea id="code" name="code">
+
+
+
+
 </textarea>
 	</div><!-- /content -->
 	<div data-role="footer" data-position="fixed">
 		<div data-role="controlgroup" data-type="horizontal">
-<select onchange="insertCode(this)">
-    <option selected>Role</option>
-    <option value="page">page</option>
-    <option value="header">header</option>
-    <option value="content">content</option>
-    <option value="footer">footer</option>
+<select onchange="selectTheme(this)">
+    <option >default</option>
+    <option>night</option>
+    <option>neat</option>
+    <option>elegant</option>
+    <option>cobalt</option>
+    <option selected>eclipse</option>
 </select>
 			<select onchange="changeToCode(this.value)">
 	<option selected value="text/html">HTML mixed</option>
@@ -251,7 +229,7 @@ Select a theme: <select onchange="selectTheme(this)">
 	<option value="text/x-groovy">Groovy</option>
 </select>
 		</div>
-	</div>-->
+	</div>
 </div><!-- /page -->
 
 <div id="settings" data-role="page">
