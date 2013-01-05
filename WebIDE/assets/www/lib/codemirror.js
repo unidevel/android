@@ -46,6 +46,8 @@ var CodeMirror = (function() {
     // Delayed object wrap timeouts, making sure only one is active. blinker holds an interval.
     var poll = new Delayed(), highlight = new Delayed(), blinker;
 
+    var pollingFast = false; // Ensures slowPoll doesn't cancel fastPoll
+
     // mode holds a mode API object. lines an array of Line objects
     // (see Line constructor), work an array of lines that should be
     // parsed, and history the undo history (instance of History
@@ -579,8 +581,7 @@ var CodeMirror = (function() {
     function getSelection() {
       return getRange(sel.from, sel.to);
     }
-
-    var pollingFast = false; // Ensures slowPoll doesn't cancel fastPoll
+    
     function slowPoll() {
       if (pollingFast) return;
       poll.set(2000, function() {

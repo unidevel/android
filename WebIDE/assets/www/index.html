@@ -128,8 +128,10 @@
     	if(typeof(p)=="object"){
     		if(p.attr('id')=="edit"){
  		    	$header = $("#code").children( ":jqmData(role=header)" );
-				$header.find("h3").html(e.file);
-				editor.updateDisplay(true);
+					$header.find("h3").html(e.file);
+					if ( editor != null ) {
+						editor.refresh();
+					}
     		}
     	}
     });
