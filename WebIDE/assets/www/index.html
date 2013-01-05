@@ -97,9 +97,9 @@
     	var s = u.listFiles(dir);
     	var files=window.eval(s);
     	var s="<ul data-role=\"listview\" data-insert=\"true\">";
-    	if(!(dir=="/" || dir=="//")){
+    	if(!(dir=="/" || dir=="//")){
     		s+="<li><a href=\"javascript:goParent()\">..</a></li>";
-}
+		}
     	for(var i=0;i<files.length;++i){
     		var f=files[i];
     		var file=f[0];
@@ -161,14 +161,12 @@
 	{
 		var f=e.file;
 		var s=editor.getValue();
-		alert(f);
 		//u.save(f,s);
 		u.view(f);
-		//("content://com.android.htmlfileprovider"+f);
 	}
 	</script>
 	<div data-role="content">
-<script type="text/javascript">
+<script type="text/javascript"><!--
     function insertCode(c,s){
     	if(s!=null&&s!=""){
     		editor.replaceSelection(s,null);
@@ -188,9 +186,12 @@
     {
     	var r=c.value;
     	if(r!=null&&r!=""){
-    		var dr="<"+r+" > </"+r+">";
+    		var dr="<"+r+" id=\"\" > </"+r+">";
     		if(r=="html"){
-    			dr="<!DOCTYPE html>\n<html>\n  <head>\n    <title> </title>\n  <script>\n  </script>\n  </head>\n  <body>\n\n  </body>\n</html>"; 
+    			dr="<!DOCTYPE html>\n<html>\n  <head>\n    <title> </title>\n"
+    				+"    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n"
+    				+"    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n"
+    				+"  <script>\n  </script>\n  </head>\n  <body>\n\n  </body>\n</html>"; 
     		}
     		else if(r=="a"){
     			dr="<a href=\"\"> </a>";     		
@@ -201,10 +202,18 @@
     		else if(r=="input"){
     			dr="<input type=\"\" value=\"\" />";
     		}
+    		else if(r=="script"){
+    			dr="<script type=\"text/javascript\">\n  function () {\n  }\n</script>"
+    		}
+    		else if(r=="jqm"){
+    			dr = "    <link rel=\"stylesheet\" href=\"http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css\" />"
+					+"    <script src=\"http://code.jquery.com/jquery-1.8.2.min.js\"></script>"
+					+"    <script src=\"http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js\"></script>"
+    		}
     		insertCode(c,dr);
     	}
     }
-</script>
+--></script>
 <textarea id="code" name="code">
 </textarea>
 	</div>
@@ -215,6 +224,7 @@
     <option value="page">page</option>
     <option value="header">header</option>
     <option value="content">content</option>
+    <option value="listview">listview</option>
     <option value="footer">footer</option>
 </select>
 
@@ -227,12 +237,15 @@
     <option value="li">li</option>
     <option value="a">a</option>
     <option value="option">option</option>
-    <option value="form">form</option>
+    <option value="form">form</option>    
+    <option value="script">script</option>
     <option value="h1">h1</option>
     <option value="h2">h2</option>
-    <option value="h3">h3</option>
+    <option value="h3">h3</option>    
     <option value="select">select</option>
     <option value="ul">ul</option>
+    <option value="jqm">jquery mobile</option>
+    
     <option value="ol">ol</option>
 </select>
 
