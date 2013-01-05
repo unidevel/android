@@ -95,14 +95,16 @@
     	var dir=e.dir;
     	var $page=$("#list");
     	var s = u.listFiles(dir);
-    	alert(s);
     	var files=window.eval(s);
     	var s="<ul data-role=\"listview\" data-insert=\"true\">";
+    	if(!(dir=="/" || dir=="//")){
+    		s+="<li><a href=\"javascript:goParent()\">..</a></li>";
+}
     	for(var i=0;i<files.length;++i){
     		var f=files[i];
     		var file=f[0];
     		if(!f[1]){
-    			s+="<li><a href=\"javascript:editFile('"+dir+file+"')\">"+file+"</a></li>";
+    			s+="<li data-icon=\"false\"><a href=\"javascript:editFile('"+dir+file+"')\">"+file+"</a></li>";
     		}
     		else{
     			s+="<li><a href=\"javascript:openDir('"+dir+file+"/')\">"+file+"/</a></li>";
@@ -123,14 +125,9 @@
     }  
     $(document).bind("pagechange", function(e,data){
     	var p=data.toPage;
-    	//alert(typeof(p));
     	if(typeof(p)=="object"){
     		if(p.attr('id')=="edit"){
-    			//var f=u.read(e.file);
-		    	//$("#code").val(f);
-		    	//alert(editor);
-		    	//editor.setValue(f);
-		    	$header = $("#code").children( ":jqmData(role=header)" );
+ 		    	$header = $("#code").children( ":jqmData(role=header)" );
 				$header.find("h3").html(e.file);
 				editor.updateDisplay(true);
     		}
@@ -171,89 +168,76 @@
 	}
 	</script>
 	<div data-role="content">
-<!--
-
-<button type=button onclick="hideShowControls(true)">Show Controls</button>
-<form id="formo" style="display:none">
-<button type=button onclick="search()">Search</button>
-<input type=text style="width: 5em" id=query value=indent /> or
-<button type=button onclick="replaceAll()">Replace All</button> by
-<input type=text style="width: 5em" id=replace />
-Select Your Code<select onchange="changeToCode(this.value)">
-	<option selected value="text/html">HTML mixed</option>
-	<option value="css">CSS</option>
-	<option value="javascript">JavaScript</option>
-	<option value="application/x-httpd-php">PHP</option>
-	<option value="application/xml">XML</option>
-	<option value="python">python</option>
-	<option value="text/x-csrc">C</option>
-	<option value="text/x-c++src">C++</option>
-	<option value="text/x-java">Java</option>
-	<option value="text/x-clojure">Clojure</option>
-	<option value="text/x-coffeescript">CoffeeScript</option>
-	<option value="text/x-haskell">Haskell</option>
-	<option value="text/x-groovy">Groovy</option>
-	
-</select>
-Select a theme: <select onchange="selectTheme(this)">
-    <option >default</option>
-    <option>night</option>
-    <option>neat</option>
-    <option>elegant</option>
-    <option>cobalt</option>
-    <option selected>eclipse</option>
-</select>
-<button type=button onclick="hideShowControls(false)">Hide Controls</button>
-
-</form>
-
-<button type=button onclick="hello(window.unidevel.getFile('test.txt'))">Test</button>
-<button type=button onclick="editor.setValue('hello\nworld')">Test</button>
--->
 <script type="text/javascript">
-    function hello(message){
-        document.getElementById("message").innerHTML = message;
+    function insertCode(c,s){
+    	if(s!=null&&s!=""){
+    		editor.replaceSelection(s,null);
+    	}
+    	c.options[0].selected=true;
     }
-    function insertCode(role){
-    	var r=role.value;
-    	alert(r);
+
+    function insertRole(c){
+    	var r=c.value;
     	if(r!=null&&r!=""){
     		var dr="data-role=\""+r+"\"";
-    		editor.replaceSelection(dr,null);
+    		insertCode(c,dr);
     	}
-    	role.options[0].selected=true;
+    }
+    
+    function insertTag(c)
+    {
+    	var r=c.value;
+    	if(r!=null&&r!=""){
+    		var dr="<"+r+" > </"+r+">";
+    		if(r=="html"){
+    			dr="<!DOCTYPE html>\n<html>\n  <head>\n    <title> </title>\n  <script>\n  </script>\n  </head>\n  <body>\n\n  </body>\n</html>"; 
+    		}
+    		else if(r=="a"){
+    			dr="<a href=\"\"> </a>";     		
+    		}
+    		else if(r=="form"){
+    			dr="<form action=\"\">\n\n</form>";  
+    		}
+    		else if(r=="input"){
+    			dr="<input type=\"\" value=\"\" />";
+    		}
+    		insertCode(c,dr);
+    	}
     }
 </script>
-<div id="message">message</div>
 <textarea id="code" name="code">
 </textarea>
-	</div><!-- /content -->
+	</div>
 	<div data-role="footer" data-position="fixed">
 		<div data-role="controlgroup" data-type="horizontal">
-<select onchange="insertCode(this)">
+<select onchange="insertRole(this)">
     <option selected>Role</option>
     <option value="page">page</option>
     <option value="header">header</option>
     <option value="content">content</option>
     <option value="footer">footer</option>
 </select>
-			<select onchange="changeToCode(this.value)">
-	<option selected value="text/html">HTML mixed</option>
-	<option value="css">CSS</option>
-	<option value="javascript">JavaScript</option>
-	<option value="application/x-httpd-php">PHP</option>
-	<option value="application/xml">XML</option>
-	<option value="python">python</option>
-	<option value="text/x-csrc">C</option>
-	<option value="text/x-c++src">C++</option>
-	<option value="text/x-java">Java</option>
-	<option value="text/x-clojure">Clojure</option>
-	<option value="text/x-coffeescript">CoffeeScript</option>
-	<option value="text/x-haskell">Haskell</option>
-	<option value="text/x-groovy">Groovy</option>
+
+<select onchange="insertTag(this)">
+    <option selected>Tag</option>
+    <option value="html">html</option>
+    <option value="div">div</option>
+    <option value="a">a</option>
+    <option value="input">input</option>
+    <option value="li">li</option>
+    <option value="a">a</option>
+    <option value="option">option</option>
+    <option value="form">form</option>
+    <option value="h1">h1</option>
+    <option value="h2">h2</option>
+    <option value="h3">h3</option>
+    <option value="select">select</option>
+    <option value="ul">ul</option>
+    <option value="ol">ol</option>
 </select>
+
 		</div>
-	</div>-->
+	</div>
 </div><!-- /page -->
 
 <div id="settings" data-role="page">
