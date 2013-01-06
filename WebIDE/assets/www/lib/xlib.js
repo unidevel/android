@@ -20,6 +20,9 @@ function XPrefence()
 String.prototype.endsWith = function(suffix) {
     return this.indexOf(suffix, this.length - suffix.length) !== -1;
 };
+String.prototype.trim= function(){  
+    return this.replace(/(^\s*)|(\s*$)/g, "");  
+};
 function XLibrary()
 {
 	this._pref = new XPrefence();

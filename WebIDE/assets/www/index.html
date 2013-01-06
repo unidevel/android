@@ -86,9 +86,7 @@
     }
     function goParent(){
     	var dir=e.dir;
-    	alert(dir);
     	dir=dir.replace(/[^/]+[/]?$/,"");
-    	alert(dir);
     	openDir(dir);
     }
     function showFiles(){
@@ -158,26 +156,29 @@
 	</div><!-- /header -->
 	<script>
 	function newFile(){
-		var name=$("#filename").value;
-		if (name.trim()==""){
+		var name=$("#filename").val();
+		alert(name);
+		if (name==""){
 			alert("Name is empty!");
 			return;
 		}
 		u.newFile(e.dir, name);
 		$('.ui-dialog').dialog('close')
+		openDir(e.dir);
 	}
 	function newDir(){
-		var name=$("#filename").value;
-		if (name.trim()==""){
+		var name=$("#filename").val();
+		if (name==""){
 			alert("Name is empty!");
 			return;
 		}
 		u.newDir(e.dir, name);
 		$('.ui-dialog').dialog('close')
+		openDir(e.dir);
 	}
 	</script>
 	<div data-role="content">
-		<input id="filename" type="text"/>
+		<input id="filename" type="text" placeholder="File or directory name" value=""/>
 		<a href="javascript:newFile()" data-role="button">File</a>
 		<a href="javascript:newDir()" data-role="button">Directory</a>
 		<a data-role="button" data-rel="back">Close</a>
