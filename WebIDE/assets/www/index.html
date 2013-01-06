@@ -118,7 +118,7 @@
     }
     function editFile(file){
     	e.file=file;
-    	var f=u.read(e.file);
+    	var f=u.load(e.file);
 		editor.setValue(f);
 		
        	$.mobile.changePage("#edit");
@@ -142,7 +142,7 @@
 	<div data-role="header" data-position="fixed">
 		<a href="javascript:window.unidevel.exit();" data-icon="back">Exit</a>
 		<h3 id="listTitle"></h3>
-		<a href="javascript:goParent()" data-icon="gear">Back</a>
+		<a href="#new" data-icon="back" data-rel="dialog">New</a>
 	</div><!-- /header -->
 	<div data-role="content">	
 		<ul data-role="listview" id="files">
@@ -152,6 +152,38 @@
 	showFiles();
 	</script>
 </div>
+<div id="new" data-role="page">
+	<div data-role="header" data-position="fixed">
+		<h3>New</h3>
+	</div><!-- /header -->
+	<script>
+	function newFile(){
+		var name=$("#filename").value;
+		if (name.trim()==""){
+			alert("Name is empty!");
+			return;
+		}
+		u.newFile(e.dir, name);
+		$('.ui-dialog').dialog('close')
+	}
+	function newDir(){
+		var name=$("#filename").value;
+		if (name.trim()==""){
+			alert("Name is empty!");
+			return;
+		}
+		u.newDir(e.dir, name);
+		$('.ui-dialog').dialog('close')
+	}
+	</script>
+	<div data-role="content">
+		<input id="filename" type="text"/>
+		<a href="javascript:newFile()" data-role="button">File</a>
+		<a href="javascript:newDir()" data-role="button">Directory</a>
+		<a data-role="button" data-rel="back">Close</a>
+	</div>
+</div>
+
 <div id="edit" data-role="page">
 	<div data-role="header" data-position="fixed">
 		<a href="javascript:browse()" data-icon="save">Browse</a>
@@ -159,13 +191,34 @@
 		<a href="index.html#settings" data-icon="gear">Settings</a>
 	</div><!-- /header -->
 	<script>
+
 	function browse()
 	{
 		var f=e.file;
 		var s=editor.getValue();
-		//u.save(f,s);
 		u.view(f);
 	}
+	
+	function save()
+	{
+		var f=e.file;
+		var s=editor.getValue();
+		if(u.save(f,s))
+			u.toast("Saved!");
+		else 
+			alert("Save failed!");
+	}
+
+	function backup()
+	{
+		var f=e.file;
+		var s=editor.getValue();
+		if(u.save(f,s)&&u.save(f,s+".bak")){
+			u.toast("Saved!");
+		}
+		else alert("Backup failed!");
+	}
+
 	</script>
 	<div data-role="content">
 <script type="text/javascript"><!--
@@ -207,6 +260,9 @@
     		else if(r=="script"){
     			dr="<script type=\"text/javascript\">\n  function () {\n  }\n</script>"
     		}
+    		else if(r=="func"){
+    			dr="  function () {\n  }\n"
+    		}
     		else if(r=="jqm"){
     			dr = "    <link rel=\"stylesheet\" href=\"http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css\" />"
 					+"    <script src=\"http://code.jquery.com/jquery-1.8.2.min.js\"></script>"
@@ -221,7 +277,7 @@
 	</div>
 	<div data-role="footer" data-position="fixed">
 		<div data-role="controlgroup" data-type="horizontal">
-<select onchange="insertRole(this)">
+<select data-role="button" onchange="insertRole(this)">
     <option selected>Role</option>
     <option value="page">page</option>
     <option value="header">header</option>
@@ -239,6 +295,7 @@
     <option value="li">li</option>
     <option value="a">a</option>
     <option value="option">option</option>
+    <option value="func">function</option>
     <option value="form">form</option>    
     <option value="script">script</option>
     <option value="h1">h1</option>
@@ -250,7 +307,8 @@
     
     <option value="ol">ol</option>
 </select>
-
+<input type=button data-role="button" data-mini="true" onclick="save()" value="Save"/>
+<input type=button data-role="button" data-mini="true" onclick="backup()" value="Backup"/>
 		</div>
 	</div>
 </div><!-- /page -->

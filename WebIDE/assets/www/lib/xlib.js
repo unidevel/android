@@ -76,11 +76,11 @@ function XLibrary()
 		}
 		return this._rootFiles;
 	}
-	this.read = function(file)
+	this.load = function(file)
 	{
 		return "1234567890\n1234567890\n1234567890\n1234567890";
 	}
-	this.write = function(file)
+	this.save = function(file)
 	{
 		return true;
 	}
@@ -115,6 +115,9 @@ function XLibrary()
 	this.bind=function(event,func)
 	{
 		// not implemented
+	}
+	this.toast=function(msg){
+		alert(msg);
 	}
 }
 

@@ -17,6 +17,7 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import java.util.*;
 import org.json.*;
+import android.widget.*;
 
 public class JavaScriptLibrary {
 	final Activity ctx;
@@ -87,6 +88,19 @@ public class JavaScriptLibrary {
 		}
 		return r.toString();
 	}
+	
+	public boolean newDir(String base, String dir){
+		File d=new File(base,dir);
+		d.mkdirs();
+		return d.isDirectory();
+	}
+	
+	public boolean newFile(String base, String file){
+		File f=new File(base,file);
+		if (f.isFile()) return false;
+		f.getParentFile().mkdirs();
+		return save(f.getPath(),"");
+	}
 
 	public boolean isFile(String path) {
 		File f = new File(path);
@@ -107,7 +121,7 @@ public class JavaScriptLibrary {
 		return Environment.getExternalStorageDirectory().getPath();
 	}
 
-	public String read(String file) {
+	public String load(String file) {
 		StringBuffer buf = new StringBuffer();
 		BufferedReader fr = null;
 		try {
@@ -128,7 +142,7 @@ public class JavaScriptLibrary {
 		return buf.toString();
 	}
 
-	public boolean write(String file, String value) {
+	public boolean save(String file, String value) {
 		FileWriter fw = null;
 		try {
 			fw = new FileWriter(file);
@@ -144,6 +158,10 @@ public class JavaScriptLibrary {
 			}
 		}
 		return false;
+	}
+	
+	public void toast(String msg){
+		Toast.makeText(this.ctx,msg,Toast.LENGTH_LONG).show();
 	}
 
 	public void view(String url) {
