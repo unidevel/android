@@ -102,6 +102,33 @@ public class JavaScriptLibrary {
 		return save(f.getPath(),"");
 	}
 
+	public boolean delete(String path){
+		File f=new File(path);
+		return delete(f);
+	}
+	
+	public boolean rename(String from, String to){
+		File f1=new File(from);
+		File f2=new File(to);
+		if(!f1.exists()||f2.exists())
+			return false;
+		File dir=f2.getParentFile();
+		if(dir.exists()||dir.mkdirs()){
+			return f1.renameTo(f2);
+		}
+		return false;
+	}
+	
+	private boolean delete(File f){
+		if(f.isDirectory()){
+			File[] files=f.listFiles();
+			for(File file:files){
+				delete(file);
+			}
+		}
+		return f.delete();
+	}
+	
 	public boolean isFile(String path) {
 		File f = new File(path);
 		return f.isFile();
