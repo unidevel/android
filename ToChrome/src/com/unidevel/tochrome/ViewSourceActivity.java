@@ -1,23 +1,47 @@
 package com.unidevel.tochrome;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import android.app.*;
 import android.content.*;
 import android.net.*;
 import android.os.*;
+import android.util.Log;
 
 public class ViewSourceActivity extends Activity
 {
+	String URL_PATTERN = "((https?)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|])";
     @Override
     public void onCreate(Bundle savedInstanceState)
 	{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-		Uri uri=getIntent().getData();
-		if(uri!=null){
-			this.finish();
-			Uri newUri=Uri.parse("view-source:"+uri.toString());
-			startChrome(newUri);
-		}
+        Intent intent = getIntent();
+        if ( Intent.ACTION_SEND.equals(intent.getAction()))
+        {
+			Uri uri = intent.getData();
+			Bundle extras = intent.getExtras();
+			if ( uri != null ) 
+			{
+				Uri newUri=Uri.parse("view-source:"+uri.toString());
+				startChrome(newUri);				
+			}
+			else 
+			{
+				String text = extras.getString(Intent.EXTRA_TEXT);
+				Pattern pattern = Pattern.compile(URL_PATTERN);
+				if(text!=null){
+					Matcher m = pattern.matcher(text);
+					if (m.find()) {
+						String url = m.group(1);
+						Uri newUri=Uri.parse("view-source:"+url);
+						startChrome(newUri);
+					}
+				}
+			}
+        }
+		this.finish();
     }
 
 	public void startChrome(Uri uri){
