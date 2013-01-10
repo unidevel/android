@@ -3,6 +3,10 @@ package com.unidevel.tochrome;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.ads.AdRequest;
+import com.google.ads.AdSize;
+import com.google.ads.AdView;
+
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -16,6 +20,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -23,7 +28,6 @@ public class MainActivity extends Activity implements OnItemClickListener
 {
     /** Called when the activity is first created. */
 	ListView linkView;
-	LinkAdapter linkAdapter;
     @Override
     public void onCreate(Bundle savedInstanceState)
 	{
@@ -38,6 +42,13 @@ public class MainActivity extends Activity implements OnItemClickListener
         setContentView(R.layout.main);
         this.linkView = (ListView) this.findViewById(R.id.listView1);
         this.linkView.setOnItemClickListener(this);
+        
+        //ToChrome: a150eec940a7ef9  
+        AdView adView = new AdView(this, AdSize.BANNER, "a150eec940a7ef9"); 
+		LinearLayout layout = (LinearLayout) findViewById(R.id.adLayout); 
+		layout.addView(adView);
+		AdRequest req = new AdRequest();
+		adView.loadAd(req);
     }
 
     @Override

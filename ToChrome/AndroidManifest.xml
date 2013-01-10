@@ -6,13 +6,18 @@
     <uses-sdk 
         android:minSdkVersion="8" 
         android:targetSdkVersion="11" />
-
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    
     <application
         android:icon="@drawable/chrome"
         android:label="@string/app_name" >
         <activity
             android:label="@string/app_name"
-            android:name=".MainActivity" android:icon="@drawable/chrome">
+            android:name=".MainActivity" android:icon="@drawable/chrome"
+            android:configChanges="orientation|keyboardHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -35,7 +40,9 @@
         </activity>
         <activity
             android:label="@string/vs_name"
-            android:name=".ViewSourceActivity" android:icon="@drawable/chrome">
+            android:name=".ViewSourceActivity" 
+            android:icon="@drawable/chrome"
+            android:theme="@android:style/Theme.Dialog">
 			<intent-filter>
 				<action android:name="android.intent.action.SEND"/>
 				<category android:name="android.intent.category.DEFAULT"/>
@@ -69,6 +76,9 @@
 				<data android:scheme="javascript"/>
 			</intent-filter>
 		</activity>
+        <activity
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+            android:name="com.google.ads.AdActivity" />   		
     </application>
 
 </manifest>
