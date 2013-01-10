@@ -104,7 +104,7 @@ public class JavaScriptLibrary {
 
 	public boolean delete(String path){
 		File f=new File(path);
-		return delete(f);
+		return deleteFile(f);
 	}
 	
 	public boolean rename(String from, String to){
@@ -119,11 +119,11 @@ public class JavaScriptLibrary {
 		return false;
 	}
 	
-	private boolean delete(File f){
+	private boolean deleteFile(File f){
 		if(f.isDirectory()){
 			File[] files=f.listFiles();
 			for(File file:files){
-				delete(file);
+				deleteFile(file);
 			}
 		}
 		return f.delete();
@@ -275,6 +275,12 @@ public class JavaScriptLibrary {
 		return eventCallbackMap.get(event);
 	}
 	
+	public String getLocale(){
+		return java.util.Locale.getDefault().getDisplayName();
+	}
+	public String getAppLocale(){
+		return ctx.getResources().getConfiguration().locale.getDisplayName();
+	}
 	public void exit(){
 		this.ctx.finish();
 	}

@@ -129,6 +129,7 @@
 					$header.find("h3").html(e.file);
 					if ( editor != null ) {
 						editor.refresh();
+						editor.focus();
 					}
     		}
     	}
@@ -214,7 +215,7 @@
 	{
 		var f=e.file;
 		var s=editor.getValue();
-		if(u.save(f,s)&&u.save(f,s+".bak")){
+		if(u.save(f,s)&&u.save(f+".bak",s)){
 			u.toast("Saved!");
 		}
 		else alert("Backup failed!");
@@ -226,6 +227,7 @@
     function insertCode(c,s){
     	if(s!=null&&s!=""){
     		editor.replaceSelection(s,null);
+    		editor.refresh();
     	}
     	c.options[0].selected=true;
     }
@@ -272,6 +274,30 @@
     		insertCode(c,dr);
     	}
     }
+    function fileop(c){
+    	var s=c.value;
+    	//alert(s);
+    	if(s=="delete"){
+    		var f=e.file;
+    		if(!confirm("Delete file "+f))
+    			return;
+    		if(f!=null&&f!=""&&f!="/")
+    			u.delete(f);
+    		openDir(e.dir);
+    	}
+    	else if(s=="backup"){
+    		backup();
+    	}
+		else if(s=="rename"){
+		    var n=prompt("Input new path:", e.file);
+			if(n!=null&&n!=""){
+			if(u.rename(e.file,n)){
+				u.toast("Renamed");
+			}
+			}
+		}
+       	c.options[0].selected=true;
+    }
 --></script>
 <textarea id="code" name="code">
 </textarea>
@@ -309,8 +335,13 @@
     <option value="ol">ol</option>
 </select>
 <input type=button data-role="button" data-mini="true" onclick="save()" value="Save"/>
-<input type=button data-role="button" data-mini="true" onclick="backup()" value="Backup"/>
-<a href="#filemore" data-role="button" data-mini="true">More...</a>
+<!--input type=button data-role="button" data-mini="true" onclick="backup()" value="Backup"/-->
+<select onchange="fileop(this)">
+    <option selected>More</option>
+    <option value="backup">Backup</option>
+    <option value="delete">Delete</option>
+    <option value="rename">Rename</option>
+</select>
 		</div>
 	</div>
 </div><!-- /page -->
@@ -355,7 +386,7 @@ var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
   lineNumbers: true,
   indentUnit: 4,
   indentWithTabs: true,
-  enterMode: "keep",
+  enterMode: "flat",
   tabMode: "shift",
   onCursorActivity: function() {
     editor.setLineClass(hlLine, null);
