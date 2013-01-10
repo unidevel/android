@@ -18,16 +18,17 @@ public class ViewSourceActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         Intent intent = getIntent();
+		Uri uri = intent.getData();
+		if ( uri != null ) 
+		{
+			MainActivity.addLink(this, uri.toString());
+			Uri newUri=Uri.parse("view-source:"+uri.toString());
+			startChrome(newUri);				
+		}
         if ( Intent.ACTION_SEND.equals(intent.getAction()))
         {
-			Uri uri = intent.getData();
-			Bundle extras = intent.getExtras();
-			if ( uri != null ) 
-			{
-				Uri newUri=Uri.parse("view-source:"+uri.toString());
-				startChrome(newUri);				
-			}
-			else 
+    		Bundle extras = intent.getExtras();
+    		if ( extras != null )
 			{
 				String text = extras.getString(Intent.EXTRA_TEXT);
 				Pattern pattern = Pattern.compile(URL_PATTERN);
@@ -35,6 +36,7 @@ public class ViewSourceActivity extends Activity
 					Matcher m = pattern.matcher(text);
 					if (m.find()) {
 						String url = m.group(1);
+						MainActivity.addLink(this, url);
 						Uri newUri=Uri.parse("view-source:"+url);
 						startChrome(newUri);
 					}
