@@ -1,28 +1,18 @@
 package com.unidevel.tochrome;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.google.ads.AdRequest;
-import com.google.ads.AdSize;
-import com.google.ads.AdView;
-
-import android.app.Activity;
-import android.content.ActivityNotFoundException;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.net.Uri;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.app.*;
+import android.content.*;
+import android.content.SharedPreferences.*;
+import android.content.pm.*;
+import android.net.*;
+import android.os.*;
+import android.preference.*;
+import android.view.*;
+import android.widget.*;
+import android.widget.AdapterView.*;
+import com.google.ads.*;
+import java.util.*;
+import java.security.*;
 
 public class MainActivity extends Activity implements OnItemClickListener
 {
@@ -42,7 +32,16 @@ public class MainActivity extends Activity implements OnItemClickListener
         setContentView(R.layout.main);
         this.linkView = (ListView) this.findViewById(R.id.listView1);
         this.linkView.setOnItemClickListener(this);
-        
+        Button btn=(Button)this.findViewById(R.id.clear);
+		btn.setOnClickListener(new View.OnClickListener(){
+
+				public void onClick(View p1)
+				{
+					clearDefault();
+				}
+
+			
+		});
         //ToChrome: a150eec940a7ef9  
         AdView adView = new AdView(this, AdSize.BANNER, "a150eec940a7ef9"); 
 		LinearLayout layout = (LinearLayout) findViewById(R.id.adLayout); 
@@ -106,5 +105,24 @@ public class MainActivity extends Activity implements OnItemClickListener
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
 		intent.setData(Uri.parse(link));
 		startActivity(intent);
+	}
+	
+	public void clearDefault(){
+	//	PackageManager pm= this.getPackageManager();
+	//	pm.clearPackagePreferredActivities("com.android.browser");
+		Intent i = (new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com")));
+		PackageManager pm = getPackageManager();
+		ComponentName name= i.resolveActivity(pm);
+		final ResolveInfo mInfo = pm.resolveActivity(i, PackageManager.MATCH_DEFAULT_ONLY);
+		Toast.makeText(this,name.getPackageName(),3).show();
+		//pm.getApplicationLabel(mInfo.activityInfo.applicationInfo), Toast.LENGTH_LONG).show();
+		String pkg=name.getPackageName();
+		if(pkg!=null&&!"android".equals(pkg)){
+		Intent intent = new Intent();
+		intent.setAction(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+		Uri uri = Uri.fromParts("package", pkg, null);
+		intent.setData(uri);
+		startActivity(intent);
+		}
 	}
 }
