@@ -4,8 +4,8 @@
     android:versionName="1.0" xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-sdk 
-        android:minSdkVersion="8" 
-        android:targetSdkVersion="11" />
+        android:minSdkVersion="13" 
+        android:targetSdkVersion="14" />
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
@@ -16,7 +16,8 @@
         android:label="@string/app_name" >
         <activity
             android:label="@string/app_name"
-            android:name=".MainActivity" android:icon="@drawable/chrome"
+            android:name=".MainActivity" 
+			android:icon="@drawable/chrome"
             android:configChanges="orientation|keyboardHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

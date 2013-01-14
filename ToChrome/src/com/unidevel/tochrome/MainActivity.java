@@ -31,17 +31,22 @@ public class MainActivity extends Activity implements OnItemClickListener
 		}
         setContentView(R.layout.main);
         this.linkView = (ListView) this.findViewById(R.id.listView1);
-        this.linkView.setOnItemClickListener(this);
+		this.linkView.setItemsCanFocus(true);
+		this.linkView.setFocusable(true);
+		this.linkView.setFocusableInTouchMode(true);
+		this.linkView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+		
+//  this.linkView.setOnItemClickListener(this);
         Button btn=(Button)this.findViewById(R.id.clear);
 		btn.setOnClickListener(new View.OnClickListener(){
-
 				public void onClick(View p1)
 				{
 					clearDefault();
 				}
-
-			
 		});
+		
+		//ActionBar bar=this.getActionBar();
+		//bar.setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME,ActionBar.DISPLAY_SHOW_HOME);
         //ToChrome: a150eec940a7ef9  
         AdView adView = new AdView(this, AdSize.BANNER, "a150eec940a7ef9"); 
 		LinearLayout layout = (LinearLayout) findViewById(R.id.adLayout); 
@@ -50,6 +55,31 @@ public class MainActivity extends Activity implements OnItemClickListener
 		adView.loadAd(req);
     }
 
+	static final int ACT_DELETE=100;
+	static final int ACT_VIEW=101;
+	
+	public boolean onCreateOptionsMenu(Menu menu){
+		super.onCreateOptionsMenu(menu);
+
+		MenuItem item=menu.add(Menu.NONE,Menu.NONE,Menu.NONE,"Delete");
+		item.setIcon(android.R.drawable.ic_menu_delete);
+		item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM|MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+		return true;
+	}
+	
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		if(item.getItemId()==ACT_DELETE){
+			
+		}
+		else if(item.getItemId()==ACT_VIEW){
+			
+		}
+		else
+			return super.onOptionsItemSelected(item);
+		return true;
+	}
+	
     @Override
     protected void onResume() {
     	super.onResume();
@@ -61,7 +91,7 @@ public class MainActivity extends Activity implements OnItemClickListener
 			if ( link!=null && link.trim().length()>0 && !links.contains(link))
 				links.add(link);
 		}
-    	this.linkView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, links));
+    	this.linkView.setAdapter(new ArrayAdapter<String>(this, R.layout.item, links));
     }
     
 	public void startChrome(Uri uri){
