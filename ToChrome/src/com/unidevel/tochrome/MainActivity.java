@@ -1,18 +1,34 @@
 package com.unidevel.tochrome;
 
-import android.app.*;
-import android.content.*;
-import android.content.SharedPreferences.*;
-import android.content.pm.*;
-import android.net.*;
-import android.os.*;
-import android.preference.*;
-import android.view.*;
-import android.widget.*;
-import android.widget.AdapterView.*;
-import com.google.ads.*;
-import java.util.*;
-import java.security.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import android.app.Activity;
+import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.net.Uri;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.ads.AdRequest;
+import com.google.ads.AdSize;
+import com.google.ads.AdView;
 
 public class MainActivity extends Activity implements OnItemClickListener
 {
@@ -31,19 +47,19 @@ public class MainActivity extends Activity implements OnItemClickListener
 		}
         setContentView(R.layout.main);
         this.linkView = (ListView) this.findViewById(R.id.listView1);
-		this.linkView.setItemsCanFocus(true);
+//		this.linkView.setItemsCanFocus(true);
 		this.linkView.setFocusable(true);
 		this.linkView.setFocusableInTouchMode(true);
-		this.linkView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+//		this.linkView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		
 //  this.linkView.setOnItemClickListener(this);
-        Button btn=(Button)this.findViewById(R.id.clear);
-		btn.setOnClickListener(new View.OnClickListener(){
-				public void onClick(View p1)
-				{
-					clearDefault();
-				}
-		});
+//        Button btn=(Button)this.findViewById(R.id.clear);
+//		btn.setOnClickListener(new View.OnClickListener(){
+//				public void onClick(View p1)
+//				{
+//					clearDefault();
+//				}
+//		});
 		
 		//ActionBar bar=this.getActionBar();
 		//bar.setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME,ActionBar.DISPLAY_SHOW_HOME);
@@ -57,13 +73,23 @@ public class MainActivity extends Activity implements OnItemClickListener
 
 	static final int ACT_DELETE=100;
 	static final int ACT_VIEW=101;
+	static final int ACT_CLEAR_DEFAULT=102;
 	
 	public boolean onCreateOptionsMenu(Menu menu){
 		super.onCreateOptionsMenu(menu);
 
-		MenuItem item=menu.add(Menu.NONE,Menu.NONE,Menu.NONE,"Delete");
+		MenuItem item=menu.add(Menu.NONE,ACT_DELETE,Menu.NONE,"Delete");
 		item.setIcon(android.R.drawable.ic_menu_delete);
 		item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM|MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+
+		item=menu.add(Menu.NONE,ACT_VIEW,Menu.NONE,"View");
+		item.setIcon(android.R.drawable.ic_menu_directions);
+		item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM|MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+
+		item=menu.add(Menu.NONE,ACT_CLEAR_DEFAULT,Menu.NONE,"Clear Default");
+		item.setIcon(android.R.drawable.ic_menu_manage);
+		item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM|MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+
 		return true;
 	}
 	
@@ -74,6 +100,9 @@ public class MainActivity extends Activity implements OnItemClickListener
 		}
 		else if(item.getItemId()==ACT_VIEW){
 			
+		}
+		else if(item.getItemId()==ACT_CLEAR_DEFAULT){
+			clearDefault();
 		}
 		else
 			return super.onOptionsItemSelected(item);
@@ -138,21 +167,24 @@ public class MainActivity extends Activity implements OnItemClickListener
 	}
 	
 	public void clearDefault(){
-	//	PackageManager pm= this.getPackageManager();
-	//	pm.clearPackagePreferredActivities("com.android.browser");
-		Intent i = (new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com")));
+		TextView view = (TextView)this.linkView.getSelectedView();
+		if ( view == null ) return;
+		String link = view.getText().toString();
+		if ( link == null || link.isEmpty()) return;
+		Intent i = (new Intent(Intent.ACTION_VIEW, Uri.parse(link)));
 		PackageManager pm = getPackageManager();
 		ComponentName name= i.resolveActivity(pm);
 		final ResolveInfo mInfo = pm.resolveActivity(i, PackageManager.MATCH_DEFAULT_ONLY);
 		Toast.makeText(this,name.getPackageName(),3).show();
 		//pm.getApplicationLabel(mInfo.activityInfo.applicationInfo), Toast.LENGTH_LONG).show();
 		String pkg=name.getPackageName();
-		if(pkg!=null&&!"android".equals(pkg)){
-		Intent intent = new Intent();
-		intent.setAction(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-		Uri uri = Uri.fromParts("package", pkg, null);
-		intent.setData(uri);
-		startActivity(intent);
+		if(pkg!=null&&!"android".equals(pkg))
+		{
+			Intent intent = new Intent();
+			intent.setAction(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+			Uri uri = Uri.fromParts("package", pkg, null);
+			intent.setData(uri);
+			startActivity(intent);
 		}
 	}
 }
