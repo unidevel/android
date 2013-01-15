@@ -34,6 +34,7 @@ public class MainActivity extends Activity implements OnItemClickListener
 {
     /** Called when the activity is first created. */
 	ListView linkView;
+	LinkAdapter linkAdapter;
     @Override
     public void onCreate(Bundle savedInstanceState)
 	{
@@ -47,12 +48,12 @@ public class MainActivity extends Activity implements OnItemClickListener
 		}
         setContentView(R.layout.main);
         this.linkView = (ListView) this.findViewById(R.id.listView1);
-//		this.linkView.setItemsCanFocus(true);
+		this.linkView.setItemsCanFocus(true);
 		this.linkView.setFocusable(true);
 		this.linkView.setFocusableInTouchMode(true);
-//		this.linkView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+		this.linkView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		
-//  this.linkView.setOnItemClickListener(this);
+		//this.linkView.setOnItemClickListener(this);
 //        Button btn=(Button)this.findViewById(R.id.clear);
 //		btn.setOnClickListener(new View.OnClickListener(){
 //				public void onClick(View p1)
@@ -96,10 +97,10 @@ public class MainActivity extends Activity implements OnItemClickListener
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
 		if(item.getItemId()==ACT_DELETE){
-			
+			deleteLink();
 		}
 		else if(item.getItemId()==ACT_VIEW){
-			
+			viewLink();
 		}
 		else if(item.getItemId()==ACT_CLEAR_DEFAULT){
 			clearDefault();
@@ -107,6 +108,22 @@ public class MainActivity extends Activity implements OnItemClickListener
 		else
 			return super.onOptionsItemSelected(item);
 		return true;
+	}
+
+	private void deleteLink()
+	{
+		this.linkAdapter.deleteSelected();
+	}
+
+	private void viewLink()
+	{
+		String link = this.linkAdapter.getSelectedLink();
+		if ( link == null ) {
+			return;
+		}		
+		Intent i=new Intent(Intent.ACTION_VIEW);
+		i.setData(Uri.parse(link));
+		startActivity(i);
 	}
 	
     @Override
@@ -120,7 +137,8 @@ public class MainActivity extends Activity implements OnItemClickListener
 			if ( link!=null && link.trim().length()>0 && !links.contains(link))
 				links.add(link);
 		}
-    	this.linkView.setAdapter(new ArrayAdapter<String>(this, R.layout.item, links));
+		this.linkAdapter = new LinkAdapter(this,links);
+    	this.linkView.setAdapter(this.linkAdapter);//(new ArrayAdapter<String>(this, R.layout.item, links));
     }
     
 	public void startChrome(Uri uri){
@@ -158,18 +176,22 @@ public class MainActivity extends Activity implements OnItemClickListener
 
 	@Override
 	public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-		TextView textView = (TextView)view;
+	/*	TextView textView = (TextView)view;
 		String link = textView.getText().toString();
 		Intent intent = new Intent(Intent.ACTION_VIEW);
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
 		intent.setData(Uri.parse(link));
 		startActivity(intent);
+		*/
+		this.linkAdapter.setSelected(position);
 	}
 	
 	public void clearDefault(){
-		TextView view = (TextView)this.linkView.getSelectedView();
-		if ( view == null ) return;
-		String link = view.getText().toString();
+		String link = this.linkAdapter.getSelectedLink();
+		if ( link == null ) {
+			Toast.makeText(this,"null",3).show();
+			return;
+		}
 		if ( link == null || link.isEmpty()) return;
 		Intent i = (new Intent(Intent.ACTION_VIEW, Uri.parse(link)));
 		PackageManager pm = getPackageManager();
