@@ -1,34 +1,19 @@
 package com.unidevel.tochrome;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import android.app.Activity;
-import android.content.ActivityNotFoundException;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
-import android.net.Uri;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.ads.AdRequest;
-import com.google.ads.AdSize;
-import com.google.ads.AdView;
+import android.app.*;
+import android.content.*;
+import android.content.SharedPreferences.*;
+import android.content.pm.*;
+import android.net.*;
+import android.os.*;
+import android.preference.*;
+import android.util.*;
+import android.view.*;
+import android.widget.*;
+import android.widget.AdapterView.*;
+import com.google.ads.*;
+import java.util.*;
+import android.text.*;
 
 public class MainActivity extends Activity implements OnItemClickListener
 {
@@ -53,7 +38,7 @@ public class MainActivity extends Activity implements OnItemClickListener
 		this.linkView.setFocusableInTouchMode(true);
 		this.linkView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		
-		//this.linkView.setOnItemClickListener(this);
+//		this.linkView.setOnItemClickListener(this);
 //        Button btn=(Button)this.findViewById(R.id.clear);
 //		btn.setOnClickListener(new View.OnClickListener(){
 //				public void onClick(View p1)
@@ -79,15 +64,15 @@ public class MainActivity extends Activity implements OnItemClickListener
 	public boolean onCreateOptionsMenu(Menu menu){
 		super.onCreateOptionsMenu(menu);
 
-		MenuItem item=menu.add(Menu.NONE,ACT_DELETE,Menu.NONE,"Delete");
+		MenuItem item=menu.add(Menu.NONE,ACT_DELETE,Menu.NONE,R.string.delete);
 		item.setIcon(android.R.drawable.ic_menu_delete);
 		item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM|MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 
-		item=menu.add(Menu.NONE,ACT_VIEW,Menu.NONE,"View");
+		item=menu.add(Menu.NONE,ACT_VIEW,Menu.NONE,R.string.view);
 		item.setIcon(android.R.drawable.ic_menu_directions);
 		item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM|MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 
-		item=menu.add(Menu.NONE,ACT_CLEAR_DEFAULT,Menu.NONE,"Clear Default");
+		item=menu.add(Menu.NONE,ACT_CLEAR_DEFAULT,Menu.NONE,R.string.clear_default);
 		item.setIcon(android.R.drawable.ic_menu_manage);
 		item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM|MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 
@@ -113,6 +98,20 @@ public class MainActivity extends Activity implements OnItemClickListener
 	private void deleteLink()
 	{
 		this.linkAdapter.deleteSelected();
+		List<String> links=this.linkAdapter.getLinks();
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		Editor edit = prefs.edit();
+		int i;
+		for (i = 1; i <= links.size() && i <= 25; ++ i)
+		{
+			Log.i("tochrome", "link" + i + ":" + links.get(i - 1));
+			edit.putString("link" + i, links.get(i - 1));
+		}
+		for (; i <= 25; ++ i)
+		{
+			edit.putString("link"+i,null);
+		}
+		edit.commit();
 	}
 
 	private void viewLink()
@@ -183,7 +182,13 @@ public class MainActivity extends Activity implements OnItemClickListener
 		intent.setData(Uri.parse(link));
 		startActivity(intent);
 		*/
-		this.linkAdapter.setSelected(position);
+	//	this.linkAdapter.setSelected(position);
+		TextView text=(TextView)view;
+		text.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+		text.setMarqueeRepeatLimit(-1);
+		text.setSelected(true);
+		text.setSingleLine();
+	//	view.setSelected(true);
 	}
 	
 	public void clearDefault(){
@@ -197,7 +202,6 @@ public class MainActivity extends Activity implements OnItemClickListener
 		PackageManager pm = getPackageManager();
 		ComponentName name= i.resolveActivity(pm);
 		final ResolveInfo mInfo = pm.resolveActivity(i, PackageManager.MATCH_DEFAULT_ONLY);
-		Toast.makeText(this,name.getPackageName(),3).show();
 		//pm.getApplicationLabel(mInfo.activityInfo.applicationInfo), Toast.LENGTH_LONG).show();
 		String pkg=name.getPackageName();
 		if(pkg!=null&&!"android".equals(pkg))
@@ -207,6 +211,11 @@ public class MainActivity extends Activity implements OnItemClickListener
 			Uri uri = Uri.fromParts("package", pkg, null);
 			intent.setData(uri);
 			startActivity(intent);
+		}
+		else
+		{
+			String msg=String.format(getString(R.string.no_default),i.getData().getScheme());
+			Toast.makeText(this,msg,3).show();
 		}
 	}
 }

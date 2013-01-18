@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html> 
+	<head> 
+	<title>My Page</title> 
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1"> 
+	<link rel="stylesheet" href="css/themes/default/jquery.mobile-1.1.1.min.css" />
+	<script src="lib/jquery.js"></script>
+	<script src="lib/jquery.mobile-1.1.1.min.js"></script>
+	<script src="lib/xlib.js"></script>
+
+    <link rel="stylesheet" href="lib/codemirror.css">
+    <script src="lib/codemirror.js"></script>
+    <link rel="stylesheet" href="theme/default.css">
+    <link rel="stylesheet" href="theme/cobalt.css">
+    <link rel="stylesheet" href="theme/eclipse.css">
+    <link rel="stylesheet" href="theme/elegant.css">
+    <link rel="stylesheet" href="theme/neat.css">
+    <link rel="stylesheet" href="theme/night.css">
+    <script src="mode/xml/xml.js"></script>
+    <script src="mode/css/css.js"></script>
+    <script src="mode/clike/clike.js"></script>
+    <script src="mode/javascript/javascript.js"></script>
+    <script src="mode/python/python.js"></script>
+    <script src="mode/php/php.js"></script>
+    <script src="mode/htmlmixed/htmlmixed.js"></script>
+    <script src="mode/clike/clike.js"></script>
+    <script src="mode/clojure/clojure.js"></script>
+    <script src="mode/haskell/haskell.js"></script>
+    <script src="mode/coffeescript/coffeescript.js"></script>
+    
+    <link rel="stylesheet" href="css/docs.css">
+
+    <style type="text/css">
+      .CodeMirror {
+      	border-top: 1px solid black; 
+      	border-bottom: 1px solid black; 
+      	width:100%;
+     	left: 0;
+		right: 0;
+      	}
+      .CodeMirror-scroll{
+   		height:auto;
+   		overflow-y:hidden;
+   		overflow-x:auto;
+   		width: 100%;
+      }/** DEBUG NO SCROLL*/
+      .searched {background: yellow;}
+      .activeline {background: #f0fcff !important;}
+      body {
+      	margin:0px;
+      	padding:0px;
+      	width:100%;
+      }
+    </style>
+    <script>
+    var u=window.unidevel;
+    function Editor(){
+    	this.dir=u.getPref("dir");
+    	this.file=u.getPref("file");
+    	
+    	if(this.dir==null){
+    		this.dir=u.rootDir()+"/";
+    	}
+    }
+    var e=new Editor();
+    u.bind("pause", "onPause");
+    u.bind("resume", "onResume");
+    function onPause()
+    {
+    	u.putPref("dir", e.dir);
+    	u.putPref("file",e.file);
+    }
+    function onResume()
+    {
+    	e.dir = u.getPref("dir");
+    	e.file = u.getPref("file");
+    }
+    function openDir(dir){
+    	e.dir=dir;
+    	var $page=$("#list");
+    	showFiles();
+    	$page.page();
+    	$page.find( ":jqmData(role=listview)" ).listview();
+    	$.mobile.changePage($page);
+    }
+    function goParent(){
+    	var dir=e.dir;
+    	dir=dir.replace(/[^/]+[/]?$/,"");
+    	openDir(dir);
+    }
+    function showFiles(){
+    	var dir=e.dir;
+    	var $page=$("#list");
+    	var s = u.listFiles(dir);
+    	var files=window.eval(s);
+    	var s="<ul data-role=\"listview\" data-insert=\"true\">";
+    	if(!(dir=="/" || dir=="//")){
+    		s+="<li><a href=\"javascript:goParent()\">..</a></li>";
+		}
+    	for(var i=0;i<files.length;++i){
+    		var f=files[i];
+    		var file=f[0];
+    		if(!f[1]){
+    			s+="<li data-icon=\"false\"><a href=\"javascript:editFile('"+dir+file+"')\">"+file+"</a></li>";
+    		}
+    		else{
+    			s+="<li><a href=\"javascript:openDir('"+dir+file+"/')\">"+file+"/</a></li>";
+    		}
+  		}
+  		s+="</ul>";
+  		$header = $page.children( ":jqmData(role=header)" );
+  		$content = $page.children( ":jqmData(role=content)" );
+    	$content.html(s);
+    	$header.find("h3").html(dir);
+    }
+    function editFile(file){
+    	e.file=file;
+    	var f=u.load(e.file);
+		editor.setValue(f);
+		
+       	$.mobile.changePage("#edit");
+    }  
+    $(document).bind("pagechange", function(e,data){
+    	var p=data.toPage;
+    	if(typeof(p)=="object"){
+    		if(p.attr('id')=="edit"){
+ 		    	$header = $("#code").children( ":jqmData(role=header)" );
+					$header.find("h3").html(e.file);
+					if ( editor != null ) {
+						editor.refresh();
+						editor.focus();
+					}
+    		}
+    	}
+    });
+    </script>
+  </head>
+<body>
+<div id="list" data-role="page">
+	<div data-role="header" data-position="fixed">
+		<a href="javascript:window.unidevel.exit();" data-icon="back">Exit</a>
+		<h3 id="listTitle"></h3>
+		<a href="#new" data-icon="back" data-rel="dialog">New</a>
+	</div><!-- /header -->
+	<div data-role="content">	
+		<ul data-role="listview" id="files">
+		</ul>
+	</div>
+	<script>
+	showFiles();
+	</script>
+</div>
+<div id="new" data-role="page">
+	<div data-role="header" data-position="fixed">
+		<h3>New</h3>
+	</div><!-- /header -->
+	<script>
+	function newFile(){
+		var name=$("#filename").val();
+		alert(name);
+		if (name==""){
+			alert("Name is empty!");
+			return;
+		}
+		u.newFile(e.dir, name);
+		$('.ui-dialog').dialog('close')
+		openDir(e.dir);
+	}
+	function newDir(){
+		var name=$("#filename").val();
+		if (name==""){
+			alert("Name is empty!");
+			return;
+		}
+		u.newDir(e.dir, name);
+		$('.ui-dialog').dialog('close')
+		openDir(e.dir);
+	}
+	</script>
+	<div data-role="content">
+		<input id="filename" type="text" placeholder="File or directory name" value=""/>
+		<a href="javascript:newFile()" data-role="button">File</a>
+		<a href="javascript:newDir()" data-role="button">Directory</a>
+		<a data-role="button" data-rel="back">Close</a>
+	</div>
+</div>
+
+<div id="edit" data-role="page">
+	<div data-role="header" data-position="fixed">
+		<a href="javascript:browse()" data-icon="save">Browse</a>
+		<h3>My Title</h3>
+		<a href="index.html#settings" data-icon="gear">Settings</a>
+	</div><!-- /header -->
+	<script>
+
+	function browse()
+	{
+		var f=e.file;
+		var s=editor.getValue();
+		u.view(f);
+	}
+	
+	function save()
+	{
+		var f=e.file;
+		var s=editor.getValue();
+		if(u.save(f,s))
+			u.toast("Saved!");
+		else 
+			alert("Save failed!");
+	}
+
+	function backup()
+	{
+		var f=e.file;
+		var s=editor.getValue();
+		if(u.save(f,s)&&u.save(f+".bak",s)){
+			u.toast("Saved!");
+		}
+		else alert("Backup failed!");
+	}
+
+	</script>
+	<div data-role="content">
+<script type="text/javascript"><!--
+    function insertCode(c,s){
+    	if(s!=null&&s!=""){
+    		editor.replaceSelection(s,null);
+    		editor.refresh();
+    	}
+    	c.options[0].selected=true;
+    }
+
+    function insertRole(c){
+    	var r=c.value;
+    	if(r!=null&&r!=""){
+    		var dr="data-role=\""+r+"\"";
+    		insertCode(c,dr);
+    	}
+    }
+    
+    function insertTag(c)
+    {
+    	var r=c.value;
+    	if(r!=null&&r!=""){
+    		var dr="<"+r+" id=\"\" > </"+r+">";
+    		if(r=="html"){
+    			dr="<!DOCTYPE html>\n<html>\n  <head>\n    <title> </title>\n"
+    				+"    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n"
+    				+"    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n"
+    				+"  <script>\n  </script>\n  </head>\n  <body>\n\n  </body>\n</html>"; 
+    		}
+    		else if(r=="a"){
+    			dr="<a href=\"\"> </a>";     		
+    		}
+    		else if(r=="form"){
+    			dr="<form action=\"\">\n\n</form>";  
+    		}
+    		else if(r=="input"){
+    			dr="<input type=\"\" value=\"\" />";
+    		}
+    		else if(r=="script"){
+    			dr="<script type=\"text/javascript\">\n  function () {\n  }\n</script>"
+    		}
+    		else if(r=="func"){
+    			dr="  function () {\n  }\n"
+    		}
+    		else if(r=="jqm"){
+    			dr = "    <link rel=\"stylesheet\" href=\"http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css\" />"
+					+"    <script src=\"http://code.jquery.com/jquery-1.8.2.min.js\"></script>"
+					+"    <script src=\"http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js\"></script>"
+    		}
+    		insertCode(c,dr);
+    	}
+    }
+    function fileop(c){
+    	var s=c.value;
+    	//alert(s);
+    	if(s=="delete"){
+    		var f=e.file;
+    		if(!confirm("Delete file "+f))
+    			return;
+    		if(f!=null&&f!=""&&f!="/")
+    			u.delete(f);
+    		openDir(e.dir);
+    	}
+    	else if(s=="backup"){
+    		backup();
+    	}
+		else if(s=="rename"){
+		    var n=prompt("Input new path:", e.file);
+			if(n!=null&&n!=""){
+			if(u.rename(e.file,n)){
+				u.toast("Renamed");
+			}
+			}
+		}
+       	c.options[0].selected=true;
+    }
+--></script>
+<textarea id="code" name="code">
+</textarea>
+	</div>
+	<div data-role="footer" data-position="fixed">
+		<div data-role="controlgroup" data-type="horizontal">
+<select data-role="button" onchange="insertRole(this)">
+    <option selected>Role</option>
+    <option value="page">page</option>
+    <option value="header">header</option>
+    <option value="content">content</option>
+    <option value="listview">listview</option>
+    <option value="footer">footer</option>
+</select>
+
+<select onchange="insertTag(this)">
+    <option selected>Tag</option>
+    <option value="html">html</option>
+    <option value="div">div</option>
+    <option value="a">a</option>
+    <option value="input">input</option>
+    <option value="li">li</option>
+    <option value="a">a</option>
+    <option value="option">option</option>
+    <option value="func">function</option>
+    <option value="form">form</option>    
+    <option value="script">script</option>
+    <option value="h1">h1</option>
+    <option value="h2">h2</option>
+    <option value="h3">h3</option>    
+    <option value="select">select</option>
+    <option value="ul">ul</option>
+    <option value="jqm">jquery mobile</option>
+    
+    <option value="ol">ol</option>
+</select>
+<input type=button data-role="button" data-mini="true" onclick="save()" value="Save"/>
+<!--input type=button data-role="button" data-mini="true" onclick="backup()" value="Backup"/-->
+<select onchange="fileop(this)">
+    <option selected>More</option>
+    <option value="backup">Backup</option>
+    <option value="delete">Delete</option>
+    <option value="rename">Rename</option>
+</select>
+		</div>
+	</div>
+</div><!-- /page -->
+
+<div id="settings" data-role="page">
+
+	<div data-role="header" data-position="fixed">
+		<h3>My Title</h3>
+	</div><!-- /header -->
+	<div data-role="content">	
+	<select onchange="selectTheme(this)">
+    <option >default</option>
+    <option>night</option>
+    <option>neat</option>
+    <option>elegant</option>
+    <option>cobalt</option>
+    <option selected>eclipse</option>
+</select>
+			<select onchange="changeToCode(this.value)">
+	<option selected value="text/html">HTML mixed</option>
+	<option value="css">CSS</option>
+	<option value="javascript">JavaScript</option>
+	<option value="application/x-httpd-php">PHP</option>
+	<option value="application/xml">XML</option>
+	<option value="python">python</option>
+	<option value="text/x-csrc">C</option>
+	<option value="text/x-c++src">C++</option>
+	<option value="text/x-java">Java</option>
+	<option value="text/x-clojure">Clojure</option>
+	<option value="text/x-coffeescript">CoffeeScript</option>
+	<option value="text/x-haskell">Haskell</option>
+	<option value="text/x-groovy">Groovy</option>
+</select>
+<a data-rel="back" data-role="button">Close</a>
+	</div>
+</div>
+
+<script> // <!-- Will hold all the shiz
+var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+  mode: "text/html",
+  theme: "eclipse",
+  lineNumbers: true,
+  indentUnit: 4,
+  indentWithTabs: true,
+  enterMode: "flat",
+  tabMode: "shift",
+  onCursorActivity: function() {
+    editor.setLineClass(hlLine, null);
+    hlLine = editor.setLineClass(editor.getCursor().line, "activeline");
+  }
+});
+var hlLine = editor.setLineClass(0, "activeline");
+// <!-- invoke to hide and show controls -->
+function hideShowControls(hideOrShow){
+	if(hideOrShow){
+		document.getElementById("formo").style.display = "block";
+	}else{
+		document.getElementById("formo").style.display = "none";
+	}
+}
+// <!-- Invoke setOption method to change syntax to correct language
+function changeToCode(mode){
+	editor.setOption("mode", mode);
+	console.log("changed to css");
+}
+// <!-- Set the theme when the select box changes
+function selectTheme(node) {
+    var theme = node.options[node.selectedIndex].innerHTML;
+    editor.setOption("theme", theme);
+}
+// <!-- SEARCH AND REPLACE -->
+var lastPos = null, lastQuery = null, marked = [];
+function unmark() {
+	for (var i = 0; i < marked.length; ++i) marked[i]();
+	marked.length = 0;
+}
+function search() {
+  unmark();                     
+  var text = document.getElementById("query").value;
+  if (!text) return;
+  for (var cursor = editor.getSearchCursor(text); cursor.findNext();)
+    marked.push(editor.markText(cursor.from(), cursor.to(), "searched"));
+
+  if (lastQuery != text) lastPos = null;
+  var cursor = editor.getSearchCursor(text, lastPos || editor.getCursor());
+  if (!cursor.findNext()) {
+    cursor = editor.getSearchCursor(text);
+    if (!cursor.findNext()) return;
+  }
+  editor.setSelection(cursor.from(), cursor.to());
+  lastQuery = text; lastPos = cursor.to();
+}
+
+function replace() {
+  editor.replaceSelection(document.getElementById("replace").value);
+}
+
+function replaceAll() {
+	unmark();
+	  var text = document.getElementById("query").value,
+	      replace = document.getElementById("replace").value;
+	  if (!text) return;
+	  for (var cursor = editor.getSearchCursor(text); cursor.findNext();)
+	    cursor.replace(replace);
+}
+
+function loadMeUpCharlie() {
+	editor.setValue(Android.loadMeUpCharlieBrown());
+}
+function giveMeUpCharlie() {
+	Android.giveMeUpCharlie(editor.getValue());
+}
+</script>
+</body>
+</html>

@@ -5,6 +5,7 @@ import android.view.*;
 import android.widget.*;
 import java.util.*;
 import android.util.*;
+import android.text.*;
 
 public class LinkAdapter extends BaseAdapter
 {
@@ -21,12 +22,18 @@ public class LinkAdapter extends BaseAdapter
 		this.inflater = LayoutInflater.from(ctx);
 	}
 
+	public List<String> getLinks()
+	{
+		return links;
+	}
+
 	public void deleteSelected()
 	{
 		if(selected<0||selected>=links.size()){
 			return;
 		}
 		this.links.remove(selected);
+		selected=-1;
 		this.notifyDataSetChanged();
 	}
 	
@@ -49,21 +56,30 @@ public class LinkAdapter extends BaseAdapter
 	{
 		if(view==null){
 			view=this.inflater.inflate(R.layout.item,null);
-			view.setClickable(true);
-			view.setFocusable(true);
-			view.setFocusableInTouchMode(true);
 			view.setOnClickListener(new View.OnClickListener(){
 
 					public void onClick(View view)
 					{
 						selected = pos;
-						view.setSelected(true);
-					//	((TextView)view)
+						notifyDataSetChanged();
 						Log.i("tochrome","selected="+pos);
 					}
 			});
 		}
 		TextView text=(TextView)view.findViewById(android.R.id.text1);
+		text.setSingleLine(true);
+		if(pos==selected){
+			text.setBackgroundResource(R.color.DarkOrange);
+			text.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+			text.setMarqueeRepeatLimit(-1);
+			text.setSelected(true);
+		}
+		else{
+			text.setSelected(false);
+			text.setBackgroundResource(R.color.Black);
+			text.setEllipsize(TextUtils.TruncateAt.END);
+			text.setMarqueeRepeatLimit(0);
+		}
 		text.setText(links.get(pos));
 		return view;
 	}

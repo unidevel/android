@@ -5,5 +5,9 @@
     <string name="app_name">ToChrome</string>
 	<string name="vs_name">ViewSource</string>
 	<string name="history">History</string>
+    <string name="delete">Delete</string>
+	<string name="view">View</string>
+	<string name="clear_default">Clear Default Settings</string>
+	<string name="no_default">No default application for %s</string>
 	
 </resources>
