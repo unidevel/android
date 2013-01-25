@@ -53,6 +53,18 @@ public class MainActivity extends Activity implements OnItemClickListener
 	static final int ACT_DELETE=100;
 	static final int ACT_VIEW=101;
 	static final int ACT_CLEAR_DEFAULT=102;
+	static final int ACT_VIEW_IN_CHROME=103;
+	static final int ACT_VIEW_SOURCE=104;
+	
+	
+	public boolean onCreateOptiondMenu (Menu menu)
+	{
+		super.onCreateOptionsMenu(menu);
+		MenuItem item=menu.add(Menu.NONE,ACT_DELETE,Menu.NONE,R.string.settings);
+		item.setIcon(android.R.drawable.ic_menu_preferences);
+		item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM|MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+		return true;
+	}
 	
 	public void onCreateContextMenu (ContextMenu menu, View v, ContextMenu.ContextMenuInfo info)
 	{
@@ -68,6 +80,8 @@ public class MainActivity extends Activity implements OnItemClickListener
 		item=menu.add(Menu.NONE,ACT_CLEAR_DEFAULT,Menu.NONE,R.string.clear_default);
 		item.setIcon(android.R.drawable.ic_menu_manage);
 		//item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM|MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+		item=menu.add(Menu.NONE,ACT_VIEW_IN_CHROME,Menu.NONE,R.string.app_name);
+		item=menu.add(Menu.NONE,ACT_VIEW_SOURCE,Menu.NONE,R.string.vs_name);
 	}
 	
 	public boolean onContextItemSelected(MenuItem item)
@@ -80,6 +94,14 @@ public class MainActivity extends Activity implements OnItemClickListener
 		}
 		else if(item.getItemId()==ACT_VIEW){
 			viewLink(link);
+		}
+		else if(item.getItemId()==ACT_VIEW_IN_CHROME){
+			Uri uri=Uri.parse(link);
+			startChrome(uri);
+		}
+		else if(item.getItemId()==ACT_VIEW_SOURCE){
+			Uri uri=Uri.parse("view-source:"+link);
+			startChrome(uri);
 		}
 		else if(item.getItemId()==ACT_CLEAR_DEFAULT){
 			clearDefault(link);
@@ -142,8 +164,14 @@ public class MainActivity extends Activity implements OnItemClickListener
 			startActivity(it);
 		}
 		catch(ActivityNotFoundException ex){
-			Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://search?id=com.android.chrome"));
-			startActivity(intent);
+			try
+			{
+				Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://search?id=com.android.chrome"));
+				startActivity(intent);
+			}
+			catch(ActivityNotFoundException e){
+				Toast.makeText(this,R.string.install_chrome,3).show();
+			}
 		}
 	}
 
