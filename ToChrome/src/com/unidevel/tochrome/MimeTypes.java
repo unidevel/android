@@ -5,8 +5,7 @@ import java.util.Map;
 
 public class MimeTypes {
 	static Map<String, String> mimeTypes;
-	static 
-	{
+	static {
 		mimeTypes = new HashMap<String, String>();
 		mimeTypes.put("htm", "text/html");
 		mimeTypes.put("html", "text/html");
@@ -36,33 +35,31 @@ public class MimeTypes {
 		mimeTypes.put("ppt", "application/vnd.ms-powerpoint");
 		mimeTypes.put("doc", "application/vnd.ms-word");
 	}
-	
-	public static String getType(String uri)
-	{
+
+	public static String getType(String uri) {
 		int pos = uri.indexOf('?');
 		String ext = null;
-		if ( pos < 0 )
-		{
-			pos = uri.lastIndexOf('.');
-			if ( pos > 0 )
-			{
-				ext = uri.substring(pos+1);
+		String name = null;
+		if (pos < 0) {
+			pos = uri.lastIndexOf('/');
+			if (pos > 0) {
+				name = uri.substring(pos + 1);
+			}
+		} else {
+			int pos2 = uri.substring(0, pos).lastIndexOf('/');
+			if (pos2 > 0) {
+				name = uri.substring(pos2 + 1, pos);
 			}
 		}
-		else
-		{
-			int pos2 = uri.lastIndexOf('.', pos);
-			if ( pos2 > 0 )
-			{
-				ext = uri.substring(pos2+1, pos-pos2-1);
-			}
-		}
-		if ( ext == null || !mimeTypes.containsKey(ext) )
-		{
+		if ( name == null )
 			return null;
+		pos = name.lastIndexOf('.');
+		if ( pos >= 0 ) {
+			ext = name.substring(pos+1).toLowerCase();
 		}
-		else
-		{
+		if (ext == null || !mimeTypes.containsKey(ext)) {
+			return null;
+		} else {
 			return mimeTypes.get(ext);
 		}
 	}

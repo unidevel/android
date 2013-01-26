@@ -156,7 +156,14 @@ public class MainActivity extends Activity implements OnItemClickListener {
 		}
 		Intent i = new Intent(Intent.ACTION_VIEW);
 		i.addCategory(Intent.CATEGORY_DEFAULT);
-		i.setDataAndType(data, type);
+		if ( link.startsWith("file://") )
+		{
+			i.setDataAndType(data, type);
+		}
+		else
+		{
+			i.setData(data);
+		}
 		try 
 		{
 			startActivity(i);
