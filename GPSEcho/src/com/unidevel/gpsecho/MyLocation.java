@@ -70,7 +70,9 @@ public class MyLocation {
              lm.removeUpdates(locationListenerNetwork);
 
              Location net_loc=null, gps_loc=null;
-             if(gps_enabled)
+             if(false)
+				gps_loc=lm.getLastKnownLocation("hybrid");
+			 if(gps_enabled)
                  gps_loc=lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
              if(network_enabled)
                  net_loc=lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);

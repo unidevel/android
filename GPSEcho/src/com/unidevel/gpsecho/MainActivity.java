@@ -30,7 +30,6 @@ public class MainActivity extends Activity {
         for (String name: providers )
         {
         	LocationProvider provider = lm.getProvider(name);
-        	
         }
         testView.append(String.valueOf(providers));
         testView.setAutoLinkMask(Linkify.ALL);
