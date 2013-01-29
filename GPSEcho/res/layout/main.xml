@@ -3,12 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <TextView
+    <Button
+        android:id="@+id/button1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:text="@string/hello_world"
-        tools:context=".MainActivity" />
+        android:background="@drawable/sign_button_selector"
+        android:padding="10dp"
+        android:text="Sign"
+        android:textSize="96dp" />
 
 </RelativeLayout>

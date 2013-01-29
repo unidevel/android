@@ -20,8 +20,11 @@ public class MainActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.main);
-
+//        setContentView(R.layout.main);
+        test();
+    }
+    
+    public void test(){
         testView = new TextView(this);
         setContentView(testView);
         
@@ -37,10 +40,14 @@ public class MainActivity extends Activity {
         location.getLocation(this, new LocationResult(){
 			@Override
 			public void gotLocation(Location location) {
-				testView.append(String.valueOf(location));
-				testView.append("\n\n");
-				testView.append("http://api.map.baidu.com/geocoder?location="+location.getLatitude()+","+location.getLongitude()+"&output=json&key=a9c37f3eb5a215fbd558d961a22867e1");
-				testView.setText(Html.fromHtml("http://api.map.baidu.com/geocoder?location="+location.getLatitude()+","+location.getLongitude()+"&output=json&key=a9c37f3eb5a215fbd558d961a22867e1"));
+				double lat = location.getLatitude(); 
+				double lng = location.getLongitude();
+//				testView.append(String.valueOf(location));
+//				testView.append("\n\n");
+//				testView.append("http://api.map.baidu.com/geocoder?location="+location.getLatitude()+","+location.getLongitude()+"&output=json&key=a9c37f3eb5a215fbd558d961a22867e1");
+				testView.setText(Html.fromHtml("http://api.map.baidu.com/geocoder?location="+location.getLatitude()+","+location.getLongitude()+"&output=json&key=a9c37f3eb5a215fbd558d961a22867e1\n"+
+						BaiduQuery.getAddress(lat, lng)
+						));
 			}
         });
     }
