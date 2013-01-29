@@ -192,18 +192,17 @@ public class MainActivity extends Activity implements OnItemClickListener {
 													// R.layout.item, links));
 	}
 
-	public void startChrome(Uri uri) {
+	public void startChromeInternal(String pkgName, String clsName, Uri uri) {
 		Intent it = new Intent(Intent.ACTION_VIEW);
 		it.setData(uri);
 		it.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-		it.setClassName("com.android.chrome",
-				"com.google.android.apps.chrome.Main");
+		it.setClassName(pkgName,clsName);
 		try {
 			startActivity(it);
 		} catch (ActivityNotFoundException ex) {
 			try {
 				Intent intent = new Intent(Intent.ACTION_VIEW,
-						Uri.parse("market://search?id=com.android.chrome"));
+						Uri.parse("market://search?id="+pkgName));
 				startActivity(intent);
 			} catch (ActivityNotFoundException e) {
 				Toast.makeText(this, R.string.install_chrome, Toast.LENGTH_LONG)
@@ -212,6 +211,11 @@ public class MainActivity extends Activity implements OnItemClickListener {
 		}
 	}
 
+	public void startChrome(Uri uri) {
+		startChromeInternal("com.android.chrome",
+						"com.google.android.apps.chrome.Main",uri);
+	}
+	
 	public static void addLink(Context context, String newLink) {
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(context);

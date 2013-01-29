@@ -3,6 +3,7 @@
 
     <string name="hello">Hello World, MainActivity!</string>
     <string name="app_name">ToChrome</string>
+	<string name="beta_name">ToChromeBeta</string>
 	<string name="vs_name">ViewSource</string>
 	<string name="history">History</string>
     <string name="settings">Settings</string>

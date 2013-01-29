@@ -2,7 +2,8 @@
 <resources>
 
     <string name="hello">Hello World, MainActivity!</string>
-    <string name="app_name">在Chrome打开</string>
+    <string name="app_name">用Chrome打开</string>
+    <string name="beta_name">用ChromeBeta打开</string>
 	<string name="vs_name">查看源文件</string>
 	<string name="history">历史记录</string>
     <string name="delete">删除</string>
