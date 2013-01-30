@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">用ChromeBeta打开</string>
+	<string name="vs_name">用ChromeBeta查看源文件</string>
+	<string name="history">历史记录</string>
+    <string name="delete">删除</string>
+	<string name="view">查看</string>
+	<string name="clear_default">清除缺省设置</string>
+	<string name="no_default">协议%s没有关联缺省应用</string>
+    <string name="settings">设置</string>
+    <string name="install_chrome">请先安装ChromeBeta浏览器!</string>
+</resources>
