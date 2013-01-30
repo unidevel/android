@@ -57,10 +57,8 @@ public class MainActivity extends Activity implements OnItemClickListener {
 		this.registerForContextMenu(this.linkView);
 		this.linkView.setOnItemClickListener(this);
 
-		// ActionBar bar=this.getActionBar();
-		// bar.setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME,ActionBar.DISPLAY_SHOW_HOME);
-		// ToChrome: a150eec940a7ef9
-		AdView adView = new AdView(this, AdSize.BANNER, "a150eec940a7ef9");
+		// ToChromeBeta: a151089aeee018e
+		AdView adView = new AdView(this, AdSize.BANNER, "a151089aeee018e");
 		LinearLayout layout = (LinearLayout) findViewById(R.id.adLayout);
 		layout.addView(adView);
 		AdRequest req = new AdRequest();
