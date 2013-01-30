@@ -8,4 +8,5 @@
 	<string name="normal">Normal</string>
 	<string name="hard">Hard</string>
 	<string name="exit">Exit</string>
+	<string name="playback">Congratulations! Do you want to playback?</string>
 </resources>

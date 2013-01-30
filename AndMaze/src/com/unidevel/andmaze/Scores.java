@@ -1,9 +1,20 @@
 package com.unidevel.andmaze;
-import java.util.*;
-import android.content.*;
-import android.app.*;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+
+@SuppressLint("UseSparseArrays")
 public class Scores
 {
 	Context context;
@@ -28,10 +39,11 @@ public class Scores
 		return pos;
 	}
 	
+	@SuppressWarnings("deprecation")
 	public void save(){
 		Properties p = new Properties();
 		for(int key : scores.keySet()){
-			List l = scores.get(key);
+			List<Long> l = scores.get(key);
 			String s="";
 			for(long t:l){
 				s+=","+t;

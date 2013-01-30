@@ -1,27 +1,28 @@
 package com.unidevel.andmaze;
 
-import android.app.Activity;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.TimeZone;
+
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
+import android.util.FloatMath;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.os.*;
-import java.util.*;
-import android.graphics.*;
-import android.text.format.*;
-import android.text.*;
-import java.text.*;
 
 public class MazeMap extends View implements Maze.Listener{
 	static final String TAG = "MazeMap";
@@ -84,7 +85,7 @@ public class MazeMap extends View implements Maze.Listener{
 		this.rows = maze.getRows();
 		this.columns = maze.getColumns();
 		this.refreshDelay = 500;
-		this.refreshHandler = new RefreshHandler();
+		this.refreshHandler = new RefreshHandler(this);
 		this.refreshHandler.sendEmptyMessage(0);
 		this.gameTime = System.currentTimeMillis();
 		this.path = new Path();
@@ -143,17 +144,21 @@ public class MazeMap extends View implements Maze.Listener{
         bitmaps[key] = bitmap;
     }
     
-	private class RefreshHandler extends Handler {
-
+	private static class RefreshHandler extends Handler {
+		final MazeMap map;
+		public RefreshHandler(MazeMap map)
+		{
+			this.map = map;
+		}
 		@Override
 		public void handleMessage(Message msg) {
-			if(state == STATE.READY) {
-				MazeMap.this.invalidate();
+			if(map.state == STATE.READY) {
+				map.invalidate();
 				removeMessages(0);
-				sendEmptyMessageDelayed(0,refreshDelay);
+				sendEmptyMessageDelayed(0,map.refreshDelay);
 			}
 			else{
-				MazeMap.this.invalidate();
+				map.invalidate();
 			}
 		}
 	};
@@ -257,11 +262,13 @@ public class MazeMap extends View implements Maze.Listener{
 		}
 	}
 	
+	Rect drawRect = new Rect();
+	
 	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
-		Rect rect = new Rect(0,0,getWidth(),getHeight());
-		canvas.drawRect(rect, paint);
+		drawRect.set(0,0,getWidth(),getHeight());
+		canvas.drawRect(drawRect, paint);
 		drawPanel(canvas);
 		drawMaze(canvas,maze,Maze.wallCode);
 		drawMaze(canvas,maze,Maze.pathCode);
@@ -312,12 +319,12 @@ public class MazeMap extends View implements Maze.Listener{
 				//when user touches the screen
 				if(event.getAction() == MotionEvent.ACTION_DOWN)
 				{
-					xInitRaw = (int) Math.floor(event.getRawX());
-					yInitRaw = (int) Math.floor(event.getRawY());
+					xInitRaw = (int) FloatMath.floor(event.getRawX());
+					yInitRaw = (int) FloatMath.floor(event.getRawY());
 				}
 				else if(event.getAction() == MotionEvent.ACTION_MOVE&&state==STATE.READY ) {
-					xCurRaw = (int) Math.floor(event.getRawX());
-					yCurRaw = (int)Math.floor(event.getRawY());
+					xCurRaw = (int)FloatMath.floor(event.getRawX());
+					yCurRaw = (int)FloatMath.floor(event.getRawY());
 					int dx= 0;
 					int dy= 0;
 					boolean needUpdate = false;
@@ -356,20 +363,27 @@ public class MazeMap extends View implements Maze.Listener{
 					}
 				}
 				else if(event.getAction()==MotionEvent.ACTION_UP){
-					xCurRaw = (int) Math.floor(event.getRawX());
-					yCurRaw = (int)Math.floor(event.getRawY());
+					xCurRaw = (int)FloatMath.floor(event.getRawX());
+					yCurRaw = (int)FloatMath.floor(event.getRawY());
+					if(state==STATE.PAUSE )
+					{
+						setState(STATE.READY);
+						update();
+						return true;
+					}
+					else if(state==STATE.DONE){
+						stopped=true;
+						initNewGame(this.level);
+						setState(STATE.READY);
+						update();
+						return true;
+					}
 					if(xCurRaw>this.getWidth()-panelHeight-10&&yCurRaw<panelHeight){
 						if (state==STATE.READY)
 							setState(STATE.PAUSE);
-						else if(state==STATE.PAUSE)
-							setState(STATE.READY);
-						else if(state==STATE.DONE){
-							stopped=true;
-							initNewGame(this.level);
-							setState(STATE.READY);
-						}
 						update();
 					}
+					
 				}
 				Log.i(TAG, "Raw("+xInitRaw+","+yInitRaw+"), Cur("+xCurRaw+","+yCurRaw+")");
 			}
@@ -428,15 +442,15 @@ public class MazeMap extends View implements Maze.Listener{
 				@Override
 				public void run() {
 					Builder builder = new Builder(MazeMap.this.getContext());
-					builder.setMessage("Congratulations! Do you want to playback?");
-					builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+					builder.setMessage(R.string.playback);
+					builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
 								PlaybackThread thread = new PlaybackThread();
 								thread.start();
 							}
 						});
-					builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+					builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
 								notifyDone();
