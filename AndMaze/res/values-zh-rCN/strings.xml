@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="ver_num">0.1</string>
+    <string name="app_name">迷宫</string>
+	<string name="difficult">难度: </string>
+	<string name="simple">容易</string>
+	<string name="normal">普通</string>
+	<string name="hard">复杂</string>
+	<string name="exit">退出</string>
+</resources>

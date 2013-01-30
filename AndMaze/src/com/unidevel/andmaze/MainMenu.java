@@ -1,12 +1,12 @@
 package com.unidevel.andmaze;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.TextView;
+import android.app.*;
+import android.content.*;
+import android.os.*;
+import android.view.*;
+import android.view.View.*;
+import android.widget.*;
+import com.google.ads.*;
 
 public class MainMenu extends Activity{
 	private final Activity me = this;
@@ -20,8 +20,8 @@ public class MainMenu extends Activity{
         Button normalBtn = (Button)findViewById(R.id.btn_main_menu_normal);
         Button hardBtn = (Button)findViewById(R.id.btn_main_menu_hard);
         Button exitBtn = (Button)findViewById(R.id.btn_main_menu_exit);
-        TextView verTxt = (TextView)findViewById(R.id.txt_main_menu_ver);
-        verTxt.setText(verTxt.getText().toString() + getString(R.string.ver_num));
+        //TextView verTxt = (TextView)findViewById(R.id.txt_main_menu_ver);
+        //verTxt.setText(verTxt.getText().toString() + getString(R.string.ver_num));
         //Button Listenerses
         exitBtn.setOnClickListener(new OnClickListener() {
 			@Override
@@ -50,6 +50,13 @@ public class MainMenu extends Activity{
         		startGame(MazeMap.HARD);
         	}
         });
+		
+		// a151086ad4201f9
+		AdView adView = new AdView(this, AdSize.BANNER, "a151086ad4201f9");
+		LinearLayout layout = (LinearLayout) findViewById(R.id.adLayout);
+		layout.addView(adView);
+		AdRequest req = new AdRequest();
+		adView.loadAd(req);
     }
     
     private void startGame(int level)

@@ -27,7 +27,7 @@
 	        android:paddingBottom="5dip"
 	        android:textSize="24.5sp"
 	        android:textColor="@color/menu_title"
-	        android:text="Main Menu" />
+	        android:text="@string/difficult" />
 	    
 	    <Button 
 	        android:id="@+id/btn_main_menu_easy"
@@ -35,7 +35,7 @@
 	        android:layout_height="wrap_content"
 	        android:layout_gravity="center_horizontal"
 	        android:layout_marginBottom="15dip"
-	        android:text="Easy"/>
+	        android:text="@string/simple"/>
 	    
 	    <Button 
 	        android:id="@+id/btn_main_menu_normal"
@@ -43,7 +43,7 @@
 	        android:layout_height="wrap_content"
 	        android:layout_gravity="center_horizontal"
 	        android:layout_marginBottom="15dip"
-	        android:text="Normal"/>
+	        android:text="@string/normal"/>
 	    
 	    <Button 
 	        android:id="@+id/btn_main_menu_hard"
@@ -51,7 +51,7 @@
 	        android:layout_height="wrap_content"
 	        android:layout_gravity="center_horizontal"
 	        android:layout_marginBottom="15dip"
-	        android:text="Hard"/>
+	        android:text="@string/hard"/>
 	    	    
 	    <Button 
 	        android:id="@+id/btn_main_menu_exit"
@@ -59,14 +59,20 @@
 	        android:layout_height="wrap_content"
 	        android:layout_gravity="center_horizontal"
 	        android:layout_marginBottom="15dip"
-	        android:text="Exit"/>
+	        android:text="@string/exit"/>
 	</LinearLayout>	
 	</LinearLayout>
-	<TextView
+    <LinearLayout
+        android:id="@+id/adLayout"
+		android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
+	<!--TextView
 	        android:id="@+id/txt_main_menu_ver"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_alignParentBottom="true"
 	        android:textSize="14sp"
-	        android:text="ver: 1.0" />
+	        android:text="ver: 1.0" /-->
 </RelativeLayout>
