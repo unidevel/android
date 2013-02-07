@@ -13,7 +13,9 @@ import android.text.util.Linkify;
 import android.view.Menu;
 import android.widget.TextView;
 
-import com.unidevel.gpsecho.MyLocation.LocationResult;
+import com.baidu.location.BDLocation;
+import com.unidevel.gpsecho.BaiduLocator.BaiduLocationResult;
+import com.unidevel.gpsecho.NativeLocator.NativeLocationResult;
 
 public class MainActivity extends Activity {
 	TextView testView;
@@ -21,13 +23,31 @@ public class MainActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        setContentView(R.layout.main);
-        test();
-    }
-    
-    public void test(){
         testView = new TextView(this);
         setContentView(testView);
-        
+
+        test2();
+    }
+	
+	public void test2(){
+		final BaiduLocator locator = new BaiduLocator(this.getApplicationContext());
+		locator.start();
+        testView.setAutoLinkMask(Linkify.ALL);
+		locator.getLocation(new BaiduLocationResult(){
+				@Override
+				public void gotLocation(BDLocation location) {
+					if(location==null)
+						return;
+					double lat = location.getLatitude(); 
+					double lng = location.getLongitude();
+					testView.setText(Html.fromHtml("http://api.map.baidu.com/geocoder?location="+location.getLatitude()+","+location.getLongitude()+"&output=json&key=a9c37f3eb5a215fbd558d961a22867e1\n"+
+							BaiduQuery.getAddress(lat, lng)
+							));
+				}
+	        });
+	}
+    
+    public void test(){
         LocationManager lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         List<String> providers = lm.getAllProviders();
         for (String name: providers )
@@ -36,8 +56,8 @@ public class MainActivity extends Activity {
         }
         testView.append(String.valueOf(providers));
         testView.setAutoLinkMask(Linkify.ALL);
-        MyLocation location = new MyLocation();
-        location.getLocation(this, new LocationResult(){
+        NativeLocator location = new NativeLocator(this);
+        location.getLocation(new NativeLocationResult(){
 			@Override
 			public void gotLocation(Location location) {
 				double lat = location.getLatitude(); 
