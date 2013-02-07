@@ -56,19 +56,25 @@ public class RootUtil
 	{
 		java.lang.Process proc = null;
 		Log.i("RUNWITHRESULT",cmd);
-		
 		{
+			String redirect_cmd="";
+			if ( outputs == null ) {
+				redirect_cmd = ">/dev/null 2>&1";
+			}
 			proc = Runtime.getRuntime().exec("su");
-			proc.getOutputStream().write((cmd+"\necho $?\nexit\n").getBytes());
+			proc.getOutputStream().write((cmd+redirect_cmd+"\necho \\n$?\nexit\n").getBytes());
 			proc.getOutputStream().flush();
 			InputStream stdout = proc.getInputStream();
 			StringBuffer buf=new StringBuffer();
 			int exitCode=getExitCode(stdout,buf);
-			outputs.add(buf.toString());
-			Log.i("STDOUT",outputs.get(0));
-			InputStream stderr = proc.getErrorStream();
-			outputs.add(toString(stderr));
-			Log.i("STDERR",outputs.get(1));
+			if ( outputs!= null )
+			{
+				outputs.add(buf.toString());
+				Log.i("STDOUT",outputs.get(0));
+				InputStream stderr = proc.getErrorStream();
+				outputs.add(toString(stderr));
+				Log.i("STDERR",outputs.get(1));
+			}
 			proc.waitFor();
 			return exitCode;
 		}
@@ -97,5 +103,9 @@ public class RootUtil
 			lastLine=line;
 		}
 		return Integer.valueOf(lastLine).intValue();
+	}
+	
+	public void reboot(){
+		run("reboot");
 	}
 }
