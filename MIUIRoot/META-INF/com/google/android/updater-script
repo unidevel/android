@@ -1,0 +1,10 @@
+mount("ext4", "EMMC", "/dev/block/platform/msm_sdcc.1/by-name/system", "/system");
+# ---- start making changes here ----
+
+ui_print("Unpacking new files...");
+package_extract_dir("system", "/system");
+ui_print("Symlinks and permissions...");
+set_perm_recursive(0, 2000, 0755, 0755, "/system/xbin");
+set_perm(0, 0, 06755, "/system/xbin/su");
+set_perm(0, 0, 0644, "/system/app/LBESEC_MIUI.apk");
+unmount("/system");

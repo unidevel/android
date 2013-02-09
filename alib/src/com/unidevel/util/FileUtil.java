@@ -5,10 +5,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import android.os.Environment;
 
@@ -82,17 +82,30 @@ public class FileUtil {
 	}
 	
 	public static String load(File file) throws IOException {
+		return load(file, null);
+	}
+	
+	public static String load(File file, String enc) throws IOException {
 		StringBuffer buf = new StringBuffer();
-		BufferedReader fr = null;
+		FileInputStream in = null;
 		try {
-			fr = new BufferedReader(new FileReader(file));
+			BufferedReader fr ;
+			in = new FileInputStream(file);
+			if ( enc != null ) 
+			{
+				fr = new BufferedReader(new InputStreamReader(in));	
+			}
+			else
+			{
+				fr = new BufferedReader(new InputStreamReader(in, enc));				
+			}
 			char cbuf[] = new char[8192];
 			for (int l = fr.read(cbuf); l > 0; l = fr.read(cbuf)) {
 				buf.append(cbuf, 0, l);
 			}
 		} finally {
 			try {
-				fr.close();
+				in.close();
 			} catch (Exception e) {
 			}
 		}
