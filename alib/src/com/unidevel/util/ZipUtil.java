@@ -18,7 +18,19 @@ public class ZipUtil {
 		ZipEntry entry;
 		while ( (entry = zipIn.getNextEntry()) != null ) {
 			File file = new File(destDir, entry.getName());
-			FileUtil.copy(zipIn, file);
+			if ( entry.isDirectory() ) 
+			{
+				file.mkdirs();
+			}
+			else
+			{
+				File parentDir = file.getParentFile();
+				if ( parentDir !=null && !parentDir.exists()) 
+				{
+					parentDir.mkdirs();
+				}
+				FileUtil.copy(zipIn, file);
+			}
 			zipIn.closeEntry();
 		}
 	}

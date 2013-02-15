@@ -3,6 +3,7 @@
 	<name>SoftKeyEnabler</name>
 	<comment></comment>
 	<projects>
+		<project>alib</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

@@ -1,14 +1,48 @@
 package com.unidevel.util;
 
-import android.annotation.*;
-import android.content.*;
-import android.net.*;
-import android.util.*;
-import android.webkit.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.util.Log;
+import android.webkit.JsResult;
+import android.webkit.WebChromeClient;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+
+import com.unidevel.www.JavaScriptLibrary;
+import com.unidevel.www.MimeTypes;
 
 public class WebUtil
 {
+	public static boolean isPublished(Context ctx)
+	{
+		File f = new File(ctx.getFilesDir(), "www/lib/jquery.mobile.js");
+		return f.exists();
+	}
 
+	public static Uri makeUri(Context ctx, String relativePath)
+	{
+		File f = new File(ctx.getFilesDir(), relativePath);
+		Uri uri = Uri.fromFile(f);
+		return uri;
+	}
+	
+	public static void publish(Context ctx) {
+		try {
+			InputStream in = ctx.getAssets().open("www.zip");
+			File dir = ctx.getFilesDir();
+			ZipUtil.extract(in, dir);
+		} catch (IOException e) {
+			Log.e("WebUtil", e.getMessage(), e);
+		}
+	}
+	
 	public static void viewLink(Context ctx, String link) {
 		if (link == null) {
 			return;
@@ -32,12 +66,20 @@ public class WebUtil
 		ctx.startActivity(i);
 	}
 	
-	public static void browse(WebView view,Uri uri)
+	public static void setup(Activity activity, WebView view)
 	{
-		browse(view,uri);
+		setup(view,"unidevel",new JavaScriptLibrary(activity));
 	}
 	
-	public static void browse(WebView view,Uri uri, String jsObjectName, Object jsInterface)
+	public static void addJsObject(WebView view, String jsObjectName, Object jsInterface)
+	{
+		if(jsInterface!=null&&jsObjectName!=null){
+			view.addJavascriptInterface(jsInterface, jsObjectName);
+		}
+	}
+	
+	@SuppressLint("SetJavaScriptEnabled")
+	public static void setup(WebView view, String jsObjectName, Object jsInterface)
 	{
 		view.getContext().getFilesDir();
 		view.getSettings().setJavaScriptEnabled(true);
@@ -60,7 +102,6 @@ public class WebUtil
 		if(jsInterface!=null&&jsObjectName!=null){
 			view.addJavascriptInterface(jsInterface, jsObjectName);
 		}
-		view.loadUrl(uri.toString());
 	}
 	
 	@SuppressLint("SetJavaScriptEnabled")

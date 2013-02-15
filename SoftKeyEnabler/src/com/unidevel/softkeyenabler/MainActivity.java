@@ -1,16 +1,26 @@
 package com.unidevel.softkeyenabler;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Menu;
+import android.webkit.WebView;
 
-public class MainActivity extends Activity {
+import com.unidevel.WebActivity;
+import com.unidevel.util.WebUtil;
+
+public class MainActivity extends WebActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        
+        WebView view =new WebView(this);
+        setContentView(view);
+        setupWebView(view);
+        extractJQM();
+        view.loadUrl(WebUtil.makeUri(this,"www/index.html").toString());
+//        WebUtil.browse(view, WebUtil.makeUri(this,"www/index.html"));
+//        setContentView(R.layout.main);
     }
 
     @Override
