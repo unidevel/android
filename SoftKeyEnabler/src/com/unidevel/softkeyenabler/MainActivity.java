@@ -6,7 +6,6 @@ import android.view.Menu;
 import android.webkit.WebView;
 
 import com.unidevel.WebActivity;
-import com.unidevel.util.WebUtil;
 
 public class MainActivity extends WebActivity {
 
@@ -17,8 +16,23 @@ public class MainActivity extends WebActivity {
         WebView view =new WebView(this);
         setContentView(view);
         setupWebView(view);
-        extractJQM();
-        view.loadUrl(WebUtil.makeUri(this,"www/index.html").toString());
+		try {
+			extractJQM();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		// try {
+		// view.loadDataWithBaseURL(getFilesDir().toURL().toString(),
+		// this.getHtmlData(appFile("www/test.html"), null),
+		// "text/html", null, null);
+		// } catch (MalformedURLException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// } catch (IOException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		view.loadUrl(appFile("www/test.html").toURI().toString());
 //        WebUtil.browse(view, WebUtil.makeUri(this,"www/index.html"));
 //        setContentView(R.layout.main);
     }

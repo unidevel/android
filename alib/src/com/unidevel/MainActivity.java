@@ -14,7 +14,6 @@ public class MainActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         final DialogUtil util = new DialogUtil(this);
-//        util.alert("HELLO WORLD");
         util.prompt("Test", new DialogUtil.OnPromptCallback() {
 			
 			@Override

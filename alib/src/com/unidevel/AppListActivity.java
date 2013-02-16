@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.unidevel.util.UnitUtil;
-
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -20,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
@@ -28,7 +24,7 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class AppListActivity extends Activity{
+public class AppListActivity extends BaseActivity {
 	ListView appList;
 	AppListActivity me = this;
 	AppAdapter appAdapter = new AppAdapter();
@@ -116,7 +112,7 @@ public class AppListActivity extends Activity{
 			ListView.LayoutParams params = new ListView.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 			layout.setLayoutParams(params);
 			layout.setFocusable(false);
-			int paddingSize = UnitUtil.d2p(me, 10);
+			int paddingSize = d2p(10);
 
 			ImageView imageView = new ImageView(me);
 			imageView.setId(IMAGEVIEW_ID);
@@ -124,7 +120,7 @@ public class AppListActivity extends Activity{
 			imageView.setPadding(paddingSize, 0, 0, 0);
 			imageView.setFocusable(false);
 
-			int pxSize = UnitUtil.d2p(me, 48);
+			int pxSize = d2p(48);
 			layout.addView(imageView, pxSize, pxSize);
 			TextView textView = new TextView(me);
 			textView.setGravity(Gravity.CENTER_VERTICAL);
@@ -212,24 +208,7 @@ public class AppListActivity extends Activity{
 			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT,1.0f);
 			layout.addView(appList, params);
 		}
-		if(false){
-			LinearLayout buttonLayout = new LinearLayout(this);
-			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT,0.01f);
-			buttonLayout.setOrientation(LinearLayout.HORIZONTAL);
-			buttonLayout.setGravity(Gravity.CENTER);
-			buttonLayout.setLayoutParams(params);
-			layout.addView(buttonLayout, params);
-			{
-				Button btnOk = new Button(this);
-				btnOk.setText(android.R.string.ok);
-				buttonLayout.addView(btnOk, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-			}
-			{
-				Button btnCancel = new Button(this);
-				btnCancel.setText(android.R.string.cancel);
-				buttonLayout.addView(btnCancel, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-			}
-		}
+
 		LoadAppsTask loadTask = new LoadAppsTask();
 		loadTask.execute();
 	}

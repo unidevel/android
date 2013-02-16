@@ -1,9 +1,12 @@
 package com.unidevel;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -12,19 +15,37 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.SubMenu;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 
-import com.unidevel.util.ZipUtil;
 import com.unidevel.www.JavaScriptLibrary;
 
 public abstract class WebActivity extends BaseActivity {
-	WebView webView;
-	Handler handler;
-	JavaScriptLibrary jsLib;
+	private WebView webView;
+	protected Handler handler;
+	private Map<String, Object> jsObjects;
+	protected JavaScriptLibrary jsLib;
+	private MenuWrapper optionMenuObject;
+
+	public static final String EVENT_RESUME = "onResume";
+	public static final String EVENT_PAUSE = "onPause";
+	public static final String EVENT_PREPARE_OPTION_MENU = "onPrepareOptionMenu";
+	public static final String EVENT_CLICK_OPTION_MENU = "onClickOptionMenu";
+
+	public static final String VAR_UNIDEVEL = "unidevel";
+	public static final String VAR_OPTION_MENU = "_internal_option_menu";
+
+	protected void onCreateJavaScriptObjects(Map<String, Object> jsObjects) {
+		this.jsLib = new JavaScriptLibrary(this);
+		jsObjects.put(VAR_UNIDEVEL, this.jsLib);
+		this.optionMenuObject = new MenuWrapper();
+		jsObjects.put(VAR_OPTION_MENU, this.optionMenuObject);
+	}
 
 	@SuppressLint("SetJavaScriptEnabled")
 	public void setupWebView(WebView view) {
@@ -40,51 +61,63 @@ public abstract class WebActivity extends BaseActivity {
 			}
 		};
 		view.setWebChromeClient(client);
-		view.addJavascriptInterface(this.jsLib, "unidevel");
+		this.jsObjects = new HashMap<String, Object>();
+		this.onCreateJavaScriptObjects(jsObjects);
+		for (String name : this.jsObjects.keySet()) {
+			view.addJavascriptInterface(this.jsObjects.get(name), name);
+		}
 	}
 
-	public void extractJQM() {
-		File dir = this.getFilesDir();
-		File f = new File(this.getFilesDir(), "www/lib/jquery.mobile.js");
-		if (!f.exists()) {
-			try {
-				InputStream in = this.getAssets().open("www.zip");
-				ZipUtil.extract(in, dir);
-			} catch (IOException e) {
-				Log.e("WebActivity", e.getMessage(), e);
-			}
-		}
+	protected void extractJQM() throws IOException {
+		extractAsset("www.zip", this.getFilesDir(), true);
 	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		this.jsLib = new JavaScriptLibrary(this);
 		this.handler = new Handler();
 	}
 
 	@Override
 	protected void onPause() {
-		String callback = this.jsLib.getEventCallback("pause");
+		String callback = this.getJsCallback(EVENT_PAUSE);
 		if (callback != null) {
 			callJS(callback + "()");
 		}
 		super.onPause();
 	}
 
+	protected String getJsCallback(String event) {
+		if (this.jsLib != null) {
+			return this.jsLib.getEventCallback(event);
+		}
+		return null;
+	}
+
 	@Override
 	protected void onResume() {
-		String callback = this.jsLib.getEventCallback("resume");
+		String callback = getJsCallback(EVENT_RESUME);
 		if (callback != null) {
 			callJS(callback + "()");
 		}
 		super.onResume();
 	}
 
-	public String getHtmlData(String assetPath, String encoding) {
-		InputStream in = null;
+	public String getHtmlData(File file, String encoding) throws IOException {
+		FileInputStream in = new FileInputStream(file);
 		try {
-			in = this.getAssets().open(assetPath);
+			return getHtmlData(in, encoding);
+		} finally {
+			try {
+				in.close();
+			} catch (Throwable ex) {
+			}
+		}
+	}
+
+	public String getHtmlData(InputStream in, String encoding)
+			throws IOException {
+		try {
 			InputStreamReader reader;
 			if (encoding != null)
 				reader = new InputStreamReader(in, encoding);
@@ -98,12 +131,9 @@ public abstract class WebActivity extends BaseActivity {
 			}
 			return sbuf.toString();
 		} catch (IOException e) {
-			try {
-				in.close();
-			} catch (Throwable ex) {
-			}
+			e(e.getMessage(), e);
+			throw e;
 		}
-		return null;
 	}
 
 	public void callJS(final String javaScript) {
@@ -117,23 +147,25 @@ public abstract class WebActivity extends BaseActivity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		String callback = this.jsLib.getCallback(requestCode);
-		if (callback != null) {
-			if (callback.startsWith("image:")) {
-				String function = callback.substring(6);
-				String path = null;
-				if (resultCode == RESULT_OK) {
-					path = getPath(data);
+		if (this.jsLib != null) {
+			String callback = this.jsLib.getCallback(requestCode);
+			if (callback != null) {
+				if (callback.startsWith("image:")) {
+					String function = callback.substring(6);
+					String path = null;
+					if (resultCode == RESULT_OK) {
+						path = getPath(data);
+					}
+					if (path != null) {
+						path = "'" + path + "'";
+					} else {
+						path = "null";
+					}
+					i(String.valueOf(path));
+					callJS(function + "(" + path + ")");
 				}
-				if (path != null) {
-					path = "'" + path + "'";
-				} else {
-					path = "null";
-				}
-				Log.i("Image Path:", String.valueOf(path));
-				callJS(function + "(" + path + ")");
+				this.jsLib.removeCallback(callback);
 			}
-			this.jsLib.removeCallback(callback);
 		}
 	}
 
@@ -169,4 +201,52 @@ public abstract class WebActivity extends BaseActivity {
 		return super.onKeyDown(keyCode, event);
 	}
 
+	public static class MenuWrapper {
+		Menu menu;
+
+		public MenuWrapper() {
+
+		}
+
+		public void setMenu(Menu menu) {
+			this.menu = menu;
+		}
+
+		public void add(int groupdId, int itemId, String title) {
+			this.menu.add(groupdId, itemId, 0, title);
+		}
+
+		public void add(int id, String title) {
+			add(0, id, title);
+		}
+
+		public MenuWrapper addSubMenu(String title) {
+			SubMenu subMenu = this.menu.addSubMenu(title);
+			MenuWrapper subMenuWrapper = new MenuWrapper();
+			subMenuWrapper.setMenu(subMenu);
+			return subMenuWrapper;
+		}
+	}
+
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		super.onPrepareOptionsMenu(menu);
+		String callback = this.getJsCallback(EVENT_PREPARE_OPTION_MENU);
+		if (callback != null && this.optionMenuObject != null) {
+			menu.clear();
+			this.optionMenuObject.setMenu(menu);
+			callJS(callback + "(" + VAR_OPTION_MENU + ")");
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		String callback = this.getJsCallback(EVENT_CLICK_OPTION_MENU);
+		if (callback != null) {
+			callJS(callback + "(" + item.getItemId() + ")");
+		}
+		return super.onOptionsItemSelected(item);
+	}
 }
