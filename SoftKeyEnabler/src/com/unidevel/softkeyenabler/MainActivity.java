@@ -1,5 +1,7 @@
 package com.unidevel.softkeyenabler;
 
+import java.util.Map;
+
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Menu;
@@ -8,6 +10,14 @@ import android.webkit.WebView;
 import com.unidevel.WebActivity;
 
 public class MainActivity extends WebActivity {
+	BuildPropFile buildPropFile;
+
+	@Override
+	protected void onCreateJavaScriptObjects(Map<String, Object> jsObjects) {
+		super.onCreateJavaScriptObjects(jsObjects);
+		this.buildPropFile = new BuildPropFile(this);
+		jsObjects.put("prop", this.buildPropFile);
+	}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -17,7 +27,9 @@ public class MainActivity extends WebActivity {
         setContentView(view);
         setupWebView(view);
 		try {
-			extractJQM();
+			extractAsset("www.zip", getFilesDir(), true);
+			// extractJQM();
+			// copyAssets("www", getFilesDir(), true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

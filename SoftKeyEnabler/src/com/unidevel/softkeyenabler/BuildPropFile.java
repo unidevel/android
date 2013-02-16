@@ -257,8 +257,8 @@ public class BuildPropFile {
 		this.properties = properties;
 	}
 	
-	public void backup(Context context) throws IOException{
-		File filesDir = context.getFilesDir();
+	public void backup() throws IOException {
+		File filesDir = this.context.getFilesDir();
 		File srcFile = new File(PROP_PATH);
 		File destFile = new File(filesDir, PROP_NAME);
 		if ( !destFile.exists())
@@ -297,7 +297,7 @@ public class BuildPropFile {
 		return 240;
 	}
 	
-	public void save(Context context) throws Exception {
+	public void save() throws Exception {
 		File filesDir = context.getFilesDir();
 		File backupFile = new File(filesDir, PROP_NAME);
 		File tempFile = new File(filesDir, TEMP_PROP_NAME);

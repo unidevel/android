@@ -31,8 +31,20 @@ public class BaseActivity extends Activity {
 		this.pref.edit().putInt(key, value).commit();
 	}
 
-	protected String get(String key) {
+	protected void put(String key, boolean value) {
+		this.pref.edit().putBoolean(key, value).commit();
+	}
+
+	protected String getString(String key) {
 		return this.pref.getString(key, null);
+	}
+
+	protected int getInt(String key) {
+		return this.pref.getInt(key, 0);
+	}
+
+	protected boolean getBoolean(String key) {
+		return this.pref.getBoolean(key, false);
 	}
 
 	protected int getVersionCode() {
@@ -58,20 +70,40 @@ public class BaseActivity extends Activity {
 	protected void extractAsset(String assetZipFile, File destDir,
 			boolean forceUpdate) throws IOException {
 		File dir = this.getFilesDir();
-		String versionCode = String.valueOf(this.getVersionCode());
-		String key = "extracted_" + assetZipFile;
-		String savedCode = get(key);
-		if (forceUpdate
-				|| (versionCode != null && !versionCode.equals(savedCode))) {
+		String key = "asset_" + assetZipFile;
+		if (shouldUpdate(key, forceUpdate)) {
 			try {
 				InputStream in = this.getAssets().open(assetZipFile);
 				ZipUtil.extract(in, dir);
+				int versionCode = this.getVersionCode();
 				put(key, versionCode);
 			} catch (IOException e) {
 				Log.e(LOG_TAG + ".extract", e.getMessage(), e);
 				throw e;
 			}
 		}
+	}
+
+	protected void copyAssets(String dir, File destDir, boolean forceUpdate)
+			throws IOException {
+		String key = "asset_" + dir;
+		int versionCode = this.getVersionCode();
+		if (shouldUpdate(key, forceUpdate)) {
+			String[] allAssets = this.getAssets().list(dir);
+			for (String asset : allAssets) {
+				String assetFile = dir + "/" + asset;
+				copyAsset(assetFile, destDir);
+			}
+			put(key, versionCode);
+		}
+	}
+
+	private boolean shouldUpdate(String key, boolean forceUpdate) {
+		if (forceUpdate)
+			return true;
+		int versionCode = this.getVersionCode();
+		int savedCode = getInt(key);
+		return versionCode != savedCode;
 	}
 
 	protected void copyAsset(String assetFile, File destDir) throws IOException {
@@ -224,7 +256,7 @@ public class BaseActivity extends Activity {
 	public void t(String message) {
 		t(message, true);
 	}
-	
+
 	public void t(String message, boolean longDuration) {
 		Toast.makeText(this, message,
 				longDuration ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT).show();
