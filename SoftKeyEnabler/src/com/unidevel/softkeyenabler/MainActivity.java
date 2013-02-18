@@ -22,6 +22,7 @@ public class MainActivity extends WebActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+		this.debug = true;
         
         WebView view =new WebView(this);
         setContentView(view);

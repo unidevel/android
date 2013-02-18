@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.view.KeyEvent;
@@ -22,6 +23,7 @@ import android.view.SubMenu;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import com.unidevel.www.JavaScriptLibrary;
 
@@ -31,6 +33,9 @@ public abstract class WebActivity extends BaseActivity {
 	private Map<String, Object> jsObjects;
 	protected JavaScriptLibrary jsLib;
 	private MenuWrapper optionMenuObject;
+	private String sdcardUrl;
+	private String dataUrl;
+	protected boolean debug = false;
 
 	public static final String EVENT_RESUME = "onResume";
 	public static final String EVENT_PAUSE = "onPause";
@@ -61,11 +66,39 @@ public abstract class WebActivity extends BaseActivity {
 			}
 		};
 		view.setWebChromeClient(client);
+		view.setWebViewClient(new WebViewClient() {
+
+			@Override
+			public void onLoadResource(WebView view, String url) {
+				String newUrl = mapUrl(url);
+				if (newUrl == null)
+					newUrl = url;
+				view.loadUrl(newUrl);
+				i(newUrl);
+			}
+
+			@Override
+			public boolean shouldOverrideUrlLoading(WebView view, String url) {
+				return true;
+				// return super.shouldOverrideUrlLoading(view, url);
+			}
+
+		});
 		this.jsObjects = new HashMap<String, Object>();
 		this.onCreateJavaScriptObjects(jsObjects);
 		for (String name : this.jsObjects.keySet()) {
 			view.addJavascriptInterface(this.jsObjects.get(name), name);
 		}
+	}
+
+	protected String mapUrl(String url) {
+		if (url != null && debug) {
+			if (url.startsWith(dataUrl)) {
+				url = this.sdcardUrl + url.substring(dataUrl.length());
+			}
+		}
+		i(url);
+		return url;
 	}
 
 	protected void extractJQM() throws IOException {
@@ -76,6 +109,9 @@ public abstract class WebActivity extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.handler = new Handler();
+		this.dataUrl = "file://" + getFilesDir().getPath();
+		this.sdcardUrl = "file://"
+				+ Environment.getExternalStorageDirectory().getPath();
 	}
 
 	@Override
