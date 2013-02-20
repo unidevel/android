@@ -1,31 +1,17 @@
 package com.unidevel;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map;
-
-import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
-import android.provider.MediaStore;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.SubMenu;
-import android.webkit.JsResult;
-import android.webkit.WebChromeClient;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
-
-import com.unidevel.www.JavaScriptLibrary;
+import android.annotation.*;
+import android.content.*;
+import android.database.*;
+import android.graphics.*;
+import android.net.*;
+import android.os.*;
+import android.provider.*;
+import android.view.*;
+import android.webkit.*;
+import com.unidevel.www.*;
+import java.io.*;
+import java.util.*;
 
 public abstract class WebActivity extends BaseActivity {
 	private WebView webView;
@@ -70,19 +56,23 @@ public abstract class WebActivity extends BaseActivity {
 
 			@Override
 			public void onLoadResource(WebView view, String url) {
-				String newUrl = mapUrl(url);
-				if (newUrl == null)
-					newUrl = url;
-				view.loadUrl(newUrl);
-				i(newUrl);
+				i(url);
+				super.onLoadResource(view,url);
 			}
 
 			@Override
 			public boolean shouldOverrideUrlLoading(WebView view, String url) {
-				return true;
+				return false;
 				// return super.shouldOverrideUrlLoading(view, url);
 			}
-
+			
+			public   void   onPageStarted(WebView view, String url, Bitmap favicon) {
+				String newUrl = mapUrl(url);
+				if (!url.equals(newUrl)){
+					view.stopLoading();
+					view.loadUrl(newUrl);		
+				}
+			}
 		});
 		this.jsObjects = new HashMap<String, Object>();
 		this.onCreateJavaScriptObjects(jsObjects);
