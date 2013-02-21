@@ -29,25 +29,10 @@ public class MainActivity extends WebActivity {
         setupWebView(view);
 		try {
 			extractAsset("www.zip", getFilesDir(), true);
-			// extractJQM();
-			// copyAssets("www", getFilesDir(), true);
 		} catch (Exception e) {
-			e.printStackTrace();
+			alert("Error", e.getMessage(),e);
 		}
-		// try {
-		// view.loadDataWithBaseURL(getFilesDir().toURL().toString(),
-		// this.getHtmlData(appFile("www/test.html"), null),
-		// "text/html", null, null);
-		// } catch (MalformedURLException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// } catch (IOException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		view.loadUrl(appFile("www/test.html").toURI().toString());
-//        WebUtil.browse(view, WebUtil.makeUri(this,"www/index.html"));
-//        setContentView(R.layout.main);
+		view.loadUrl(appFile("www/index.html").toURI().toString());
     }
 
     @Override

@@ -257,6 +257,12 @@ public class BuildPropFile {
 		this.properties = properties;
 	}
 	
+	public boolean hasBackup(){
+		File filesDir = this.context.getFilesDir();
+		File destFile = new File(filesDir, PROP_NAME);
+		return destFile.exists();		
+	}
+	
 	public void backup() throws IOException {
 		File filesDir = this.context.getFilesDir();
 		File srcFile = new File(PROP_PATH);
