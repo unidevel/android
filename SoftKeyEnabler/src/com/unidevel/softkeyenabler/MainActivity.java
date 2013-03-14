@@ -8,6 +8,8 @@ import android.view.Menu;
 import android.webkit.WebView;
 
 import com.unidevel.WebActivity;
+import com.unidevel.util.*;
+import android.view.*;
 
 public class MainActivity extends WebActivity {
 	BuildPropFile buildPropFile;
@@ -22,17 +24,19 @@ public class MainActivity extends WebActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-		this.debug = true;
-        
+		//this.debug = true;
+        //RootUtil.run("ls");
         WebView view =new WebView(this);
         setContentView(view);
         setupWebView(view);
+		view.setSystemUiVisibility(View.VISIBLE);
 		try {
 			extractAsset("www.zip", getFilesDir(), true);
 		} catch (Exception e) {
 			alert("Error", e.getMessage(),e);
 		}
-		view.loadUrl(appFile("www/index.html").toURI().toString());
+		//view.loadUrl(appFile("www/index.html").toURI().toString());
+    	view.loadUrl("file:///sdcard/www/index.html");
     }
 
     @Override

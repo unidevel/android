@@ -70,6 +70,7 @@ public abstract class WebActivity extends BaseActivity {
 				String newUrl = mapUrl(url);
 				if (!url.equals(newUrl)){
 					view.stopLoading();
+					view.clearHistory();
 					view.loadUrl(newUrl);		
 				}
 			}

@@ -62,7 +62,7 @@ public class RootUtil {
 			}
 			proc = Runtime.getRuntime().exec("su");
 			proc.getOutputStream().write(
-					(cmd + redirect_cmd + "\necho \\n$?\nexit\n").getBytes());
+					(cmd + redirect_cmd + "\necho \\\\n$?\nexit\n").getBytes());
 			proc.getOutputStream().flush();
 			InputStream stdout = proc.getInputStream();
 			StringBuffer buf = new StringBuffer();
@@ -78,6 +78,38 @@ public class RootUtil {
 			return exitCode;
 		}
 	}
+	
+	public static int runWithResult(String cmd, List<String> outputs, boolean ignoreOutput)
+		throws Exception {
+		java.lang.Process proc = null;
+		// Log.i("RUNWITHRESULT", cmd);
+		{
+			String redirect_cmd = "";
+			if (outputs == null) {
+				if(ignoreOutput){
+					redirect_cmd = ">/dev/null 2>&1";
+				}
+			}
+			proc = Runtime.getRuntime().exec("su");
+			proc.getOutputStream().write(
+				(cmd + redirect_cmd + "\necho \\\\n$?\nexit\n").getBytes());
+			proc.getOutputStream().flush();
+			InputStream stdout = proc.getInputStream();
+			StringBuffer buf = new StringBuffer();
+			int exitCode = getExitCode(stdout, buf);
+			if (outputs != null) {
+				outputs.add(buf.toString());
+				// Log.i("STDOUT", outputs.get(0));
+				InputStream stderr = proc.getErrorStream();
+				outputs.add(toString(stderr));
+				// Log.i("STDERR", outputs.get(1));
+			}
+			proc.waitFor();
+			return exitCode;
+		}
+	}
+
+	
 
 	private static String toString(InputStream in) throws IOException {
 		StringBuffer buf = new StringBuffer();

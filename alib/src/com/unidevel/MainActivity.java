@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 
 import com.unidevel.util.DialogUtil;
+import com.unidevel.util.*;
 
 public class MainActivity extends Activity
 {
@@ -21,7 +22,7 @@ public class MainActivity extends Activity
 				util.toast(value);
 			}
 		});
-        	
+        RootUtil.run("ls");
         System.err.println("Finally");
     }
 }
