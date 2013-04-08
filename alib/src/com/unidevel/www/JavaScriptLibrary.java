@@ -278,6 +278,13 @@ public class JavaScriptLibrary {
 	public String getLocale(){
 		return java.util.Locale.getDefault().getDisplayName();
 	}
+	
+	public String lang(){
+		java.util.Locale l= java.util.Locale.getDefault();
+		return l.getLanguage()+"_"+l.getCountry();
+	}
+	
+	
 	public String getAppLocale(){
 		return ctx.getResources().getConfiguration().locale.getDisplayName();
 	}

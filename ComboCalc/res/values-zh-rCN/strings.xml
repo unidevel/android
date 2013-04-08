@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello World, MainActivity!</string>
+    <string name="app_name">套餐分析</string>
+    <string name="total2">产品包价格</string>
+    <string name="price1">优惠购机款</string>
+    <string name="price2">市场价格</string>
+    <string name="period">合约期</string>
+	<string name="paid1">套餐月费</string>
+	<string name="firstReturn">入网返还金额</string>
+	<string name="paid2">非合约每月</string>
+    <string name="return1">每月返还金额</string>
+    <string name="total1">总消费</string>
+    <string name="extra">每月补交</string>
+    <string name="worth">是否划算?</string>
+    <string name="share">分享</string>
+    <string name="it_worth">我觉得值！</string>
+    <string name="not_worth">我觉得不值！</string>
+    <string name="fmtSubject">分享套餐</string>
+    <string name="fmtContent" formatted="false">%s元套餐，套餐月费%s元，%s共消费%s元，%s</string>
+</resources>

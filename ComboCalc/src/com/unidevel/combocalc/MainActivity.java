@@ -1,4 +1,4 @@
-package com.unidevel.softkeyenabler;
+package com.unidevel.combocalc;
 
 import java.util.Map;
 
@@ -13,13 +13,10 @@ import android.view.*;
 import android.webkit.*;
 
 public class MainActivity extends WebActivity {
-	BuildPropFile buildPropFile;
 
 	@Override
 	protected void onCreateJavaScriptObjects(Map<String, Object> jsObjects) {
 		super.onCreateJavaScriptObjects(jsObjects);
-		this.buildPropFile = new BuildPropFile(this);
-		jsObjects.put("prop", this.buildPropFile);
 	}
 
     @Override
@@ -40,18 +37,6 @@ public class MainActivity extends WebActivity {
 			alert("Error", e.getMessage(),e);
 		}
 		//view.loadUrl(appFile("www/index.html").toURI().toString());
-    	view.loadUrl("file:///sdcard/www/index.html");
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-    
-    public int getDPI(){
-    	DisplayMetrics metrics = new DisplayMetrics();
-    	this.getWindowManager().getDefaultDisplay().getMetrics(metrics);
-    	return metrics.densityDpi;
+    	view.loadUrl("file:///sdcard/wcalc/index.html");
     }
 }

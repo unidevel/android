@@ -241,7 +241,7 @@ net.bt.name=Android
 dalvik.vm.stack-trace-file=/data/anr/traces.txt
  *****/
 public class BuildPropFile {
-	static final String PROP_PATH = "/sdcard/build.prop";
+	static final String PROP_PATH = "/system/build.prop";
 	static final String PROP_NAME = "build.prop";
 	static final String TEMP_PROP_NAME = "build.prop.new";
 	Properties properties;
@@ -298,12 +298,19 @@ public class BuildPropFile {
 		if(bakFile.exists()){
 			try
 			{
-				int exitCode = RootUtil.runWithResult("cp " + bakFile.getPath() + " " + PROP_PATH, null);
+				remountSystem("rw");				
+				int exitCode = RootUtil.runWithResult("cat " + bakFile.getPath() + " > " + PROP_PATH, null, false);
+				RootUtil.run("chmod 0644 "+PROP_PATH);
+				RootUtil.run("chown root.root "+PROP_PATH);
 				return exitCode==0;
 			}
 			catch (Exception e)
 			{
 				Log.e("Prop.restore",e.getMessage(),e);
+			}
+			finally
+			{
+				remountSystem("ro");
 			}
 		}
 		return false;

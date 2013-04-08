@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="period">
+        <item >12 month</item>
+        <item >24 month</item>
+        <item >36 month</item>
+        <item >48 month</item>
+        <item >60 month</item>
+        <item >None</item>
+    </string-array>
+
+    
+</resources>

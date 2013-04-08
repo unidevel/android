@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, MainActivity!</string>
+    <string name="app_name">UnHortUrl</string>
+	<string name="beta_name">ToChromeBeta</string>
+	<string name="vs_name">ViewSource</string>
+	<string name="history">History</string>
+    <string name="settings">Settings</string>
+    <string name="install_chrome">Please install chrome!</string>
+    <string name="delete">Delete</string>
+	<string name="view">View</string>
+	<string name="clear_default">Clear Default Settings</string>
+	<string name="no_default">No default application for %s</string>
+	 
+</resources>

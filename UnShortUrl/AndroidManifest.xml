@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.unidevel.tochrome"
+<manifest package="com.unidevel.unshorturl"
     android:versionCode="4"
     android:versionName="1.3" xmlns:android="http://schemas.android.com/apk/res/android">
 
@@ -48,40 +48,6 @@
 				<data android:scheme="javascript"/>
 			</intent-filter>
         </activity>
-        <!--activity
-            android:label="@string/beta_name"
-            android:name=".ToChromeBeta" 
-			android:icon="@drawable/chrome"
-            android:configChanges="orientation|keyboardHidden">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-				<category android:name="android.intent.category.BROWSABLE"/>
-				<category android:name="android.intent.category.APP_BROWSER"/>
-	        </intent-filter>
-            <intent-filter>
-				<action android:name="android.intent.action.VIEW"/>
-				<category android:name="android.intent.category.DEFAULT"/>
-				<category android:name="android.intent.category.BROWSABLE"/>
-				<data android:scheme="http"/>
-				<data android:scheme="https"/>
-				<data android:scheme="about"/>
-				<data android:scheme="javascript"/>
-				<data android:mimeType="text/html"/>
-				<data android:mimeType="text/plain"/>
-				<data android:mimeType="application/xhtml+xml"/>
-				<data android:mimeType="multipart/related" android:scheme="file"/>
-			</intent-filter>
-			<intent-filter>
-				<action android:name="android.intent.action.VIEW"/>
-				<category android:name="android.intent.category.DEFAULT"/>
-				<category android:name="android.intent.category.BROWSABLE"/>
-				<data android:scheme="http"/>
-				<data android:scheme="https"/>
-				<data android:scheme="about"/>
-				<data android:scheme="javascript"/>
-			</intent-filter>
-        </activity-->
         <activity
             android:label="@string/vs_name"
             android:name=".ViewSourceActivity" 

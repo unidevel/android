@@ -29,6 +29,7 @@ public abstract class WebActivity extends BaseActivity {
 	public static final String EVENT_CLICK_OPTION_MENU = "onClickOptionMenu";
 
 	public static final String VAR_UNIDEVEL = "unidevel";
+	public static final String VAR_LANG = "LANG";
 	public static final String VAR_OPTION_MENU = "_internal_option_menu";
 
 	protected void onCreateJavaScriptObjects(Map<String, Object> jsObjects) {
@@ -36,6 +37,7 @@ public abstract class WebActivity extends BaseActivity {
 		jsObjects.put(VAR_UNIDEVEL, this.jsLib);
 		this.optionMenuObject = new MenuWrapper();
 		jsObjects.put(VAR_OPTION_MENU, this.optionMenuObject);
+	//	jsObjects.put(VAR_LANG,this.jsLib.lang());
 	}
 
 	@SuppressLint("SetJavaScriptEnabled")

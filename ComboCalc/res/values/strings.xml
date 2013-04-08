@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello World, MainActivity!</string>
+    <string name="app_name">ComboCheatSheet</string>
+    <string name="total2">Contract Total</string>
+    <string name="price1">Contract Price</string>
+    <string name="price2">Market Price</string>
+    <string name="period">Contract Period</string>
+	<string name="paid1">Monthly Paid</string>
+	<string name="firstReturn">First Return</string>	
+    <string name="paid2">Actual Monthly</string>
+    <string name="return1">Monthly Return</string>
+    <string name="total1">Total Cost</string>
+    <string name="extra">Extra Monthly</string>
+    <string name="worth">Worth or not?</string>
+    <string name="it_worth">I think it is worth.</string>
+    <string name="not_worth">I don\'t think it is worth.</string>
+    <string name="share">Share</string>
+    <string name="fmtSubject">Share contract</string>
+    <string name="fmtContent" formatted="false">Total contract price %s, monthly paid %s, in %s total cost %s, %s</string>
+</resources>
