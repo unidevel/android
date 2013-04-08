@@ -121,11 +121,11 @@ public class MainActivity extends Activity implements OnItemClickListener
 		{
 
 		}
-		else if ( links.size() == 1 )
+		/*else if ( links.size() == 1 )
 		{
-			viewLink( links.get( 0 ) );
-			this.finish();
-		}
+		//	viewLink( links.get( 0 ) );
+		//	this.finish();
+		}*/
 		else
 		{
 			this.linkView.setAdapter( new LinkAdapter( this, links ) );
@@ -178,7 +178,9 @@ public class MainActivity extends Activity implements OnItemClickListener
 				try
 				{
 					String link = URLDecoder.decode( value, "ISO8859-1" ); //$NON-NLS-1$
-					links.add( link );
+					//links.add( link );
+					Log.i("link2:",link);
+					links.addAll( findLinks(link) );
 				}
 				catch (Throwable ex)
 				{
@@ -198,7 +200,7 @@ public class MainActivity extends Activity implements OnItemClickListener
 			findLinksInternal( links, uri );
 			return links;
 		}
-
+		Log.i("link",url);
 		DefaultHttpClient client = new DefaultHttpClient();
 		final HttpParams params = new BasicHttpParams();
 		HttpClientParams.setRedirecting( params, false );
@@ -217,8 +219,9 @@ public class MainActivity extends Activity implements OnItemClickListener
 				String value = header.getValue();
 				if ( isLink( value ) )
 				{
-					URI linkURI = URI.create( value );
-					findLinksInternal( links, linkURI );
+					//URI linkURI = URI.create( value );
+					//findLinksInternal( links, linkURI );
+					links.addAll(findLinks(value));
 				}
 			}
 		}
