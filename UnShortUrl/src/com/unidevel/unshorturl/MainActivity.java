@@ -36,6 +36,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,6 +47,7 @@ public class MainActivity extends Activity implements OnItemClickListener
 	LinkAdapter linkAdapter;
 	Handler handler;
 	LoadLinksTask task;
+	ProgressBar progressBar;
 
 	class LoadLinksTask extends AsyncTask<String, Integer, Void>
 	{
@@ -61,9 +63,11 @@ public class MainActivity extends Activity implements OnItemClickListener
 			HttpClientParams.setRedirecting( httpParams, false );
 			client.setParams( httpParams );
 			int n = 0;
+			int total = 0;
 			while ( links.size() > 0 )
 			{
 				n++;
+				total += links.size();
 				String url = links.remove( 0 );
 				URI uri = URI.create( url );
 				realLinks.add( url );
@@ -114,6 +118,7 @@ public class MainActivity extends Activity implements OnItemClickListener
 		protected void onPostExecute( Void result )
 		{
 			super.onPostExecute( result );
+			progressBar.setProgress( 5 );
 		}
 
 		@Override
@@ -123,6 +128,10 @@ public class MainActivity extends Activity implements OnItemClickListener
 			links.addAll( realLinks );
 			LinkAdapter linkAdapter = new LinkAdapter( MainActivity.this, links );
 			linkView.setAdapter( linkAdapter );
+			int progress = values[ 0 ];
+			if ( progress >= 4 )
+				progress = 4;
+			progressBar.setProgress( progress );
 		}
 	}
 
@@ -147,7 +156,9 @@ public class MainActivity extends Activity implements OnItemClickListener
 		this.registerForContextMenu( this.linkView );
 		this.linkView.setOnItemClickListener( this );
 
-		// this.linkView.setEmptyView( emptyView )
+		this.progressBar = (ProgressBar)this.findViewById( R.id.progressBar1 );
+		this.progressBar.setMax( 5 );
+
 		this.handler = new Handler();
 		final String url = uri.toString();
 
@@ -170,58 +181,6 @@ public class MainActivity extends Activity implements OnItemClickListener
 		 * findViewById(R.id.adLayout); layout.addView(adView); AdRequest req =
 		 * new AdRequest(); adView.loadAd(req);
 		 */
-	}
-
-	void showLinks( List<String> links )
-	{
-		if ( links == null || links.isEmpty() )
-		{
-
-		}
-		/*else if ( links.size() == 1 )
-		{
-		//	viewLink( links.get( 0 ) );
-		//	this.finish();
-		}*/
-		else
-		{
-			this.linkView.setAdapter( new LinkAdapter( this, links ) );
-		}
-	}
-
-	@SuppressWarnings ("deprecation")
-	public String unshortUrl( String url )
-	{
-		StringBuffer buf = new StringBuffer();
-		DefaultHttpClient client = new DefaultHttpClient();
-		final HttpParams params = new BasicHttpParams();
-		HttpClientParams.setRedirecting( params, false );
-		client.setParams( params );
-		HttpGet get = new HttpGet( url );
-		try
-		{
-			HttpResponse r = client.execute( get );
-			buf.append( "status:" + r.getStatusLine() + "\n" ); //$NON-NLS-1$ //$NON-NLS-2$
-			for ( Header h : r.getAllHeaders() )
-			{
-				buf.append( h.getName() + ":" + h.getValue() + "\n" ); //$NON-NLS-1$ //$NON-NLS-2$
-				if ( "Location".equalsIgnoreCase( h.getName() ) ) //$NON-NLS-1$
-				{
-					URI uri = URI.create( h.getValue() );
-					List<NameValuePair> pairs = URLEncodedUtils.parse( uri, "ISO8859-1" ); //$NON-NLS-1$
-					for ( NameValuePair pair : pairs )
-					{
-						String value = URLDecoder.decode( pair.getValue() );
-						buf.append( pair.getName() + ":" + value + "\n" ); //$NON-NLS-1$ //$NON-NLS-2$
-					}
-				}
-			}
-		}
-		catch (Exception e)
-		{
-			buf.append( e.toString() );
-		}
-		return buf.toString();
 	}
 
 	private void findLinksInternal( List<String> links, URI uri )
