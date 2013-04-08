@@ -1,7 +1,6 @@
 
 package com.unidevel.unshorturl;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -10,7 +9,6 @@ import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.params.HttpClientParams;
 import org.apache.http.client.utils.URLEncodedUtils;
@@ -25,6 +23,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -45,8 +44,87 @@ public class MainActivity extends Activity implements OnItemClickListener
 	/** Called when the activity is first created. */
 	ListView linkView;
 	LinkAdapter linkAdapter;
-	TextView text;
 	Handler handler;
+	LoadLinksTask task;
+
+	class LoadLinksTask extends AsyncTask<String, Integer, Void>
+	{
+		List<String> realLinks = new ArrayList<String>();
+
+		@Override
+		protected Void doInBackground( String... params )
+		{
+			List<String> links = new ArrayList<String>();
+			links.add( params[ 0 ] );
+			DefaultHttpClient client = new DefaultHttpClient();
+			final HttpParams httpParams = new BasicHttpParams();
+			HttpClientParams.setRedirecting( httpParams, false );
+			client.setParams( httpParams );
+			int n = 0;
+			while ( links.size() > 0 )
+			{
+				n++;
+				String url = links.remove( 0 );
+				URI uri = URI.create( url );
+				realLinks.add( url );
+				if ( !isShort( uri ) )
+				{
+					findLinksInternal( links, uri );
+					this.publishProgress( n );
+					continue;
+				}
+
+				HttpGet request = new HttpGet( url );
+				HttpResponse response;
+				try
+				{
+					response = client.execute( request );
+					StatusLine status = response.getStatusLine();
+					if ( status.getStatusCode() >= 300 && status.getStatusCode() < 400 )
+					{
+						for ( Header header : response.getAllHeaders() )
+						{
+							String value = header.getValue();
+							if ( isLink( value ) )
+							{
+								URI linkURI = URI.create( value );
+								links.add( value );
+								findLinksInternal( links, linkURI );
+								this.publishProgress( n );
+							}
+						}
+					}
+				}
+				catch (Throwable e)
+				{
+					Log.e( "LoadLinks", e.getMessage(), e );
+				}
+			}
+			return null;
+		}
+
+		@Override
+		protected void onPreExecute()
+		{
+			this.publishProgress( 0 );
+			super.onPreExecute();
+		}
+
+		@Override
+		protected void onPostExecute( Void result )
+		{
+			super.onPostExecute( result );
+		}
+
+		@Override
+		protected void onProgressUpdate( Integer... values )
+		{
+			List<String> links = new ArrayList<String>();
+			links.addAll( realLinks );
+			LinkAdapter linkAdapter = new LinkAdapter( MainActivity.this, links );
+			linkView.setAdapter( linkAdapter );
+		}
+	}
 
 	@Override
 	public void onCreate( Bundle savedInstanceState )
@@ -70,32 +148,11 @@ public class MainActivity extends Activity implements OnItemClickListener
 		this.linkView.setOnItemClickListener( this );
 
 		// this.linkView.setEmptyView( emptyView )
-		this.text = (TextView)this.findViewById( R.id.text );
 		this.handler = new Handler();
 		final String url = uri.toString();
-		Thread thread = new Thread()
-		{
-			public void run()
-			{
-				try
-				{
-					final List<String> links = findLinks( url );
-					MainActivity.this.handler.post( new Runnable()
-					{
-						@Override
-						public void run()
-						{
-							showLinks( links );
-						}
-					} );
-				}
-				catch (Exception e)
-				{
-					Log.i( "onCreate", e.getMessage(), e ); //$NON-NLS-1$
-				}
-			}
-		};
-		thread.start();
+
+		this.task = new LoadLinksTask();
+		this.task.execute( url );
 		/*
 		 * this.linkView = (ListView) this.findViewById(R.id.listView1);
 		 * this.linkView.setItemsCanFocus(true);
@@ -178,9 +235,7 @@ public class MainActivity extends Activity implements OnItemClickListener
 				try
 				{
 					String link = URLDecoder.decode( value, "ISO8859-1" ); //$NON-NLS-1$
-					//links.add( link );
-					Log.i("link2:",link);
-					links.addAll( findLinks(link) );
+					links.add( link );
 				}
 				catch (Throwable ex)
 				{
@@ -188,44 +243,6 @@ public class MainActivity extends Activity implements OnItemClickListener
 				}
 			}
 		}
-		links.add( uri.toString() );
-	}
-
-	public List<String> findLinks( String url ) throws LinkException, ClientProtocolException, IOException
-	{
-		List<String> links = new ArrayList<String>();
-		URI uri = URI.create( url );
-		if ( !isShort( uri ) )
-		{
-			findLinksInternal( links, uri );
-			return links;
-		}
-		Log.i("link",url);
-		DefaultHttpClient client = new DefaultHttpClient();
-		final HttpParams params = new BasicHttpParams();
-		HttpClientParams.setRedirecting( params, false );
-		client.setParams( params );
-		HttpGet request = new HttpGet( url );
-		HttpResponse response = client.execute( request );
-		StatusLine status = response.getStatusLine();
-		if ( status.getStatusCode() > 400 )
-		{
-			throw new LinkException( status.toString() );
-		}
-		else if ( status.getStatusCode() >= 300 )
-		{
-			for ( Header header : response.getAllHeaders() )
-			{
-				String value = header.getValue();
-				if ( isLink( value ) )
-				{
-					//URI linkURI = URI.create( value );
-					//findLinksInternal( links, linkURI );
-					links.addAll(findLinks(value));
-				}
-			}
-		}
-		return links;
 	}
 
 	public boolean isShort( URI uri )

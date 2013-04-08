@@ -15,12 +15,12 @@
 		android:focusable="true"
         android:background="#323232" >
     </ListView>    
-	<TextView
+	<!-- TextView
         android:id="@+id/text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
 		android:focusable="true"
-        android:background="#323232" >
-    </TextView>
+        android:background="#323232">
+    </TextView-->
 
 </LinearLayout>
