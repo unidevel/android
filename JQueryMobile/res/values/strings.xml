@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">JQueryMobile</string>
+    <string name="view_source">View Source</string>
 </resources>

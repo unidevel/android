@@ -3,8 +3,8 @@ package com.unidevel.book.jquerymobile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -13,6 +13,8 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -68,6 +70,53 @@ public class MainActivity extends Activity {
 		view.loadDataWithBaseURL(base+"index.html",
 				getHtmlData("demos/1.2.0/index.html", null), "text/html", null,
 				base+"index.html");
+	}
+
+	public static final int MENU_VIEW_SOURCE = 1001;
+
+	@Override
+	public boolean onCreateOptionsMenu( Menu menu )
+	{
+		menu.add( 0, MENU_VIEW_SOURCE, 0, R.string.view_source );
+		return super.onCreateOptionsMenu( menu );
+	}
+
+	@Override
+	public boolean onOptionsItemSelected( MenuItem item )
+	{
+		if ( item.getItemId() == MENU_VIEW_SOURCE )
+		{
+			String url = view.getUrl();
+			viewSource( url );
+		}
+		return super.onOptionsItemSelected( item );
+	}
+
+	private void viewSource( String link )
+	{
+		if ( link == null )
+		{
+			return;
+		}
+		Uri sourceUri = Uri.parse( "view-source:" + link );
+		startChrome( sourceUri );
+	}
+
+	public void startChrome( Uri uri )
+	{
+		Intent it = new Intent( Intent.ACTION_VIEW );
+		it.setData( uri );
+		it.setFlags( Intent.FLAG_ACTIVITY_NO_HISTORY );
+		it.setClassName( "com.android.chrome", "com.google.android.apps.chrome.Main" );
+		try
+		{
+			startActivity( it );
+		}
+		catch (ActivityNotFoundException ex)
+		{
+			Intent intent = new Intent( Intent.ACTION_VIEW, Uri.parse( "market://search?id=com.android.chrome" ) );
+			startActivity( intent );
+		}
 	}
 
 	public String getHtmlData(String assetPath, String encoding) {
