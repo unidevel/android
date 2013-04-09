@@ -22,6 +22,7 @@ public class AppAdapter extends BaseAdapter
 	{
 		this.ctx = ctx;
 		this.apps = apps;
+		this.selected = -1;
 		for ( int index = 0; index < apps.size(); ++index )
 		{
 			AppInfo app = apps.get( index );
@@ -31,7 +32,6 @@ public class AppAdapter extends BaseAdapter
 				break;
 			}
 		}
-		this.selected = -1;
 		this.inflater = LayoutInflater.from( ctx );
 	}
 
