@@ -25,8 +25,9 @@
 
     <ProgressBar
         android:id="@+id/progressBar1"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
+        style="@android:style/Widget.ProgressBar.Small"
+		android:indeterminate="true"
+	    android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
 </LinearLayout>

@@ -119,6 +119,7 @@ public class MainActivity extends Activity implements OnItemClickListener
 		{
 			super.onPostExecute( result );
 			progressBar.setProgress( 5 );
+			progressBar.setVisibility(View.GONE);
 		}
 
 		@Override
