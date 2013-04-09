@@ -22,19 +22,21 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -44,10 +46,33 @@ public class MainActivity extends Activity implements OnItemClickListener
 {
 	/** Called when the activity is first created. */
 	ListView linkView;
-	LinkAdapter linkAdapter;
-	Handler handler;
+	GridView appView;
 	LoadLinksTask task;
+	LoadAppTask appTask;
+	AppAdapter appAdapter;
 	ProgressBar progressBar;
+
+	class LoadAppTask extends AsyncTask<Void, Integer, List<AppInfo>>
+	{
+
+		@Override
+		protected List<AppInfo> doInBackground( Void... params )
+		{
+			List<AppInfo> apps;
+			Uri uri = getIntent().getData();
+			String type = getIntent().getType();
+			apps = findActivity( uri, type );
+			return apps;
+		}
+
+		@Override
+		protected void onPostExecute( List<AppInfo> result )
+		{
+			super.onPostExecute( result );
+			MainActivity.this.appAdapter = new AppAdapter( MainActivity.this, result );
+			MainActivity.this.appView.setAdapter( MainActivity.this.appAdapter );
+		}
+	}
 
 	class LoadLinksTask extends AsyncTask<String, Integer, Void>
 	{
@@ -70,7 +95,7 @@ public class MainActivity extends Activity implements OnItemClickListener
 				total += links.size();
 				String url = links.remove( 0 );
 				URI uri = URI.create( url );
-				realLinks.add( url );
+				this.realLinks.add( url );
 				if ( !isShort( uri ) )
 				{
 					findLinksInternal( links, uri );
@@ -101,7 +126,7 @@ public class MainActivity extends Activity implements OnItemClickListener
 				}
 				catch (Throwable e)
 				{
-					Log.e( "LoadLinks", e.getMessage(), e );
+					Log.e( "LoadLinks", e.getMessage(), e ); //$NON-NLS-1$
 				}
 			}
 			return null;
@@ -118,29 +143,34 @@ public class MainActivity extends Activity implements OnItemClickListener
 		protected void onPostExecute( Void result )
 		{
 			super.onPostExecute( result );
-			progressBar.setProgress( 5 );
-			progressBar.setVisibility(View.GONE);
+			MainActivity.this.progressBar.setProgress( 5 );
+			MainActivity.this.progressBar.setVisibility( View.GONE );
 		}
 
 		@Override
 		protected void onProgressUpdate( Integer... values )
 		{
 			List<String> links = new ArrayList<String>();
-			links.addAll( realLinks );
+			links.addAll( this.realLinks );
 			LinkAdapter linkAdapter = new LinkAdapter( MainActivity.this, links );
-			linkView.setAdapter( linkAdapter );
+			MainActivity.this.linkView.setAdapter( linkAdapter );
 			int progress = values[ 0 ];
 			if ( progress >= 4 )
 				progress = 4;
-			progressBar.setProgress( progress );
+			MainActivity.this.progressBar.setProgress( progress );
 		}
 	}
 
 	@Override
 	public void onCreate( Bundle savedInstanceState )
 	{
-		this.setTitle( R.string.app_name );
+		requestWindowFeature( Window.FEATURE_LEFT_ICON );
+		setTitle( R.string.app_name );
+		setContentView( R.layout.main );
+		setFeatureDrawableResource( Window.FEATURE_LEFT_ICON, R.drawable.link );
+
 		super.onCreate( savedInstanceState );
+
 		Uri uri = getIntent().getData();
 		if ( uri == null )
 		{
@@ -148,7 +178,6 @@ public class MainActivity extends Activity implements OnItemClickListener
 			return;
 		}
 
-		setContentView( R.layout.main );
 		this.linkView = (ListView)this.findViewById( R.id.listView1 );
 		this.linkView.setItemsCanFocus( true );
 		this.linkView.setFocusable( true );
@@ -157,14 +186,28 @@ public class MainActivity extends Activity implements OnItemClickListener
 		this.registerForContextMenu( this.linkView );
 		this.linkView.setOnItemClickListener( this );
 
+		this.appView = (GridView)this.findViewById( R.id.gridview );
+		this.appView.setOnItemClickListener( new OnItemClickListener()
+		{
+
+			@Override
+			public void onItemClick( AdapterView<?> adapterView, View view, int pos, long id )
+			{
+				appAdapter.setSelected( pos );
+			}
+		} );
+
 		this.progressBar = (ProgressBar)this.findViewById( R.id.progressBar1 );
 		this.progressBar.setMax( 5 );
 
-		this.handler = new Handler();
 		final String url = uri.toString();
+
+		this.appTask = new LoadAppTask();
+		this.appTask.execute();
 
 		this.task = new LoadLinksTask();
 		this.task.execute( url );
+
 		/*
 		 * this.linkView = (ListView) this.findViewById(R.id.listView1);
 		 * this.linkView.setItemsCanFocus(true);
@@ -209,6 +252,8 @@ public class MainActivity extends Activity implements OnItemClickListener
 	{
 		if ( uri == null )
 			return false;
+		if ( !"http".equals( uri.getScheme() ) && !"https".equals( uri.getScheme() ) ) //$NON-NLS-1$ //$NON-NLS-2$
+			return false;
 		if ( uri.getHost().length() > 9 )
 			return false;
 		if ( uri.getRawQuery() != null && uri.getRawQuery().length() > 0 )
@@ -249,12 +294,30 @@ public class MainActivity extends Activity implements OnItemClickListener
 		return true;
 	}
 
+	protected void savePref()
+	{
+		if ( appAdapter == null )
+			return;
+		AppInfo app = appAdapter.getSelectedApp();
+		if ( app == null )
+			return;
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences( this );
+		pref.edit().putString( "package", app.packageName ).putString( "class", app.name ).commit(); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
 	private void viewLink( String link )
 	{
-		if ( link == null )
+		if ( link == null || appAdapter == null )
 		{
 			return;
 		}
+		AppInfo app = appAdapter.getSelectedApp();
+		if ( app == null )
+		{
+			Toast.makeText( this, R.string.select_a_browser, Toast.LENGTH_LONG ).show();
+			return;
+		}
+		savePref();
 		Uri data = null;
 		data = Uri.parse( link );
 		String type = MimeTypes.getType( link );
@@ -264,6 +327,7 @@ public class MainActivity extends Activity implements OnItemClickListener
 		}
 		Intent i = new Intent( Intent.ACTION_VIEW );
 		i.addCategory( Intent.CATEGORY_DEFAULT );
+		i.setClassName( app.packageName, app.name );
 		if ( link.startsWith( "file://" ) ) //$NON-NLS-1$
 		{
 			i.setDataAndType( data, type );
@@ -310,7 +374,7 @@ public class MainActivity extends Activity implements OnItemClickListener
 	@Override
 	public void onItemClick( AdapterView<?> adapterView, View view, int position, long id )
 	{
-		TextView text = (TextView)view;
+		TextView text = (TextView)view.findViewById( android.R.id.text1 );
 		String link = text.getText().toString();
 		viewLink( link );
 		this.finish();
@@ -335,9 +399,53 @@ public class MainActivity extends Activity implements OnItemClickListener
 		}
 		else
 		{
-			String msg = String.format( getString( R.string.no_default ), i.getData().getScheme() );
-			Toast.makeText( this, msg, Toast.LENGTH_LONG ).show();
+			// String msg = String.format( getString( R.string.no_default ),
+			// i.getData().getScheme() );
+			// Toast.makeText( this, msg, Toast.LENGTH_LONG ).show();
 		}
+	}
+
+	public List<AppInfo> findActivity( Uri uri, String type )
+	{
+		List<AppInfo> apps = new ArrayList<AppInfo>();
+		PackageManager pm = this.getPackageManager();
+		Intent intent = new Intent( Intent.ACTION_VIEW, null );
+		intent.setDataAndType( uri, type );
+		List<ResolveInfo> rList = pm.queryIntentActivities( intent, 0 );
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences( this );
+		String selectedPkg = pref.getString( "package", "" );
+		String selectedName = pref.getString( "class", "" );
+		for ( ResolveInfo r : rList )
+		{
+			if ( this.getPackageName().equals( r.activityInfo.packageName ) )
+				continue;
+			AppInfo app = new AppInfo();
+			apps.add( app );
+			app.packageName = r.activityInfo.packageName;
+			app.name = r.activityInfo.name;
+			app.icon = r.activityInfo.loadIcon( pm );
+			if ( app.icon == null )
+			{
+				app.icon = getResources().getDrawable( R.drawable.link );
+			}
+			CharSequence label = r.activityInfo.loadLabel( pm );
+			if ( label == null )
+			{
+				app.label = ""; //$NON-NLS-1$
+			}
+			else
+			{
+				app.label = label.toString();
+			}
+			if ( selectedPkg.equals( app.packageName ) )
+			{
+				if ( (app.name == null && selectedName.length() == 0) || selectedName.equals( app.name ) )
+				{
+					app.selected = true;
+				}
+			}
+		}
+		return apps;
 	}
 
 	class LinkException extends Exception

@@ -3,31 +3,38 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
+
     <LinearLayout
         android:id="@+id/adLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" />
+        android:orientation="vertical" >
+    </LinearLayout>
+
+    <GridView
+        android:id="@+id/gridview"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:columnWidth="90dp"
+        android:gravity="center"
+        android:horizontalSpacing="10dp"
+        android:numColumns="auto_fit"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="10dp" />
+
     <ListView
         android:id="@+id/listView1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-		android:focusable="true"
-        android:background="#323232" >
-    </ListView>    
-	<!-- TextView
-        android:id="@+id/text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-		android:focusable="true"
-        android:background="#323232">
-    </TextView-->
+        android:background="#323232"
+        android:focusable="true" >
+    </ListView>
 
     <ProgressBar
         android:id="@+id/progressBar1"
         style="@android:style/Widget.ProgressBar.Small"
-		android:indeterminate="true"
-	    android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:indeterminate="true" />
 
 </LinearLayout>

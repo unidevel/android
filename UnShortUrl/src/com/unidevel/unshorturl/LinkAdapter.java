@@ -1,11 +1,14 @@
 package com.unidevel.unshorturl;
 
-import android.content.*;
-import android.view.*;
-import android.widget.*;
-import java.util.*;
-import android.util.*;
-import android.text.*;
+import java.util.List;
+import android.content.Context;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 public class LinkAdapter extends BaseAdapter
 {
@@ -49,9 +52,25 @@ public class LinkAdapter extends BaseAdapter
 		text.setSingleLine(true);
 		text.setEllipsize(TextUtils.TruncateAt.MARQUEE);
 		text.setText(links.get(pos));
+		int padding = d2p( 4 );
+		text.setPadding( 0, padding, 0, padding );
+		ImageView image = (ImageView)view.findViewById( R.id.imageView1 );
+		image.setPadding( d2p( 24 * pos + 10 ), padding, 0, padding );
 		return view;
 	}
 	
+	public int d2p( float dipValue )
+	{
+		final float scale = ctx.getResources().getDisplayMetrics().density;
+		return (int)(dipValue * scale + 0.5f);
+	}
+
+	public float p2d( int pxValue )
+	{
+		final float scale = ctx.getResources().getDisplayMetrics().density;
+		return (float)pxValue / scale + 0.5f;
+	}
+
 	public void deleteLink(String link){
 		this.links.remove(link);
 		this.notifyDataSetChanged();

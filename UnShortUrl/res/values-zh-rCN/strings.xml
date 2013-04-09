@@ -6,6 +6,6 @@
     <string name="delete">删除</string>
 	<string name="view">查看</string>
 	<string name="clear_default">清除缺省设置</string>
-	<string name="no_default">无缺省程序用来查看 %s</string>
+	<string name="select_a_browser">请首先选择一个浏览器!</string>
 	 
 </resources>

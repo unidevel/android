@@ -6,6 +6,6 @@
     <string name="delete">Delete</string>
 	<string name="view">View</string>
 	<string name="clear_default">Clear Default Settings</string>
-	<string name="no_default">No default application for %s</string>
+	<string name="select_a_browser">Select a browser first!</string>
 	 
 </resources>
