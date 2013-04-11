@@ -92,6 +92,10 @@ public class AppAdapter extends BaseAdapter
 		this.selected = pos;
 		notifyDataSetChanged();
 	}
+	
+	public int getSelected(){
+		return this.selected;
+	}
 
 	public void getApp( int pos )
 	{

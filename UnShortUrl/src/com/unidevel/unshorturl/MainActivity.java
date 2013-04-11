@@ -1,46 +1,26 @@
 
 package com.unidevel.unshorturl;
 
-import java.net.URI;
-import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.List;
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.StatusLine;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.params.HttpClientParams;
-import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpParams;
-import android.app.Activity;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.util.Log;
-import android.view.ContextMenu;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.Window;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.GridView;
-import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.app.*;
+import android.content.*;
+import android.content.SharedPreferences.*;
+import android.content.pm.*;
+import android.net.*;
+import android.os.*;
+import android.preference.*;
+import android.util.*;
+import android.view.*;
+import android.widget.*;
+import android.widget.AdapterView.*;
+import com.google.ads.*;
+import java.net.*;
+import java.util.*;
+import org.apache.http.*;
+import org.apache.http.client.methods.*;
+import org.apache.http.client.params.*;
+import org.apache.http.client.utils.*;
+import org.apache.http.impl.client.*;
+import org.apache.http.params.*;
 
 public class MainActivity extends Activity implements OnItemClickListener
 {
@@ -60,7 +40,16 @@ public class MainActivity extends Activity implements OnItemClickListener
 		{
 			List<AppInfo> apps;
 			Uri uri = getIntent().getData();
-			String type = getIntent().getType();
+			String type;
+			if(uri!=null)
+			{
+				type = getIntent().getType();
+			}
+			else
+			{
+				uri = Uri.parse("http://www.googke.com/");
+				type="text/html";
+			}
 			apps = findActivity( uri, type );
 			return apps;
 		}
@@ -71,6 +60,9 @@ public class MainActivity extends Activity implements OnItemClickListener
 			super.onPostExecute( result );
 			MainActivity.this.appAdapter = new AppAdapter( MainActivity.this, result );
 			MainActivity.this.appView.setAdapter( MainActivity.this.appAdapter );
+			int sel=appAdapter.getSelected();
+			appView.smoothScrollToPosition(sel);
+			//.setSelection(sel);
 		}
 	}
 
@@ -172,11 +164,11 @@ public class MainActivity extends Activity implements OnItemClickListener
 		super.onCreate( savedInstanceState );
 
 		Uri uri = getIntent().getData();
-		if ( uri == null )
+		/*if ( uri == null )
 		{
 			this.finish();
 			return;
-		}
+		}*/
 
 		this.linkView = (ListView)this.findViewById( R.id.listView1 );
 		this.linkView.setItemsCanFocus( true );
@@ -185,7 +177,27 @@ public class MainActivity extends Activity implements OnItemClickListener
 		this.linkView.setChoiceMode( AbsListView.CHOICE_MODE_SINGLE );
 		this.registerForContextMenu( this.linkView );
 		this.linkView.setOnItemClickListener( this );
+		this.linkView.setOnItemLongClickListener(new OnItemLongClickListener(){
 
+				public boolean onItemLongClick(AdapterView<?> adapterView, View view, int pos, long id)
+				{
+
+					TextView text = (TextView)view.findViewById( android.R.id.text1 );
+					String link = text.getText().toString();
+					AlertDialog.Builder builder= new AlertDialog.Builder(MainActivity.this);
+					builder.setMessage(link).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener(){
+
+							public void onClick(DialogInterface dialog, int p2)
+							{
+								dialog.dismiss();
+							}
+							
+					});
+					builder.create().show();
+					return false;
+				}
+				   
+		});
 		this.appView = (GridView)this.findViewById( R.id.gridview );
 		this.appView.setOnItemClickListener( new OnItemClickListener()
 		{
@@ -194,37 +206,33 @@ public class MainActivity extends Activity implements OnItemClickListener
 			public void onItemClick( AdapterView<?> adapterView, View view, int pos, long id )
 			{
 				appAdapter.setSelected( pos );
+				savePref();
 			}
 		} );
 
 		this.progressBar = (ProgressBar)this.findViewById( R.id.progressBar1 );
 		this.progressBar.setMax( 5 );
 
-		final String url = uri.toString();
 
 		this.appTask = new LoadAppTask();
 		this.appTask.execute();
 
-		this.task = new LoadLinksTask();
-		this.task.execute( url );
-
-		/*
-		 * this.linkView = (ListView) this.findViewById(R.id.listView1);
-		 * this.linkView.setItemsCanFocus(true);
-		 * this.linkView.setFocusable(true);
-		 * this.linkView.setFocusableInTouchMode(true);
-		 * this.linkView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-		 * this.registerForContextMenu(this.linkView);
-		 * this.linkView.setOnItemClickListener(this);
-		 * 
-		 * // ActionBar bar=this.getActionBar(); //
-		 * bar.setDisplayOptions(ActionBar
-		 * .DISPLAY_SHOW_HOME,ActionBar.DISPLAY_SHOW_HOME); // ToChrome:
-		 * a150eec940a7ef9 AdView adView = new AdView(this, AdSize.BANNER,
-		 * "a150eec940a7ef9"); LinearLayout layout = (LinearLayout)
-		 * findViewById(R.id.adLayout); layout.addView(adView); AdRequest req =
-		 * new AdRequest(); adView.loadAd(req);
-		 */
+		if(uri!=null)
+		{
+			final String url = uri.toString();
+			this.task = new LoadLinksTask();
+			this.task.execute( url );
+		}
+		else
+		{
+			this.progressBar.setVisibility(View.GONE);
+		}
+		
+		 AdView adView = new AdView(this, AdSize.BANNER,"a151640e221df04");
+		 LinearLayout layout = (LinearLayout)findViewById(R.id.adLayout);
+		 layout.addView(adView); 
+		 AdRequest req =new AdRequest();
+		 adView.loadAd(req);
 	}
 
 	private void findLinksInternal( List<String> links, URI uri )
@@ -317,7 +325,7 @@ public class MainActivity extends Activity implements OnItemClickListener
 			Toast.makeText( this, R.string.select_a_browser, Toast.LENGTH_LONG ).show();
 			return;
 		}
-		savePref();
+	//	savePref();
 		Uri data = null;
 		data = Uri.parse( link );
 		String type = MimeTypes.getType( link );
@@ -410,7 +418,12 @@ public class MainActivity extends Activity implements OnItemClickListener
 		List<AppInfo> apps = new ArrayList<AppInfo>();
 		PackageManager pm = this.getPackageManager();
 		Intent intent = new Intent( Intent.ACTION_VIEW, null );
-		intent.setDataAndType( uri, type );
+		if("file".equalsIgnoreCase(uri.getScheme())){
+			intent.setDataAndType( uri, type );
+		}
+		else{
+			intent.setData(uri);		
+		}
 		List<ResolveInfo> rList = pm.queryIntentActivities( intent, 0 );
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences( this );
 		String selectedPkg = pref.getString( "package", "" );
