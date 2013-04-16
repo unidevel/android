@@ -15,16 +15,22 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.LinearLayout;
+import com.google.ads.AdRequest;
+import com.google.ads.AdSize;
+import com.google.ads.AdView;
 
 public class MainActivity extends Activity
 {
 	WebView view;
 	Handler handler;
 	JavaScriptLibrary jsLib;
+	LinearLayout adLayout = null;
 	String sourceLink = null;
 	final String BASE_URL = "file:///android_asset/demos/1.2.0/";
 
@@ -35,8 +41,8 @@ public class MainActivity extends Activity
 		super.onCreate( savedInstanceState );
 		this.handler = new Handler();
 		this.jsLib = new JavaScriptLibrary( this );
-		view = new WebView( this );
-		setContentView( view );
+		setContentView( R.layout.main );
+		view = (WebView)this.findViewById( R.id.webView );
 		view.getSettings().setJavaScriptEnabled( true );
 		view.getSettings().setAllowFileAccess( true );
 		view.getSettings().setSupportZoom( false );
@@ -95,16 +101,16 @@ public class MainActivity extends Activity
 		if ( item.getItemId() == MENU_VIEW_SOURCE )
 		{
 			sourceLink = view.getUrl();
-			// callJS(
-			// "var s=document.documentElement.outerHTML; s=s.replace(/</g, '&lt;'); document.writeln('<pre class=\"prettyprint linenums\">'+s+'</pre>'); var e= document.createElement('link');e.setAttribute('rel', 'stylesheet'); e.setAttribute('type','text/css');e.setAttribute('href', '"
-			// + BASE_URL
-			// +
-			// "css/prettify.css');  document.getElementsByTagName('head')[0].appendChild(e); var e= document.createElement('script');e.setAttribute('type','text/javascript');e.setAttribute('src', '"
-			// + BASE_URL
-			// +
-			// "js/prettify.js'); document.getElementsByTagName('head')[0].appendChild(e); alert(document.documentElement.outerHTML);"
-			// + "" );
 			callJS( "var s=document.documentElement.outerHTML; s=s.replace(/</g, '&lt;'); document.body.innerHTML='<pre>'+s+'</pre>';" );
+			this.findViewById( R.id.adLayout ).setVisibility( View.VISIBLE );
+			if ( adLayout == null )
+			{
+				AdView adView = new AdView( this, AdSize.BANNER, "a15166706d2ac13" );
+				adLayout = (LinearLayout)findViewById( R.id.adLayout );
+				adLayout.addView( adView );
+				AdRequest req = new AdRequest();
+				adView.loadAd( req );
+			}
 			return true;
 		}
 		return super.onOptionsItemSelected( item );
@@ -157,6 +163,7 @@ public class MainActivity extends Activity
 				else
 				{
 					view.loadUrl( sourceLink );
+					this.findViewById( R.id.adLayout ).setVisibility( View.GONE );
 					sourceLink = null;
 				}
 			}
@@ -165,7 +172,12 @@ public class MainActivity extends Activity
 				if ( sourceLink != null )
 				{
 					view.loadUrl( sourceLink );
+					this.findViewById( R.id.adLayout ).setVisibility( View.GONE );
 					sourceLink = null;
+				}
+				else
+				{
+					this.finish();
 				}
 			}
 			return true;

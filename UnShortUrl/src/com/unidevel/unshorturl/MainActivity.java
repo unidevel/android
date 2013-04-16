@@ -1,31 +1,70 @@
 
 package com.unidevel.unshorturl;
 
-import android.app.*;
-import android.content.*;
-import android.content.SharedPreferences.*;
-import android.content.pm.*;
-import android.graphics.*;
-import android.graphics.drawable.*;
-import android.net.*;
-import android.os.*;
-import android.preference.*;
-import android.util.*;
-import android.view.*;
-import android.widget.*;
-import android.widget.AdapterView.*;
-import com.google.ads.*;
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import java.util.regex.*;
-import org.apache.http.*;
-import org.apache.http.client.methods.*;
-import org.apache.http.client.params.*;
-import org.apache.http.client.utils.*;
-import org.apache.http.impl.client.*;
-import org.apache.http.params.*;
-import java.nio.*;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.StatusLine;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.params.HttpClientParams;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpParams;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.ClipData;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.os.Handler;
+import android.preference.PreferenceManager;
+import android.util.Log;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.Button;
+import android.widget.GridView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
+import com.google.ads.AdRequest;
+import com.google.ads.AdSize;
+import com.google.ads.AdView;
 
 public class MainActivity extends Activity implements OnItemClickListener,Runnable
 {
@@ -318,18 +357,19 @@ public class MainActivity extends Activity implements OnItemClickListener,Runnab
 			{
 				try
 				{
-					bitmap = BitmapFactory.decodeByteArray(icon,0,icon.length);
-					Bitmap source = BitmapFactory.decodeResource(getResources(), R.drawable.link);
-					source = source.copy(Bitmap.Config.ARGB_8888, true);
-					Canvas canvas = new Canvas(source);
+					Bitmap favicon = BitmapFactory.decodeByteArray( icon, 0, icon.length );
+					bitmap = BitmapFactory.decodeResource( getResources(), R.drawable.link );
+					bitmap = bitmap.copy( Bitmap.Config.ARGB_8888, true );
+					Canvas canvas = new Canvas( bitmap );
 					Paint paint = new Paint();
-					int x = source.getWidth() * 4 / 7;
-					int y = source.getHeight() * 4 / 7;
-					int w = source.getWidth() / 4;
-					int h = source.getHeight() / 4;
+					int x = bitmap.getWidth() * 4 / 7;
+					int y = bitmap.getHeight() * 4 / 7;
+					int w = bitmap.getWidth() / 4;
+					int h = bitmap.getHeight() / 4;
 					
 //							canvas.drawBitmap(bitmap, w, h, paint);
-					canvas.drawBitmap(bitmap, new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight()), new Rect(x, y, x + w, y + h), paint);
+					canvas.drawBitmap( favicon, new Rect( 0, 0, favicon.getWidth(), favicon.getHeight() ), new Rect( x,
+							y, x + w, y + h ), paint );
 					Log.i("unidevel", "using site icon");
 				}
 				catch (Throwable ex)
