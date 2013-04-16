@@ -15,9 +15,10 @@ public class LinkAdapter extends BaseAdapter implements View.OnClickListener
 
 	public void onClick(View v)
 	{
-		if(listener!=null){
+		if ( this.listener != null )
+		{
 			String url=(String)v.getTag();
-			listener.onClick(url);			
+			this.listener.onClick( url );
 		}
 	}
 
@@ -51,17 +52,17 @@ public class LinkAdapter extends BaseAdapter implements View.OnClickListener
 
 	public List<String> getLinks()
 	{
-		return links;
+		return this.links;
 	}
 	
 	public int getCount()
 	{
-		return links.size();
+		return this.links.size();
 	}
 
 	public Object getItem(int pos)
 	{
-		return links.get(pos);
+		return this.links.get( pos );
 	}
 
 	public long getItemId(int pos)
@@ -77,7 +78,7 @@ public class LinkAdapter extends BaseAdapter implements View.OnClickListener
 		TextView text=(TextView)view.findViewById(android.R.id.text1);
 		text.setSingleLine(true);
 		text.setEllipsize(TextUtils.TruncateAt.MARQUEE);
-		String url=links.get(pos);
+		String url = this.links.get( pos );
 		text.setText(url);
 		int padding = d2p( 4 );
 		text.setPadding( 0, padding, 0, padding );
@@ -85,7 +86,6 @@ public class LinkAdapter extends BaseAdapter implements View.OnClickListener
 		if(pos>0){
 			image.setVisibility(View.VISIBLE);
 			image.setPadding( d2p( 24 * (pos-1) ), 0, 0, 0);
-			//image.setImageResource(R.drawable.dot);
 		}
 		else{
 			image.setVisibility(View.GONE);
@@ -99,13 +99,13 @@ public class LinkAdapter extends BaseAdapter implements View.OnClickListener
 	
 	public int d2p( float dipValue )
 	{
-		final float scale = ctx.getResources().getDisplayMetrics().density;
+		final float scale = this.ctx.getResources().getDisplayMetrics().density;
 		return (int)(dipValue * scale + 0.5f);
 	}
 
 	public float p2d( int pxValue )
 	{
-		final float scale = ctx.getResources().getDisplayMetrics().density;
+		final float scale = this.ctx.getResources().getDisplayMetrics().density;
 		return (float)pxValue / scale + 0.5f;
 	}
 

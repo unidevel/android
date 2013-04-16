@@ -53,15 +53,16 @@ public class AppAdapter extends BaseAdapter
 		return position;
 	}
 
+	@SuppressWarnings ("deprecation")
 	@Override
 	public View getView( int position, View view, ViewGroup group )
 	{
 		if ( view == null )
 		{
 			view = this.inflater.inflate( R.layout.app, null );
-			if ( defaultBackground == null )
+			if ( this.defaultBackground == null )
 			{
-				defaultBackground = view.getBackground();
+				this.defaultBackground = view.getBackground();
 			}
 		}
 		ImageView icon = (ImageView)view.findViewById( R.id.icon );

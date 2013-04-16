@@ -2,40 +2,42 @@ package com.unidevel.unshorturl;
 
 import java.util.HashMap;
 import java.util.Map;
+import android.annotation.SuppressLint;
 
 public class MimeTypes {
 	static Map<String, String> mimeTypes;
 	static {
 		mimeTypes = new HashMap<String, String>();
-		mimeTypes.put("htm", "text/html");
-		mimeTypes.put("html", "text/html");
-		mimeTypes.put("xml", "application/xml");
-		mimeTypes.put("xhtml", "application/xhtml+xml");
-		mimeTypes.put("js", "text/javascript");
-		mimeTypes.put("txt", "text/plain");
-		mimeTypes.put("css", "text/css");
-		mimeTypes.put("zip", "application/zip");
-		mimeTypes.put("jpg", "image/jpeg");
-		mimeTypes.put("jpeg", "image/jpeg");
-		mimeTypes.put("png", "image/png");
-		mimeTypes.put("tif", "image/tiff");
-		mimeTypes.put("tiff", "image/tiff");
-		mimeTypes.put("gif", "image/gif");
-		mimeTypes.put("ico", "image/vnd.microsoft.icon");
-		mimeTypes.put("icon", "image/vnd.microsoft.icon");
-		mimeTypes.put("svg", "image/svg+xml");
-		mimeTypes.put("wav", "audio/vnd.wave");
-		mimeTypes.put("mp3", "audio/mpeg");
-		mimeTypes.put("mpeg", "video/mpeg");
-		mimeTypes.put("mpg", "video/mpeg");
-		mimeTypes.put("mp4", "video/mp4");
-		mimeTypes.put("flv", "video/flv");
-		mimeTypes.put("pdf", "application/pdf");
-		mimeTypes.put("xls", "application/vnd.ms-excel");
-		mimeTypes.put("ppt", "application/vnd.ms-powerpoint");
-		mimeTypes.put("doc", "application/vnd.ms-word");
+		mimeTypes.put( "htm", "text/html" ); //$NON-NLS-1$ //$NON-NLS-2$
+		mimeTypes.put( "html", "text/html" ); //$NON-NLS-1$ //$NON-NLS-2$
+		mimeTypes.put( "xml", "application/xml" ); //$NON-NLS-1$ //$NON-NLS-2$
+		mimeTypes.put( "xhtml", "application/xhtml+xml" ); //$NON-NLS-1$ //$NON-NLS-2$
+		mimeTypes.put( "js", "text/javascript" ); //$NON-NLS-1$ //$NON-NLS-2$
+		mimeTypes.put( "txt", "text/plain" ); //$NON-NLS-1$ //$NON-NLS-2$
+		mimeTypes.put( "css", "text/css" ); //$NON-NLS-1$ //$NON-NLS-2$
+		mimeTypes.put( "zip", "application/zip" ); //$NON-NLS-1$ //$NON-NLS-2$
+		mimeTypes.put( "jpg", "image/jpeg" ); //$NON-NLS-1$ //$NON-NLS-2$
+		mimeTypes.put( "jpeg", "image/jpeg" ); //$NON-NLS-1$ //$NON-NLS-2$
+		mimeTypes.put( "png", "image/png" ); //$NON-NLS-1$ //$NON-NLS-2$
+		mimeTypes.put( "tif", "image/tiff" ); //$NON-NLS-1$ //$NON-NLS-2$
+		mimeTypes.put( "tiff", "image/tiff" ); //$NON-NLS-1$ //$NON-NLS-2$
+		mimeTypes.put( "gif", "image/gif" ); //$NON-NLS-1$ //$NON-NLS-2$
+		mimeTypes.put( "ico", "image/vnd.microsoft.icon" ); //$NON-NLS-1$ //$NON-NLS-2$
+		mimeTypes.put( "icon", "image/vnd.microsoft.icon" ); //$NON-NLS-1$ //$NON-NLS-2$
+		mimeTypes.put( "svg", "image/svg+xml" ); //$NON-NLS-1$ //$NON-NLS-2$
+		mimeTypes.put( "wav", "audio/vnd.wave" ); //$NON-NLS-1$ //$NON-NLS-2$
+		mimeTypes.put( "mp3", "audio/mpeg" ); //$NON-NLS-1$ //$NON-NLS-2$
+		mimeTypes.put( "mpeg", "video/mpeg" ); //$NON-NLS-1$ //$NON-NLS-2$
+		mimeTypes.put( "mpg", "video/mpeg" ); //$NON-NLS-1$ //$NON-NLS-2$
+		mimeTypes.put( "mp4", "video/mp4" ); //$NON-NLS-1$ //$NON-NLS-2$
+		mimeTypes.put( "flv", "video/flv" ); //$NON-NLS-1$ //$NON-NLS-2$
+		mimeTypes.put( "pdf", "application/pdf" ); //$NON-NLS-1$ //$NON-NLS-2$
+		mimeTypes.put( "xls", "application/vnd.ms-excel" ); //$NON-NLS-1$ //$NON-NLS-2$
+		mimeTypes.put( "ppt", "application/vnd.ms-powerpoint" ); //$NON-NLS-1$ //$NON-NLS-2$
+		mimeTypes.put( "doc", "application/vnd.ms-word" ); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	@SuppressLint ("DefaultLocale")
 	public static String getType(String uri) {
 		int pos = uri.indexOf('?');
 		String ext = null;

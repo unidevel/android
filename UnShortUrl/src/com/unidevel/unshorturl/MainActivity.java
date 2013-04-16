@@ -30,6 +30,7 @@ import android.content.ClipData;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -52,6 +53,7 @@ import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -68,16 +70,17 @@ import com.google.ads.AdRequest;
 import com.google.ads.AdSize;
 import com.google.ads.AdView;
 
-public class MainActivity extends Activity implements OnItemClickListener,Runnable
+public class MainActivity extends Activity implements OnItemClickListener, Runnable
 {
 
+	@SuppressWarnings ("unused")
 	public void run()
 	{
-		if (false && !canceled && appLoaded && linkLoaded && realLinks.size() > 0)
+		if ( false && !this.canceled && this.appLoaded && this.linkLoaded && this.realLinks.size() > 0 )
 		{
-			String url=realLinks.get(realLinks.size() - 1);
+			String url = this.realLinks.get( this.realLinks.size() - 1 );
 			finish();
-			viewLink(url);
+			viewLink( url );
 		}
 	}
 
@@ -90,47 +93,46 @@ public class MainActivity extends Activity implements OnItemClickListener,Runnab
 	AppAdapter appAdapter;
 	ProgressBar progressBar;
 	Handler handler;
-	boolean appLoaded=false;
-	boolean linkLoaded=false;
-	boolean canceled=false;
+	boolean appLoaded = false;
+	boolean linkLoaded = false;
+	boolean canceled = false;
 	List<String> realLinks = new ArrayList<String>();
 
 	class LoadAppTask extends AsyncTask<Void, Integer, List<AppInfo>>
 	{
 
 		@Override
-		protected List<AppInfo> doInBackground(Void... params)
+		protected List<AppInfo> doInBackground( Void... params )
 		{
 			List<AppInfo> apps;
 			Uri uri = getIntent().getData();
 			String type;
-			if (uri != null)
+			if ( uri != null )
 			{
 				type = getIntent().getType();
 			}
 			else
 			{
-				uri = Uri.parse("http://www.googke.com/");
-				type = "text/html";
+				uri = Uri.parse( "http://www.google.com/" ); //$NON-NLS-1$
+				type = "text/html"; //$NON-NLS-1$
 			}
-			apps = findActivity(uri, type);
+			apps = findActivity( uri, type );
 			return apps;
 		}
 
 		@Override
-		protected void onPostExecute(List<AppInfo> result)
+		protected void onPostExecute( List<AppInfo> result )
 		{
-			super.onPostExecute(result);
-			MainActivity.this.appAdapter = new AppAdapter(MainActivity.this, result);
-			MainActivity.this.appView.setAdapter(MainActivity.this.appAdapter);
-			int sel=appAdapter.getSelected();
-			if (sel >= 0)
+			super.onPostExecute( result );
+			MainActivity.this.appAdapter = new AppAdapter( MainActivity.this, result );
+			MainActivity.this.appView.setAdapter( MainActivity.this.appAdapter );
+			int sel = MainActivity.this.appAdapter.getSelected();
+			if ( sel >= 0 )
 			{
-				appView.smoothScrollToPosition(sel);
-				appLoaded = true;
-				handler.postDelayed(MainActivity.this, 3000);
+				MainActivity.this.appView.smoothScrollToPosition( sel );
+				MainActivity.this.appLoaded = true;
+				MainActivity.this.handler.postDelayed( MainActivity.this, 3000 );
 			}
-			//.setSelection(sel);
 		}
 	}
 
@@ -138,54 +140,55 @@ public class MainActivity extends Activity implements OnItemClickListener,Runnab
 	{
 
 		@Override
-		protected Void doInBackground(String... params)
+		protected Void doInBackground( String... params )
 		{
 			List<String> links = new ArrayList<String>();
-			links.add(params[0]);
+			links.add( params[ 0 ] );
 			DefaultHttpClient client = new DefaultHttpClient();
 			final HttpParams httpParams = new BasicHttpParams();
-			HttpClientParams.setRedirecting(httpParams, false);
-			client.setParams(httpParams);
+			HttpClientParams.setRedirecting( httpParams, false );
+			client.setParams( httpParams );
 			int n = 0;
+			@SuppressWarnings ("unused")
 			int total = 0;
-			while (links.size() > 0)
+			while ( links.size() > 0 )
 			{
 				n++;
 				total += links.size();
-				String url = links.remove(0);
-				URI uri = URI.create(url);
-				realLinks.add(url);
-				if (!isShort(uri))
+				String url = links.remove( 0 );
+				URI uri = URI.create( url );
+				MainActivity.this.realLinks.add( url );
+				if ( !isShort( uri ) )
 				{
-					findLinksInternal(links, uri);
-					this.publishProgress(n);
+					findLinksInternal( links, uri );
+					this.publishProgress( n );
 					continue;
 				}
 
-				HttpGet request = new HttpGet(url);
+				HttpGet request = new HttpGet( url );
 				HttpResponse response;
 				try
 				{
-					response = client.execute(request);
+					response = client.execute( request );
 					StatusLine status = response.getStatusLine();
-					if (status.getStatusCode() >= 300 && status.getStatusCode() < 400)
+					if ( status.getStatusCode() >= 300 && status.getStatusCode() < 400 )
 					{
-						for (Header header : response.getAllHeaders())
+						for ( Header header : response.getAllHeaders() )
 						{
 							String value = header.getValue();
-							if (isLink(value))
+							if ( isLink( value ) )
 							{
-								URI linkURI = URI.create(value);
-								links.add(value);
-								findLinksInternal(links, linkURI);
-								this.publishProgress(n);
+								URI linkURI = URI.create( value );
+								links.add( value );
+								findLinksInternal( links, linkURI );
+								this.publishProgress( n );
 							}
 						}
 					}
 				}
 				catch (Throwable e)
 				{
-					Log.e("LoadLinks", e.getMessage(), e); //$NON-NLS-1$
+					Log.e( "LoadLinks", e.getMessage(), e ); //$NON-NLS-1$
 				}
 			}
 			return null;
@@ -194,111 +197,114 @@ public class MainActivity extends Activity implements OnItemClickListener,Runnab
 		@Override
 		protected void onPreExecute()
 		{
-			this.publishProgress(0);
+			this.publishProgress( 0 );
 			super.onPreExecute();
 		}
 
 		@Override
-		protected void onPostExecute(Void result)
+		protected void onPostExecute( Void result )
 		{
-			super.onPostExecute(result);
-			MainActivity.this.progressBar.setProgress(5);
-			MainActivity.this.progressBar.setVisibility(View.GONE);
-			if (realLinks != null && realLinks.size() > 0)
+			super.onPostExecute( result );
+			MainActivity.this.progressBar.setProgress( 5 );
+			MainActivity.this.progressBar.setVisibility( View.GONE );
+			if ( MainActivity.this.realLinks != null && MainActivity.this.realLinks.size() > 0 )
 			{
-				linkView.setSelection(realLinks.size() - 1);
+				MainActivity.this.linkView.setSelection( MainActivity.this.realLinks.size() - 1 );
 			}
-			linkLoaded = true;
-			handler.postDelayed(MainActivity.this, 3000);
+			MainActivity.this.linkLoaded = true;
+			MainActivity.this.handler.postDelayed( MainActivity.this, 3000 );
 		}
 
 		@Override
-		protected void onProgressUpdate(Integer... values)
+		protected void onProgressUpdate( Integer... values )
 		{
 			List<String> links = new ArrayList<String>();
-			links.addAll(realLinks);
-			LinkAdapter linkAdapter = new LinkAdapter(MainActivity.this, links);
-			linkAdapter.setOnStarClickListener(new LinkAdapter.StarClickListener(){
+			links.addAll( MainActivity.this.realLinks );
+			LinkAdapter linkAdapter = new LinkAdapter( MainActivity.this, links );
+			linkAdapter.setOnStarClickListener( new LinkAdapter.StarClickListener()
+			{
 
-					public void onClick(String url)
-					{
-						deskTask=new CreateDeskLinkTask();
-						deskTask.execute(url);
-					}			
-			});
-			MainActivity.this.linkView.setAdapter(linkAdapter);
-			int progress = values[0];
-			if (progress >= 4)
+				public void onClick( String url )
+				{
+					MainActivity.this.deskTask = new CreateDeskLinkTask();
+					MainActivity.this.deskTask.execute( url );
+				}
+			} );
+			MainActivity.this.linkView.setAdapter( linkAdapter );
+			int progress = values[ 0 ];
+			if ( progress >= 4 )
 				progress = 4;
-			MainActivity.this.progressBar.setProgress(progress);
+			MainActivity.this.progressBar.setProgress( progress );
 		}
 	}
 
-	class CreateDeskLinkTask extends AsyncTask<String, Void, Void>
+	class CreateDeskLinkTask extends AsyncTask<String, Void, Void> implements OnCancelListener
 	{
-		ProgressDialog progDlg;
+		ProgressDialog progressDialog;
 		String url;
-		String title ;
+		String title;
 		byte[] icon;
-		protected Void doInBackground(String[] args)
+
+		protected Void doInBackground( String... args )
 		{
-			title = args[0];
-			url=title;
+			this.title = args[ 0 ];
+			this.url = this.title;
 			StringBuffer buf = new StringBuffer();
 			try
 			{
 				String encoding = null;
-				URL urlLink = new URL(url);
-				URL favLink = new URL(urlLink.getProtocol(), urlLink.getHost(), urlLink.getPort(), "/favicon.ico");
-				HttpURLConnection conn = (HttpURLConnection) urlLink
-					.openConnection();
-				conn.setConnectTimeout( 10000 );
-				conn.setReadTimeout( 10000 );
+				URL urlLink = new URL( this.url );
+				URL favLink = new URL( urlLink.getProtocol(), urlLink.getHost(), urlLink.getPort(), "/favicon.ico" ); //$NON-NLS-1$
+				HttpURLConnection conn = (HttpURLConnection)urlLink.openConnection();
+				conn.setConnectTimeout( 3000 );
+				conn.setReadTimeout( 5000 );
 				// conn.setDoOutput(true);
-				conn.setRequestMethod("GET");
-				conn.setRequestProperty( "User-Agent",
-						"Mozilla/5.0 (Windows NT 5.1; rv:7.0.1) Gecko/20100101 Firefox/7.0.1" );
+				conn.setRequestMethod( "GET" ); //$NON-NLS-1$
+				conn.setRequestProperty( "User-Agent", //$NON-NLS-1$
+						"Mozilla/5.0 (Windows NT 5.1; rv:7.0.1) Gecko/20100101 Firefox/7.0.1" ); //$NON-NLS-1$
 				InputStream in = conn.getInputStream();
 				encoding = conn.getContentEncoding();
 
 				InputStreamReader reader = null;
-				if (encoding == null) reader = new InputStreamReader(in, "ISO8859-1");
-				else reader = new InputStreamReader(in, encoding);
+				if ( encoding == null )
+					reader = new InputStreamReader( in, "ISO8859-1" ); //$NON-NLS-1$
+				else
+					reader = new InputStreamReader( in, encoding );
 				int len;
-				char cbuf[] = new char[1024];
+				char cbuf[] = new char[ 1024 ];
 				String htmlEncoding = null;
-				Pattern pattern = Pattern.compile("<title>([^<]+)", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
-				Pattern charsetPattern = Pattern.compile("\\bcharset\\s*=\\s*\"?([^\"]+)\"");
-				while ((len = reader.read(cbuf)) > 0)
+				Pattern pattern = Pattern.compile( "<title>([^<]+)", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE ); //$NON-NLS-1$
+				Pattern charsetPattern = Pattern.compile( "\\bcharset\\s*=\\s*\"?([^\"]+)\"" ); //$NON-NLS-1$
+				while ( (len = reader.read( cbuf )) > 0 )
 				{
-					if (encoding == null)
+					if ( encoding == null )
 					{
-						if (htmlEncoding == null)
+						if ( htmlEncoding == null )
 						{
-							String s = new String(cbuf);
-							Matcher m = charsetPattern.matcher(s);
-							if (m.find())
+							String s = new String( cbuf );
+							Matcher m = charsetPattern.matcher( s );
+							if ( m.find() )
 							{
-								htmlEncoding = m.group(1).trim();
-								String s2 = buf.toString();
+								htmlEncoding = m.group( 1 ).trim();
 								buf = new StringBuffer();
-								buf.append(new String(s.getBytes("ISO8859-1"), htmlEncoding));
+								buf.append( new String( s.getBytes( "ISO8859-1" ), htmlEncoding ) ); //$NON-NLS-1$
 							}
 						}
 					}
-					if (encoding != null)
-						buf.append(cbuf, 0, len);
+					if ( encoding != null )
+						buf.append( cbuf, 0, len );
 					else
 					{
-						buf.append(new String(new String(cbuf).getBytes("ISO8859-1"), htmlEncoding));
+						buf.append( new String( new String( cbuf ).getBytes( "ISO8859-1" ), htmlEncoding ) ); //$NON-NLS-1$
 					}
 					String body = buf.toString();
-					Matcher m = pattern.matcher(body);
-					if (m.find())
+					Matcher m = pattern.matcher( body );
+					if ( m.find() )
 					{
-						title = m.group(1).trim();
-						int pos = title.indexOf('\n');
-						if (pos >= 0)title = title.substring(0, pos).trim();
+						this.title = m.group( 1 ).trim();
+						int pos = this.title.indexOf( '\n' );
+						if ( pos >= 0 )
+							this.title = this.title.substring( 0, pos ).trim();
 						break;
 					}
 				}
@@ -306,28 +312,28 @@ public class MainActivity extends Activity implements OnItemClickListener,Runnab
 				conn.disconnect();
 
 				conn = (HttpURLConnection)favLink.openConnection();
-				conn.setConnectTimeout(5000);
-				conn.setReadTimeout(5000);
-				conn.setDoOutput(true);
-				conn.setRequestMethod("GET");
-				conn.setRequestProperty("User-Agent",
-										"Mozilla/5.0 (Windows NT 5.1; rv:7.0.1) Gecko/20100101 Firefox/7.0.1");
+				conn.setConnectTimeout( 5000 );
+				conn.setReadTimeout( 5000 );
+				conn.setDoOutput( true );
+				conn.setRequestMethod( "GET" ); //$NON-NLS-1$
+				conn.setRequestProperty( "User-Agent", //$NON-NLS-1$
+						"Mozilla/5.0 (Windows NT 5.1; rv:7.0.1) Gecko/20100101 Firefox/7.0.1" ); //$NON-NLS-1$
 				in = conn.getInputStream();
-				ByteArrayOutputStream out=new ByteArrayOutputStream();
-				byte[] data = new byte[1024];
-				while ((len = in.read(data)) > 0)
+				ByteArrayOutputStream out = new ByteArrayOutputStream();
+				byte[] data = new byte[ 1024 ];
+				while ( (len = in.read( data )) > 0 )
 				{
-					out.write(data, 0, len);
+					out.write( data, 0, len );
 				}
 				in.close();
 				out.close();
 				conn.disconnect();
 
-				icon = out.toByteArray();
+				this.icon = out.toByteArray();
 			}
 			catch (Throwable ex)
 			{
-				Log.e("ToDesktop", ex.getMessage(), ex);
+				Log.e( "ToDesktop", ex.getMessage(), ex ); //$NON-NLS-1$
 			}
 
 			return null;
@@ -335,300 +341,309 @@ public class MainActivity extends Activity implements OnItemClickListener,Runnab
 
 		protected void onCancelled()
 		{
-			progDlg.cancel();
-			createLink(url,title,icon);
+			this.progressDialog.cancel();
+			createLink( this.url, this.title, this.icon );
 		}
 
 		protected void onPreExecute()
 		{
 			super.onPreExecute();
-			progDlg = ProgressDialog.show(MainActivity.this, getString(R.string.desk_link), null, true, true);
+			this.progressDialog =
+					ProgressDialog.show( MainActivity.this, getString( R.string.desk_link ), null, true, true );
+			this.progressDialog.setOnCancelListener( this );
 		}
 
-		protected void onPostExecute(Void result)
+		protected void onPostExecute( Void result )
 		{
-			super.onPostExecute(result);
-			progDlg.dismiss();
-			createLink(url,title,icon);
+			super.onPostExecute( result );
+			this.progressDialog.dismiss();
+			createLink( this.url, this.title, this.icon );
 		}
 
-		public void createLink(final String url, String title, byte[] icon)
+		public void createLink( final String url, String title, byte[] icon )
 		{
 			Bitmap bitmap = null;
-			if (icon != null && icon.length > 0)
+			if ( icon != null && icon.length > 0 )
 			{
 				try
 				{
 					Bitmap favicon = BitmapFactory.decodeByteArray( icon, 0, icon.length );
-					bitmap = BitmapFactory.decodeResource( getResources(), R.drawable.desk_link);
+					bitmap = BitmapFactory.decodeResource( getResources(), android.R.drawable.btn_star_big_on );
 					bitmap = bitmap.copy( Bitmap.Config.ARGB_8888, true );
 					Canvas canvas = new Canvas( bitmap );
 					Paint paint = new Paint();
-					int x = bitmap.getWidth() *3 / 5;
-					int y = bitmap.getHeight() *3 /5;
-					int w = bitmap.getWidth() *2/5;
-					int h = bitmap.getHeight() *2/5;
-					
-//							canvas.drawBitmap(bitmap, w, h, paint);
+					int x = bitmap.getWidth() / 2;
+					int y = bitmap.getHeight() / 2;
+					int w = bitmap.getWidth() * 2 / 5;
+					int h = bitmap.getHeight() * 2 / 5;
+
+					// canvas.drawBitmap(bitmap, w, h, paint);
 					canvas.drawBitmap( favicon, new Rect( 0, 0, favicon.getWidth(), favicon.getHeight() ), new Rect( x,
 							y, x + w, y + h ), paint );
-					Log.i("unidevel", "using site icon");
+					Log.i( "unidevel", "using site icon" ); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				catch (Throwable ex)
 				{
-					Log.w("unidevel", ex.getMessage(), ex);
+					Log.w( "unidevel", ex.getMessage(), ex ); //$NON-NLS-1$
 				}
 				finally
 				{
 				}
 			}
-			
-			if(bitmap==null){
-				bitmap=((BitmapDrawable)getResources().getDrawable(R.drawable.desk_link)).getBitmap();
-				Log.i("unidevel", "using default icon");
-			}
-			Log.i("unidevel", "url="+url);
-			Log.i("unidevel", "title="+title);
-				
-			Intent shortcutIntent = new Intent(Intent.ACTION_VIEW);
-			Uri uri = Uri.parse(url);
-			shortcutIntent.setData(uri);
-			Intent createIntent = new Intent();
-			createIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
-			createIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, title);
-			if(bitmap!=null)
+
+			if ( bitmap == null )
 			{
-				createIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON, bitmap);
+				bitmap =
+						((BitmapDrawable)getResources().getDrawable( android.R.drawable.btn_star_big_off )).getBitmap();
+				Log.i( "unidevel", "using default icon" ); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			//createIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,
-			//					  Intent.ShortcutIconResource.fromContext(this,
-			//															  R.drawable.link));
-			createIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
-			MainActivity.this.sendBroadcast(createIntent);
+			Log.i( "unidevel", "url=" + url ); //$NON-NLS-1$ //$NON-NLS-2$
+			Log.i( "unidevel", "title=" + title ); //$NON-NLS-1$ //$NON-NLS-2$
+
+			Intent shortcutIntent = new Intent( Intent.ACTION_VIEW );
+			Uri uri = Uri.parse( url );
+			shortcutIntent.setData( uri );
+			Intent createIntent = new Intent();
+			createIntent.putExtra( Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent );
+			createIntent.putExtra( Intent.EXTRA_SHORTCUT_NAME, title );
+			if ( bitmap != null )
+			{
+				createIntent.putExtra( Intent.EXTRA_SHORTCUT_ICON, bitmap );
+			}
+			createIntent.setAction( "com.android.launcher.action.INSTALL_SHORTCUT" ); //$NON-NLS-1$
+			MainActivity.this.sendBroadcast( createIntent );
 		}
 
+		@Override
+		public void onCancel( DialogInterface dialog )
+		{
+			this.cancel( true );
+		}
 	}
 
 	@Override
-	public void onCreate(Bundle savedInstanceState)
+	public void onCreate( Bundle savedInstanceState )
 	{
-		super.onCreate(savedInstanceState);
+		super.onCreate( savedInstanceState );
 		this.handler = new Handler();
 
 		Uri uri = getIntent().getData();
 
-	 	requestWindowFeature(Window.FEATURE_LEFT_ICON);
-		if (uri == null)
+		requestWindowFeature( Window.FEATURE_LEFT_ICON );
+		if ( uri == null )
 		{
-			setTitle(R.string.settings);
+			setTitle( R.string.settings );
 		}
 		else
 		{
-			setTitle(R.string.app_name);
+			setTitle( R.string.app_name );
 		}
-		setContentView(R.layout.main);
-		setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, R.drawable.link);
+		setContentView( R.layout.main );
+		setFeatureDrawableResource( Window.FEATURE_LEFT_ICON, R.drawable.link );
 
-		Button buyButton= (Button)this.findViewById(R.id.buy);
-		//if (uri!=null)
+		Button buyButton = (Button)this.findViewById( R.id.buy );
+		// if (uri!=null)
 		{
-			buyButton.setVisibility(View.GONE);
+			buyButton.setVisibility( View.GONE );
 		}
 
-		this.linkView = (ListView)this.findViewById(R.id.listView1);
-		this.linkView.setItemsCanFocus(true);
-		this.linkView.setFocusable(true);
-		this.linkView.setFocusableInTouchMode(true);
-		this.linkView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
-		this.registerForContextMenu(this.linkView);
-		this.linkView.setOnItemClickListener(this);
-		this.linkView.setOnItemLongClickListener(new OnItemLongClickListener(){
+		this.linkView = (ListView)this.findViewById( R.id.listView1 );
+		this.linkView.setItemsCanFocus( true );
+		this.linkView.setFocusable( true );
+		this.linkView.setFocusableInTouchMode( true );
+		this.linkView.setChoiceMode( AbsListView.CHOICE_MODE_SINGLE );
+		this.registerForContextMenu( this.linkView );
+		this.linkView.setOnItemClickListener( this );
+		this.linkView.setOnItemLongClickListener( new OnItemLongClickListener()
+		{
 
-				public boolean onItemLongClick(AdapterView<?> adapterView, View view, int pos, long id)
-				{
-
-					TextView text = (TextView)view.findViewById(android.R.id.text1);
-					final String link = text.getText().toString();
-					AlertDialog.Builder builder= new AlertDialog.Builder(MainActivity.this);
-					builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener(){
-							public void onClick(DialogInterface dialog, int p2)
-							{
-								dialog.dismiss();
-							}
-
-						});
-					builder.setMessage(link).setPositiveButton(android.R.string.copy, new DialogInterface.OnClickListener(){
-							public void onClick(DialogInterface dialog, int p2)
-							{
-								putText(link);
-								Toast.makeText(MainActivity.this, R.string.copied, Toast.LENGTH_LONG).show();
-							}
-
-						});
-					builder.create().show();
-					return false;
-				}
-
-			});
-		this.appView = (GridView)this.findViewById(R.id.gridview);
-		this.appView.setOnItemClickListener(new OnItemClickListener()
+			public boolean onItemLongClick( AdapterView<?> adapterView, View view, int pos, long id )
 			{
 
-				@Override
-				public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id)
+				TextView text = (TextView)view.findViewById( android.R.id.text1 );
+				final String link = text.getText().toString();
+				AlertDialog.Builder builder = new AlertDialog.Builder( MainActivity.this );
+				builder.setNegativeButton( android.R.string.cancel, new DialogInterface.OnClickListener()
 				{
-					appAdapter.setSelected(pos);
-					savePref();
-				}
-			});
+					public void onClick( DialogInterface dialog, int p2 )
+					{
+						dialog.dismiss();
+					}
 
-		this.progressBar = (ProgressBar)this.findViewById(R.id.progressBar1);
-		this.progressBar.setMax(5);
+				} );
+				builder.setMessage( link ).setPositiveButton( android.R.string.copy,
+						new DialogInterface.OnClickListener()
+						{
+							public void onClick( DialogInterface dialog, int p2 )
+							{
+								putText( link );
+								Toast.makeText( MainActivity.this, R.string.copied, Toast.LENGTH_LONG ).show();
+							}
 
+						} );
+				builder.create().show();
+				return false;
+			}
+
+		} );
+		this.appView = (GridView)this.findViewById( R.id.gridview );
+		this.appView.setOnItemClickListener( new OnItemClickListener()
+		{
+
+			@Override
+			public void onItemClick( AdapterView<?> adapterView, View view, int pos, long id )
+			{
+				MainActivity.this.appAdapter.setSelected( pos );
+				savePref();
+			}
+		} );
+
+		this.progressBar = (ProgressBar)this.findViewById( R.id.progressBar1 );
+		this.progressBar.setMax( 5 );
 
 		this.appTask = new LoadAppTask();
 		this.appTask.execute();
 
-		if (uri != null)
+		if ( uri != null )
 		{
 			final String url = uri.toString();
 			this.task = new LoadLinksTask();
-			this.task.execute(url);
+			this.task.execute( url );
 		}
 		else
 		{
-			int m=LinearLayout.LayoutParams.MATCH_PARENT;
-			LinearLayout.LayoutParams params= new LinearLayout.LayoutParams(m, m);
-			this.appView.setLayoutParams(params);
-			this.progressBar.setVisibility(View.GONE);
-			clearDefault("https://www.google.com");
-			clearDefault("http://www.google.com");
+			int m = LayoutParams.MATCH_PARENT;
+			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams( m, m );
+			this.appView.setLayoutParams( params );
+			this.progressBar.setVisibility( View.GONE );
+			clearDefault( "https://www.google.com" ); //$NON-NLS-1$
+			clearDefault( "http://www.google.com" ); //$NON-NLS-1$
 		}
 
-		AdView adView = new AdView(this, AdSize.BANNER, "a151640e221df04");
-		LinearLayout layout = (LinearLayout)findViewById(R.id.adLayout);
-		layout.addView(adView); 
-		AdRequest req =new AdRequest();
-		adView.loadAd(req);
-	}	
+		AdView adView = new AdView( this, AdSize.BANNER, "a151640e221df04" ); //$NON-NLS-1$
+		LinearLayout layout = (LinearLayout)findViewById( R.id.adLayout );
+		layout.addView( adView );
+		AdRequest req = new AdRequest();
+		adView.loadAd( req );
+	}
 
-	private void findLinksInternal(List<String> links, URI uri)
+	protected void findLinksInternal( List<String> links, URI uri )
 	{
-		List<NameValuePair> pairs = URLEncodedUtils.parse(uri, "ISO8859-1"); //$NON-NLS-1$
-		for (NameValuePair pair : pairs)
+		List<NameValuePair> pairs = URLEncodedUtils.parse( uri, "ISO8859-1" ); //$NON-NLS-1$
+		for ( NameValuePair pair : pairs )
 		{
 			String value = pair.getValue();
-			if (value != null && isLink(value))
+			if ( value != null && isLink( value ) )
 			{
 				try
 				{
-					String link = URLDecoder.decode(value, "ISO8859-1"); //$NON-NLS-1$
-					links.add(link);
+					String link = URLDecoder.decode( value, "ISO8859-1" ); //$NON-NLS-1$
+					links.add( link );
 				}
 				catch (Throwable ex)
 				{
-					Log.e("findLinksInternal", ex.getMessage(), ex); //$NON-NLS-1$
+					Log.e( "findLinksInternal", ex.getMessage(), ex ); //$NON-NLS-1$
 				}
 			}
 		}
 	}
 
-	public boolean isShort(URI uri)
+	public boolean isShort( URI uri )
 	{
-		if (uri == null)
+		if ( uri == null )
 			return false;
-		if (!"http".equals(uri.getScheme()) && !"https".equals(uri.getScheme())) //$NON-NLS-1$ //$NON-NLS-2$
+		if ( !"http".equals( uri.getScheme() ) && !"https".equals( uri.getScheme() ) ) //$NON-NLS-1$ //$NON-NLS-2$
 			return false;
-		if (uri.getHost().length() > 9)
+		if ( uri.getHost().length() > 9 )
 			return false;
-		if (uri.getRawQuery() != null && uri.getRawQuery().length() > 0)
+		if ( uri.getRawQuery() != null && uri.getRawQuery().length() > 0 )
 			return false;
-		if (uri.getRawPath() != null && uri.getRawPath().length() > 12)
+		if ( uri.getRawPath() != null && uri.getRawPath().length() > 12 )
 			return false;
 		return true;
 	}
 
-	public boolean isLink(String value)
+	public boolean isLink( String value )
 	{
-		if (value == null)
+		if ( value == null )
 			return false;
-		if (value.startsWith("http://")) //$NON-NLS-1$
+		if ( value.startsWith( "http://" ) ) //$NON-NLS-1$
 			return true;
-		if (value.startsWith("https://")) //$NON-NLS-1$
+		if ( value.startsWith( "https://" ) ) //$NON-NLS-1$
 			return true;
-		if (value.startsWith("file://")) //$NON-NLS-1$
+		if ( value.startsWith( "file://" ) ) //$NON-NLS-1$
 			return true;
-		if (value.startsWith("ftp://")) //$NON-NLS-1$
+		if ( value.startsWith( "ftp://" ) ) //$NON-NLS-1$
 			return true;
 		return false;
 	}
 
-	public boolean onCreateOptiondMenu(Menu menu)
+	public boolean onCreateOptiondMenu( Menu menu )
 	{
-		super.onCreateOptionsMenu(menu);
+		super.onCreateOptionsMenu( menu );
 		return true;
 	}
 
-	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo info)
+	public void onCreateContextMenu( ContextMenu menu, View v, ContextMenu.ContextMenuInfo info )
 	{
-		super.onCreateContextMenu(menu, v, info);
+		super.onCreateContextMenu( menu, v, info );
 	}
 
-	public boolean onContextItemSelected(MenuItem item)
+	public boolean onContextItemSelected( MenuItem item )
 	{
 		return true;
 	}
 
 	protected void savePref()
 	{
-		if (appAdapter == null)
+		if ( this.appAdapter == null )
 			return;
-		AppInfo app = appAdapter.getSelectedApp();
-		if (app == null)
+		AppInfo app = this.appAdapter.getSelectedApp();
+		if ( app == null )
 			return;
-		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-		pref.edit().putString("package", app.packageName).putString("class", app.name).commit(); //$NON-NLS-1$ //$NON-NLS-2$
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences( this );
+		pref.edit().putString( "package", app.packageName ).putString( "class", app.name ).commit(); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	private void viewLink(String link)
+	private void viewLink( String link )
 	{
-		if (link == null || appAdapter == null)
+		if ( link == null || this.appAdapter == null )
 		{
 			return;
 		}
-		AppInfo app = appAdapter.getSelectedApp();
-		if (app == null)
+		AppInfo app = this.appAdapter.getSelectedApp();
+		if ( app == null )
 		{
-			Toast.makeText(this, R.string.select_a_browser, Toast.LENGTH_LONG).show();
+			Toast.makeText( this, R.string.select_a_browser, Toast.LENGTH_LONG ).show();
 			return;
 		}
-		//	savePref();
+		// savePref();
 		Uri data = null;
-		data = Uri.parse(link);
-		String type = MimeTypes.getType(link);
-		if (type == null)
+		data = Uri.parse( link );
+		String type = MimeTypes.getType( link );
+		if ( type == null )
 		{
 			type = "text/plain"; //$NON-NLS-1$
 		}
-		Intent i = new Intent(Intent.ACTION_VIEW);
-		i.addCategory(Intent.CATEGORY_DEFAULT);
-		i.setClassName(app.packageName, app.name);
-		if (link.startsWith("file://")) //$NON-NLS-1$
+		Intent i = new Intent( Intent.ACTION_VIEW );
+		i.addCategory( Intent.CATEGORY_DEFAULT );
+		i.setClassName( app.packageName, app.name );
+		if ( link.startsWith( "file://" ) ) //$NON-NLS-1$
 		{
-			i.setDataAndType(data, type);
+			i.setDataAndType( data, type );
 		}
 		else
 		{
-			i.setData(data);
+			i.setData( data );
 		}
 		try
 		{
-			startActivity(i);
+			startActivity( i );
 			this.finish();
 		}
 		catch (Throwable ex)
 		{
-			Log.e("tochrome", "viewLink:" + ex.getMessage(), ex); //$NON-NLS-1$ //$NON-NLS-2$
+			Log.e( "tochrome", "viewLink:" + ex.getMessage(), ex ); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -636,109 +651,110 @@ public class MainActivity extends Activity implements OnItemClickListener,Runnab
 	protected void onPause()
 	{
 		super.onPause();
-		canceled = true;
+		this.canceled = true;
 	}
 
-	public static void addLink(Context context, String newLink)
+	public static void addLink( Context context, String newLink )
 	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( context );
 		List<String> links = new ArrayList<String>();
-		links.add(newLink);
-		for (int i = 1; i <= 25; ++i)
+		links.add( newLink );
+		for ( int i = 1; i <= 25; ++i )
 		{
-			String link = prefs.getString("link" + i, null); //$NON-NLS-1$
-			if (link != null && link.trim().length() > 0 && !links.contains(link))
-				links.add(link);
+			String link = prefs.getString( "link" + i, null ); //$NON-NLS-1$
+			if ( link != null && link.trim().length() > 0 && !links.contains( link ) )
+				links.add( link );
 		}
 		Editor edit = prefs.edit();
-		for (int i = 1; i <= links.size() && i <= 25; ++i)
+		for ( int i = 1; i <= links.size() && i <= 25; ++i )
 		{
-			edit.putString("link" + i, links.get(i - 1)); //$NON-NLS-1$
+			edit.putString( "link" + i, links.get( i - 1 ) ); //$NON-NLS-1$
 		}
 		edit.commit();
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> adapterView, View view, int position, long id)
+	public void onItemClick( AdapterView<?> adapterView, View view, int position, long id )
 	{
-		TextView text = (TextView)view.findViewById(android.R.id.text1);
+		TextView text = (TextView)view.findViewById( android.R.id.text1 );
 		String link = text.getText().toString();
-		viewLink(link);
+		viewLink( link );
 	}
 
-	public void clearDefault(String link)
+	@TargetApi (Build.VERSION_CODES.GINGERBREAD)
+	public void clearDefault( String link )
 	{
 		if ( link == null || link.length() == 0 )
 			return;
-		Intent i = (new Intent(Intent.ACTION_VIEW, Uri.parse(link)));
+		Intent i = (new Intent( Intent.ACTION_VIEW, Uri.parse( link ) ));
 		PackageManager pm = getPackageManager();
-		ComponentName name = i.resolveActivity(pm);
+		ComponentName name = i.resolveActivity( pm );
 
 		String pkg = name.getPackageName();
-		if (pkg != null && !"android".equals(pkg)) //$NON-NLS-1$
+		if ( pkg != null && !"android".equals( pkg ) ) //$NON-NLS-1$
 		{
-			if (this.getPackageName().equals(pkg))
+			if ( this.getPackageName().equals( pkg ) )
 				return;
 			Intent intent = new Intent();
-			intent.setAction(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-			Uri uri = Uri.fromParts("package", pkg, null); //$NON-NLS-1$
-			intent.setData(uri);
-			startActivity(intent);
-			Toast.makeText(this, R.string.clear_default, Toast.LENGTH_LONG).show();
+			intent.setAction( android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS );
+			Uri uri = Uri.fromParts( "package", pkg, null ); //$NON-NLS-1$
+			intent.setData( uri );
+			startActivity( intent );
+			Toast.makeText( this, R.string.clear_default, Toast.LENGTH_LONG ).show();
 		}
 	}
 
-	public List<AppInfo> findActivity(Uri uri, String type)
+	public List<AppInfo> findActivity( Uri uri, String type )
 	{
 		List<AppInfo> apps = new ArrayList<AppInfo>();
 		PackageManager pm = this.getPackageManager();
-		Intent intent = new Intent(Intent.ACTION_VIEW, null);
-		if ("file".equalsIgnoreCase(uri.getScheme()))
+		Intent intent = new Intent( Intent.ACTION_VIEW, null );
+		if ( "file".equalsIgnoreCase( uri.getScheme() ) ) //$NON-NLS-1$
 		{
-			intent.setDataAndType(uri, type);
+			intent.setDataAndType( uri, type );
 		}
 		else
 		{
-			intent.setData(uri);		
+			intent.setData( uri );
 		}
 		List<ResolveInfo> rList = new ArrayList<ResolveInfo>();
-		List<ResolveInfo> acts = pm.queryIntentActivities(intent, 0);
-		rList.addAll(acts);
-		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-		String selectedPkg = pref.getString("package", "");
-		String selectedName = pref.getString("class", "");
-		if ("file".equals(uri.getScheme()))
+		List<ResolveInfo> acts = pm.queryIntentActivities( intent, 0 );
+		rList.addAll( acts );
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences( this );
+		String selectedPkg = pref.getString( "package", "" ); //$NON-NLS-1$ //$NON-NLS-2$
+		String selectedName = pref.getString( "class", "" ); //$NON-NLS-1$ //$NON-NLS-2$
+		if ( "file".equals( uri.getScheme() ) ) //$NON-NLS-1$
 		{
 			intent = new Intent();
-			intent.setClassName("com.android.chrome",
-								"com.google.android.apps.chrome.Main");
-			acts = pm.queryIntentActivities(intent, 0);
-			if (acts != null && acts.size() > 0)
-				rList.addAll(acts);
+			intent.setClassName( "com.android.chrome", //$NON-NLS-1$
+					"com.google.android.apps.chrome.Main" ); //$NON-NLS-1$
+			acts = pm.queryIntentActivities( intent, 0 );
+			if ( acts != null && acts.size() > 0 )
+				rList.addAll( acts );
 
 			intent = new Intent();
-			intent.setClassName("com.chrome.beta",
-								"com.google.android.apps.chrome.Main");
-			acts = pm.queryIntentActivities(intent, 0);
-			if (acts != null && acts.size() > 0)
-				rList.addAll(acts);
+			intent.setClassName( "com.chrome.beta", //$NON-NLS-1$
+					"com.google.android.apps.chrome.Main" ); //$NON-NLS-1$
+			acts = pm.queryIntentActivities( intent, 0 );
+			if ( acts != null && acts.size() > 0 )
+				rList.addAll( acts );
 		}
 
-		for (ResolveInfo r : rList)
+		for ( ResolveInfo r : rList )
 		{
-			if (this.getPackageName().equals(r.activityInfo.packageName))
+			if ( this.getPackageName().equals( r.activityInfo.packageName ) )
 				continue;
 			AppInfo app = new AppInfo();
-			apps.add(app);
+			apps.add( app );
 			app.packageName = r.activityInfo.packageName;
 			app.name = r.activityInfo.name;
-			app.icon = r.activityInfo.loadIcon(pm);
-			if (app.icon == null)
+			app.icon = r.activityInfo.loadIcon( pm );
+			if ( app.icon == null )
 			{
-				app.icon = getResources().getDrawable(R.drawable.link);
+				app.icon = getResources().getDrawable( R.drawable.link );
 			}
-			CharSequence label = r.activityInfo.loadLabel(pm);
-			if (label == null)
+			CharSequence label = r.activityInfo.loadLabel( pm );
+			if ( label == null )
 			{
 				app.label = ""; //$NON-NLS-1$
 			}
@@ -746,9 +762,9 @@ public class MainActivity extends Activity implements OnItemClickListener,Runnab
 			{
 				app.label = label.toString();
 			}
-			if (selectedPkg.equals(app.packageName))
+			if ( selectedPkg.equals( app.packageName ) )
 			{
-				if ((app.name == null && selectedName.length() == 0) || selectedName.equals(app.name))
+				if ( (app.name == null && selectedName.length() == 0) || selectedName.equals( app.name ) )
 				{
 					app.selected = true;
 				}
@@ -757,22 +773,22 @@ public class MainActivity extends Activity implements OnItemClickListener,Runnab
 		return apps;
 	}
 
-
 	@TargetApi (Build.VERSION_CODES.HONEYCOMB)
-	@SuppressWarnings("deprecation")
-	public void putText(String text)
+	@SuppressWarnings ("deprecation")
+	public void putText( String text )
 	{
 		int sdk = android.os.Build.VERSION.SDK_INT;
 		if ( sdk < android.os.Build.VERSION_CODES.HONEYCOMB )
 		{
-			android.text.ClipboardManager clipboard = (android.text.ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE);
-			clipboard.setText(text);
+			android.text.ClipboardManager clipboard =
+					(android.text.ClipboardManager)this.getSystemService( Context.CLIPBOARD_SERVICE );
+			clipboard.setText( text );
 		}
 		else
 		{
 			android.content.ClipboardManager clipboard =
 					(android.content.ClipboardManager)this.getSystemService( Context.CLIPBOARD_SERVICE );
-			android.content.ClipData clip = ClipData.newPlainText( "simple text", text );
+			android.content.ClipData clip = ClipData.newPlainText( "simple text", text ); //$NON-NLS-1$
 			clipboard.setPrimaryClip( clip );
 		}
 	}
@@ -784,9 +800,9 @@ public class MainActivity extends Activity implements OnItemClickListener,Runnab
 		 */
 		private static final long serialVersionUID = 1L;
 
-		public LinkException(String msg)
+		public LinkException( String msg )
 		{
-			super(msg);
+			super( msg );
 		}
 	}
 }
