@@ -71,7 +71,7 @@ public class AppAdapter extends BaseAdapter
 		label.setText( info.label );
 		if ( this.selected == position )
 		{
-			view.setBackgroundColor( 0x80808080 );
+			view.setBackgroundColor( 0x80b0b0b0 );
 		}
 		else
 		{

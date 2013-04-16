@@ -10,17 +10,43 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class LinkAdapter extends BaseAdapter
+public class LinkAdapter extends BaseAdapter implements View.OnClickListener
 {
+
+	public void onClick(View v)
+	{
+		if(listener!=null){
+			String url=(String)v.getTag();
+			listener.onClick(url);			
+		}
+	}
+
+
+	public interface StarClickListener
+	{
+		public void onClick(String url);
+	}
+	
 	List<String> links;
 	Context ctx;
 	LayoutInflater inflater;
+	StarClickListener listener;
 	
 	public LinkAdapter(Context ctx,List<String> links)
 	{
 		this.ctx = ctx;
 		this.links = links;
 		this.inflater = LayoutInflater.from(ctx);
+	}
+	
+
+	public void removeOnStarClickListener(StarClickListener listener){
+		this.listener=null;
+	}
+	
+	
+	public void setOnStarClickListener(StarClickListener listener){
+		this.listener=listener;
 	}
 
 	public List<String> getLinks()
@@ -51,11 +77,23 @@ public class LinkAdapter extends BaseAdapter
 		TextView text=(TextView)view.findViewById(android.R.id.text1);
 		text.setSingleLine(true);
 		text.setEllipsize(TextUtils.TruncateAt.MARQUEE);
-		text.setText(links.get(pos));
+		String url=links.get(pos);
+		text.setText(url);
 		int padding = d2p( 4 );
 		text.setPadding( 0, padding, 0, padding );
 		ImageView image = (ImageView)view.findViewById( R.id.imageView1 );
-		image.setPadding( d2p( 24 * pos + 10 ), padding, 0, padding );
+		if(pos>0){
+			image.setVisibility(View.VISIBLE);
+			image.setPadding( d2p( 24 * (pos-1) ), 0, 0, 0);
+			//image.setImageResource(R.drawable.dot);
+		}
+		else{
+			image.setVisibility(View.GONE);
+		}
+		
+		ImageView star=(ImageView)view.findViewById(R.id.starView);
+		star.setOnClickListener(this);
+		star.setTag(url);
 		return view;
 	}
 	

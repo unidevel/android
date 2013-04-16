@@ -2,10 +2,12 @@
 <resources>
 
     <string name="app_name">还原网址</string>
-    <string name="settings">设置</string>
+    <string name="settings">选择浏览器</string>
     <string name="delete">删除</string>
 	<string name="view">查看</string>
-	<string name="clear_default">清除缺省设置</string>
+	<string name="clear_default">请清除浏览器默认设置</string>
 	<string name="select_a_browser">请首先选择一个浏览器!</string>
-	 
+	<string name="copied">链接已经拷贝到剪切板。</string>
+	<string name="buy">购买专业版</string>
+	
 </resources>
