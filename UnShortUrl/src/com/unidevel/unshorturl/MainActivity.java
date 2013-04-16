@@ -358,14 +358,14 @@ public class MainActivity extends Activity implements OnItemClickListener,Runnab
 				try
 				{
 					Bitmap favicon = BitmapFactory.decodeByteArray( icon, 0, icon.length );
-					bitmap = BitmapFactory.decodeResource( getResources(), R.drawable.link );
+					bitmap = BitmapFactory.decodeResource( getResources(), R.drawable.desk_link);
 					bitmap = bitmap.copy( Bitmap.Config.ARGB_8888, true );
 					Canvas canvas = new Canvas( bitmap );
 					Paint paint = new Paint();
-					int x = bitmap.getWidth() * 4 / 7;
-					int y = bitmap.getHeight() * 4 / 7;
-					int w = bitmap.getWidth() / 4;
-					int h = bitmap.getHeight() / 4;
+					int x = bitmap.getWidth() *3 / 5;
+					int y = bitmap.getHeight() *3 /5;
+					int w = bitmap.getWidth() *2/5;
+					int h = bitmap.getHeight() *2/5;
 					
 //							canvas.drawBitmap(bitmap, w, h, paint);
 					canvas.drawBitmap( favicon, new Rect( 0, 0, favicon.getWidth(), favicon.getHeight() ), new Rect( x,
@@ -382,7 +382,7 @@ public class MainActivity extends Activity implements OnItemClickListener,Runnab
 			}
 			
 			if(bitmap==null){
-				bitmap=((BitmapDrawable)getResources().getDrawable(R.drawable.link)).getBitmap();
+				bitmap=((BitmapDrawable)getResources().getDrawable(R.drawable.desk_link)).getBitmap();
 				Log.i("unidevel", "using default icon");
 			}
 			Log.i("unidevel", "url="+url);
