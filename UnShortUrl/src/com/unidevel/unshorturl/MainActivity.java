@@ -22,6 +22,7 @@ import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpParams;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -42,6 +43,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -250,12 +252,12 @@ public class MainActivity extends Activity implements OnItemClickListener,Runnab
 				URL favLink = new URL(urlLink.getProtocol(), urlLink.getHost(), urlLink.getPort(), "/favicon.ico");
 				HttpURLConnection conn = (HttpURLConnection) urlLink
 					.openConnection();
-				conn.setConnectTimeout(5000);
-				conn.setReadTimeout(5000);
-				conn.setDoOutput(true);
+				conn.setConnectTimeout( 10000 );
+				conn.setReadTimeout( 10000 );
+				// conn.setDoOutput(true);
 				conn.setRequestMethod("GET");
-				conn.setRequestProperty("User-Agent",
-										"Mozilla/5.0 (Windows NT 5.1; rv:7.0.1) Gecko/20100101 Firefox/7.0.1");
+				conn.setRequestProperty( "User-Agent",
+						"Mozilla/5.0 (Windows NT 5.1; rv:7.0.1) Gecko/20100101 Firefox/7.0.1" );
 				InputStream in = conn.getInputStream();
 				encoding = conn.getContentEncoding();
 
@@ -666,7 +668,7 @@ public class MainActivity extends Activity implements OnItemClickListener,Runnab
 
 	public void clearDefault(String link)
 	{
-		if (link == null || link.isEmpty())
+		if ( link == null || link.length() == 0 )
 			return;
 		Intent i = (new Intent(Intent.ACTION_VIEW, Uri.parse(link)));
 		PackageManager pm = getPackageManager();
@@ -756,20 +758,22 @@ public class MainActivity extends Activity implements OnItemClickListener,Runnab
 	}
 
 
+	@TargetApi (Build.VERSION_CODES.HONEYCOMB)
 	@SuppressWarnings("deprecation")
 	public void putText(String text)
 	{
 		int sdk = android.os.Build.VERSION.SDK_INT;
-		if (sdk < android.os.Build.VERSION_CODES. HONEYCOMB)
+		if ( sdk < android.os.Build.VERSION_CODES.HONEYCOMB )
 		{
 			android.text.ClipboardManager clipboard = (android.text.ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE);
 			clipboard.setText(text);
 		}
 		else
 		{
-			android.content.ClipboardManager clipboard = (android.content.ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE); 
-			android.content.ClipData clip = ClipData.newPlainText("simple text", text);
-			clipboard.setPrimaryClip(clip);
+			android.content.ClipboardManager clipboard =
+					(android.content.ClipboardManager)this.getSystemService( Context.CLIPBOARD_SERVICE );
+			android.content.ClipData clip = ClipData.newPlainText( "simple text", text );
+			clipboard.setPrimaryClip( clip );
 		}
 	}
 

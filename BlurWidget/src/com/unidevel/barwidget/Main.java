@@ -1,7 +1,6 @@
 package com.unidevel.barwidget;
 
 import java.util.List;
-
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
@@ -57,11 +56,11 @@ public class Main extends PreferenceActivity {
     		app.icon = pkgs.get(0).loadIcon(this.getPackageManager());
     	}
     }
-    
-    @Override
-    public void onBackPressed() {
-    	super.onBackPressed();
-    	AppListView appView = (AppListView)findViewById(R.id.listApps);
-//    	Log.i("Test", String.valueOf(appView.getSelection()));
-    }
+
+	public void onBackPressed()
+	{
+		super.onBackPressed();
+		AppListView appView = (AppListView)findViewById( R.id.listApps );
+		// Log.i("Test", String.valueOf(appView.getSelection()));
+	}
 }

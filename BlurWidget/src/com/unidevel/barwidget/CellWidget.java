@@ -2,7 +2,6 @@ package com.unidevel.barwidget;
 
 import java.io.File;
 import java.util.List;
-
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
@@ -118,8 +117,7 @@ public class CellWidget extends AppWidgetProvider {
 					}
 					if (icon != null) {
 						view.setImageViewBitmap(R.id.imageProg, icon);
-						intent = context.getPackageManager()
-								.getLaunchIntentForPackage(pkg);
+						intent = context.getPackageManager().getLaunchIntentForPackage( pkg );
 						if (intent == null) {
 							intent = new Intent(Intent.ACTION_MAIN, null);
 							intent.addCategory(Intent.CATEGORY_LAUNCHER);
