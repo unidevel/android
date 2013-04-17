@@ -32,11 +32,12 @@ public class LinkAdapter extends BaseAdapter implements View.OnClickListener
 	Context ctx;
 	LayoutInflater inflater;
 	StarClickListener listener;
-	
-	public LinkAdapter(Context ctx,List<String> links)
+	String starUrl;
+	public LinkAdapter(Context ctx, String starUrl, List<String> links)
 	{
 		this.ctx = ctx;
 		this.links = links;
+		this.starUrl=starUrl;
 		this.inflater = LayoutInflater.from(ctx);
 	}
 	
@@ -92,6 +93,12 @@ public class LinkAdapter extends BaseAdapter implements View.OnClickListener
 		}
 		
 		ImageView star=(ImageView)view.findViewById(R.id.starView);
+		if(url!=null&&url.equals(starUrl)){
+			star.setImageResource(android.R.drawable.btn_star_big_on);
+		}
+		else{
+			star.setImageResource(android.R.drawable.btn_star);
+		}
 		star.setOnClickListener(this);
 		star.setTag(url);
 		return view;

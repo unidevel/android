@@ -9,5 +9,6 @@
 	<string name="select_a_browser">请首先选择一个浏览器!</string>
 	<string name="copied">链接已经拷贝到剪切板。</string>
 	<string name="buy">购买专业版</string>
+	<string name="desk_link">正在创建桌面链接</string>
 	
 </resources>

@@ -96,6 +96,7 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 	boolean appLoaded = false;
 	boolean linkLoaded = false;
 	boolean canceled = false;
+	String starUrl=null;
 	List<String> realLinks = new ArrayList<String>();
 
 	class LoadAppTask extends AsyncTask<Void, Integer, List<AppInfo>>
@@ -158,6 +159,7 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 				String url = links.remove( 0 );
 				URI uri = URI.create( url );
 				MainActivity.this.realLinks.add( url );
+				this.publishProgress(n);
 				if ( !isShort( uri ) )
 				{
 					findLinksInternal( links, uri );
@@ -220,7 +222,7 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 		{
 			List<String> links = new ArrayList<String>();
 			links.addAll( MainActivity.this.realLinks );
-			LinkAdapter linkAdapter = new LinkAdapter( MainActivity.this, links );
+			LinkAdapter linkAdapter = new LinkAdapter( MainActivity.this, starUrl, links );
 			linkAdapter.setOnStarClickListener( new LinkAdapter.StarClickListener()
 			{
 
@@ -349,7 +351,7 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 		{
 			super.onPreExecute();
 			this.progressDialog =
-					ProgressDialog.show( MainActivity.this, getString( R.string.desk_link ), null, true, true );
+					ProgressDialog.show( MainActivity.this, null,getString( R.string.desk_link ), true, true );
 			this.progressDialog.setOnCancelListener( this );
 		}
 
@@ -363,11 +365,10 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 		public void createLink( final String url, String title, byte[] icon )
 		{
 			Bitmap bitmap = null;
-			if ( icon != null && icon.length > 0 )
+			if ( !url.equals(title) || icon!=null)
 			{
 				try
 				{
-					Bitmap favicon = BitmapFactory.decodeByteArray( icon, 0, icon.length );
 					bitmap = BitmapFactory.decodeResource( getResources(), android.R.drawable.btn_star_big_on );
 					bitmap = bitmap.copy( Bitmap.Config.ARGB_8888, true );
 					Canvas canvas = new Canvas( bitmap );
@@ -377,6 +378,7 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 					int w = bitmap.getWidth() * 2 / 5;
 					int h = bitmap.getHeight() * 2 / 5;
 
+					Bitmap favicon = BitmapFactory.decodeByteArray( icon, 0, icon.length );
 					// canvas.drawBitmap(bitmap, w, h, paint);
 					canvas.drawBitmap( favicon, new Rect( 0, 0, favicon.getWidth(), favicon.getHeight() ), new Rect( x,
 							y, x + w, y + h ), paint );
@@ -403,6 +405,7 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 			Intent shortcutIntent = new Intent( Intent.ACTION_VIEW );
 			Uri uri = Uri.parse( url );
 			shortcutIntent.setData( uri );
+			shortcutIntent.putExtra( getPackageName(), true );
 			Intent createIntent = new Intent();
 			createIntent.putExtra( Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent );
 			createIntent.putExtra( Intent.EXTRA_SHORTCUT_NAME, title );
@@ -411,6 +414,7 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 				createIntent.putExtra( Intent.EXTRA_SHORTCUT_ICON, bitmap );
 			}
 			createIntent.setAction( "com.android.launcher.action.INSTALL_SHORTCUT" ); //$NON-NLS-1$
+		//	createIntent.setAction( "com.android.launcher.action.UNINSTALL_SHORTCUT" ); //$NON-NLS-1$
 			MainActivity.this.sendBroadcast( createIntent );
 		}
 
@@ -507,6 +511,16 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 		if ( uri != null )
 		{
 			final String url = uri.toString();
+			Bundle extras=getIntent().getExtras();
+			if(extras!=null)
+			{
+				boolean fromSelf = extras.getBoolean(getPackageName(),false);
+				Log.i("from",""+fromSelf);
+				if(fromSelf){
+					starUrl=url;
+				}
+			}
+
 			this.task = new LoadLinksTask();
 			this.task.execute( url );
 		}
@@ -652,6 +666,25 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 	{
 		super.onPause();
 		this.canceled = true;
+		Log.i("onPause","onPause");
+		this.finish();
+	}
+
+	@Override
+	protected void onDestroy()
+	{
+		Log.i("onDestroy","onDestroy");
+		super.onDestroy();
+		if(this.deskTask!=null){
+			this.deskTask.cancel(true);
+		}
+		if(this.task!=null){
+			this.task.cancel(true);
+		}
+		if(this.appTask!=null){
+			this.appTask.cancel(true);
+		}
+	//	this.finish();
 	}
 
 	public static void addLink( Context context, String newLink )
