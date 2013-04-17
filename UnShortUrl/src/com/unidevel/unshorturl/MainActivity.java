@@ -87,7 +87,7 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 	/** Called when the activity is first created. */
 	ListView linkView;
 	GridView appView;
-	LoadLinksTask task;
+	LoadLinksTask linkTask;
 	LoadAppTask appTask;
 	CreateDeskLinkTask deskTask;
 	AppAdapter appAdapter;
@@ -96,7 +96,7 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 	boolean appLoaded = false;
 	boolean linkLoaded = false;
 	boolean canceled = false;
-	String starUrl=null;
+	String starUrl = null;
 	List<String> realLinks = new ArrayList<String>();
 
 	class LoadAppTask extends AsyncTask<Void, Integer, List<AppInfo>>
@@ -134,6 +134,11 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 				MainActivity.this.appLoaded = true;
 				MainActivity.this.handler.postDelayed( MainActivity.this, 3000 );
 			}
+			Uri uri = getIntent().getData();
+			if ( uri != null )
+			{
+				MainActivity.this.linkTask.execute( uri.toString() );
+			}
 		}
 	}
 
@@ -159,7 +164,7 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 				String url = links.remove( 0 );
 				URI uri = URI.create( url );
 				MainActivity.this.realLinks.add( url );
-				this.publishProgress(n);
+				this.publishProgress( n );
 				if ( !isShort( uri ) )
 				{
 					findLinksInternal( links, uri );
@@ -222,7 +227,7 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 		{
 			List<String> links = new ArrayList<String>();
 			links.addAll( MainActivity.this.realLinks );
-			LinkAdapter linkAdapter = new LinkAdapter( MainActivity.this, starUrl, links );
+			LinkAdapter linkAdapter = new LinkAdapter( MainActivity.this, MainActivity.this.starUrl, links );
 			linkAdapter.setOnStarClickListener( new LinkAdapter.StarClickListener()
 			{
 
@@ -351,7 +356,7 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 		{
 			super.onPreExecute();
 			this.progressDialog =
-					ProgressDialog.show( MainActivity.this, null,getString( R.string.desk_link ), true, true );
+					ProgressDialog.show( MainActivity.this, null, getString( R.string.desk_link ), true, true );
 			this.progressDialog.setOnCancelListener( this );
 		}
 
@@ -365,7 +370,7 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 		public void createLink( final String url, String title, byte[] icon )
 		{
 			Bitmap bitmap = null;
-			if ( !url.equals(title) || icon!=null)
+			if ( !url.equals( title ) || icon != null )
 			{
 				try
 				{
@@ -414,7 +419,7 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 				createIntent.putExtra( Intent.EXTRA_SHORTCUT_ICON, bitmap );
 			}
 			createIntent.setAction( "com.android.launcher.action.INSTALL_SHORTCUT" ); //$NON-NLS-1$
-		//	createIntent.setAction( "com.android.launcher.action.UNINSTALL_SHORTCUT" ); //$NON-NLS-1$
+			//	createIntent.setAction( "com.android.launcher.action.UNINSTALL_SHORTCUT" ); //$NON-NLS-1$
 			MainActivity.this.sendBroadcast( createIntent );
 		}
 
@@ -446,10 +451,7 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 		setFeatureDrawableResource( Window.FEATURE_LEFT_ICON, R.drawable.link );
 
 		Button buyButton = (Button)this.findViewById( R.id.buy );
-		// if (uri!=null)
-		{
-			buyButton.setVisibility( View.GONE );
-		}
+		buyButton.setVisibility( View.GONE );
 
 		this.linkView = (ListView)this.findViewById( R.id.listView1 );
 		this.linkView.setItemsCanFocus( true );
@@ -506,23 +508,25 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 		this.progressBar.setMax( 5 );
 
 		this.appTask = new LoadAppTask();
-		this.appTask.execute();
 
+		
 		if ( uri != null )
 		{
 			final String url = uri.toString();
-			Bundle extras=getIntent().getExtras();
-			if(extras!=null)
+			Bundle extras = getIntent().getExtras();
+			if ( extras != null )
 			{
-				boolean fromSelf = extras.getBoolean(getPackageName(),false);
-				Log.i("from",""+fromSelf);
-				if(fromSelf){
-					starUrl=url;
+				boolean fromSelf = extras.getBoolean( getPackageName(), false );
+				Log.i( "from", "" + fromSelf );
+				if ( fromSelf )
+				{
+					this.starUrl = url;
 				}
 			}
-
-			this.task = new LoadLinksTask();
-			this.task.execute( url );
+			List<String> links = new ArrayList<String>();
+			links.add( url );
+			this.linkView.setAdapter( new LinkAdapter( this, null, links ) );
+			this.linkTask = new LoadLinksTask();
 		}
 		else
 		{
@@ -539,6 +543,13 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 		layout.addView( adView );
 		AdRequest req = new AdRequest();
 		adView.loadAd( req );
+	}
+
+	@Override
+	protected void onResume()
+	{
+		super.onResume();
+		this.appTask.execute();
 	}
 
 	protected void findLinksInternal( List<String> links, URI uri )
@@ -666,25 +677,28 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 	{
 		super.onPause();
 		this.canceled = true;
-		Log.i("onPause","onPause");
+		Log.i( "onPause", "onPause" );
 		this.finish();
 	}
 
 	@Override
 	protected void onDestroy()
 	{
-		Log.i("onDestroy","onDestroy");
+		Log.i( "onDestroy", "onDestroy" );
 		super.onDestroy();
-		if(this.deskTask!=null){
-			this.deskTask.cancel(true);
+		if ( this.deskTask != null )
+		{
+			this.deskTask.cancel( true );
 		}
-		if(this.task!=null){
-			this.task.cancel(true);
+		if ( this.linkTask != null )
+		{
+			this.linkTask.cancel( true );
 		}
-		if(this.appTask!=null){
-			this.appTask.cancel(true);
+		if ( this.appTask != null )
+		{
+			this.appTask.cancel( true );
 		}
-	//	this.finish();
+		// this.finish();
 	}
 
 	public static void addLink( Context context, String newLink )
