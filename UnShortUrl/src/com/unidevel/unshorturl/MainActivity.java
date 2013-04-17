@@ -73,7 +73,7 @@ import com.google.ads.AdView;
 public class MainActivity extends Activity implements OnItemClickListener, Runnable
 {
 	static final int SO_TIMEOUT = 5000;
-	static final int CONNECT_TIMEOUT = 3000;
+	static final int CONNECT_TIMEOUT = 5000;
 
 	@SuppressWarnings ("unused")
 	public void run()
@@ -308,7 +308,14 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 						buf.append( cbuf, 0, len );
 					else
 					{
-						buf.append( new String( new String( cbuf ).getBytes( "ISO8859-1" ), htmlEncoding ) ); //$NON-NLS-1$
+						if ( htmlEncoding != null )
+						{
+							buf.append( new String( new String( cbuf ).getBytes( "ISO8859-1" ), htmlEncoding ) ); //$NON-NLS-1$
+						}
+						else
+						{
+							buf.append( new String( new String( cbuf ).getBytes( "ISO8859-1" ) ) ); //$NON-NLS-1$
+						}
 					}
 					String body = buf.toString();
 					Matcher m = pattern.matcher( body );
@@ -698,16 +705,18 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 		if ( this.deskTask != null )
 		{
 			this.deskTask.cancel( true );
+			this.deskTask = null;
 		}
 		if ( this.linkTask != null )
 		{
 			this.linkTask.cancel( true );
+			this.linkTask = null;
 		}
 		if ( this.appTask != null )
 		{
 			this.appTask.cancel( true );
+			this.appTask = null;
 		}
-		// this.finish();
 	}
 
 	public static void addLink( Context context, String newLink )
