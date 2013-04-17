@@ -21,7 +21,7 @@ import org.apache.http.client.params.HttpClientParams;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpParams;
+import org.apache.http.params.HttpConnectionParams;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -72,6 +72,8 @@ import com.google.ads.AdView;
 
 public class MainActivity extends Activity implements OnItemClickListener, Runnable
 {
+	static final int SO_TIMEOUT = 5000;
+	static final int CONNECT_TIMEOUT = 3000;
 
 	@SuppressWarnings ("unused")
 	public void run()
@@ -139,6 +141,8 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 			{
 				MainActivity.this.linkTask.execute( uri.toString() );
 			}
+
+			initAd();
 		}
 	}
 
@@ -151,8 +155,10 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 			List<String> links = new ArrayList<String>();
 			links.add( params[ 0 ] );
 			DefaultHttpClient client = new DefaultHttpClient();
-			final HttpParams httpParams = new BasicHttpParams();
+			final BasicHttpParams httpParams = new BasicHttpParams();
 			HttpClientParams.setRedirecting( httpParams, false );
+			HttpConnectionParams.setSoTimeout( httpParams, SO_TIMEOUT );
+			HttpConnectionParams.setConnectionTimeout( httpParams, CONNECT_TIMEOUT );
 			client.setParams( httpParams );
 			int n = 0;
 			@SuppressWarnings ("unused")
@@ -263,8 +269,8 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 				URL urlLink = new URL( this.url );
 				URL favLink = new URL( urlLink.getProtocol(), urlLink.getHost(), urlLink.getPort(), "/favicon.ico" ); //$NON-NLS-1$
 				HttpURLConnection conn = (HttpURLConnection)urlLink.openConnection();
-				conn.setConnectTimeout( 3000 );
-				conn.setReadTimeout( 5000 );
+				conn.setConnectTimeout( CONNECT_TIMEOUT );
+				conn.setReadTimeout( SO_TIMEOUT );
 				// conn.setDoOutput(true);
 				conn.setRequestMethod( "GET" ); //$NON-NLS-1$
 				conn.setRequestProperty( "User-Agent", //$NON-NLS-1$
@@ -537,7 +543,10 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 			clearDefault( "https://www.google.com" ); //$NON-NLS-1$
 			clearDefault( "http://www.google.com" ); //$NON-NLS-1$
 		}
+	}
 
+	private void initAd()
+	{
 		AdView adView = new AdView( this, AdSize.BANNER, "a151640e221df04" ); //$NON-NLS-1$
 		LinearLayout layout = (LinearLayout)findViewById( R.id.adLayout );
 		layout.addView( adView );
