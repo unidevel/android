@@ -69,6 +69,7 @@ import android.widget.Toast;
 import com.google.ads.AdRequest;
 import com.google.ads.AdSize;
 import com.google.ads.AdView;
+import java.util.concurrent.*;
 
 public class MainActivity extends Activity implements OnItemClickListener, Runnable
 {
@@ -103,7 +104,11 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 
 	class LoadAppTask extends AsyncTask<Void, Integer, List<AppInfo>>
 	{
-
+		public void run(){
+			List<AppInfo> apps=doInBackground();
+			onPostExecute(apps);
+		}
+		
 		@Override
 		protected List<AppInfo> doInBackground( Void... params )
 		{
@@ -134,10 +139,10 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 			{
 				MainActivity.this.appView.smoothScrollToPosition( sel );
 				MainActivity.this.appLoaded = true;
-				MainActivity.this.handler.postDelayed( MainActivity.this, 3000 );
+			//	MainActivity.this.handler.postDelayed( MainActivity.this, 3000 );
 			}
 			Uri uri = getIntent().getData();
-			if ( uri != null )
+			if ( uri != null && !canceled)
 			{
 				MainActivity.this.linkTask.execute( uri.toString() );
 			}
@@ -163,18 +168,21 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 			int n = 0;
 			@SuppressWarnings ("unused")
 			int total = 0;
-			while ( links.size() > 0 )
+			while ( links.size() > 0 && !canceled )
 			{
 				n++;
 				total += links.size();
 				String url = links.remove( 0 );
+				if(realLinks.contains(url))
+				{
+					continue;
+				}
 				URI uri = URI.create( url );
 				MainActivity.this.realLinks.add( url );
 				this.publishProgress( n );
 				if ( !isShort( uri ) )
 				{
 					findLinksInternal( links, uri );
-					this.publishProgress( n );
 					continue;
 				}
 
@@ -189,12 +197,12 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 						for ( Header header : response.getAllHeaders() )
 						{
 							String value = header.getValue();
-							if ( isLink( value ) )
+							if ( !canceled && isLink( value ) )
 							{
 								URI linkURI = URI.create( value );
 								links.add( value );
 								findLinksInternal( links, linkURI );
-								this.publishProgress( n );
+								//this.publishProgress( n );
 							}
 						}
 					}
@@ -210,7 +218,6 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 		@Override
 		protected void onPreExecute()
 		{
-			this.publishProgress( 0 );
 			super.onPreExecute();
 		}
 
@@ -382,6 +389,7 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 
 		public void createLink( final String url, String title, byte[] icon )
 		{
+			if(url==null)return;
 			Bitmap bitmap = null;
 			if ( !url.equals( title ) || icon != null )
 			{
@@ -565,7 +573,7 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 	protected void onResume()
 	{
 		super.onResume();
-		this.appTask.execute();
+		this.appTask.run();//.execute();
 	}
 
 	protected void findLinksInternal( List<String> links, URI uri )
