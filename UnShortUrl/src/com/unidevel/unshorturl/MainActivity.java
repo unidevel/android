@@ -533,7 +533,8 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 
 		setContentView( R.layout.main );
 		setFeatureDrawableResource( Window.FEATURE_LEFT_ICON, R.drawable.link );
-
+		
+		viewAd();
 		Button buyButton = (Button)this.findViewById( R.id.buy );
 		buyButton.setVisibility( View.GONE );
 
@@ -621,6 +622,27 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 		}
 	}
 
+	public void viewAd(){
+		Uri uri = getIntent().getData();
+		if(uri!=null){
+			SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences( this );
+			String pkg = pref.getString( "package", "" ); //$NON-NLS-1$ //$NON-NLS-2$
+			String clazz = pref.getString( "class", "" ); //$NON-NLS-1$ //$NON-NLS-2$
+			
+			if(pkg!=null){
+				if("www.googleadservices.com".equalsIgnoreCase(uri.getHost())){
+					viewLink(uri.toString(),pkg,clazz);
+				}
+				else if("googleadservices.com".equalsIgnoreCase(uri.getHost())){
+					viewLink(uri.toString(),pkg,clazz);
+				}
+				else if("googleads.g.doubleclick.net".equalsIgnoreCase(uri.getHost())){
+					viewLink(uri.toString(),pkg,clazz);		
+				}
+			}
+		}
+	}
+	
 	private void initAd()
 	{
 		AdView adView = new AdView( this, AdSize.BANNER, "a151640e221df04" ); //$NON-NLS-1$
@@ -727,7 +749,13 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 			Toast.makeText( this, R.string.select_a_browser, Toast.LENGTH_LONG ).show();
 			return;
 		}
-		// savePref();
+		viewLink(link, app.packageName, app.name);
+	}
+	
+	private void viewLink( String link , String pkg, String clazz)
+	{
+		if (pkg==null)
+			return;
 		Uri data = null;
 		data = Uri.parse( link );
 		String type = MimeTypes.getType( link );
@@ -737,7 +765,7 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 		}
 		Intent i = new Intent( Intent.ACTION_VIEW );
 		i.addCategory( Intent.CATEGORY_DEFAULT );
-		i.setClassName( app.packageName, app.name );
+		i.setClassName( pkg, clazz);
 		if ( link.startsWith( "file://" ) ) //$NON-NLS-1$
 		{
 			i.setDataAndType( data, type );
