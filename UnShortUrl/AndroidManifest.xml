@@ -50,6 +50,13 @@
 				<data android:scheme="about"/>
 				<data android:scheme="javascript"/>
 			</intent-filter>
+			<intent-filter >
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+				<!-- data android:scheme="http"/>
+				<data android:scheme="https"/ -->
+				<data android:mimeType="*/*" />
+            </intent-filter>
         </activity>
         <activity
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"

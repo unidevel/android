@@ -9,6 +9,7 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -69,12 +70,12 @@ import android.widget.Toast;
 import com.google.ads.AdRequest;
 import com.google.ads.AdSize;
 import com.google.ads.AdView;
-import java.util.concurrent.*;
 
 public class MainActivity extends Activity implements OnItemClickListener, Runnable
 {
 	static final int SO_TIMEOUT = 5000;
 	static final int CONNECT_TIMEOUT = 5000;
+	static String URL_PATTERN = "((https?)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|])"; //$NON-NLS-1$
 
 	@SuppressWarnings ("unused")
 	public void run()
@@ -99,6 +100,9 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 	boolean appLoaded = false;
 	boolean linkLoaded = false;
 	boolean canceled = false;
+	String mainUrl = null;
+	String mainType = null;
+
 	String starUrl = null;
 	List<String> realLinks = new ArrayList<String>();
 
@@ -113,21 +117,22 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 		protected List<AppInfo> doInBackground( Void... params )
 		{
 			List<AppInfo> apps;
-			Uri uri = getIntent().getData();
-			String type;
-			if ( uri != null )
+			Uri uri;
+
+			if ( MainActivity.this.mainUrl == null )
 			{
-				type = getIntent().getType();
+				uri = Uri.parse( "http://www.google.com/" ); //$NON-NLS-1$
+				MainActivity.this.mainType = "text/html"; //$NON-NLS-1$
 			}
 			else
 			{
-				uri = Uri.parse( "http://www.google.com/" ); //$NON-NLS-1$
-				type = "text/html"; //$NON-NLS-1$
+				uri = Uri.parse( MainActivity.this.mainUrl );
 			}
-			apps = findActivity( uri, type );
+			apps = findActivity( uri, MainActivity.this.mainType );
 			return apps;
 		}
 
+		@SuppressWarnings ("synthetic-access")
 		@Override
 		protected void onPostExecute( List<AppInfo> result )
 		{
@@ -141,10 +146,11 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 				MainActivity.this.appLoaded = true;
 			//	MainActivity.this.handler.postDelayed( MainActivity.this, 3000 );
 			}
-			Uri uri = getIntent().getData();
-			if ( uri != null && !canceled)
+
+			if ( MainActivity.this.mainUrl != null && !MainActivity.this.canceled )
 			{
-				MainActivity.this.linkTask.execute( uri.toString() );
+				MainActivity.this.linkTask = new LoadLinksTask();
+				MainActivity.this.linkTask.execute( MainActivity.this.mainUrl );
 			}
 
 			initAd();
@@ -168,12 +174,12 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 			int n = 0;
 			@SuppressWarnings ("unused")
 			int total = 0;
-			while ( links.size() > 0 && !canceled )
+			while ( links.size() > 0 && !MainActivity.this.canceled )
 			{
 				n++;
 				total += links.size();
 				String url = links.remove( 0 );
-				if(realLinks.contains(url))
+				if ( MainActivity.this.realLinks.contains( url ) )
 				{
 					continue;
 				}
@@ -197,7 +203,7 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 						for ( Header header : response.getAllHeaders() )
 						{
 							String value = header.getValue();
-							if ( !canceled && isLink( value ) )
+							if ( !MainActivity.this.canceled && isLink( value ) )
 							{
 								URI linkURI = URI.create( value );
 								links.add( value );
@@ -232,7 +238,7 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 				MainActivity.this.linkView.setSelection( MainActivity.this.realLinks.size() - 1 );
 			}
 			MainActivity.this.linkLoaded = true;
-			MainActivity.this.handler.postDelayed( MainActivity.this, 3000 );
+			// MainActivity.this.handler.postDelayed( MainActivity.this, 3000 );
 		}
 
 		@Override
@@ -244,10 +250,17 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 			linkAdapter.setOnStarClickListener( new LinkAdapter.StarClickListener()
 			{
 
-				public void onClick( String url )
+				public void onClick( String url, boolean hasStar )
 				{
-					MainActivity.this.deskTask = new CreateDeskLinkTask();
-					MainActivity.this.deskTask.execute( url );
+					if ( hasStar )
+					{
+						deleteLink( url );
+					}
+					else
+					{
+						MainActivity.this.deskTask = new CreateDeskLinkTask();
+						MainActivity.this.deskTask.execute( url );
+					}
 				}
 			} );
 			MainActivity.this.linkView.setAdapter( linkAdapter );
@@ -451,6 +464,21 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 		}
 	}
 
+	public void deleteLink( final String url )
+	{
+		if ( url == null )
+			return;
+
+		Intent shortcutIntent = new Intent( Intent.ACTION_VIEW );
+		Uri uri = Uri.parse( url );
+		shortcutIntent.setData( uri );
+		shortcutIntent.putExtra( getPackageName(), true );
+		Intent deleteIntent = new Intent();
+		deleteIntent.putExtra( Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent );
+		deleteIntent.setAction( "com.android.launcher.action.UNINSTALL_SHORTCUT" ); //$NON-NLS-1$
+		MainActivity.this.sendBroadcast( deleteIntent );
+	}
+
 	@Override
 	public void onCreate( Bundle savedInstanceState )
 	{
@@ -468,6 +496,41 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 		{
 			setTitle( R.string.app_name );
 		}
+
+		if ( Intent.ACTION_VIEW.equals( getIntent().getAction() ) && uri != null )
+		{
+			this.mainUrl = uri.toString();
+			this.mainType = getIntent().getType();
+			if ( this.mainType == null || this.mainType.length() == 0 )
+			{
+				this.mainType = MimeTypes.getType( this.mainUrl );
+			}
+		}
+		else if ( Intent.ACTION_SEND.equals( getIntent().getAction() ) )
+		{
+			Bundle extras = getIntent().getExtras();
+			Pattern pattern = Pattern.compile( URL_PATTERN );
+			for ( Iterator<String> it = extras.keySet().iterator(); it.hasNext(); )
+			{
+				Object key = it.next();
+				Object value = extras.get( key.toString() );
+				String sValue = value == null
+						? "" //$NON-NLS-1$
+						: value.toString();
+				Matcher m = pattern.matcher( sValue );
+				if ( m.find() )
+				{
+					this.mainUrl = m.group( 1 );
+					this.mainType = MimeTypes.getType( this.mainUrl );
+				}
+			}
+		}
+		else
+		{
+			this.mainUrl = null;
+			this.mainType = null;
+		}
+
 		setContentView( R.layout.main );
 		setFeatureDrawableResource( Window.FEATURE_LEFT_ICON, R.drawable.link );
 
@@ -531,23 +594,21 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 		this.appTask = new LoadAppTask();
 
 		
-		if ( uri != null )
+		if ( this.mainUrl != null )
 		{
-			final String url = uri.toString();
 			Bundle extras = getIntent().getExtras();
 			if ( extras != null )
 			{
 				boolean fromSelf = extras.getBoolean( getPackageName(), false );
-				Log.i( "from", "" + fromSelf );
+				Log.i( "from", "" + fromSelf ); //$NON-NLS-1$ //$NON-NLS-2$
 				if ( fromSelf )
 				{
-					this.starUrl = url;
+					this.starUrl = this.mainUrl;
 				}
 			}
 			List<String> links = new ArrayList<String>();
-			links.add( url );
+			links.add( this.mainUrl );
 			this.linkView.setAdapter( new LinkAdapter( this, null, links ) );
-			this.linkTask = new LoadLinksTask();
 		}
 		else
 		{
@@ -701,14 +762,14 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 	{
 		super.onPause();
 		this.canceled = true;
-		Log.i( "onPause", "onPause" );
+		Log.i( "onPause", "onPause" ); //$NON-NLS-1$ //$NON-NLS-2$
 		this.finish();
 	}
 
 	@Override
 	protected void onDestroy()
 	{
-		Log.i( "onDestroy", "onDestroy" );
+		Log.i( "onDestroy", "onDestroy" ); //$NON-NLS-1$ //$NON-NLS-2$
 		super.onDestroy();
 		if ( this.deskTask != null )
 		{

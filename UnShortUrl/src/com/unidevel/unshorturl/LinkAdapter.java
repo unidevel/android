@@ -19,13 +19,14 @@ public class LinkAdapter extends BaseAdapter implements View.OnClickListener
 		if ( this.listener != null )
 		{
 			String url = (String)v.getTag();
-			this.listener.onClick( url );
+			boolean hasStar = (url != null && url.equals( this.starUrl ));
+			this.listener.onClick( url, hasStar );
 		}
 	}
 
 	public interface StarClickListener
 	{
-		public void onClick( String url );
+		public void onClick( String url, boolean hasStar );
 	}
 
 	List<String> links;
