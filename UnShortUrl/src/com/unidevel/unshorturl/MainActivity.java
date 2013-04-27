@@ -630,13 +630,13 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 			String clazz = pref.getString( "class", "" ); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			if(pkg!=null){
-				if("www.googleadservices.com".equalsIgnoreCase(uri.getHost())){
+				if ( "www.googleadservices.com".equalsIgnoreCase( uri.getHost() ) ) { //$NON-NLS-1$
 					viewLink(uri.toString(),pkg,clazz);
 				}
-				else if("googleadservices.com".equalsIgnoreCase(uri.getHost())){
+				else if ( "googleadservices.com".equalsIgnoreCase( uri.getHost() ) ) { //$NON-NLS-1$
 					viewLink(uri.toString(),pkg,clazz);
 				}
-				else if("googleads.g.doubleclick.net".equalsIgnoreCase(uri.getHost())){
+				else if ( "googleads.g.doubleclick.net".equalsIgnoreCase( uri.getHost() ) ) { //$NON-NLS-1$
 					viewLink(uri.toString(),pkg,clazz);		
 				}
 			}
@@ -660,8 +660,17 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 	}
 
 	protected void findLinksInternal( List<String> links, URI uri )
-	{
-		List<NameValuePair> pairs = URLEncodedUtils.parse( uri, "ISO8859-1" ); //$NON-NLS-1$
+	{		
+		List<NameValuePair> pairs = null;
+		try 
+		{
+			pairs = URLEncodedUtils.parse( uri, "ISO8859-1" ); //$NON-NLS-1$
+		}
+		catch(Throwable ex)
+		{
+			Log.e( "findLinksInternal.parse", uri.toString(), ex ); //$NON-NLS-1$
+			return;
+		}
 		for ( NameValuePair pair : pairs )
 		{
 			String value = pair.getValue();
@@ -674,7 +683,7 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 				}
 				catch (Throwable ex)
 				{
-					Log.e( "findLinksInternal", ex.getMessage(), ex ); //$NON-NLS-1$
+					Log.e( "findLinksInternal.decode", uri.toString(), ex ); //$NON-NLS-1$
 				}
 			}
 		}
