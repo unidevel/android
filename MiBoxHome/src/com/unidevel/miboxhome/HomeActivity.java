@@ -1,14 +1,22 @@
 
 package com.unidevel.miboxhome;
 
-import com.unidevel.miboxhome.util.SystemUiHider;
+import java.io.IOException;
+import java.net.InetAddress;
+import javax.jmdns.JmDNS;
+import javax.jmdns.ServiceEvent;
+import javax.jmdns.ServiceListener;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import com.unidevel.miboxhome.util.SystemUiHider;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -16,7 +24,7 @@ import android.view.View;
  * 
  * @see SystemUiHider
  */
-public class HomeActivity extends Activity
+public class HomeActivity extends Activity implements ServiceListener
 {
 	/**
 	 * Whether or not the system UI should be auto-hidden after
@@ -176,5 +184,63 @@ public class HomeActivity extends Activity
 	{
 		mHideHandler.removeCallbacks( mHideRunnable );
 		mHideHandler.postDelayed( mHideRunnable, delayMillis );
+		new Thread()
+		{
+			public void run()
+			{
+				test();
+			}
+		}.start();
+	}
+
+	public void test()
+	{
+		WifiManager wm = (WifiManager)getSystemService( Context.WIFI_SERVICE );
+		WifiManager.MulticastLock socketLock = wm.createMulticastLock( "mydebuginfo" );
+		socketLock.acquire();
+		try
+		{
+			int i = ((WifiManager)getSystemService( "wifi" )).getConnectionInfo().getIpAddress();
+			byte[] arrayOfByte = new byte[ 4 ];
+			arrayOfByte[ 0 ] = (byte)(i & 0xFF);
+			arrayOfByte[ 1 ] = (byte)(0xFF & i >> 8);
+			arrayOfByte[ 2 ] = (byte)(0xFF & i >> 16);
+			arrayOfByte[ 3 ] = (byte)(0xFF & i >> 24);
+			InetAddress localInetAddress = InetAddress.getByAddress( arrayOfByte );
+			JmDNS jmdns =
+					JmDNS.create( localInetAddress, InetAddress.getByName( localInetAddress.getHostName() ).toString() );
+			String type = "_rc._tcp.local.";
+			jmdns.addServiceListener( type, this );
+			return;
+		}
+		catch (IOException localIOException)
+		{
+			while ( true )
+				localIOException.printStackTrace();
+		}
+	}
+
+	@Override
+	public void serviceAdded( ServiceEvent event )
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void serviceRemoved( ServiceEvent event )
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void serviceResolved( ServiceEvent event )
+	{
+		String address = event.getInfo().getHostAddresses()[ 0 ];
+		int port = event.getInfo().getPort();
+		String name = event.getInfo().getName();
+		// this.this$0.connectMiBox( str1, i );
+		Log.i( "resolved", "address:" + address + ",port:" + port + ",name:" + name );
 	}
 }
