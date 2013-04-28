@@ -3,19 +3,26 @@ package com.unidevel.miboxhome;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.List;
 import javax.jmdns.JmDNS;
 import javax.jmdns.ServiceEvent;
 import javax.jmdns.ServiceListener;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.wifi.WifiManager;
-import android.os.Build;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.GridView;
 import com.unidevel.miboxhome.util.SystemUiHider;
 
 /**
@@ -52,7 +59,35 @@ public class HomeActivity extends Activity implements ServiceListener
 	/**
 	 * The instance of the {@link SystemUiHider} for this activity.
 	 */
-	private SystemUiHider mSystemUiHider;
+	// private SystemUiHider mSystemUiHider;
+	GridView appView;
+	AppAdapter appAdapter;
+
+	class LoadAppTask extends AsyncTask<Void, Integer, List<AppInfo>>
+	{
+		public void run()
+		{
+			List<AppInfo> apps = doInBackground();
+			onPostExecute( apps );
+		}
+
+		@Override
+		protected List<AppInfo> doInBackground( Void... params )
+		{
+			List<AppInfo> apps;
+			apps = findApps();
+			return apps;
+		}
+
+		@Override
+		protected void onPostExecute( List<AppInfo> result )
+		{
+			super.onPostExecute( result );
+			GridView listView = (GridView)findViewById( R.id.gridview );
+			appAdapter = new AppAdapter( HomeActivity.this, result );
+			listView.setAdapter( appAdapter );
+		}
+	}
 
 	@Override
 	protected void onCreate( Bundle savedInstanceState )
@@ -61,80 +96,71 @@ public class HomeActivity extends Activity implements ServiceListener
 
 		setContentView( R.layout.home );
 
-		final View controlsView = findViewById( R.id.fullscreen_content_controls );
-		final View contentView = findViewById( R.id.fullscreen_content );
+		this.appView = (GridView)this.findViewById( R.id.gridview );
+		this.appView.setKeepScreenOn( true );
+		this.appView.setFocusable( true );
+		this.appView.setFocusableInTouchMode( true );
+		this.appView.setOnItemClickListener( new OnItemClickListener()
+		{
+			@Override
+			public void onItemClick( AdapterView<?> adapterView, View view, int pos, long id )
+			{
+				AppInfo info = appAdapter.getApp( pos );
+				String packageName = info.packageName;
+				String className = info.name;
+				Intent intent = new Intent();
+				intent.setClassName( packageName, className );
+				startActivity( intent );
+			}
+		} );
+
+		// final View controlsView = findViewById(
+		// R.id.fullscreen_content_controls );
+		// final View contentView = findViewById( R.id.fullscreen_content );
 
 		// Set up an instance of SystemUiHider to control the system UI for
 		// this activity.
-		mSystemUiHider = SystemUiHider.getInstance( this, contentView, HIDER_FLAGS );
-		mSystemUiHider.setup();
-		mSystemUiHider.setOnVisibilityChangeListener( new SystemUiHider.OnVisibilityChangeListener()
-		{
-			// Cached values.
-			int mControlsHeight;
-			int mShortAnimTime;
-
-			@Override
-			@TargetApi (Build.VERSION_CODES.HONEYCOMB_MR2)
-			public void onVisibilityChange( boolean visible )
-			{
-				if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2 )
-				{
-					// If the ViewPropertyAnimator API is available
-					// (Honeycomb MR2 and later), use it to animate the
-					// in-layout UI controls at the bottom of the
-					// screen.
-					if ( mControlsHeight == 0 )
-					{
-						mControlsHeight = controlsView.getHeight();
-					}
-					if ( mShortAnimTime == 0 )
-					{
-						mShortAnimTime = getResources().getInteger( android.R.integer.config_shortAnimTime );
-					}
-					controlsView.animate().translationY( visible
-							? 0
-							: mControlsHeight ).setDuration( mShortAnimTime );
-				}
-				else
-				{
-					// If the ViewPropertyAnimator APIs aren't
-					// available, simply show or hide the in-layout UI
-					// controls.
-					controlsView.setVisibility( visible
-							? View.VISIBLE
-							: View.GONE );
-				}
-
-				if ( visible && AUTO_HIDE )
-				{
-					// Schedule a hide().
-					delayedHide( AUTO_HIDE_DELAY_MILLIS );
-				}
-			}
-		} );
-
+		// mSystemUiHider = SystemUiHider.getInstance( this, contentView,
+		// HIDER_FLAGS );
+		/*
+		 * mSystemUiHider.setup(); mSystemUiHider.setOnVisibilityChangeListener(
+		 * new SystemUiHider.OnVisibilityChangeListener() { // Cached values.
+		 * int mControlsHeight; int mShortAnimTime;
+		 * 
+		 * @Override
+		 * 
+		 * @TargetApi (Build.VERSION_CODES.HONEYCOMB_MR2) public void
+		 * onVisibilityChange( boolean visible ) { if ( Build.VERSION.SDK_INT >=
+		 * Build.VERSION_CODES.HONEYCOMB_MR2 ) { // If the ViewPropertyAnimator
+		 * API is available // (Honeycomb MR2 and later), use it to animate the
+		 * // in-layout UI controls at the bottom of the // screen. if (
+		 * mControlsHeight == 0 ) { mControlsHeight = controlsView.getHeight();
+		 * } if ( mShortAnimTime == 0 ) { mShortAnimTime =
+		 * getResources().getInteger( android.R.integer.config_shortAnimTime );
+		 * } controlsView.animate().translationY( visible ? 0 : mControlsHeight
+		 * ).setDuration( mShortAnimTime ); } else { // If the
+		 * ViewPropertyAnimator APIs aren't // available, simply show or hide
+		 * the in-layout UI // controls. controlsView.setVisibility( visible ?
+		 * View.VISIBLE : View.GONE ); }
+		 * 
+		 * if ( visible && AUTO_HIDE ) { // Schedule a hide(). delayedHide(
+		 * AUTO_HIDE_DELAY_MILLIS ); } } } );
+		 */
 		// Set up the user interaction to manually show or hide the system UI.
-		contentView.setOnClickListener( new View.OnClickListener()
-		{
-			@Override
-			public void onClick( View view )
-			{
-				if ( TOGGLE_ON_CLICK )
-				{
-					mSystemUiHider.toggle();
-				}
-				else
-				{
-					mSystemUiHider.show();
-				}
-			}
-		} );
+		/*
+		 * contentView.setOnClickListener( new View.OnClickListener() {
+		 * 
+		 * @Override public void onClick( View view ) { if ( TOGGLE_ON_CLICK ) {
+		 * mSystemUiHider.toggle(); } else { mSystemUiHider.show(); } } } );
+		 */
 
 		// Upon interacting with UI controls, delay any scheduled hide()
 		// operations to prevent the jarring behavior of controls going away
 		// while interacting with the UI.
-		findViewById( R.id.dummy_button ).setOnTouchListener( mDelayHideTouchListener );
+		// findViewById( R.id.dummy_button ).setOnTouchListener(
+		// mDelayHideTouchListener );
+
+		new LoadAppTask().execute();
 	}
 
 	@Override
@@ -145,7 +171,7 @@ public class HomeActivity extends Activity implements ServiceListener
 		// Trigger the initial hide() shortly after the activity has been
 		// created, to briefly hint to the user that UI controls
 		// are available.
-		delayedHide( 100 );
+		// delayedHide( 100 );
 	}
 
 	/**
@@ -153,46 +179,29 @@ public class HomeActivity extends Activity implements ServiceListener
 	 * system UI. This is to prevent the jarring behavior of controls going away
 	 * while interacting with activity UI.
 	 */
-	View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener()
-	{
-		@Override
-		public boolean onTouch( View view, MotionEvent motionEvent )
-		{
-			if ( AUTO_HIDE )
-			{
-				delayedHide( AUTO_HIDE_DELAY_MILLIS );
-			}
-			return false;
-		}
-	};
-
-	Handler mHideHandler = new Handler();
-	Runnable mHideRunnable = new Runnable()
-	{
-		@Override
-		public void run()
-		{
-			mSystemUiHider.hide();
-		}
-	};
-
+	/*
+	 * View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener()
+	 * {
+	 * 
+	 * @Override public boolean onTouch( View view, MotionEvent motionEvent ) {
+	 * if ( AUTO_HIDE ) { delayedHide( AUTO_HIDE_DELAY_MILLIS ); } return false;
+	 * } };
+	 * 
+	 * Handler mHideHandler = new Handler(); Runnable mHideRunnable = new
+	 * Runnable() {
+	 * 
+	 * @Override public void run() { mSystemUiHider.hide(); } };
+	 */
 	/**
 	 * Schedules a call to hide() in [delay] milliseconds, canceling any
 	 * previously scheduled calls.
 	 */
-	private void delayedHide( int delayMillis )
-	{
-		mHideHandler.removeCallbacks( mHideRunnable );
-		mHideHandler.postDelayed( mHideRunnable, delayMillis );
-		new Thread()
-		{
-			public void run()
-			{
-				test();
-			}
-		}.start();
-	}
-
+	/*
+	 * private void delayedHide( int delayMillis ) {
+	 * mHideHandler.removeCallbacks( mHideRunnable ); mHideHandler.postDelayed(
+	 * mHideRunnable, delayMillis ); new Thread() { public void run() { test();
+	 * } }.start(); }
+	 */
 	public void test()
 	{
 		WifiManager wm = (WifiManager)getSystemService( Context.WIFI_SERVICE );
@@ -242,5 +251,51 @@ public class HomeActivity extends Activity implements ServiceListener
 		String name = event.getInfo().getName();
 		// this.this$0.connectMiBox( str1, i );
 		Log.i( "resolved", "address:" + address + ",port:" + port + ",name:" + name );
+	}
+
+	public List<AppInfo> findApps()
+	{
+		List<AppInfo> apps = new ArrayList<AppInfo>();
+		PackageManager pm = this.getPackageManager();
+		Intent intent = new Intent( Intent.ACTION_MAIN, null );
+		intent.addCategory( Intent.CATEGORY_LAUNCHER );
+		List<ResolveInfo> rList = new ArrayList<ResolveInfo>();
+		List<ResolveInfo> acts = pm.queryIntentActivities( intent, 0 );
+		rList.addAll( acts );
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences( this );
+		String selectedPkg = pref.getString( "package", "" ); //$NON-NLS-1$ //$NON-NLS-2$
+		String selectedName = pref.getString( "class", "" ); //$NON-NLS-1$ //$NON-NLS-2$
+
+		for ( ResolveInfo r : rList )
+		{
+			if ( this.getPackageName().equals( r.activityInfo.packageName ) )
+				continue;
+			AppInfo app = new AppInfo();
+			apps.add( app );
+			app.packageName = r.activityInfo.packageName;
+			app.name = r.activityInfo.name;
+			app.icon = r.activityInfo.loadIcon( pm );
+			if ( app.icon == null )
+			{
+				app.icon = getResources().getDrawable( R.drawable.ic_launcher );
+			}
+			CharSequence label = r.activityInfo.loadLabel( pm );
+			if ( label == null )
+			{
+				app.label = ""; //$NON-NLS-1$
+			}
+			else
+			{
+				app.label = label.toString();
+			}
+			if ( selectedPkg.equals( app.packageName ) )
+			{
+				if ( (app.name == null && selectedName.length() == 0) || selectedName.equals( app.name ) )
+				{
+					app.selected = true;
+				}
+			}
+		}
+		return apps;
 	}
 }

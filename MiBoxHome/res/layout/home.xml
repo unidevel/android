@@ -1,9 +1,9 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#0099cc"
-    tools:context=".HomeActivity" >
+    >
 
     <!--
          The primary full-screen view. This can be replaced with whatever view
@@ -11,7 +11,7 @@
          TextureView, etc.
     -->
 
-    <TextView
+    <!-- TextView
         android:id="@+id/fullscreen_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -20,14 +20,24 @@
         android:text="@string/dummy_content"
         android:textColor="#33b5e5"
         android:textSize="50sp"
-        android:textStyle="bold" />
+        android:textStyle="bold" /-->
+
+	<GridView
+	    android:id="@+id/gridview"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    android:gravity="center"
+	    android:horizontalSpacing="10dp"
+	    android:numColumns="5"
+	    android:stretchMode="columnWidth"
+	    android:verticalSpacing="10dp" />
 
     <!--
          This FrameLayout insets its children based on system windows using
          android:fitsSystemWindows.
     -->
 
-    <FrameLayout
+    <!--  FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true" >
@@ -50,6 +60,6 @@
                 android:layout_weight="1"
                 android:text="@string/dummy_button" />
         </LinearLayout>
-    </FrameLayout>
+    </FrameLayout -->
 
-</FrameLayout>
+</LinearLayout>
