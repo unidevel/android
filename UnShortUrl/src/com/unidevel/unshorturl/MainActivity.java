@@ -246,10 +246,9 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 		{
 			List<String> links = new ArrayList<String>();
 			links.addAll( MainActivity.this.realLinks );
-			LinkAdapter linkAdapter = new LinkAdapter( MainActivity.this, MainActivity.this.starUrl, links );
+			final LinkAdapter linkAdapter = new LinkAdapter( MainActivity.this, MainActivity.this.starUrl, links );
 			linkAdapter.setOnStarClickListener( new LinkAdapter.StarClickListener()
 			{
-
 				public void onClick( String url, boolean hasStar )
 				{
 					if ( hasStar )
@@ -260,6 +259,7 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 					{
 						MainActivity.this.deskTask = new CreateDeskLinkTask();
 						MainActivity.this.deskTask.execute( url );
+						linkAdapter.setStarUrl(url);
 					}
 				}
 			} );

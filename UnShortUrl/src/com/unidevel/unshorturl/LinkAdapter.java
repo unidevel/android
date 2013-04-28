@@ -43,6 +43,12 @@ public class LinkAdapter extends BaseAdapter implements View.OnClickListener
 		this.inflater = LayoutInflater.from( ctx );
 	}
 
+	public void setStarUrl(String starUrl)
+	{
+		this.starUrl = starUrl;
+		this.notifyDataSetChanged();
+	}
+	
 	public void removeOnStarClickListener( StarClickListener listener )
 	{
 		this.listener = null;
