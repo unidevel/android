@@ -851,7 +851,10 @@ public class ServiceInfoImpl extends ServiceInfo implements DNSListener, DNSStat
             }
             this._props = properties;
         }
-        return (_props != null ? _props : Collections.<String, byte[]> emptyMap());
+		if(_props != null )
+			return _props;
+		Map<String, byte[] > emptyMap=new HashMap<String,byte[]>();
+		return emptyMap;
     }
 
     /**
