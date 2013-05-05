@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OptionalDataException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -200,8 +201,15 @@ public class MiBoxServer implements Runnable
 			WifiManager wm = (WifiManager)context.getSystemService( Context.WIFI_SERVICE );
 			socketLock = wm.createMulticastLock( Constants.SERVICE_LOCK_NAME );
 			socketLock.acquire();
+			int i = wm.getConnectionInfo().getIpAddress();
+			byte[] arrayOfByte = new byte[ 4 ];
+			arrayOfByte[ 0 ] = (byte)(i & 0xFF);
+			arrayOfByte[ 1 ] = (byte)(0xFF & i >> 8);
+			arrayOfByte[ 2 ] = (byte)(0xFF & i >> 16);
+			arrayOfByte[ 3 ] = (byte)(0xFF & i >> 24);
+			InetAddress localInetAddress = InetAddress.getByAddress( arrayOfByte );
+			jmdns = JmDNS.create( localInetAddress, InetAddress.getByName( localInetAddress.getHostName() ).toString() );
 
-			jmdns = JmDNS.create();
 			ServiceInfo serviceInfo =
 					ServiceInfo.create( Constants.JMDNS_TYPE, Constants.SERVICE_NAME, Constants.SERVICE_PORT,
 							"Hello world!" );
