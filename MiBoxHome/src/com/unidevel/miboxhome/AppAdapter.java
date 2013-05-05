@@ -68,8 +68,14 @@ public class AppAdapter extends BaseAdapter
 		ImageView icon = (ImageView)view.findViewById( R.id.icon );
 		TextView label = (TextView)view.findViewById( R.id.label );
 		AppInfo info = this.apps.get( position );
-		icon.setImageDrawable( info.icon );
-		label.setText( info.label );
+		if ( info.icon != null )
+		{
+			icon.setImageDrawable( info.icon );
+		}
+		if ( info.label != null )
+		{
+			label.setText( info.label );
+		}
 		if ( this.selected == position )
 		{
 			view.setBackgroundColor( 0x80b0b0b0 );
@@ -101,5 +107,10 @@ public class AppAdapter extends BaseAdapter
 	public AppInfo getApp( int pos )
 	{
 		return this.apps.get( pos );
+	}
+
+	public List<AppInfo> getApps()
+	{
+		return apps;
 	}
 }
