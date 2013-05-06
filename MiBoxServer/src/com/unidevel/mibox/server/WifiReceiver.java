@@ -15,7 +15,7 @@ public class WifiReceiver extends BroadcastReceiver
 	{
 		ConnectivityManager conMan = (ConnectivityManager)context.getSystemService( Context.CONNECTIVITY_SERVICE );
 		NetworkInfo netInfo = conMan.getActiveNetworkInfo();
-		if ( netInfo.getType() == ConnectivityManager.TYPE_WIFI )
+		if (netInfo!=null&& netInfo.getType() == ConnectivityManager.TYPE_WIFI )
 		{
 			if ( netInfo.getState() == State.CONNECTED )
 			{
