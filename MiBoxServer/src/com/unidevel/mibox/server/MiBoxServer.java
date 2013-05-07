@@ -1,18 +1,28 @@
 
 package com.unidevel.mibox.server;
 
-import android.content.*;
-import android.net.wifi.*;
-import android.text.format.*;
-import android.util.*;
-import com.unidevel.mibox.data.*;
-import com.unidevel.mibox.server.handler.*;
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import javax.jmdns.*;
-
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OptionalDataException;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import javax.jmdns.JmDNS;
+import javax.jmdns.ServiceInfo;
+import android.content.Context;
+import android.net.wifi.WifiManager;
 import android.text.format.Formatter;
+import android.util.Log;
+import com.unidevel.mibox.data.Constants;
+import com.unidevel.mibox.data.DisconnectRequest;
+import com.unidevel.mibox.data.MiBoxRequest;
+import com.unidevel.mibox.data.MiBoxResponse;
+import com.unidevel.mibox.server.handler.MiBoxRequestHandlerManager;
 
 public class MiBoxServer implements Runnable
 {
@@ -182,61 +192,71 @@ public class MiBoxServer implements Runnable
 		}
 	}
 
+	JmDNS jmdns;
+
+	private void startJmDNS() throws IOException
+	{
+		WifiManager wm = (WifiManager)context.getSystemService( Context.WIFI_SERVICE );
+
+		@SuppressWarnings ("deprecation")
+		String ip = Formatter.formatIpAddress( wm.getConnectionInfo().getIpAddress() );
+		InetAddress localInetAddress = InetAddress.getByName( ip );
+		this.jmdns = JmDNS.create( localInetAddress );// ,
+														// InetAddress.getByName(
+		// localInetAddress.getHostName()
+		// ).toString() );
+
+		ServiceInfo serviceInfo =
+				ServiceInfo.create( Constants.JMDNS_TYPE, Constants.SERVICE_NAME, Constants.SERVICE_PORT,
+						"unidevel remoter" ); //$NON-NLS-1$
+		this.jmdns.registerService( serviceInfo );
+		Log.i( "service.run", "ip:" + ip + ", service:" + serviceInfo ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	}
+
+	private void stopJmDNS()
+	{
+		if ( this.jmdns != null )
+		{
+			this.jmdns.unregisterAllServices();
+			try
+			{
+				this.jmdns.close();
+			}
+			catch (IOException e)
+			{
+				Log.e( "stopJmDNS", e.getMessage(), e ); //$NON-NLS-1$
+			}
+			this.jmdns = null;
+		}
+	}
 	public void run()
 	{
-		JmDNS jmdns = null;
-		WifiManager.MulticastLock socketLock = null;
 		try
 		{
-			WifiManager wm = (WifiManager)context.getSystemService( Context.WIFI_SERVICE );
-			socketLock = wm.createMulticastLock( Constants.SERVICE_LOCK_NAME );
-			socketLock.acquire();
-			/*
-			int i = wm.getConnectionInfo().getIpAddress();
-			byte[] arrayOfByte = new byte[ 4 ];
-			arrayOfByte[ 0 ] = (byte)(i & 0xFF);
-			arrayOfByte[ 1 ] = (byte)(0xFF & i >> 8);
-			arrayOfByte[ 2 ] = (byte)(0xFF & i >> 16);
-			arrayOfByte[ 3 ] = (byte)(0xFF & i >> 24);
-			*/
-			String ip = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
-			InetAddress localInetAddress = InetAddress.getByName( ip );
-			jmdns = JmDNS.create( localInetAddress);//, InetAddress.getByName( localInetAddress.getHostName() ).toString() );
-
-			ServiceInfo serviceInfo =
-					ServiceInfo.create( Constants.JMDNS_TYPE, Constants.SERVICE_NAME, Constants.SERVICE_PORT,
-							"Hello world!" );
-			jmdns.registerService( serviceInfo );
-			Log.i("service.run", "ip:"+ip+", service:"+serviceInfo);
-			while ( !this.stop )
-			{
-				try
-				{
-					Socket socket = this.serverSocket.accept();
-					ClientThread thread = new ClientThread( socket );
-					thread.start();
-				}
-				catch (SocketException ex)
-				{
-					// close outside the thread.
-					break;
-				}
-				catch (IOException ex)
-				{
-					Log.e( "Server.run", ex.getMessage(), ex ); //$NON-NLS-1$
-				}
-			}
+			startJmDNS();
 		}
 		catch (IOException e)
 		{
-			Log.e( "startServer", e.getMessage(), e );
+			Log.i( "startJmDNS", e.getMessage(), e ); //$NON-NLS-1$
 		}
-		finally
+		while ( !this.stop )
 		{
-			if ( jmdns != null )
-				jmdns.unregisterAllServices();
-			if ( socketLock != null )
-				socketLock.release();
+			try
+			{
+				Socket socket = this.serverSocket.accept();
+				ClientThread thread = new ClientThread( socket );
+				thread.start();
+			}
+			catch (SocketException ex)
+			{
+				// close outside the thread.
+				break;
+			}
+			catch (IOException ex)
+			{
+				Log.e( "Server.run", ex.getMessage(), ex ); //$NON-NLS-1$
+			}
 		}
+		stopJmDNS();
 	}
 }

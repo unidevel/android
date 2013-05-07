@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#0099cc"
-    >
+    android:orientation="vertical" >
 
     <!--
          The primary full-screen view. This can be replaced with whatever view
@@ -11,7 +11,7 @@
          TextureView, etc.
     -->
 
-    <TextView
+    <!-- TextView
         android:id="@+id/trace"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -20,15 +20,16 @@
         android:text="@string/dummy_content"
         android:textColor="#33b5e5"
         android:textSize="20sp"
-        android:textStyle="bold" />
+        android:textStyle="bold" / -->
 
 	<GridView
 	    android:id="@+id/gridview"
 	    android:layout_width="fill_parent"
 	    android:layout_height="fill_parent"
 	    android:gravity="center"
+	    android:numColumns="auto_fit"
+        android:columnWidth="140dp"	    
 	    android:horizontalSpacing="10dp"
-	    android:numColumns="5"
 	    android:stretchMode="columnWidth"
 	    android:verticalSpacing="10dp" />
 

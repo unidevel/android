@@ -1,31 +1,38 @@
 package com.unidevel.mibox.launcher;
 
-import android.app.*;
-import android.content.*;
-import android.graphics.drawable.*;
-import android.net.wifi.*;
-import android.os.*;
-import android.text.format.*;
-import android.util.*;
-import android.view.*;
-import android.widget.*;
-import android.widget.AdapterView.*;
-import com.unidevel.mibox.data.*;
-import com.unidevel.mibox.launcher.client.*;
-import com.unidevel.mibox.util.*;
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import javax.jmdns.*;
-
+import java.io.IOException;
+import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.List;
+import javax.jmdns.JmDNS;
+import javax.jmdns.ServiceEvent;
+import javax.jmdns.ServiceListener;
+import android.app.Activity;
+import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
+import android.os.Bundle;
 import android.text.format.Formatter;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.GridView;
+import com.unidevel.mibox.data.BasicAppInfo;
+import com.unidevel.mibox.data.Constants;
+import com.unidevel.mibox.data.GetAppIconResponse;
+import com.unidevel.mibox.data.ListAppResponse;
+import com.unidevel.mibox.data.StartAppResponse;
+import com.unidevel.mibox.launcher.client.MiBoxClient;
+import com.unidevel.mibox.util.BitmapUtil;
 
 public class HomeActivity2 extends Activity implements ServiceListener
 {
 	GridView appView;
 	AppAdapter appAdapter;
 	MiBoxClient client;
-	TextView tv;
+
 	WifiManager.MulticastLock socketLock;
 	JmDNS jmdns;
 	class LoadIconTask extends AsyncTask<Void, Void, Boolean>
@@ -148,7 +155,7 @@ public class HomeActivity2 extends Activity implements ServiceListener
 		super.onCreate( savedInstanceState );
 
 		setContentView( R.layout.home );
-		this.tv = (TextView)findViewById(R.id.trace);
+		// this.tv = (TextView)findViewById(R.id.trace);
 		this.appView = (GridView)this.findViewById( R.id.gridview );
 		this.appView.setKeepScreenOn( true );
 		this.appView.setFocusable( true );
@@ -189,9 +196,12 @@ public class HomeActivity2 extends Activity implements ServiceListener
 			*/
 			String ip = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
 			InetAddress localInetAddress = InetAddress.getByName( ip );
-			jmdns = JmDNS.create( localInetAddress);//, InetAddress.getByName( localInetAddress.getHostName() ).toString() );
+			jmdns = JmDNS.create();// , InetAddress.getByName(
+									// localInetAddress.getHostName()
+									// ).toString() );
 			jmdns.addServiceListener( Constants.JMDNS_TYPE, this );
-			
+			// ServiceInfo[] services = jmdns.list( Constants.JMDNS_TYPE );
+			// System.err.println( services.length );
 			return;
 		}
 		catch (IOException ex)
@@ -207,7 +217,7 @@ public class HomeActivity2 extends Activity implements ServiceListener
 	public void serviceAdded( ServiceEvent event )
 	{
 		// TODO Auto-generated method stub
-		this.tv.append("added:"+event.getName()+"\n");
+		Log.i( "serviceAdded:", "added:" + event.getName() );
 		
 	}
 
@@ -221,7 +231,7 @@ public class HomeActivity2 extends Activity implements ServiceListener
 	@Override
 	public void serviceResolved( ServiceEvent event )
 	{
-		this.tv.append("resolved"+event.getName()+"\n");
+		Log.i( "serviceResolved:", "resolved:" + event.getName() );
 		if ( Constants.SERVICE_NAME.equals( event.getName() ) )
 		{
 			this.socketLock.release();
