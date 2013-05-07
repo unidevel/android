@@ -1,35 +1,24 @@
 package com.unidevel.mibox.launcher;
 
-import java.io.IOException;
-import java.net.InetAddress;
-import java.util.ArrayList;
-import java.util.List;
-import javax.jmdns.JmDNS;
-import javax.jmdns.ServiceEvent;
-import javax.jmdns.ServiceListener;
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.drawable.Drawable;
-import android.net.wifi.WifiManager;
-import android.os.AsyncTask;
-import android.os.Bundle;
+import android.app.*;
+import android.content.*;
+import android.graphics.drawable.*;
+import android.net.wifi.*;
+import android.os.*;
+import android.text.format.*;
+import android.util.*;
+import android.view.*;
+import android.widget.*;
+import android.widget.AdapterView.*;
+import com.unidevel.mibox.data.*;
+import com.unidevel.mibox.launcher.client.*;
+import com.unidevel.mibox.util.*;
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import javax.jmdns.*;
+
 import android.text.format.Formatter;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.GridView;
-import com.unidevel.mibox.data.BasicAppInfo;
-import com.unidevel.mibox.data.Constants;
-import com.unidevel.mibox.data.GetAppIconResponse;
-import com.unidevel.mibox.data.ListAppResponse;
-import com.unidevel.mibox.data.StartAppResponse;
-import com.unidevel.mibox.launcher.client.MiBoxClient;
-import com.unidevel.mibox.util.BitmapUtil;
 
 public class HomeActivity2 extends Activity implements ServiceListener
 {
@@ -41,6 +30,34 @@ public class HomeActivity2 extends Activity implements ServiceListener
 	JmDNS jmdns;
 	class LoadIconTask extends AsyncTask<Void, Void, Boolean>
 	{
+		Context ctx;
+		File cacheDir;
+		byte[] buf;
+		protected void onPreExecute()
+		{
+			super.onPreExecute();
+			ctx=HomeActivity2.this;
+			cacheDir=ctx.getDir("cache",Context.MODE_PRIVATE);
+			buf=new byte[8192];
+		}
+		
+		byte[] load(File f) throws FileNotFoundException, IOException{
+			FileInputStream in=new FileInputStream(f);
+			ByteArrayOutputStream out=new ByteArrayOutputStream();
+			int len;
+			while((len=in.read(buf))>0){
+				out.write(buf,0,len);
+			}
+			in.close();
+			return out.toByteArray();
+		}
+		
+		void save(File f, byte[] d) throws IOException{
+			FileOutputStream out = new FileOutputStream(f);
+			out.write(d);
+			out.close();
+		}
+		
 		@Override
 		protected Boolean doInBackground( Void... params )
 		{
@@ -49,14 +66,32 @@ public class HomeActivity2 extends Activity implements ServiceListener
 			{
 				String packageName = app.packageName;
 				String className = app.name;
+				File iconFile=new File(cacheDir, packageName+"_"+className);
 				try
 				{
+					if(iconFile.exists()){
+						try{
+							byte[] data=load(iconFile);
+							app.icon =  BitmapUtil.toDrawable( data );
+							this.publishProgress();
+							continue;
+						}
+						catch(Exception e){
+							
+						}
+					}
 					GetAppIconResponse response = client.getIcon( packageName, className );
 					Drawable icon = BitmapUtil.toDrawable( response.data );
 					if ( icon != null )
 					{
 						app.icon = icon;
 						this.publishProgress();
+					}
+					try{
+						save(iconFile, response.data);
+					}
+					catch(Exception e){
+						
 					}
 				}
 				catch (Exception e)
@@ -267,7 +302,7 @@ public class HomeActivity2 extends Activity implements ServiceListener
 			*/
 			String ip = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
 			InetAddress localInetAddress = InetAddress.getByName( ip );
-			jmdns = JmDNS.create();// , InetAddress.getByName(
+			jmdns = JmDNS.create(localInetAddress);// , InetAddress.getByName(
 									// localInetAddress.getHostName()
 									// ).toString() );
 			jmdns.addServiceListener( Constants.JMDNS_TYPE, this );
@@ -288,7 +323,17 @@ public class HomeActivity2 extends Activity implements ServiceListener
 	public void serviceAdded( ServiceEvent event )
 	{
 		// TODO Auto-generated method stub
-		Log.i( "serviceAdded:", "added:" + event.getName() );
+		Log.i( "serviceAdded:", "added:" + event.getName() +", port:"+event.getInfo().getPort()+",address:"+event.getInfo().getHostAddresses()[ 0 ]);
+		if ( Constants.SERVICE_NAME.equals( event.getName() ) )
+		{
+			this.socketLock.release();
+			this.socketLock = null;
+			String address = event.getInfo().getHostAddresses()[ 0 ];
+			Log.i("added","address:"+address);
+			int port = event.getInfo().getPort();
+			this.client = new MiBoxClient( address, 3456 );
+			new LoadAppTask().execute();
+		}
 		
 	}
 
