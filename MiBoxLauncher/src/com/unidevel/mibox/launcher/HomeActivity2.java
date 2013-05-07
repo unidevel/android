@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.jmdns.JmDNS;
 import javax.jmdns.ServiceEvent;
+import javax.jmdns.ServiceInfo;
 import javax.jmdns.ServiceListener;
 import android.app.Activity;
 import android.content.Context;
@@ -20,9 +21,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.Button;
 import android.widget.GridView;
+import android.widget.Spinner;
 import com.unidevel.mibox.data.BasicAppInfo;
 import com.unidevel.mibox.data.Constants;
 import com.unidevel.mibox.data.GetAppIconResponse;
@@ -31,11 +36,12 @@ import com.unidevel.mibox.data.StartAppResponse;
 import com.unidevel.mibox.launcher.client.MiBoxClient;
 import com.unidevel.mibox.util.BitmapUtil;
 
-public class HomeActivity2 extends Activity implements ServiceListener
+public class HomeActivity2 extends Activity implements ServiceListener, OnItemSelectedListener
 {
 	GridView appView;
 	AppAdapter appAdapter;
 	MiBoxClient client;
+	Spinner devices;
 
 	WifiManager.MulticastLock socketLock;
 	JmDNS jmdns;
@@ -178,6 +184,27 @@ public class HomeActivity2 extends Activity implements ServiceListener
 
 	}
 
+	class RefreshDeviceTask extends AsyncTask<Void, Void, Void>
+	{
+		ServiceInfo[] services;
+		@Override
+		protected Void doInBackground( Void... params )
+		{
+			services = jmdns.list( Constants.JMDNS_TYPE );
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute( Void result )
+		{
+			super.onPostExecute( result );
+			for ( ServiceInfo service : services )
+			{
+
+			}
+		}
+	}
+
 	@Override
 	protected void onCreate( Bundle savedInstanceState )
 	{
@@ -201,7 +228,21 @@ public class HomeActivity2 extends Activity implements ServiceListener
 			}
 		} );
 
+		this.devices = (Spinner)findViewById( R.id.devices );
+		this.devices.setOnItemSelectedListener( this );
+		Button button = (Button)findViewById( R.id.refresh_devices );
+		button.setOnClickListener( new OnClickListener()
+		{
+
+			@Override
+			public void onClick( View v )
+			{
+				new RefreshDeviceTask().execute();
+			}
+
+		} );
 		new ResolveServiceTask().execute();
+
 	}
 
 	@Override
@@ -253,26 +294,12 @@ public class HomeActivity2 extends Activity implements ServiceListener
 		socketLock.acquire();
 		try
 		{
-			/*
-			int i = ((WifiManager)getSystemService( "wifi" )).getConnectionInfo().getIpAddress();
-			byte[] arrayOfByte = new byte[ 4 ];
-			arrayOfByte[ 0 ] = (byte)(i & 0xFF);
-			arrayOfByte[ 1 ] = (byte)(0xFF & i >> 8);
-			arrayOfByte[ 2 ] = (byte)(0xFF & i >> 16);
-			arrayOfByte[ 3 ] = (byte)(0xFF & i >> 24);
-			Log.i("resolveService","ip:"+(255+(int)arrayOfByte[0])+"."+(255+(int)arrayOfByte[1])+"."+arrayOfByte[2]+"."+arrayOfByte[3]);
-			InetAddress localInetAddress = InetAddress.getByAddress( arrayOfByte );
-			JmDNS jmdns =
-					JmDNS.create( localInetAddress, InetAddress.getByName( localInetAddress.getHostName() ).toString() );
-			*/
 			String ip = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
 			InetAddress localInetAddress = InetAddress.getByName( ip );
-			jmdns = JmDNS.create();// , InetAddress.getByName(
-									// localInetAddress.getHostName()
-									// ).toString() );
+			jmdns = JmDNS.create( localInetAddress );
 			jmdns.addServiceListener( Constants.JMDNS_TYPE, this );
-			// ServiceInfo[] services = jmdns.list( Constants.JMDNS_TYPE );
-			// System.err.println( services.length );
+			ServiceInfo[] services = jmdns.list( Constants.JMDNS_TYPE );
+			System.err.println( services.length );
 			return;
 		}
 		catch (IOException ex)
@@ -324,5 +351,19 @@ public class HomeActivity2 extends Activity implements ServiceListener
 			this.socketLock.release();
 			this.socketLock = null;
 		}
+	}
+
+	@Override
+	public void onItemSelected( AdapterView<?> adapterView, View view, int position, long id )
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onNothingSelected( AdapterView<?> adapterView )
+	{
+		// TODO Auto-generated method stub
+
 	}
 }
