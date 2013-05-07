@@ -29,7 +29,7 @@
         </activity>
         <service android:name="HomeService">
             <intent-filter>
-                <action android:name="com.unidevel.miboxserver.START_SERVER"/>
+                <action android:name="com.unidevel.mibox.server.START_SERVER"/>
             </intent-filter>
         </service>
         <receiver android:name="WifiReceiver">

@@ -10,6 +10,8 @@ import com.unidevel.mibox.server.MiBoxServer;
 
 public class HomeService extends Service
 {
+	public static final String SERVICE_ACTION = "com.unidevel.mibox.server.START_SERVER";
+
 	MiBoxServer server;
 	@Override
 	public IBinder onBind( Intent arg0 )
@@ -25,6 +27,7 @@ public class HomeService extends Service
 		{
 			this.server = new MiBoxServer( this, Constants.SERVICE_PORT );
 			this.server.start();
+			Log.i("Service.start","service started");
 		}
 		catch (IOException e)
 		{

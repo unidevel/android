@@ -39,6 +39,8 @@ public class HomeActivity extends Activity
 
 		setContentView( R.layout.home );
 
+		Intent i = new Intent(HomeService.SERVICE_ACTION);
+		startService(i);
 	}
 
 }

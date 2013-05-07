@@ -5,6 +5,7 @@ import android.content.*;
 import android.graphics.drawable.*;
 import android.net.wifi.*;
 import android.os.*;
+import android.text.format.*;
 import android.util.*;
 import android.view.*;
 import android.widget.*;
@@ -17,13 +18,16 @@ import java.net.*;
 import java.util.*;
 import javax.jmdns.*;
 
+import android.text.format.Formatter;
+
 public class HomeActivity2 extends Activity implements ServiceListener
 {
 	GridView appView;
 	AppAdapter appAdapter;
 	MiBoxClient client;
+	TextView tv;
 	WifiManager.MulticastLock socketLock;
-
+	JmDNS jmdns;
 	class LoadIconTask extends AsyncTask<Void, Void, Boolean>
 	{
 		@Override
@@ -144,7 +148,7 @@ public class HomeActivity2 extends Activity implements ServiceListener
 		super.onCreate( savedInstanceState );
 
 		setContentView( R.layout.home );
-
+		this.tv = (TextView)findViewById(R.id.trace);
 		this.appView = (GridView)this.findViewById( R.id.gridview );
 		this.appView.setKeepScreenOn( true );
 		this.appView.setFocusable( true );
@@ -161,9 +165,6 @@ public class HomeActivity2 extends Activity implements ServiceListener
 			}
 		} );
 
-		//Intent intent = new Intent( MiBoxServer.SERVICE_ACTION );
-		//startService( intent );
-
 		new ResolveServiceTask().execute();
 	}
 
@@ -174,22 +175,29 @@ public class HomeActivity2 extends Activity implements ServiceListener
 		socketLock.acquire();
 		try
 		{
+			/*
 			int i = ((WifiManager)getSystemService( "wifi" )).getConnectionInfo().getIpAddress();
 			byte[] arrayOfByte = new byte[ 4 ];
 			arrayOfByte[ 0 ] = (byte)(i & 0xFF);
 			arrayOfByte[ 1 ] = (byte)(0xFF & i >> 8);
 			arrayOfByte[ 2 ] = (byte)(0xFF & i >> 16);
 			arrayOfByte[ 3 ] = (byte)(0xFF & i >> 24);
+			Log.i("resolveService","ip:"+(255+(int)arrayOfByte[0])+"."+(255+(int)arrayOfByte[1])+"."+arrayOfByte[2]+"."+arrayOfByte[3]);
 			InetAddress localInetAddress = InetAddress.getByAddress( arrayOfByte );
 			JmDNS jmdns =
 					JmDNS.create( localInetAddress, InetAddress.getByName( localInetAddress.getHostName() ).toString() );
-
+			*/
+			String ip = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
+			InetAddress localInetAddress = InetAddress.getByName( ip );
+			jmdns = JmDNS.create( localInetAddress);//, InetAddress.getByName( localInetAddress.getHostName() ).toString() );
 			jmdns.addServiceListener( Constants.JMDNS_TYPE, this );
+			
 			return;
 		}
 		catch (IOException ex)
 		{
 			ex.printStackTrace();
+			Log.e("resolveService",ex.getMessage(),ex);
 			this.socketLock.release();
 			this.socketLock = null;
 		}
@@ -199,7 +207,8 @@ public class HomeActivity2 extends Activity implements ServiceListener
 	public void serviceAdded( ServiceEvent event )
 	{
 		// TODO Auto-generated method stub
-
+		this.tv.append("added:"+event.getName()+"\n");
+		
 	}
 
 	@Override
@@ -212,6 +221,7 @@ public class HomeActivity2 extends Activity implements ServiceListener
 	@Override
 	public void serviceResolved( ServiceEvent event )
 	{
+		this.tv.append("resolved"+event.getName()+"\n");
 		if ( Constants.SERVICE_NAME.equals( event.getName() ) )
 		{
 			this.socketLock.release();

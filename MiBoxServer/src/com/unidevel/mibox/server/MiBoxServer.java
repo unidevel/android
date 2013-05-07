@@ -3,6 +3,7 @@ package com.unidevel.mibox.server;
 
 import android.content.*;
 import android.net.wifi.*;
+import android.text.format.*;
 import android.util.*;
 import com.unidevel.mibox.data.*;
 import com.unidevel.mibox.server.handler.*;
@@ -11,10 +12,10 @@ import java.net.*;
 import java.util.*;
 import javax.jmdns.*;
 
+import android.text.format.Formatter;
+
 public class MiBoxServer implements Runnable
 {
-	public static final String SERVICE_ACTION = "com.unidevel.miboxserver.START_SERVER";
-
 	class ClientThread extends Thread
 	{
 		Socket socket;
@@ -190,19 +191,23 @@ public class MiBoxServer implements Runnable
 			WifiManager wm = (WifiManager)context.getSystemService( Context.WIFI_SERVICE );
 			socketLock = wm.createMulticastLock( Constants.SERVICE_LOCK_NAME );
 			socketLock.acquire();
+			/*
 			int i = wm.getConnectionInfo().getIpAddress();
 			byte[] arrayOfByte = new byte[ 4 ];
 			arrayOfByte[ 0 ] = (byte)(i & 0xFF);
 			arrayOfByte[ 1 ] = (byte)(0xFF & i >> 8);
 			arrayOfByte[ 2 ] = (byte)(0xFF & i >> 16);
 			arrayOfByte[ 3 ] = (byte)(0xFF & i >> 24);
-			InetAddress localInetAddress = InetAddress.getByAddress( arrayOfByte );
-			jmdns = JmDNS.create( localInetAddress, InetAddress.getByName( localInetAddress.getHostName() ).toString() );
+			*/
+			String ip = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
+			InetAddress localInetAddress = InetAddress.getByName( ip );
+			jmdns = JmDNS.create( localInetAddress);//, InetAddress.getByName( localInetAddress.getHostName() ).toString() );
 
 			ServiceInfo serviceInfo =
 					ServiceInfo.create( Constants.JMDNS_TYPE, Constants.SERVICE_NAME, Constants.SERVICE_PORT,
 							"Hello world!" );
 			jmdns.registerService( serviceInfo );
+			Log.i("service.run", "ip:"+ip+", service:"+serviceInfo);
 			while ( !this.stop )
 			{
 				try

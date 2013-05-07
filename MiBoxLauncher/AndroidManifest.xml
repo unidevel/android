@@ -27,11 +27,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name="HomeService">
-            <intent-filter>
-                <action android:name="com.unidevel.miboxserver.START_SERVER"/>
-            </intent-filter>
-        </service>
     </application>
 
 </manifest>
