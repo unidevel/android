@@ -9,12 +9,16 @@ import javax.jmdns.ServiceEvent;
 import javax.jmdns.ServiceListener;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.format.Formatter;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -149,6 +153,31 @@ public class HomeActivity2 extends Activity implements ServiceListener
 		}
 	}
 
+	class InstallApkTask extends AsyncTask<String, Void, Void>
+	{
+		@Override
+		protected void onPreExecute()
+		{
+			super.onPreExecute();
+		}
+
+		@Override
+		protected Void doInBackground( String... params )
+		{
+			String path = params[ 0 ];
+			try
+			{
+				client.installApp( path );
+			}
+			catch (Exception e)
+			{
+				Log.e( "installApk", e.getMessage(), e );
+			}
+			return null;
+		}
+
+	}
+
 	@Override
 	protected void onCreate( Bundle savedInstanceState )
 	{
@@ -173,6 +202,48 @@ public class HomeActivity2 extends Activity implements ServiceListener
 		} );
 
 		new ResolveServiceTask().execute();
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu( Menu menu )
+	{
+		super.onCreateOptionsMenu( menu );
+		MenuInflater inflater = new MenuInflater( this );
+		inflater.inflate( R.menu.main_menu, menu );
+		return true;
+	}
+
+	@Override
+	public boolean onMenuItemSelected( int featureId, MenuItem item )
+	{
+		if ( R.id.install == item.getItemId() )
+		{
+			Intent intent = new Intent( Intent.ACTION_GET_CONTENT );
+			intent.setType( "file/*" );
+			startActivityForResult( intent, GET_PATH );
+		}
+		else if ( R.id.file == item.getItemId() )
+		{
+
+		}
+		return super.onMenuItemSelected( featureId, item );
+	}
+
+	int GET_PATH = 1234;
+
+	@Override
+	protected void onActivityResult( int requestCode, int resultCode, Intent data )
+	{
+		super.onActivityResult( requestCode, resultCode, data );
+		if ( requestCode == GET_PATH )
+		{
+			if ( RESULT_OK == resultCode && data != null )
+			{
+				String path = data.getData().getPath();
+				InstallApkTask task = new InstallApkTask();
+				task.execute( path );
+			}
+		}
 	}
 
 	public void resolveService()
