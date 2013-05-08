@@ -30,6 +30,33 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 
 	WifiManager.MulticastLock socketLock;
 	JmDNS jmdns;
+	ServiceList sl;
+	
+	class ServiceList
+	{
+		LinkedHashMap<String, ServiceInfo> services = new LinkedHashMap<String, ServiceInfo>();
+		
+		public void setServices(ServiceInfo[] services){
+			for(ServiceInfo s:services){
+				this.services.put(s.getName(),s);
+			}
+			invalidate();
+		}
+		
+		public void addService(ServiceInfo s){
+			this.services.put(s.getName(),s);
+			invalidate();
+		}
+
+		private void invalidate()
+		{
+			ArrayList<String> names=new ArrayList<String>(services.size());
+			names.addAll(services.keySet());
+			ArrayAdapter<String> adapter = new ArrayAdapter<String>(HomeActivity2.this, android.R.layout.simple_dropdown_item_1line, names);//.toArray(new String[0]));
+			devices.setAdapter(adapter);
+		}
+		
+	}
 	class LoadIconTask extends AsyncTask<Void, Void, Boolean>
 	{
 		Context ctx;
@@ -231,7 +258,7 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 			super.onPostExecute( result );
 			for ( ServiceInfo service : services )
 			{
-
+				
 			}
 		}
 	}
@@ -261,7 +288,7 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 
 		this.devices = (Spinner)findViewById( R.id.devices );
 		this.devices.setOnItemSelectedListener( this );
-		Button button = (Button)findViewById( R.id.refresh_devices );
+		View button = findViewById( R.id.refresh_devices );
 		button.setOnClickListener( new OnClickListener()
 		{
 
@@ -273,7 +300,7 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 
 		} );
 		new ResolveServiceTask().execute();
-
+		this.sl=new ServiceList();
 	}
 
 	@Override
@@ -332,7 +359,8 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 									// ).toString() );
 			jmdns.addServiceListener( Constants.JMDNS_TYPE, this );
 			ServiceInfo[] services = jmdns.list( Constants.JMDNS_TYPE );
-			System.err.println( services.length );
+			
+			//System.err.println( services.length );
 			return;
 		}
 		catch (IOException ex)
