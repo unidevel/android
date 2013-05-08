@@ -1,3 +1,4 @@
+
 package com.unidevel.mibox.launcher;
 
 import java.util.List;
@@ -23,13 +24,16 @@ public class AppAdapter extends BaseAdapter
 		this.ctx = ctx;
 		this.apps = apps;
 		this.selected = -1;
-		for ( int index = 0; index < apps.size(); ++index )
+		if ( apps != null )
 		{
-			AppInfo app = apps.get( index );
-			if ( app.selected )
+			for ( int index = 0; index < apps.size(); ++index )
 			{
-				this.selected = index;
-				break;
+				AppInfo app = apps.get( index );
+				if ( app.selected )
+				{
+					this.selected = index;
+					break;
+				}
 			}
 		}
 		this.inflater = LayoutInflater.from( ctx );
@@ -99,8 +103,9 @@ public class AppAdapter extends BaseAdapter
 		this.selected = pos;
 		notifyDataSetChanged();
 	}
-	
-	public int getSelected(){
+
+	public int getSelected()
+	{
 		return this.selected;
 	}
 

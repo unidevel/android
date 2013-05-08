@@ -27,16 +27,12 @@ public class MiBoxClient
 	Socket socket;
 	ObjectInputStream in;
 	ObjectOutputStream out;
-	String host;
-	int port;
 
-	public MiBoxClient( String host, int port )
+	public MiBoxClient()
 	{
-		this.host = host;
-		this.port = port;
 	}
 
-	public void connect() throws StreamCorruptedException, IOException
+	public void connect( String host, int port ) throws StreamCorruptedException, IOException
 	{
 		this.socket = new Socket( host, port );
 	}
@@ -122,30 +118,32 @@ public class MiBoxClient
 	{
 		try
 		{
-			this.out.writeObject( new DisconnectRequest() );
+			if ( this.out != null )
+			{
+				this.out.writeObject( new DisconnectRequest() );
+			}
 		}
-		catch (IOException e)
+		catch (Exception e)
 		{
 		}
 		try
 		{
-			this.in.close();
+			if ( this.in != null )
+			{
+				this.in.close();
+			}
 		}
-		catch (IOException e)
+		catch (Exception e)
 		{
 		}
 		try
 		{
-			this.out.close();
+			if ( this.socket != null )
+			{
+				this.socket.close();
+			}
 		}
-		catch (IOException e)
-		{
-		}
-		try
-		{
-			this.socket.close();
-		}
-		catch (IOException e)
+		catch (Exception e)
 		{
 		}
 		this.in = null;
