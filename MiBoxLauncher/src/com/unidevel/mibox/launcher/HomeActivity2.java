@@ -294,11 +294,11 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 		@Override
 		protected void onPreExecute()
 		{
-			if ( socketLock == null )
+			if ( HomeActivity2.this.socketLock == null )
 			{
 				WifiManager wm = (WifiManager)getSystemService( Context.WIFI_SERVICE );
-				socketLock = wm.createMulticastLock( Constants.SERVICE_NAME );
-				socketLock.acquire();
+				HomeActivity2.this.socketLock = wm.createMulticastLock( Constants.SERVICE_NAME );
+				HomeActivity2.this.socketLock.acquire();
 			}
 		}
 
@@ -306,15 +306,16 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 		{
 			try
 			{
-				if ( jmdns == null )
+				if ( HomeActivity2.this.jmdns == null )
 				{
 					WifiManager wm = (WifiManager)getSystemService( Context.WIFI_SERVICE );
+					@SuppressWarnings ("deprecation")
 					String ip = Formatter.formatIpAddress( wm.getConnectionInfo().getIpAddress() );
 					InetAddress localInetAddress = InetAddress.getByName( ip );
-					jmdns = JmDNS.create( localInetAddress );
-					jmdns.addServiceListener( Constants.JMDNS_TYPE, HomeActivity2.this );
+					HomeActivity2.this.jmdns = JmDNS.create( localInetAddress );
+					HomeActivity2.this.jmdns.addServiceListener( Constants.JMDNS_TYPE, HomeActivity2.this );
 				}
-				this.services = jmdns.list( Constants.JMDNS_TYPE );
+				this.services = HomeActivity2.this.jmdns.list( Constants.JMDNS_TYPE );
 			}
 			catch (IOException ex)
 			{
@@ -339,12 +340,12 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 		@Override
 		protected Exception doInBackground( Object... params )
 		{
-			client.disconnect();
+			HomeActivity2.this.client.disconnect();
 			try
 			{
-				host = (String)params[ 0 ];
-				port = (Integer)params[ 1 ];
-				client.connect( host, port );
+				this.host = (String)params[ 0 ];
+				this.port = (Integer)params[ 1 ];
+				HomeActivity2.this.client.connect( this.host, this.port );
 			}
 			catch (Exception ex)
 			{
@@ -359,8 +360,8 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 			super.onPostExecute( e );
 			if ( e != null )
 			{
-				Toast.makeText( HomeActivity2.this, "Connect to " + host + " failed!", Toast.LENGTH_LONG ).show();
-				Log.e( "Client.connect", e.getMessage(), e );
+				Toast.makeText( HomeActivity2.this, "Connect to " + this.host + " failed!", Toast.LENGTH_LONG ).show(); //$NON-NLS-1$ //$NON-NLS-2$
+				Log.e( "Client.connect", e.getMessage(), e ); //$NON-NLS-1$
 			}
 			else
 			{
@@ -413,9 +414,9 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 		new RefreshDeviceTask().execute();
 	}
 
-	private void startMiBoxRemoter()
+	void startMiBoxRemoter()
 	{
-		String pkg = "com.duokan.phone.remotecontroller";
+		String pkg = "com.duokan.phone.remotecontroller"; //$NON-NLS-1$
 		try
 		{
 			Intent intent = getPackageManager().getLaunchIntentForPackage( pkg );
@@ -426,12 +427,12 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 			try
 			{
 				Intent intent = new Intent( Intent.ACTION_VIEW );
-				intent.setData( Uri.parse( "market://details?id=" + pkg ) );
+				intent.setData( Uri.parse( "market://details?id=" + pkg ) ); //$NON-NLS-1$
 				startActivity( intent );
 			}
 			catch (Throwable ex2)
 			{
-				Log.e( "OpenMarket", ex2.getMessage(), ex2 );
+				Log.e( "OpenMarket", ex2.getMessage(), ex2 ); //$NON-NLS-1$
 			}
 		}
 	}

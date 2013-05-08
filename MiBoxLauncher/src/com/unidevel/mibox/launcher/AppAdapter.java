@@ -116,6 +116,6 @@ public class AppAdapter extends BaseAdapter
 
 	public List<AppInfo> getApps()
 	{
-		return apps;
+		return this.apps;
 	}
 }
