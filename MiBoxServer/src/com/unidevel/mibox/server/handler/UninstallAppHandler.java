@@ -13,7 +13,8 @@ public class UninstallAppHandler extends MiBoxRequestHandler<UninstallAppRequest
 	{
 		String pkg = request.packageName;
 		Uri pkgUri = Uri.parse( "package:" + pkg ); //$NON-NLS-1$
-		Intent i = new Intent(Intent.ACTION_DELETE,pkgUri);
+		Intent i = new Intent( Intent.ACTION_DELETE, pkgUri );
+		i.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
 		context.startActivity(i);
 		return new UninstallAppResponse();
 	}

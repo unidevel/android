@@ -39,6 +39,8 @@ public class HomeActivity extends Activity
 		startService( i );
 
 		this.appView = (GridView)this.findViewById( R.id.gridview );
+		this.appView.setFocusable(true);
+		this.appView.setFocusableInTouchMode(true);
 		this.appView.setOnItemClickListener( new OnItemClickListener()
 		{
 

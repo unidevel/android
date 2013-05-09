@@ -6,11 +6,13 @@ import android.content.Context;
 import com.unidevel.mibox.data.GetAppIconRequest;
 import com.unidevel.mibox.data.GetFileRequest;
 import com.unidevel.mibox.data.InstallAppRequest;
+import com.unidevel.mibox.data.KeyRequest;
 import com.unidevel.mibox.data.ListAppRequest;
 import com.unidevel.mibox.data.MiBoxRequest;
 import com.unidevel.mibox.data.MiBoxResponse;
 import com.unidevel.mibox.data.SendFileRequest;
 import com.unidevel.mibox.data.StartAppRequest;
+import com.unidevel.mibox.data.UninstallAppRequest;
 
 @SuppressWarnings ("rawtypes")
 public class MiBoxRequestHandlerManager
@@ -33,6 +35,9 @@ public class MiBoxRequestHandlerManager
 		this.handlers.put( SendFileRequest.class, new SendFileHandler() );
 		this.handlers.put( InstallAppRequest.class, new InstallAppHandler() );
 		this.handlers.put( GetFileRequest.class, new GetFileHandler() );
+		this.handlers.put( UninstallAppRequest.class, new UninstallAppHandler() );
+		this.handlers.put( KeyRequest.class, new KeyHandler() );
+
 	}
 
 	@SuppressWarnings ("unchecked")

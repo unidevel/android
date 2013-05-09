@@ -18,6 +18,7 @@ import javax.jmdns.ServiceEvent;
 import javax.jmdns.ServiceInfo;
 import javax.jmdns.ServiceListener;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -264,6 +265,12 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 			return false;
 		}
 
+		@Override
+		protected void onPostExecute( Boolean result )
+		{
+			super.onPostExecute( result );
+			startMiBoxRemoter();
+		}
 	}
 
 	class InstallApkTask extends AsyncTask<String, Void, Void>
@@ -289,6 +296,12 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 			return null;
 		}
 
+		@Override
+		protected void onPostExecute( Void result )
+		{
+			super.onPostExecute( result );
+			startMiBoxRemoter();
+		}
 	}
 	
 	class KeyTask extends AsyncTask<Integer, Void, Void>
@@ -311,17 +324,18 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 			{}
 			return null;
 		}
-
-		
 	}
 
 	class RefreshDeviceTask extends AsyncTask<Void, Void, Void>
 	{
 		ServiceInfo[] services;
-
+		ProgressDialog dialog;
+		
 		@Override
 		protected void onPreExecute()
 		{
+			dialog = ProgressDialog.show(HomeActivity2.this,"", "Finding");
+			
 			if ( HomeActivity2.this.socketLock == null )
 			{
 				WifiManager wm = (WifiManager)getSystemService( Context.WIFI_SERVICE );
@@ -356,6 +370,7 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 		protected void onPostExecute( Void result )
 		{
 			super.onPostExecute( result );
+			dialog.dismiss();
 			HomeActivity2.this.serviceList.setServices( this.services );
 		}
 	}
@@ -366,17 +381,30 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 		@Override
 		protected Void doInBackground( String... params )
 		{
-			// TODO Auto-generated method stub
+			try
+			{
+				client.uninstallApp( params[ 0 ] );
+			}
+			catch (Exception e)
+			{
+				Log.e( "Uninstall", e.getMessage(), e );
+			}
 			return null;
 		}
 
+		@Override
+		protected void onPostExecute( Void result )
+		{
+			super.onPostExecute( result );
+			startMiBoxRemoter();
+		}
 	}
 
 	class ConnectToClientTask extends AsyncTask<Object, Void, Exception>
 	{
 		String host;
 		int port;
-
+		ProgressDialog dialog;
 		@Override
 		protected Exception doInBackground( Object... params )
 		{
@@ -395,9 +423,16 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 		}
 
 		@Override
+		protected void onPreExecute()
+		{
+			dialog = ProgressDialog.show(HomeActivity2.this,"", "Connecting");
+		}
+		
+		@Override
 		protected void onPostExecute( Exception e )
 		{
 			super.onPostExecute( e );
+			dialog.dismiss();
 			if ( e != null )
 			{
 				Toast.makeText( HomeActivity2.this, "Connect to " + this.host + " failed!", Toast.LENGTH_LONG ).show(); //$NON-NLS-1$ //$NON-NLS-2$
@@ -430,7 +465,6 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 				String packageName = info.packageName;
 				String className = info.name;
 				new StartAppTask().execute( packageName, className );
-				startMiBoxRemoter();
 			}
 		} );
 		registerForContextMenu( this.appView );
@@ -442,15 +476,25 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 		View button = findViewById( R.id.refresh_devices );
 		button.setOnClickListener( new OnClickListener()
 		{
-
 			@Override
 			public void onClick( View v )
 			{
 				new RefreshDeviceTask().execute();
 			}
-
 		} );
 		this.serviceList = new ServiceList();
+
+		View btnHome = findViewById( R.id.home );
+		btnHome.setOnClickListener( new OnClickListener()
+			{
+				@Override
+				public void onClick( View v )
+				{
+					String packageName = "com.unidevel.mibox.server";
+					String className = "com.unidevel.mibox.server.HomeActivity";
+					new StartAppTask().execute( packageName, className );
+				}
+			} );
 
 		new RefreshDeviceTask().execute();
 	}
@@ -520,11 +564,14 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 	@Override
 	public boolean onContextItemSelected( MenuItem item )
 	{
-		return super.onContextItemSelected( item );
 		if ( item.getItemId() == R.id.uninstall )
 		{
-
+			AdapterContextMenuInfo info = (AdapterContextMenuInfo)item.getMenuInfo();
+			AppInfo app = appAdapter.getApp( info.position );
+			new UninstallTask().execute( app.packageName );
+			return true;
 		}
+		return super.onContextItemSelected( item );
 	}
 
 	int GET_PATH = 1234;

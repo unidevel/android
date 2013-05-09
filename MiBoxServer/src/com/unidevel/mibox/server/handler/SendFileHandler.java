@@ -13,34 +13,38 @@ public class SendFileHandler extends MiBoxRequestHandler<SendFileRequest, SendFi
 	@Override
 	public SendFileResponse handleRequest( Context context, SendFileRequest request )
 	{
+		boolean isTemp = false;
 		SendFileResponse result = new SendFileResponse();
 		File dir = null;
-		// if ( Environment.getExternalStorageState().equals(
-		// Environment.MEDIA_MOUNTED ) )
-		// {
-		//			dir = new File( Environment.getExternalStorageDirectory() + "/miboxserver" ); //$NON-NLS-1$
-		// }
-		// else
-		// {
-		dir = context.getDir( "miboxserver", Context.MODE_WORLD_READABLE | Context.MODE_WORLD_WRITEABLE ); //$NON-NLS-1$
-		// dir = new File( "/data/local/tmp/" );
-		// // dir = new File( "/tmp/mibox" );
-		// }
+		if ( request.remoteDir != null && request.remoteDir.length() > 0 )
+		{
+			dir = new File( request.remoteDir );
+		}
+		else
+		{
+			dir = context.getDir( "tmp", Context.MODE_WORLD_READABLE | Context.MODE_WORLD_WRITEABLE ); //$NON-NLS-1$
+			isTemp = true;
+		}
 		if ( !dir.exists() )
 			dir.mkdirs();
-		chmod( dir.getPath(), "0777" );
-		// File file = File.createTempFile( request.name, ".apk" ); // ( dir,
-																	// request.name
-																	// );
 		try
 		{
-			File file = new File( dir, request.name );
+			String name = request.remoteName;
+			if ( name == null || name.length() == 0 )
+			{
+				name = request.name;
+			}
+			File file = new File( dir, name );
 			RandomAccessFile f = new RandomAccessFile( file, "rw" ); //$NON-NLS-1$
 			if ( request.offset > 0 )
 				f.seek( request.offset );
 
 			f.write( request.block );
 			f.close();
+			if ( isTemp )
+			{
+				chmod( dir.getPath(), "0777" );
+			}
 			result.remotePath = file.getPath();
 		}
 		catch (Exception e)

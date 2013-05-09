@@ -21,6 +21,8 @@ import com.unidevel.mibox.data.SendFileRequest;
 import com.unidevel.mibox.data.SendFileResponse;
 import com.unidevel.mibox.data.StartAppRequest;
 import com.unidevel.mibox.data.StartAppResponse;
+import com.unidevel.mibox.data.UninstallAppRequest;
+import com.unidevel.mibox.data.UninstallAppResponse;
 
 public class MiBoxClient
 {
@@ -74,6 +76,7 @@ public class MiBoxClient
 		File file = new File( path );
 		SendFileRequest request = new SendFileRequest();
 		request.name = file.getName();
+		request.remoteName = "temp.apk";
 		request.size = file.length();
 		request.offset = 0;
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -102,6 +105,14 @@ public class MiBoxClient
 			result.failedMessage = response.failedMessage;
 		}
 		return result;
+	}
+
+	public UninstallAppResponse uninstallApp( String packageName ) throws IOException, ClassNotFoundException
+	{
+		UninstallAppRequest request = new UninstallAppRequest();
+		request.packageName = packageName;
+		UninstallAppResponse response = (UninstallAppResponse)sendRecv( request );
+		return response;
 	}
 
 	public GetAppIconResponse getIcon( String packageName, String className ) throws IOException,
