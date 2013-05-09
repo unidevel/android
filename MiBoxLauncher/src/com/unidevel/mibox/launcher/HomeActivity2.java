@@ -47,6 +47,7 @@ import com.unidevel.mibox.data.StartAppResponse;
 import com.unidevel.mibox.launcher.client.MiBoxClient;
 import com.unidevel.mibox.util.BitmapUtil;
 import com.unidevel.mibox.data.*;
+import android.app.*;
 
 public class HomeActivity2 extends Activity implements ServiceListener, OnItemSelectedListener
 {
@@ -308,17 +309,18 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 			{}
 			return null;
 		}
-
-		
 	}
 
 	class RefreshDeviceTask extends AsyncTask<Void, Void, Void>
 	{
 		ServiceInfo[] services;
-
+		ProgressDialog dialog;
+		
 		@Override
 		protected void onPreExecute()
 		{
+			dialog = ProgressDialog.show(HomeActivity2.this,"", "Finding");
+			
 			if ( HomeActivity2.this.socketLock == null )
 			{
 				WifiManager wm = (WifiManager)getSystemService( Context.WIFI_SERVICE );
@@ -353,6 +355,7 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 		protected void onPostExecute( Void result )
 		{
 			super.onPostExecute( result );
+			dialog.dismiss();
 			HomeActivity2.this.serviceList.setServices( this.services );
 		}
 	}
@@ -361,7 +364,7 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 	{
 		String host;
 		int port;
-
+		ProgressDialog dialog;
 		@Override
 		protected Exception doInBackground( Object... params )
 		{
@@ -380,9 +383,16 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 		}
 
 		@Override
+		protected void onPreExecute()
+		{
+			dialog = ProgressDialog.show(HomeActivity2.this,"", "Connecting");
+		}
+		
+		@Override
 		protected void onPostExecute( Exception e )
 		{
 			super.onPostExecute( e );
+			dialog.dismiss();
 			if ( e != null )
 			{
 				Toast.makeText( HomeActivity2.this, "Connect to " + this.host + " failed!", Toast.LENGTH_LONG ).show(); //$NON-NLS-1$ //$NON-NLS-2$
@@ -426,15 +436,25 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 		View button = findViewById( R.id.refresh_devices );
 		button.setOnClickListener( new OnClickListener()
 		{
-
 			@Override
 			public void onClick( View v )
 			{
 				new RefreshDeviceTask().execute();
 			}
-
 		} );
 		this.serviceList = new ServiceList();
+
+		View btnHome = findViewById( R.id.home );
+		btnHome.setOnClickListener( new OnClickListener()
+			{
+				@Override
+				public void onClick( View v )
+				{
+					String packageName = "com.unidevel.mibox.server";
+					String className = "com.unidevel.mibox.server.HomeActivity";
+					new StartAppTask().execute( packageName, className );
+				}
+			} );
 
 		new RefreshDeviceTask().execute();
 	}
