@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.unidevel.miboxhome.AppItemLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.unidevel.mibox.server.AppItemLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:paddingBottom="4dip" >
+    android:paddingBottom="4dip" 
+   	android:background="@color/black_overlay"
+    >
 
     <ImageView
         android:id="@+id/icon"
@@ -12,7 +14,8 @@
         android:layout_height="match_parent"
         android:layout_centerHorizontal="true"
         android:layout_weight="1"
-        android:scaleType="fitXY" />
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter" />
 
     <TextView
         android:id="@+id/label"
@@ -21,6 +24,7 @@
         android:layout_below="@+id/icon"
         android:layout_centerHorizontal="true"
         android:minLines="1"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:maxLines="1"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
-</com.unidevel.miboxhome.AppItemLayout>
+</com.unidevel.mibox.server.AppItemLayout>

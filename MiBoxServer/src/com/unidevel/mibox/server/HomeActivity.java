@@ -1,13 +1,21 @@
 
 package com.unidevel.mibox.server;
 
-import android.app.*;
-import android.content.*;
-import android.content.pm.*;
-import android.net.*;
-import android.os.*;
-import android.preference.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.GridView;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -17,6 +25,9 @@ import java.util.*;
  */
 public class HomeActivity extends Activity
 {
+	AppAdapter appAdapter;
+	GridView appView;
+
 	@Override
 	protected void onCreate( Bundle savedInstanceState )
 	{
@@ -24,46 +35,91 @@ public class HomeActivity extends Activity
 
 		setContentView( R.layout.home );
 
-		Intent i = new Intent(HomeService.SERVICE_ACTION);
-		startService(i);
+		Intent i = new Intent( HomeService.SERVICE_ACTION );
+		startService( i );
+
+		this.appView = (GridView)this.findViewById( R.id.gridview );
+		this.appView.setOnItemClickListener( new OnItemClickListener()
+		{
+
+			@Override
+			public void onItemClick( AdapterView<?> adapterView, View view, int pos, long id )
+			{
+				HomeActivity.this.appAdapter.setSelected( pos );
+				savePref();
+				AppInfo app = HomeActivity.this.appAdapter.getSelectedApp();
+				try
+				{
+					Intent intent = new Intent();
+					intent.setClassName( app.packageName, app.name );
+					intent.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
+					startActivity( intent );
+				}
+				catch (Exception ex)
+				{
+					Log.e( "startApp", ex.getMessage(), ex ); //$NON-NLS-1$
+				}
+			}
+		} );
+		new LoadAppTask().execute();
 	}
 
-	public List<AppInfo> findActivity( Uri uri, String type )
+	protected void savePref()
+	{
+		if ( this.appAdapter == null )
+			return;
+		AppInfo app = this.appAdapter.getSelectedApp();
+		if ( app == null )
+			return;
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences( this );
+		pref.edit().putString( "package", app.packageName ).putString( "class", app.name ).commit(); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	class LoadAppTask extends AsyncTask<Void, Integer, List<AppInfo>>
+	{
+		public void run()
+		{
+			List<AppInfo> apps = doInBackground();
+			onPostExecute( apps );
+		}
+
+		@Override
+		protected List<AppInfo> doInBackground( Void... params )
+		{
+			List<AppInfo> apps;
+
+			apps = findActivity();
+			return apps;
+		}
+
+		@Override
+		protected void onPostExecute( List<AppInfo> result )
+		{
+			super.onPostExecute( result );
+			HomeActivity.this.appAdapter = new AppAdapter( HomeActivity.this, result );
+			HomeActivity.this.appView.setAdapter( HomeActivity.this.appAdapter );
+			int sel = HomeActivity.this.appAdapter.getSelected();
+			if ( sel >= 0 )
+			{
+				HomeActivity.this.appView.smoothScrollToPosition( sel );
+			}
+		}
+	}
+
+	public List<AppInfo> findActivity()
 	{
 		List<AppInfo> apps = new ArrayList<AppInfo>();
 		PackageManager pm = this.getPackageManager();
 		Intent intent = new Intent( Intent.ACTION_MAIN );
-		
-		if ( "file".equalsIgnoreCase( uri.getScheme() ) ) //$NON-NLS-1$
-		{
-			intent.setDataAndType( uri, type );
-		}
-		else
-		{
-			intent.setData( uri );
-		}
+		intent.addCategory( Intent.CATEGORY_LAUNCHER );
+
 		List<ResolveInfo> rList = new ArrayList<ResolveInfo>();
 		List<ResolveInfo> acts = pm.queryIntentActivities( intent, 0 );
 		rList.addAll( acts );
+
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences( this );
 		String selectedPkg = pref.getString( "package", "" ); //$NON-NLS-1$ //$NON-NLS-2$
 		String selectedName = pref.getString( "class", "" ); //$NON-NLS-1$ //$NON-NLS-2$
-		if ( "file".equals( uri.getScheme() ) ) //$NON-NLS-1$
-		{
-			intent = new Intent();
-			intent.setClassName( "com.android.chrome", //$NON-NLS-1$
-					"com.google.android.apps.chrome.Main" ); //$NON-NLS-1$
-			acts = pm.queryIntentActivities( intent, 0 );
-			if ( acts != null && acts.size() > 0 )
-				rList.addAll( acts );
-
-			intent = new Intent();
-			intent.setClassName( "com.chrome.beta", //$NON-NLS-1$
-					"com.google.android.apps.chrome.Main" ); //$NON-NLS-1$
-			acts = pm.queryIntentActivities( intent, 0 );
-			if ( acts != null && acts.size() > 0 )
-				rList.addAll( acts );
-		}
 
 		for ( ResolveInfo r : rList )
 		{
@@ -97,6 +153,5 @@ public class HomeActivity extends Activity
 		}
 		return apps;
 	}
-
 
 }

@@ -9,6 +9,7 @@ import com.unidevel.mibox.data.SendFileResponse;
 
 public class SendFileHandler extends MiBoxRequestHandler<SendFileRequest, SendFileResponse>
 {
+	@SuppressWarnings ("deprecation")
 	@Override
 	public SendFileResponse handleRequest( Context context, SendFileRequest request )
 	{
@@ -20,7 +21,7 @@ public class SendFileHandler extends MiBoxRequestHandler<SendFileRequest, SendFi
 		}
 		else
 		{
-			dir = context.getDir( "miboxserver", Context.MODE_WORLD_READABLE | Context.MODE_WORLD_WRITEABLE );
+			dir = context.getDir( "miboxserver", Context.MODE_WORLD_READABLE | Context.MODE_WORLD_WRITEABLE ); //$NON-NLS-1$
 		}
 		if ( !dir.exists() )
 			dir.mkdirs();
