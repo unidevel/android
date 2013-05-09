@@ -37,7 +37,7 @@ public class MiBoxClient
 		this.socket = new Socket( host, port );
 	}
 
-	private MiBoxResponse sendRecv( MiBoxRequest request ) throws IOException, ClassNotFoundException
+	public MiBoxResponse sendRecv( MiBoxRequest request ) throws IOException, ClassNotFoundException
 	{
 		if ( this.out == null )
 		{

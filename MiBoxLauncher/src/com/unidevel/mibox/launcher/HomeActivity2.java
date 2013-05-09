@@ -46,6 +46,7 @@ import com.unidevel.mibox.data.ListAppResponse;
 import com.unidevel.mibox.data.StartAppResponse;
 import com.unidevel.mibox.launcher.client.MiBoxClient;
 import com.unidevel.mibox.util.BitmapUtil;
+import com.unidevel.mibox.data.*;
 
 public class HomeActivity2 extends Activity implements ServiceListener, OnItemSelectedListener
 {
@@ -285,6 +286,30 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 			return null;
 		}
 
+	}
+	
+	class KeyTask extends AsyncTask<Integer, Void, Void>
+	{
+
+		protected Void doInBackground(Integer[] keys)
+		{
+			KeyRequest req=new KeyRequest();
+			req.index=0;
+			for(int key:keys){
+				req.key=key;
+			}
+			try
+			{
+				client.sendRecv(req);
+			}
+			catch (IOException e)
+			{}
+			catch (ClassNotFoundException e)
+			{}
+			return null;
+		}
+
+		
 	}
 
 	class RefreshDeviceTask extends AsyncTask<Void, Void, Void>
