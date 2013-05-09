@@ -18,7 +18,6 @@ public class InstallAppHandler extends MiBoxRequestHandler<InstallAppRequest, In
 		intent.setAction( android.content.Intent.ACTION_VIEW );
 		intent.setDataAndType( Uri.parse( "file://" + request.remotePath ), "application/vnd.android.package-archive" ); //$NON-NLS-1$ //$NON-NLS-2$
 		context.startActivity( intent );
-
 		return result;
 	}
 

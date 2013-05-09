@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <group android:id="@+id/group_app" android:menuCategory="container" android:visible="true">
+        <item android:id="@+id/uninstall" android:title="Uninstall"></item>
+    </group>
+    
+
+</menu>

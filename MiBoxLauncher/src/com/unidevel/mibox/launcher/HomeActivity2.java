@@ -27,12 +27,15 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.format.Formatter;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -42,11 +45,11 @@ import android.widget.Toast;
 import com.unidevel.mibox.data.BasicAppInfo;
 import com.unidevel.mibox.data.Constants;
 import com.unidevel.mibox.data.GetAppIconResponse;
+import com.unidevel.mibox.data.KeyRequest;
 import com.unidevel.mibox.data.ListAppResponse;
 import com.unidevel.mibox.data.StartAppResponse;
 import com.unidevel.mibox.launcher.client.MiBoxClient;
 import com.unidevel.mibox.util.BitmapUtil;
-import com.unidevel.mibox.data.*;
 
 public class HomeActivity2 extends Activity implements ServiceListener, OnItemSelectedListener
 {
@@ -357,6 +360,18 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 		}
 	}
 
+	class UninstallTask extends AsyncTask<String, Void, Void>
+	{
+
+		@Override
+		protected Void doInBackground( String... params )
+		{
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+	}
+
 	class ConnectToClientTask extends AsyncTask<Object, Void, Exception>
 	{
 		String host;
@@ -418,6 +433,7 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 				startMiBoxRemoter();
 			}
 		} );
+		registerForContextMenu( this.appView );
 
 		this.client = new MiBoxClient();
 
@@ -472,6 +488,20 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 	}
 
 	@Override
+	public void onCreateContextMenu( ContextMenu menu, View v, ContextMenuInfo menuInfo )
+	{
+		super.onCreateContextMenu( menu, v, menuInfo );
+		if ( v.getId() == this.appView.getId() )
+		{
+			MenuInflater inflater = new MenuInflater( this );
+			inflater.inflate( R.menu.app_menu, menu );
+			AdapterContextMenuInfo info = (AdapterContextMenuInfo)menuInfo;
+			AppInfo app = appAdapter.getApp( info.position );
+			menu.setHeaderTitle( app.name );
+		}
+	}
+
+	@Override
 	public boolean onMenuItemSelected( int featureId, MenuItem item )
 	{
 		if ( R.id.install == item.getItemId() )
@@ -485,6 +515,16 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 
 		}
 		return super.onMenuItemSelected( featureId, item );
+	}
+
+	@Override
+	public boolean onContextItemSelected( MenuItem item )
+	{
+		return super.onContextItemSelected( item );
+		if ( item.getItemId() == R.id.uninstall )
+		{
+
+		}
 	}
 
 	int GET_PATH = 1234;
