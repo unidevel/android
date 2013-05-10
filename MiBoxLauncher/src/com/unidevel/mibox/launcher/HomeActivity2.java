@@ -18,8 +18,10 @@ import javax.jmdns.ServiceEvent;
 import javax.jmdns.ServiceInfo;
 import javax.jmdns.ServiceListener;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -38,26 +40,25 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.GridView;
-import android.widget.Spinner;
 import android.widget.Toast;
 import com.unidevel.mibox.data.BasicAppInfo;
 import com.unidevel.mibox.data.Constants;
 import com.unidevel.mibox.data.GetAppIconResponse;
-import com.unidevel.mibox.data.KeyRequest;
 import com.unidevel.mibox.data.ListAppResponse;
 import com.unidevel.mibox.data.StartAppResponse;
 import com.unidevel.mibox.launcher.client.MiBoxClient;
+import com.unidevel.mibox.launcher.client.MiBoxRemoter;
 import com.unidevel.mibox.util.BitmapUtil;
 
-public class HomeActivity2 extends Activity implements ServiceListener, OnItemSelectedListener
+public class HomeActivity2 extends Activity implements ServiceListener
 {
 	GridView appView;
 	AppAdapter appAdapter;
 	MiBoxClient client;
-	Spinner devices;
+	MiBoxRemoter remoter;
+	Button devices;
 
 	WifiManager.MulticastLock socketLock;
 	JmDNS jmdns;
@@ -73,23 +74,18 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 			{
 				this.services.put( s.getName(), s );
 			}
-			invalidate();
 		}
 
 		public void addService( ServiceInfo s )
 		{
 			this.services.put( s.getName(), s );
-			invalidate();
 		}
 
-		private void invalidate()
+		public String[] getServiceNames()
 		{
 			ArrayList<String> names = new ArrayList<String>( this.services.size() );
 			names.addAll( this.services.keySet() );
-			ArrayAdapter<String> adapter =
-					new ArrayAdapter<String>( HomeActivity2.this, android.R.layout.simple_spinner_item, names );// .toArray(new
-																														// String[0]));
-			HomeActivity2.this.devices.setAdapter( adapter );
+			return names.toArray( new String[ 0 ] );
 		}
 
 		public ServiceInfo getService( int pos )
@@ -303,25 +299,28 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 			startMiBoxRemoter();
 		}
 	}
-	
+
 	class KeyTask extends AsyncTask<Integer, Void, Void>
 	{
-
-		protected Void doInBackground(Integer[] keys)
+		protected Void doInBackground( Integer... keys )
 		{
-			KeyRequest req=new KeyRequest();
-			req.index=0;
-			for(int key:keys){
-				req.key=key;
-			}
-			try
+			// KeyRequest req=new KeyRequest();
+			// req.index=0;
+			// for(int key:keys){
+			// req.key=key;
+			// }
+			// try
+			// {
+			// HomeActivity2.this.client.sendRecv( req );
+			// }
+			// catch (IOException e)
+			// {}
+			// catch (ClassNotFoundException e)
+			// {}
+			if ( remoter.isConnected() )
 			{
-				client.sendRecv(req);
+				remoter.sendKeyCode( keys[ 0 ] );
 			}
-			catch (IOException e)
-			{}
-			catch (ClassNotFoundException e)
-			{}
 			return null;
 		}
 	}
@@ -330,12 +329,12 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 	{
 		ServiceInfo[] services;
 		ProgressDialog dialog;
-		
+
 		@Override
 		protected void onPreExecute()
 		{
-			dialog = ProgressDialog.show(HomeActivity2.this,"", "Finding");
-			
+			this.dialog = ProgressDialog.show( HomeActivity2.this, "", "Finding" ); //$NON-NLS-1$ //$NON-NLS-2$
+
 			if ( HomeActivity2.this.socketLock == null )
 			{
 				WifiManager wm = (WifiManager)getSystemService( Context.WIFI_SERVICE );
@@ -370,8 +369,22 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 		protected void onPostExecute( Void result )
 		{
 			super.onPostExecute( result );
-			dialog.dismiss();
+			this.dialog.dismiss();
 			HomeActivity2.this.serviceList.setServices( this.services );
+
+			AlertDialog.Builder builder = new AlertDialog.Builder( HomeActivity2.this );
+			builder.setTitle( "Select device" ); //$NON-NLS-1$
+			builder.setItems( HomeActivity2.this.serviceList.getServiceNames(), new DialogInterface.OnClickListener()
+			{
+
+				@Override
+				public void onClick( DialogInterface dialog, int which )
+				{
+					connect( which );
+					dialog.dismiss();
+				}
+			} );
+			builder.create().show();
 		}
 	}
 
@@ -383,11 +396,11 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 		{
 			try
 			{
-				client.uninstallApp( params[ 0 ] );
+				HomeActivity2.this.client.uninstallApp( params[ 0 ] );
 			}
 			catch (Exception e)
 			{
-				Log.e( "Uninstall", e.getMessage(), e );
+				Log.e( "Uninstall", e.getMessage(), e ); //$NON-NLS-1$
 			}
 			return null;
 		}
@@ -405,34 +418,44 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 		String host;
 		int port;
 		ProgressDialog dialog;
+
 		@Override
 		protected Exception doInBackground( Object... params )
 		{
 			HomeActivity2.this.client.disconnect();
+			Exception exception = null;
 			try
 			{
 				this.host = (String)params[ 0 ];
 				this.port = (Integer)params[ 1 ];
-				HomeActivity2.this.client.connect( this.host, this.port );
+				HomeActivity2.this.client.connect( this.host, Constants.SERVICE_PORT );
 			}
 			catch (Exception ex)
 			{
-				return ex;
+				exception = ex;
 			}
-			return null;
+			try
+			{
+				HomeActivity2.this.remoter.connect( this.host, this.port );
+			}
+			catch (Exception ex)
+			{
+				exception = ex;
+			}
+			return exception;
 		}
 
 		@Override
 		protected void onPreExecute()
 		{
-			dialog = ProgressDialog.show(HomeActivity2.this,"", "Connecting");
+			this.dialog = ProgressDialog.show( HomeActivity2.this, "", "Connecting" ); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		
+
 		@Override
 		protected void onPostExecute( Exception e )
 		{
 			super.onPostExecute( e );
-			dialog.dismiss();
+			this.dialog.dismiss();
 			if ( e != null )
 			{
 				Toast.makeText( HomeActivity2.this, "Connect to " + this.host + " failed!", Toast.LENGTH_LONG ).show(); //$NON-NLS-1$ //$NON-NLS-2$
@@ -470,32 +493,69 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 		registerForContextMenu( this.appView );
 
 		this.client = new MiBoxClient();
+		this.remoter = new MiBoxRemoter();
 
-		this.devices = (Spinner)findViewById( R.id.devices );
-		this.devices.setOnItemSelectedListener( this );
-		View button = findViewById( R.id.refresh_devices );
-		button.setOnClickListener( new OnClickListener()
+		this.devices = (Button)findViewById( R.id.devices );
+		this.devices.setOnClickListener( new OnClickListener()
+		{
+
+			@Override
+			public void onClick( View v )
+			{
+				showDeviceList();
+			}
+
+		} );
+		this.serviceList = new ServiceList();
+
+		int[] buttonIds = new int[] {
+				R.id.btnUp, R.id.btnDown, R.id.btnLeft, R.id.btnRight, R.id.btnBack,
+				// R.id.btnHome,
+				R.id.btnMenu
+		};
+		int[] keys =
+				new int[] {
+						MiBoxRemoter.KEY_CODE_UP, MiBoxRemoter.KEY_CODE_DOWN, MiBoxRemoter.KEY_CODE_LEFT,
+						MiBoxRemoter.KEY_CODE_RIGHT, MiBoxRemoter.KEY_CODE_BACK,
+						// MiBoxRemoter.KEY_CODE_HOME,
+						MiBoxRemoter.KEY_CODE_MENU
+				};
+		OnClickListener buttonListener = new OnClickListener()
+		{
+
+			@Override
+			public void onClick( View v )
+			{
+				int code = (Integer)v.getTag();
+				new KeyTask().execute( code );
+			}
+		};
+		for ( int i = 0; i < buttonIds.length; ++i )
+		{
+			int buttonId = buttonIds[ i ];
+			int key = keys[ i ];
+			View button = findViewById( buttonId );
+			button.setTag( key );
+			button.setOnClickListener( buttonListener );
+		}
+
+		View btnHome = findViewById( R.id.btnHome );
+		btnHome.setOnClickListener( new OnClickListener()
 		{
 			@Override
 			public void onClick( View v )
 			{
-				new RefreshDeviceTask().execute();
+				String packageName = "com.unidevel.mibox.server"; //$NON-NLS-1$
+				String className = "com.unidevel.mibox.server.HomeActivity"; //$NON-NLS-1$
+				new StartAppTask().execute( packageName, className );
 			}
 		} );
-		this.serviceList = new ServiceList();
 
-		View btnHome = findViewById( R.id.home );
-		btnHome.setOnClickListener( new OnClickListener()
-			{
-				@Override
-				public void onClick( View v )
-				{
-					String packageName = "com.unidevel.mibox.server";
-					String className = "com.unidevel.mibox.server.HomeActivity";
-					new StartAppTask().execute( packageName, className );
-				}
-			} );
+		showDeviceList();
+	}
 
+	protected void showDeviceList()
+	{
 		new RefreshDeviceTask().execute();
 	}
 
@@ -540,7 +600,7 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 			MenuInflater inflater = new MenuInflater( this );
 			inflater.inflate( R.menu.app_menu, menu );
 			AdapterContextMenuInfo info = (AdapterContextMenuInfo)menuInfo;
-			AppInfo app = appAdapter.getApp( info.position );
+			AppInfo app = this.appAdapter.getApp( info.position );
 			menu.setHeaderTitle( app.name );
 		}
 	}
@@ -567,7 +627,7 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 		if ( item.getItemId() == R.id.uninstall )
 		{
 			AdapterContextMenuInfo info = (AdapterContextMenuInfo)item.getMenuInfo();
-			AppInfo app = appAdapter.getApp( info.position );
+			AppInfo app = this.appAdapter.getApp( info.position );
 			new UninstallTask().execute( app.packageName );
 			return true;
 		}
@@ -618,17 +678,6 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 	public void serviceAdded( ServiceEvent event )
 	{
 		Log.i( "serviceAdded:", "added:" + event.getName() + ", port:" + event.getInfo().getPort() + ",address:" + event.getInfo().getHostAddresses()[ 0 ] ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		// if ( Constants.SERVICE_NAME.equals( event.getName() ) )
-		// {
-		// this.socketLock.release();
-		// this.socketLock = null;
-		// String address = event.getInfo().getHostAddresses()[ 0 ];
-		//			Log.i( "added", "address:" + address ); //$NON-NLS-1$ //$NON-NLS-2$
-		// int port = event.getInfo().getPort();
-		// this.client = new MiBoxClient( address, 3456 );
-		// new LoadAppTask().execute();
-		// }
-
 	}
 
 	@Override
@@ -641,16 +690,6 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 	public void serviceResolved( ServiceEvent event )
 	{
 		Log.i( "serviceResolved:", "resolved:" + event.getName() ); //$NON-NLS-1$ //$NON-NLS-2$
-		// if ( Constants.SERVICE_NAME.equals( event.getName() ) )
-		// {
-		// this.socketLock.release();
-		// this.socketLock = null;
-		// String address = event.getInfo().getHostAddresses()[ 0 ];
-		// int port = event.getInfo().getPort();
-		// this.client = new MiBoxClient( address, port );
-		// new LoadAppTask().execute();
-		//
-		// }
 	}
 
 	@Override
@@ -664,23 +703,19 @@ public class HomeActivity2 extends Activity implements ServiceListener, OnItemSe
 		}
 	}
 
-	@Override
-	public void onItemSelected( AdapterView<?> adapterView, View view, int pos, long id )
+	protected void connect( int pos )
 	{
 		ServiceInfo service = this.serviceList.getService( pos );
+		String serviceName;
 		if ( service != null )
 		{
-			new ConnectToClientTask().execute( service.getHostAddresses()[ 0 ], Constants.SERVICE_PORT );
+			new ConnectToClientTask().execute( service.getHostAddresses()[ 0 ], service.getPort() );
+			serviceName = service.getName();
 		}
 		else
 		{
-
+			serviceName = ""; //$NON-NLS-1$
 		}
-	}
-
-	@Override
-	public void onNothingSelected( AdapterView<?> adapterView )
-	{
-
+		this.devices.setText( serviceName );
 	}
 }

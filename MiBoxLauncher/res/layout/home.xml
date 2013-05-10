@@ -6,12 +6,7 @@
     android:orientation="vertical" >
 
     <!--
-         The primary full-screen view. This can be replaced with whatever view
-         is needed to present your content, e.g. VideoView, SurfaceView,
-         TextureView, etc.
-    -->
-
-    <!-- TextView
+         TextView
         android:id="@+id/trace"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -20,59 +15,35 @@
         android:text="@string/dummy_content"
         android:textColor="#33b5e5"
         android:textSize="20sp"
-        android:textStyle="bold" / -->
+        android:textStyle="bold" /
+    -->
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical" >
 
-        <Spinner
+        <Button
             android:id="@+id/devices"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
-
-        <ImageButton
-            android:id="@+id/refresh_devices"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="6dp"
-            android:layout_marginRight="6dp"
-            android:layout_weight="0"
-            android:background="@null"
-            android:src="@android:drawable/ic_popup_sync" />
-		
-		<ImageButton
-            android:id="@+id/home"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="6dp"
-            android:layout_marginRight="6dp"
-            android:layout_weight="0"
-            android:background="@null"
-            android:src="@drawable/ic_launcher" />
-		
-
     </LinearLayout>
 
-	<GridView
-	    android:id="@+id/gridview"
-	    android:layout_width="fill_parent"
-	    android:layout_height="fill_parent"
-	    android:gravity="center"
-	    android:numColumns="auto_fit"
-        android:columnWidth="140dp"	    
-	    android:horizontalSpacing="10dp"
-	    android:stretchMode="columnWidth"
-	    android:verticalSpacing="10dp" />
+    <GridView
+        android:id="@+id/gridview"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:columnWidth="140dp"
+        android:gravity="center"
+        android:horizontalSpacing="10dp"
+        android:numColumns="auto_fit"
+        android:stretchMode="columnWidth"
+        android:layout_weight="1"
+        android:verticalSpacing="10dp" />
 
     <!--
-         This FrameLayout insets its children based on system windows using
-         android:fitsSystemWindows.
-    -->
-
-    <!--  FrameLayout
+    FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true" >
@@ -95,6 +66,85 @@
                 android:layout_weight="1"
                 android:text="@string/dummy_button" />
         </LinearLayout>
-    </FrameLayout -->
+    </FrameLayout
+    -->
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="*" >
+
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <ImageButton
+                android:id="@+id/btnHome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/btn_home" />
+
+            <ImageButton
+                android:id="@+id/btnUp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/btn_up" />
+
+            <ImageButton
+                android:id="@+id/btnMenu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/btn_menu" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <ImageButton
+                android:id="@+id/btnLeft"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/btn_left" />
+
+            <ImageButton
+                android:id="@+id/btnEnter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/btn_enter" />
+
+            <ImageButton
+                android:id="@+id/btnRight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/btn_right" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/btn_back" />
+
+            <ImageButton
+                android:id="@+id/btnDown"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/btn_down" />
+
+            <ImageButton
+                android:id="@+id/btnUpload"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/btn_upload" />
+        </TableRow>
+    </TableLayout>
 
 </LinearLayout>

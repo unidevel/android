@@ -43,7 +43,7 @@ public class SendFileHandler extends MiBoxRequestHandler<SendFileRequest, SendFi
 			f.close();
 			if ( isTemp )
 			{
-				chmod( dir.getPath(), "0777" );
+				chmod( dir.getPath(), "0777" ); //$NON-NLS-1$
 			}
 			result.remotePath = file.getPath();
 		}
@@ -58,7 +58,7 @@ public class SendFileHandler extends MiBoxRequestHandler<SendFileRequest, SendFi
 	public void chmod( String path, String mode )
 	{
 		Runtime runtime = Runtime.getRuntime();
-		String command = "chmod -R " + mode + " " + path;
+		String command = "chmod -R " + mode + " " + path; //$NON-NLS-1$ //$NON-NLS-2$
 		Process proc;
 		try
 		{
@@ -67,7 +67,7 @@ public class SendFileHandler extends MiBoxRequestHandler<SendFileRequest, SendFi
 		}
 		catch (Exception e)
 		{
-			Log.e( "chmod", command + " failed:" + e.getMessage(), e );
+			Log.e( "chmod", command + " failed:" + e.getMessage(), e ); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 }

@@ -196,21 +196,32 @@ public class MiBoxServer implements Runnable
 
 	private void startJmDNS() throws IOException
 	{
-		WifiManager wm = (WifiManager)context.getSystemService( Context.WIFI_SERVICE );
+		WifiManager wm = (WifiManager)this.context.getSystemService( Context.WIFI_SERVICE );
 
 		@SuppressWarnings ("deprecation")
 		String ip = Formatter.formatIpAddress( wm.getConnectionInfo().getIpAddress() );
 		InetAddress localInetAddress = InetAddress.getByName( ip );
 		this.jmdns = JmDNS.create( localInetAddress );// ,
-														// InetAddress.getByName(
-		// localInetAddress.getHostName()
-		// ).toString() );
 
-		ServiceInfo serviceInfo =
-				ServiceInfo.create( Constants.JMDNS_TYPE, Constants.SERVICE_NAME, Constants.SERVICE_PORT,
-						"unidevel remoter" ); //$NON-NLS-1$
-		this.jmdns.registerService( serviceInfo );
-		Log.i( "service.run", "ip:" + ip + ", service:" + serviceInfo ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		ServiceInfo[] services = this.jmdns.list( Constants.JMDNS_TYPE );
+		boolean hasService = false;
+		for ( ServiceInfo service : services )
+		{
+			String address = service.getHostAddresses().length > 0
+					? null
+					: service.getHostAddresses()[ 0 ];
+			Log.i( "service.list", "ip:" + address + ", name:" + service.getName() ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			if ( address != null && address.equals( ip ) )
+				hasService = true;
+		}
+		if ( !hasService )
+		{
+			ServiceInfo serviceInfo =
+					ServiceInfo.create( Constants.JMDNS_TYPE, Constants.SERVICE_NAME, Constants.SERVICE_PORT,
+							"unidevel remoter" ); //$NON-NLS-1$
+			this.jmdns.registerService( serviceInfo );
+			Log.i( "service.run", "ip:" + ip + ", service:" + serviceInfo ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
 	}
 
 	private void stopJmDNS()
