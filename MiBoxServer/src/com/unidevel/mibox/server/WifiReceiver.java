@@ -13,21 +13,23 @@ public class WifiReceiver extends BroadcastReceiver
 	@Override
 	public void onReceive( Context context, Intent intent )
 	{
-		ConnectivityManager conMan = (ConnectivityManager)context.getSystemService( Context.CONNECTIVITY_SERVICE );
-		NetworkInfo netInfo = conMan.getActiveNetworkInfo();
-		if (netInfo!=null&& netInfo.getType() == ConnectivityManager.TYPE_WIFI )
-		{
-			if ( netInfo.getState() == State.CONNECTED )
-			{
-				Intent serviceIntent = new Intent( Constants.SERVICE_NAME );
-				context.startService( serviceIntent );
-			}
-			else
-			{
-				Intent serviceIntent = new Intent( Constants.SERVICE_NAME );
-				context.stopService( serviceIntent );
-			}
-		}
+		Intent serviceIntent = new Intent( HomeService.SERVICE_ACTION );
+		context.startService( serviceIntent );
+//		ConnectivityManager conMan = (ConnectivityManager)context.getSystemService( Context.CONNECTIVITY_SERVICE );
+//		NetworkInfo netInfo = conMan.getActiveNetworkInfo();
+//		if (netInfo!=null&& netInfo.getType() == ConnectivityManager.TYPE_WIFI )
+//		{
+//			if ( netInfo.getState() == State.CONNECTED )
+//			{
+//				Intent serviceIntent = new Intent( Constants.SERVICE_NAME );
+//				context.startService( serviceIntent );
+//			}
+//			else
+//			{
+//				Intent serviceIntent = new Intent( Constants.SERVICE_NAME );
+//				context.stopService( serviceIntent );
+//			}
+//		}
 	}
 
 }

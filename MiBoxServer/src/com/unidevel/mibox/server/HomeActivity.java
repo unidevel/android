@@ -3,6 +3,7 @@ package com.unidevel.mibox.server;
 
 import java.util.ArrayList;
 import java.util.List;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -94,6 +95,7 @@ public class HomeActivity extends Activity
 			return apps;
 		}
 
+		@SuppressLint("NewApi")
 		@Override
 		protected void onPostExecute( List<AppInfo> result )
 		{
@@ -101,10 +103,13 @@ public class HomeActivity extends Activity
 			HomeActivity.this.appAdapter = new AppAdapter( HomeActivity.this, result );
 			HomeActivity.this.appView.setAdapter( HomeActivity.this.appAdapter );
 			int sel = HomeActivity.this.appAdapter.getSelected();
-			if ( sel >= 0 )
-			{
-				HomeActivity.this.appView.smoothScrollToPosition( sel );
-			}
+//			appView.getI
+//			if ( sel >= 0 )
+//			{
+//				HomeActivity.this.appView.scrollTo(0, 0);
+//				HomeActivity.this.appView.smoothScrollToPosition( sel );
+//				HomeActivity.this.appView.setItemChecked(sel, true);
+//			}
 		}
 	}
 

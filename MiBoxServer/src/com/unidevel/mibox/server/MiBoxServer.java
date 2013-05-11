@@ -1,4 +1,3 @@
-
 package com.unidevel.mibox.server;
 
 import java.io.IOException;
@@ -24,70 +23,48 @@ import com.unidevel.mibox.data.MiBoxRequest;
 import com.unidevel.mibox.data.MiBoxResponse;
 import com.unidevel.mibox.server.handler.MiBoxRequestHandlerManager;
 
-public class MiBoxServer implements Runnable
-{
-	class ClientThread extends Thread
-	{
+public class MiBoxServer implements Runnable {
+	class ClientThread extends Thread {
 		Socket socket;
 		ObjectInputStream in;
 		ObjectOutputStream out;
 
-		public ClientThread( Socket socket )
-		{
+		public ClientThread(Socket socket) {
 			this.socket = socket;
 		}
 
 		@Override
-		public void run()
-		{
-			addClientThread( this );
-			try
-			{
-				this.in = new ObjectInputStream( this.socket.getInputStream() );
-				this.out = new ObjectOutputStream( this.socket.getOutputStream() );
-				handleClient( this.in, this.out );
-			}
-			catch (Exception ex)
-			{
-				Log.e( "MiBoxServer.handleClient", ex.getMessage(), ex ); //$NON-NLS-1$
-			}
-			finally
-			{
-				try
-				{
+		public void run() {
+			addClientThread(this);
+			try {
+				this.in = new ObjectInputStream(this.socket.getInputStream());
+				this.out = new ObjectOutputStream(this.socket.getOutputStream());
+				handleClient(this.in, this.out);
+			} catch (Exception ex) {
+				Log.e("MiBoxServer.handleClient", ex.getMessage(), ex); //$NON-NLS-1$
+			} finally {
+				try {
 					this.in.close();
+				} catch (Throwable ex) {
 				}
-				catch (Throwable ex)
-				{
-				}
-				try
-				{
+				try {
 					this.out.close();
+				} catch (Throwable ex) {
 				}
-				catch (Throwable ex)
-				{
-				}
-				removeClientThread( this );
+				removeClientThread(this);
 			}
 		}
 
-		public void stopThis()
-		{
-			try
-			{
+		public void stopThis() {
+			try {
 				this.socket.close();
+			} catch (IOException e) {
+				Log.e("ClientThread.close", e.getMessage(), e); //$NON-NLS-1$
 			}
-			catch (IOException e)
-			{
-				Log.e( "ClientThread.close", e.getMessage(), e ); //$NON-NLS-1$
-			}
-			try
-			{
+			try {
 				this.join();
-			}
-			catch (InterruptedException e)
-			{
-				Log.e( "ClientThread.join", e.getMessage(), e ); //$NON-NLS-1$
+			} catch (InterruptedException e) {
+				Log.e("ClientThread.join", e.getMessage(), e); //$NON-NLS-1$
 			}
 		}
 	}
@@ -100,174 +77,146 @@ public class MiBoxServer implements Runnable
 	Context context;
 	MiBoxRequestHandlerManager requestHandlerManager;
 
-	public MiBoxServer( Context context, int port ) throws IOException
-	{
+	public MiBoxServer(Context context, int port)  {
 		this.port = port;
 		this.context = context;
-		this.serverSocket = new ServerSocket( port );
-		this.requestHandlerManager = new MiBoxRequestHandlerManager( context );
+		this.requestHandlerManager = new MiBoxRequestHandlerManager(context);
 	}
 
-	public void handleClient( ObjectInputStream in, ObjectOutputStream out ) throws OptionalDataException,
-			ClassNotFoundException, IOException
-	{
+	public void handleClient(ObjectInputStream in, ObjectOutputStream out)
+			throws OptionalDataException, ClassNotFoundException, IOException {
 		Object request;
-		while ( (request = in.readObject()) != null )
-		{
-			if ( request instanceof DisconnectRequest )
-			{
+		while ((request = in.readObject()) != null) {
+			if (request instanceof DisconnectRequest) {
 				break;
-			}
-			else if ( request instanceof MiBoxRequest )
-			{
-				MiBoxResponse response = this.requestHandlerManager.handleRequest( (MiBoxRequest)request );
-				if ( response == null )
+			} else if (request instanceof MiBoxRequest) {
+				MiBoxResponse response = this.requestHandlerManager
+						.handleRequest((MiBoxRequest) request);
+				if (response == null)
 					break;
-				out.writeObject( response );
+				out.writeObject(response);
 			}
 		}
 	}
 
-	public void start()
-	{
-		if ( this.serverThread != null )
+	public void start() {
+		if (this.serverThread != null)
 			return;
-		this.serverThread = new Thread( this );
+		this.serverThread = new Thread(this);
 		this.clientThreads = new ArrayList<ClientThread>();
 		this.serverThread.start();
 	}
 
-	public void stop()
+	public boolean isStarted()
 	{
-		if ( this.serverThread == null )
+		return this.serverSocket!=null && !this.serverSocket.isClosed();
+	}
+	
+	public void stop() {
+		if (this.serverThread == null)
 			return;
 		this.stop = true;
-		try
-		{
+		try {
 			this.serverSocket.close();
+		} catch (IOException e) {
+			Log.e("Server.close", e.getMessage(), e); //$NON-NLS-1$
 		}
-		catch (IOException e)
-		{
-			Log.e( "Server.close", e.getMessage(), e ); //$NON-NLS-1$
-		}
-		try
-		{
+		try {
 			this.serverThread.join();
-		}
-		catch (InterruptedException e)
-		{
+		} catch (InterruptedException e) {
 		}
 		this.serverThread = null;
 		stopClientThreads();
 		return;
 	}
 
-	protected void addClientThread( ClientThread thread )
-	{
-		synchronized (this.clientThreads)
-		{
-			this.clientThreads.add( thread );
+	protected void addClientThread(ClientThread thread) {
+		synchronized (this.clientThreads) {
+			this.clientThreads.add(thread);
 		}
 	}
 
-	protected void removeClientThread( ClientThread thread )
-	{
-		synchronized (this.clientThreads)
-		{
-			this.clientThreads.remove( thread );
+	protected void removeClientThread(ClientThread thread) {
+		synchronized (this.clientThreads) {
+			this.clientThreads.remove(thread);
 		}
 	}
 
-	protected void stopClientThreads()
-	{
+	protected void stopClientThreads() {
 		List<ClientThread> threads;
-		synchronized (this.clientThreads)
-		{
-			threads = Collections.unmodifiableList( this.clientThreads );
+		synchronized (this.clientThreads) {
+			threads = Collections.unmodifiableList(this.clientThreads);
 		}
-		for ( ClientThread thread : threads )
-		{
-			if ( thread.isAlive() )
+		for (ClientThread thread : threads) {
+			if (thread.isAlive())
 				thread.stopThis();
 		}
 	}
 
 	JmDNS jmdns;
 
-	private void startJmDNS() throws IOException
-	{
-		WifiManager wm = (WifiManager)this.context.getSystemService( Context.WIFI_SERVICE );
+	private void startJmDNS() throws IOException {
+		WifiManager wm = (WifiManager) this.context
+				.getSystemService(Context.WIFI_SERVICE);
 
-		@SuppressWarnings ("deprecation")
-		String ip = Formatter.formatIpAddress( wm.getConnectionInfo().getIpAddress() );
-		InetAddress localInetAddress = InetAddress.getByName( ip );
-		this.jmdns = JmDNS.create( localInetAddress );// ,
-
-		ServiceInfo[] services = this.jmdns.list( Constants.JMDNS_TYPE );
-		boolean hasService = false;
-		for ( ServiceInfo service : services )
-		{
-			String address = service.getHostAddresses().length > 0
-					? null
-					: service.getHostAddresses()[ 0 ];
-			Log.i( "service.list", "ip:" + address + ", name:" + service.getName() ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			if ( address != null && address.equals( ip ) )
+		@SuppressWarnings("deprecation")
+		String ip = Formatter.formatIpAddress(wm.getConnectionInfo()
+				.getIpAddress());
+		InetAddress localInetAddress = InetAddress.getByName(ip);
+		this.jmdns = JmDNS.create(localInetAddress);// ,
+		ServiceInfo[] services = this.jmdns.list(Constants.JMDNS_TYPE);
+		boolean hasService = true;
+		for (ServiceInfo service : services) {
+			String address = service.getHostAddresses().length == 0 ? null
+					: service.getHostAddresses()[0];
+			Log.i("service.list", "ip:" + address + ", name:" + service.getName()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			if (address != null && address.equals(ip))
 				hasService = true;
 		}
-		if ( !hasService )
-		{
-			ServiceInfo serviceInfo =
-					ServiceInfo.create( Constants.JMDNS_TYPE, Constants.SERVICE_NAME, Constants.SERVICE_PORT,
-							"unidevel remoter" ); //$NON-NLS-1$
-			this.jmdns.registerService( serviceInfo );
-			Log.i( "service.run", "ip:" + ip + ", service:" + serviceInfo ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if (!hasService) {
+			ServiceInfo serviceInfo = ServiceInfo.create(Constants.JMDNS_TYPE,
+					Constants.SERVICE_NAME, Constants.SERVICE_PORT,
+					"unidevel remoter"); //$NON-NLS-1$
+			this.jmdns.registerService(serviceInfo);
+			Log.i("service.run", "ip:" + ip + ", service:" + serviceInfo); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
 
-	private void stopJmDNS()
-	{
-		if ( this.jmdns != null )
-		{
+	private void stopJmDNS() {
+		if (this.jmdns != null) {
 			this.jmdns.unregisterAllServices();
-			try
-			{
+			try {
 				this.jmdns.close();
-			}
-			catch (IOException e)
-			{
-				Log.e( "stopJmDNS", e.getMessage(), e ); //$NON-NLS-1$
+			} catch (IOException e) {
+				Log.e("stopJmDNS", e.getMessage(), e); //$NON-NLS-1$
 			}
 			this.jmdns = null;
 		}
 	}
-	public void run()
-	{
-		try
-		{
-			startJmDNS();
-		}
-		catch (IOException e)
-		{
-			Log.i( "startJmDNS", e.getMessage(), e ); //$NON-NLS-1$
-		}
-		while ( !this.stop )
-		{
-			try
-			{
-				Socket socket = this.serverSocket.accept();
-				ClientThread thread = new ClientThread( socket );
-				thread.start();
+
+	public void run() {
+//		try {
+//			startJmDNS();
+//		} catch (IOException e) {
+//			Log.i("startJmDNS", e.getMessage(), e); //$NON-NLS-1$
+//		}
+		try {
+			this.serverSocket = new ServerSocket(port);
+			while (!this.stop) {
+				try {
+					Socket socket = this.serverSocket.accept();
+					ClientThread thread = new ClientThread(socket);
+					thread.start();
+				} catch (SocketException ex) {
+					// close outside the thread.
+					break;
+				} catch (IOException ex) {
+					Log.e("Server.run", ex.getMessage(), ex); //$NON-NLS-1$
+				}
 			}
-			catch (SocketException ex)
-			{
-				// close outside the thread.
-				break;
-			}
-			catch (IOException ex)
-			{
-				Log.e( "Server.run", ex.getMessage(), ex ); //$NON-NLS-1$
-			}
+		} catch (IOException ex) {
+			Log.e("ServerSocket", ex.getMessage(), ex); //$NON-NLS-1$
 		}
-		stopJmDNS();
+//		stopJmDNS();
 	}
 }

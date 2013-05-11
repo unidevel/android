@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <string name="app_name">MiBoxHome</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
-
+    <string name="app_name">MiBox App Remoter</string>
+    <string name="author">unidevel</string>
+    <string name="sina_weibo">unidevel</string>
+    <string name="prog_finding_device">Finding device...</string>
+    <string name="prog_uploading">Uploading app to device...</string>
+    <string name="msg_no_device">No device is found!</string>
+    <string name="label_no_device">Click here to search device</string>
+    <string name="title_select_device">Select device</string>
+	<string name="prog_connecting">Connecting device...</string>    
+	<string name="msg_not_connect" formatted="false">Can\'t connect to %s, please install MiBoxServer.apk on MiBox, and reboot MiBox.</string>
+	<string name="menu_uninstall">Uninstall</string>    
+	
 </resources>

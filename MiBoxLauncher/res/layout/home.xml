@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#0099cc"
+    android:gravity="center"
     android:orientation="vertical" >
 
     <!--
@@ -34,12 +35,12 @@
         android:id="@+id/gridview"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:columnWidth="140dp"
         android:gravity="center"
         android:horizontalSpacing="10dp"
-        android:numColumns="auto_fit"
+        android:numColumns="3"
         android:stretchMode="columnWidth"
-        android:layout_weight="1"
         android:verticalSpacing="10dp" />
 
     <!--
@@ -147,4 +148,11 @@
         </TableRow>
     </TableLayout>
 
+    <LinearLayout
+        android:id="@+id/adLayout"
+        android:layout_width="640px"
+        android:layout_height="wrap_content" >
+
+    </LinearLayout>
+    
 </LinearLayout>

@@ -25,6 +25,6 @@
         android:layout_centerHorizontal="true"
         android:minLines="1"
         android:maxLines="1"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
 </com.unidevel.mibox.server.AppItemLayout>

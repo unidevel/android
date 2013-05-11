@@ -25,16 +25,24 @@ public class HomeService extends Service
 	public void onCreate()
 	{
 		super.onCreate();
+		this.server = new MiBoxServer( this, Constants.SERVICE_PORT );
+		
+	}
+	
+	public int onStartCommand(Intent intent, int flags, int startId)
+	{
 		try
 		{
-			this.server = new MiBoxServer( this, Constants.SERVICE_PORT );
-			this.server.start();
+			if (! this.server.isStarted() )
+				this.server.start();
 			Log.i( "Service.start", "service started" ); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		catch (IOException e)
+		catch (Exception e)
 		{
 			Log.e( "HomeService.onCreate", e.getMessage(), e ); //$NON-NLS-1$
 		}
+		
+		return super.onStartCommand(intent, flags, startId);
 	}
 
 	@Override

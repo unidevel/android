@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="server_name">MiBoxServer</string>
+    <string name="server_name">米联应用启动器</string>
     <string name="author">unidevel</string>
     <string name="sina_weibo">unidevel</string>
 

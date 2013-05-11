@@ -13,10 +13,12 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
+
 import javax.jmdns.JmDNS;
 import javax.jmdns.ServiceEvent;
 import javax.jmdns.ServiceInfo;
 import javax.jmdns.ServiceListener;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -24,7 +26,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -42,7 +43,12 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import com.google.ads.AdRequest;
+import com.google.ads.AdSize;
+import com.google.ads.AdView;
 import com.unidevel.mibox.data.BasicAppInfo;
 import com.unidevel.mibox.data.Constants;
 import com.unidevel.mibox.data.GetAppIconResponse;
@@ -333,7 +339,7 @@ public class HomeActivity2 extends Activity implements ServiceListener
 		@Override
 		protected void onPreExecute()
 		{
-			this.dialog = ProgressDialog.show( HomeActivity2.this, "", "Finding" ); //$NON-NLS-1$ //$NON-NLS-2$
+			this.dialog = ProgressDialog.show( HomeActivity2.this, "", getString(R.string.prog_finding_device) ); 
 
 			if ( HomeActivity2.this.socketLock == null )
 			{
@@ -371,19 +377,32 @@ public class HomeActivity2 extends Activity implements ServiceListener
 			super.onPostExecute( result );
 			this.dialog.dismiss();
 			HomeActivity2.this.serviceList.setServices( this.services );
-
 			AlertDialog.Builder builder = new AlertDialog.Builder( HomeActivity2.this );
-			builder.setTitle( "Select device" ); //$NON-NLS-1$
-			builder.setItems( HomeActivity2.this.serviceList.getServiceNames(), new DialogInterface.OnClickListener()
+			if ( this.services == null || this.services.length == 0 )
 			{
-
-				@Override
-				public void onClick( DialogInterface dialog, int which )
+				builder.setMessage(R.string.msg_no_device);
+				builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener(){
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+						devices.setText(getString(R.string.label_no_device));
+					}
+				});
+			}
+			else
+			{
+				builder.setTitle( R.string.title_select_device ); 
+				builder.setItems( HomeActivity2.this.serviceList.getServiceNames(), new DialogInterface.OnClickListener()
 				{
-					connect( which );
-					dialog.dismiss();
-				}
-			} );
+	
+					@Override
+					public void onClick( DialogInterface dialog, int which )
+					{
+						connect( which );
+						dialog.dismiss();
+					}
+				} );
+			}
 			builder.create().show();
 		}
 	}
@@ -448,7 +467,7 @@ public class HomeActivity2 extends Activity implements ServiceListener
 		@Override
 		protected void onPreExecute()
 		{
-			this.dialog = ProgressDialog.show( HomeActivity2.this, "", "Connecting" ); //$NON-NLS-1$ //$NON-NLS-2$
+			this.dialog = ProgressDialog.show( HomeActivity2.this, "", getString(R.string.prog_connecting) ); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		@Override
@@ -458,7 +477,7 @@ public class HomeActivity2 extends Activity implements ServiceListener
 			this.dialog.dismiss();
 			if ( e != null )
 			{
-				Toast.makeText( HomeActivity2.this, "Connect to " + this.host + " failed!", Toast.LENGTH_LONG ).show(); //$NON-NLS-1$ //$NON-NLS-2$
+				Toast.makeText( HomeActivity2.this, getString(R.string.msg_not_connect, this.host), Toast.LENGTH_LONG ).show(); //$NON-NLS-1$ //$NON-NLS-2$
 				Log.e( "Client.connect", e.getMessage(), e ); //$NON-NLS-1$
 			}
 			else
@@ -510,15 +529,13 @@ public class HomeActivity2 extends Activity implements ServiceListener
 
 		int[] buttonIds = new int[] {
 				R.id.btnUp, R.id.btnDown, R.id.btnLeft, R.id.btnRight, R.id.btnBack,
-				// R.id.btnHome,
-				R.id.btnMenu
+				R.id.btnHome, R.id.btnMenu, R.id.btnEnter
 		};
 		int[] keys =
 				new int[] {
 						MiBoxRemoter.KEY_CODE_UP, MiBoxRemoter.KEY_CODE_DOWN, MiBoxRemoter.KEY_CODE_LEFT,
 						MiBoxRemoter.KEY_CODE_RIGHT, MiBoxRemoter.KEY_CODE_BACK,
-						// MiBoxRemoter.KEY_CODE_HOME,
-						MiBoxRemoter.KEY_CODE_MENU
+						MiBoxRemoter.KEY_CODE_HOME, MiBoxRemoter.KEY_CODE_MENU, MiBoxRemoter.KEY_CODE_OK
 				};
 		OnClickListener buttonListener = new OnClickListener()
 		{
@@ -538,7 +555,19 @@ public class HomeActivity2 extends Activity implements ServiceListener
 			button.setTag( key );
 			button.setOnClickListener( buttonListener );
 		}
+		
+		View btnUpload = findViewById(R.id.btnUpload);
+		btnUpload.setOnClickListener(new OnClickListener(){
 
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent( Intent.ACTION_GET_CONTENT );
+				intent.setType( "file/*" ); //$NON-NLS-1$
+				startActivityForResult( intent, GET_PATH );
+			}
+		});
+
+		/*
 		View btnHome = findViewById( R.id.btnHome );
 		btnHome.setOnClickListener( new OnClickListener()
 		{
@@ -550,7 +579,14 @@ public class HomeActivity2 extends Activity implements ServiceListener
 				new StartAppTask().execute( packageName, className );
 			}
 		} );
-
+		*/
+		
+		AdView adView = new AdView( this, AdSize.BANNER, "a1518d142014149" ); //$NON-NLS-1$
+		LinearLayout layout = (LinearLayout)findViewById( R.id.adLayout );
+		layout.addView( adView );
+		AdRequest req = new AdRequest();
+		adView.loadAd( req );
+		
 		showDeviceList();
 	}
 
@@ -561,6 +597,7 @@ public class HomeActivity2 extends Activity implements ServiceListener
 
 	void startMiBoxRemoter()
 	{
+		/*
 		String pkg = "com.duokan.phone.remotecontroller"; //$NON-NLS-1$
 		try
 		{
@@ -580,14 +617,15 @@ public class HomeActivity2 extends Activity implements ServiceListener
 				Log.e( "OpenMarket", ex2.getMessage(), ex2 ); //$NON-NLS-1$
 			}
 		}
+		*/
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu( Menu menu )
 	{
 		super.onCreateOptionsMenu( menu );
-		MenuInflater inflater = new MenuInflater( this );
-		inflater.inflate( R.menu.main_menu, menu );
+//		MenuInflater inflater = new MenuInflater( this );
+//		inflater.inflate( R.menu.main_menu, menu );
 		return true;
 	}
 
@@ -601,7 +639,7 @@ public class HomeActivity2 extends Activity implements ServiceListener
 			inflater.inflate( R.menu.app_menu, menu );
 			AdapterContextMenuInfo info = (AdapterContextMenuInfo)menuInfo;
 			AppInfo app = this.appAdapter.getApp( info.position );
-			menu.setHeaderTitle( app.name );
+			menu.setHeaderTitle( app.label );
 		}
 	}
 
@@ -714,7 +752,7 @@ public class HomeActivity2 extends Activity implements ServiceListener
 		}
 		else
 		{
-			serviceName = ""; //$NON-NLS-1$
+			serviceName = getString(R.string.label_no_device); 
 		}
 		this.devices.setText( serviceName );
 	}
