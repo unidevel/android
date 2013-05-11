@@ -26,6 +26,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -271,7 +272,6 @@ public class HomeActivity2 extends Activity implements ServiceListener
 		protected void onPostExecute( Boolean result )
 		{
 			super.onPostExecute( result );
-			startMiBoxRemoter();
 		}
 	}
 
@@ -302,7 +302,6 @@ public class HomeActivity2 extends Activity implements ServiceListener
 		protected void onPostExecute( Void result )
 		{
 			super.onPostExecute( result );
-			startMiBoxRemoter();
 		}
 	}
 
@@ -428,7 +427,6 @@ public class HomeActivity2 extends Activity implements ServiceListener
 		protected void onPostExecute( Void result )
 		{
 			super.onPostExecute( result );
-			startMiBoxRemoter();
 		}
 	}
 
@@ -566,7 +564,34 @@ public class HomeActivity2 extends Activity implements ServiceListener
 				startActivityForResult( intent, GET_PATH );
 			}
 		});
+		
+		View btnRefresh = findViewById(R.id.btnRefresh);
+		btnRefresh.setOnClickListener(new OnClickListener(){
 
+			@Override
+			public void onClick(View v) {
+				new LoadAppTask().execute();
+			}
+		});
+		
+		View btnRemoter = findViewById(R.id.btnRemomter);
+		btnRemoter.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View v) {
+				startMiBoxRemoter();
+			}
+		});
+
+		View btnClose = findViewById(R.id.btnClose);
+		btnClose.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View v) {
+				HomeActivity2.this.finish();
+			}
+		});
+		
 		/*
 		View btnHome = findViewById( R.id.btnHome );
 		btnHome.setOnClickListener( new OnClickListener()
@@ -597,7 +622,6 @@ public class HomeActivity2 extends Activity implements ServiceListener
 
 	void startMiBoxRemoter()
 	{
-		/*
 		String pkg = "com.duokan.phone.remotecontroller"; //$NON-NLS-1$
 		try
 		{
@@ -617,7 +641,6 @@ public class HomeActivity2 extends Activity implements ServiceListener
 				Log.e( "OpenMarket", ex2.getMessage(), ex2 ); //$NON-NLS-1$
 			}
 		}
-		*/
 	}
 
 	@Override
