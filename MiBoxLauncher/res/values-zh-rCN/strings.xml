@@ -10,7 +10,10 @@
     <string name="label_no_device">点击这里搜索设备</string>
     <string name="title_select_device">选择设备</string>
     <string name="prog_connecting">设备连接中...</string>
-	<string name="msg_not_connect" formatted="false">无法连接 %s,请先在小米盒子上安装 MiBoxServer.apk,然后重启小米盒子.</string>    
- 	<string name="menu_uninstall">卸载应用</string>    
-	
+    <string name="msg_not_connect" formatted="false">无法连接 %s,请先在小米盒子上安装 MiBoxServer.apk,然后重启小米盒子.</string>
+    <string name="menu_uninstall">卸载应用</string>
+    <string name="labelAD">支持的话帮忙点一下下面的广告，多谢啦!</string>
+    <string name="version">版本: 1.7</string>
+    <string name="readme">使用说明：主界面点击启动按钮，启用任意键唤醒，同时按钮文本变为停止，再次点击禁用任意键唤醒，配置界面可以配置启用和禁用的时间，定时启用和禁用</string>
+
 </resources>

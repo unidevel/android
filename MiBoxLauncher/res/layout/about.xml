@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:myapp="http://schemas.android.com/apk/res/com.unidevel.mibox.launcher" 
+  android:layout_width="fill_parent" android:layout_height="fill_parent">
+	<TextView android:id="@+id/labelLink" android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_marginLeft="20dp" android:layout_marginRight="20dp" android:textSize="32dp" android:gravity="center" android:clickable="true" android:text="@string/app_name" android:layout_marginTop="20dp"></TextView>
+  	<TextView android:id="@+id/labelVersion" android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_marginLeft="20dp" android:layout_marginRight="20dp" android:layout_marginTop="10dp" android:textSize="20dp" android:gravity="center" android:text="@string/version" android:layout_below="@+id/labelLink"></TextView>
+  	<TextView android:id="@+id/labelReadme" android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_marginLeft="20dp" android:layout_marginRight="20dp" android:layout_marginTop="10dp" android:layout_below="@+id/labelVersion" android:text="@string/readme" android:textSize="24dp"></TextView>
+  	
+	<TextView android:layout_height="wrap_content" android:id="@+id/labelAD" android:layout_above="@+id/ad" android:textSize="20dp" android:layout_width="fill_parent" android:layout_marginLeft="20dp" android:layout_marginRight="20dp" android:text="@string/labelAD"></TextView>
+</RelativeLayout>

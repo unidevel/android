@@ -42,6 +42,8 @@ public class AppAdapter extends BaseAdapter
 	@Override
 	public int getCount()
 	{
+		if ( this.apps == null ) 
+			return 0;
 		return this.apps.size();
 	}
 
