@@ -34,11 +34,17 @@ import android.text.format.Formatter;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.GestureDetector;
+import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.Animation;
+import android.view.animation.Transformation;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
@@ -70,7 +76,10 @@ public class HomeActivity2 extends Activity implements ServiceListener
 	WifiManager.MulticastLock socketLock;
 	JmDNS jmdns;
 	ServiceList serviceList;
-
+	
+	View homeView;
+	View menuView;
+	
 	class ServiceList
 	{
 		LinkedHashMap<String, ServiceInfo> services = new LinkedHashMap<String, ServiceInfo>();
@@ -485,12 +494,45 @@ public class HomeActivity2 extends Activity implements ServiceListener
 		}
 	}
 
+    private static final int SWIPE_MIN_DISTANCE = 120;
+    private static final int SWIPE_MAX_OFF_PATH = 250;
+    private static final int SWIPE_THRESHOLD_VELOCITY = 200;
+    
+	class MyGestureDetector extends SimpleOnGestureListener {
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            try {
+                if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH)
+                    return false;
+                // right to left swipe
+                if(e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+//                    Toast.makeText(SelectFilterActivity.this, "Left Swipe", Toast.LENGTH_SHORT).show();
+                	showSideMenu(true);
+                }  else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+//                    Toast.makeText(SelectFilterActivity.this, "Right Swipe", Toast.LENGTH_SHORT).show();
+                	showSideMenu(false);
+                }
+            } catch (Exception e) {
+                // nothing
+            }
+            return false;
+        }
+
+    }
+	
+	GestureDetector gestureDetector;
+    View.OnTouchListener gestureListener;
+	
 	@Override
 	protected void onCreate( Bundle savedInstanceState )
 	{
 		super.onCreate( savedInstanceState );
 
-		setContentView( R.layout.home );
+		setContentView( R.layout.main );
+		
+		this.homeView = findViewById(R.id.home_layout);
+		this.menuView = findViewById(R.id.menu_layout);
+		
 		// this.tv = (TextView)findViewById(R.id.trace);
 		this.appView = (GridView)this.findViewById( R.id.gridview );
 		this.appView.setKeepScreenOn( true );
@@ -535,6 +577,15 @@ public class HomeActivity2 extends Activity implements ServiceListener
 						MiBoxRemoter.KEY_CODE_RIGHT, MiBoxRemoter.KEY_CODE_BACK,
 						MiBoxRemoter.KEY_CODE_HOME, MiBoxRemoter.KEY_CODE_MENU, MiBoxRemoter.KEY_CODE_OK
 				};
+
+		
+		gestureDetector = new GestureDetector(this, new MyGestureDetector());
+        gestureListener = new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                return gestureDetector.onTouchEvent(event);
+            }
+        };
+
 		OnClickListener buttonListener = new OnClickListener()
 		{
 
@@ -552,6 +603,7 @@ public class HomeActivity2 extends Activity implements ServiceListener
 			View button = findViewById( buttonId );
 			button.setTag( key );
 			button.setOnClickListener( buttonListener );
+			button.setOnTouchListener(gestureListener);
 		}
 		
 		View btnUpload = findViewById(R.id.btnUpload);
@@ -591,7 +643,17 @@ public class HomeActivity2 extends Activity implements ServiceListener
 				HomeActivity2.this.finish();
 			}
 		});
-		
+
+		View btnMenu = findViewById(R.id.btnMenu);
+		btnMenu.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View v) {
+				showMenu = !showMenu;
+				showSideMenu(showMenu);
+			}
+		});
+
 		/*
 		View btnHome = findViewById( R.id.btnHome );
 		btnHome.setOnClickListener( new OnClickListener()
@@ -612,7 +674,50 @@ public class HomeActivity2 extends Activity implements ServiceListener
 		AdRequest req = new AdRequest();
 		adView.loadAd( req );
 		
+        this.appView.setOnTouchListener(gestureListener);
+		
 		showDeviceList();
+	}
+	
+	class SlideAnimation extends Animation
+	{
+		View viewLeft;
+		View viewRight;
+		int endOffset;
+		boolean expanded;
+		public SlideAnimation(View viewLeft, View viewRight, int endOffset, boolean expanded) {
+			super();
+			this.viewLeft = viewLeft;
+			this.viewRight = viewRight;
+			this.endOffset = endOffset;
+			this.expanded = expanded;
+		}
+
+		@Override
+		protected void applyTransformation(float interpolatedTime,
+				Transformation t) {
+			int newOffset;
+		    if(expanded) {
+		        newOffset = 0;
+		        newOffset = (int)(endOffset*(1-interpolatedTime));
+		    } else {
+		        newOffset = (int)(endOffset*(interpolatedTime));
+		    }
+		    viewLeft.scrollTo(newOffset, 0);
+		    viewRight.scrollTo(newOffset-endOffset, 0);
+		}
+	}
+	
+	boolean showMenu = false;
+	
+	public void showSideMenu(boolean show)
+	{
+		showMenu = show;
+		View view = findViewById(R.id.menu_view);
+		SlideAnimation anim = new SlideAnimation(this.homeView, this.menuView, view.getWidth(), !show);	
+		anim.setDuration(75);
+	    this.menuView.setVisibility(View.VISIBLE);
+	    this.homeView.startAnimation(anim);
 	}
 
 	protected void showDeviceList()
@@ -764,6 +869,18 @@ public class HomeActivity2 extends Activity implements ServiceListener
 		}
 	}
 
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+	    if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+	    	if ( showMenu )
+	    	{
+	    		showSideMenu(false);
+	    		return true;
+	    	}
+	    }
+	    return super.onKeyDown(keyCode, event);
+	}
+	
 	protected void connect( int pos )
 	{
 		ServiceInfo service = this.serviceList.getService( pos );
