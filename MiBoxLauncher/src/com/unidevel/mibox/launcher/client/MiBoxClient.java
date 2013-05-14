@@ -54,6 +54,10 @@ public class MiBoxClient
 		return response;
 	}
 
+	public boolean isConnected(){
+		return socket!=null&&socket.isConnected();
+	}
+	
 	public ListAppResponse listApps() throws IOException, ClassNotFoundException
 	{
 		ListAppRequest request = new ListAppRequest();

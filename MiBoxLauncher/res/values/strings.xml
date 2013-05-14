@@ -11,5 +11,11 @@
 	<string name="prog_connecting">Connecting device...</string>    
 	<string name="msg_not_connect" formatted="false">Can\'t connect to %s, please install MiBoxServer.apk on MiBox, and reboot MiBox.</string>
 	<string name="menu_uninstall">Uninstall</string>    
+	<string name="menu_remoter">Mi Remoter</string>    
+	<string name="menu_home">App List</string>    
+	<string name="menu_refresh">Refresh</string>    
+	<string name="menu_about">About</string>    
+	<string name="label_setting">Settings</string>    
+	<string name="msg_open_wifi">Wifi is not connected, click "Settings" button to enable it.</string>    
 	
 </resources>

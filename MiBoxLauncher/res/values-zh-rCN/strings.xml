@@ -15,5 +15,11 @@
     <string name="labelAD">支持的话帮忙点一下下面的广告，多谢啦!</string>
     <string name="version">版本: 1.7</string>
     <string name="readme">使用说明：主界面点击启动按钮，启用任意键唤醒，同时按钮文本变为停止，再次点击禁用任意键唤醒，配置界面可以配置启用和禁用的时间，定时启用和禁用</string>
-
+	<string name="menu_remoter">小米遥控器</string>    
+	<string name="menu_home">程序列表</string>    
+	<string name="menu_refresh">刷新应用</string>    
+	<string name="menu_about">关于</string>    
+	<string name="label_setting">设置</string>    
+	<string name="msg_open_wifi">Wifi未启用，点击“设置”按钮启用.</string>    
+	
 </resources>

@@ -41,13 +41,13 @@ public class MenuAdapter extends BaseAdapter {
 		this.context = context;
 		items = new ArrayList<MenuAdapter.MenuItem>();
 		MenuItem item;
-		item = new MenuItem(ID_REMOTER, R.drawable.menu_mi, "Remoter");
+		item = new MenuItem(ID_REMOTER, R.drawable.menu_mi, context.getString(R.string.menu_remoter));
 		items.add(item);
-		item = new MenuItem(ID_HOME, R.drawable.tv, "My Home");
+		item = new MenuItem(ID_HOME, android.R.drawable.ic_dialog_dialer, context.getString(R.string.menu_home));
 		items.add(item);
-		item = new MenuItem(ID_REFRESH, android.R.drawable.ic_popup_sync, "Refresh");
+		item = new MenuItem(ID_REFRESH, android.R.drawable.ic_popup_sync, context.getString(R.string.menu_refresh));
 		items.add(item);
-		item = new MenuItem(ID_ABOUT, android.R.drawable.ic_dialog_info, "About");
+		item = new MenuItem(ID_ABOUT, android.R.drawable.ic_dialog_info, context.getString(R.string.menu_about));
 		items.add(item);
 //		item = new MenuItem(ID_PAD, R.drawable.menu_pad, "Pad");
 //		items.add(item);
@@ -76,7 +76,7 @@ public class MenuAdapter extends BaseAdapter {
 	public View getView(int pos, View view, ViewGroup parent) {
 		if ( view == null )
 		{
-			view = this.inflater.inflate( R.layout.app, null );
+			view = this.inflater.inflate( R.layout.item, null );
 		}
 		ImageView icon = (ImageView)view.findViewById( R.id.icon );
 		TextView label = (TextView)view.findViewById( R.id.label );

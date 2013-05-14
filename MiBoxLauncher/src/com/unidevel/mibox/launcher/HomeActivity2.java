@@ -1,68 +1,32 @@
 package com.unidevel.mibox.launcher;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Set;
+import android.app.*;
+import android.content.*;
+import android.graphics.drawable.*;
+import android.net.*;
+import android.net.wifi.*;
+import android.os.*;
+import android.provider.*;
+import android.text.format.*;
+import android.util.*;
+import android.view.*;
+import android.view.ContextMenu.*;
+import android.view.GestureDetector.*;
+import android.view.View.*;
+import android.view.animation.*;
+import android.widget.*;
+import android.widget.AdapterView.*;
+import com.google.ads.*;
+import com.unidevel.mibox.data.*;
+import com.unidevel.mibox.launcher.client.*;
+import com.unidevel.mibox.util.*;
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import javax.jmdns.*;
 
-import javax.jmdns.JmDNS;
-import javax.jmdns.ServiceEvent;
-import javax.jmdns.ServiceInfo;
-import javax.jmdns.ServiceListener;
-
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.net.wifi.WifiManager;
-import android.os.AsyncTask;
-import android.os.Bundle;
 import android.text.format.Formatter;
-import android.util.Log;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.view.GestureDetector;
-import android.view.GestureDetector.SimpleOnGestureListener;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.animation.Animation;
-import android.view.animation.Transformation;
-import android.widget.AdapterView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
-import android.widget.GridView;
-import android.widget.LinearLayout;
-import android.widget.Toast;
-
-import com.google.ads.AdRequest;
-import com.google.ads.AdSize;
-import com.google.ads.AdView;
-import com.unidevel.mibox.data.BasicAppInfo;
-import com.unidevel.mibox.data.Constants;
-import com.unidevel.mibox.data.GetAppIconResponse;
-import com.unidevel.mibox.data.ListAppResponse;
-import com.unidevel.mibox.data.StartAppResponse;
-import com.unidevel.mibox.launcher.client.MiBoxClient;
-import com.unidevel.mibox.launcher.client.MiBoxRemoter;
-import com.unidevel.mibox.util.BitmapUtil;
 
 public class HomeActivity2 extends Activity implements ServiceListener {
 	GridView appView;
@@ -514,15 +478,28 @@ public class HomeActivity2 extends Activity implements ServiceListener {
 					startMiBoxRemoter();
 					break;
 				case MenuAdapter.ID_REFRESH:
-					new LoadAppTask().execute();
+					if(client.isConnected())
+					{
+						new LoadAppTask().execute();
+					}
+					else{
+						showDeviceList();
+					}
 					break;
 				case MenuAdapter.ID_HOME: {
-					String packageName = "com.unidevel.mibox.server"; //$NON-NLS-1$ 
-					String className = "com.unidevel.mibox.server.HomeActivity"; //$NON-NLS-1$ 
-					new StartAppTask().execute(packageName, className);
-				}
+						if(client.isConnected()){
+							String packageName = "com.unidevel.mibox.server"; //$NON-NLS-1$ 
+							String className = "com.unidevel.mibox.server.HomeActivity"; //$NON-NLS-1$ 
+							new StartAppTask().execute(packageName, className);
+						}else{
+							showDeviceList();
+						}
+					}
 					break;
-				case MenuAdapter.ID_ABOUT:
+				case MenuAdapter.ID_ABOUT:{
+					Intent intent=new Intent(HomeActivity2.this, AboutActivity.class);
+					startActivity(intent);
+				}
 
 					break;
 				// case MenuAdapter.ID_SEARCH:
@@ -590,8 +567,13 @@ public class HomeActivity2 extends Activity implements ServiceListener {
 
 			@Override
 			public void onClick(View v) {
-				int code = (Integer) v.getTag();
-				new KeyTask().execute(code);
+				if(!client.isConnected()){
+					showDeviceList();
+				}
+				else{
+					int code = (Integer) v.getTag();
+					new KeyTask().execute(code);
+				}
 			}
 		};
 		for (int i = 0; i < buttonIds.length; ++i) {
@@ -608,12 +590,17 @@ public class HomeActivity2 extends Activity implements ServiceListener {
 
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-				intent.setType("file/*"); //$NON-NLS-1$
-				startActivityForResult(intent, GET_PATH);
+				if(!client.isConnected()){
+					showDeviceList();
+				}
+				else{
+					Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+					intent.setType("file/*"); //$NON-NLS-1$
+					startActivityForResult(intent, GET_PATH);
+				}
 			}
 		});
-
+		/*
 		View btnRefresh = findViewById(R.id.btnRefresh);
 		btnRefresh.setOnClickListener(new OnClickListener() {
 
@@ -640,7 +627,7 @@ public class HomeActivity2 extends Activity implements ServiceListener {
 				HomeActivity2.this.finish();
 			}
 		});
-
+		*/
 		View btnMenu = findViewById(R.id.btnMenu);
 		btnMenu.setOnClickListener(new OnClickListener() {
 
@@ -715,7 +702,34 @@ public class HomeActivity2 extends Activity implements ServiceListener {
 	}
 
 	protected void showDeviceList() {
-		new RefreshDeviceTask().execute();
+		if(isWifiConnected())
+		{
+			new RefreshDeviceTask().execute();
+		}
+		else
+		{
+			showConnectWifiDialog();
+		}
+	}
+	
+	protected void showConnectWifiDialog(){
+		AlertDialog.Builder b=new AlertDialog.Builder(this);
+		b.setMessage(R.string.msg_open_wifi);
+		b.setPositiveButton(R.string.label_setting, new DialogInterface.OnClickListener(){
+				public void onClick(DialogInterface dialog, int p2)
+				{
+					Intent intent = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
+					startActivity(intent);
+					dialog.dismiss();
+				}
+			});
+		b.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener(){
+				public void onClick(DialogInterface dialog, int p2)
+				{
+					dialog.dismiss();
+				}
+			});
+		b.create().show();
 	}
 
 	void startMiBoxRemoter() {
@@ -791,6 +805,19 @@ public class HomeActivity2 extends Activity implements ServiceListener {
 				task.execute(path);
 			}
 		}
+	}
+	
+	public boolean isWifiConnected(){
+		WifiManager wm = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+		if(wm.getWifiState()!=WifiManager.WIFI_STATE_ENABLED){
+			return false;
+		}
+		WifiInfo info=wm.getConnectionInfo();
+		if(info==null||info.getNetworkId()<0||info.getIpAddress()==0){
+			return false;
+		}
+		Log.i("wifi","ip: "+info.getIpAddress()+", netid:"+info.getNetworkId()+", SSID:"+info.getSSID());
+		return true;
 	}
 
 	@SuppressWarnings("deprecation")
