@@ -12,15 +12,21 @@
     <string name="prog_connecting">设备连接中...</string>
     <string name="msg_not_connect" formatted="false">无法连接 %s,请先在小米盒子上安装 MiBoxServer.apk,然后重启小米盒子.</string>
     <string name="menu_uninstall">卸载应用</string>
-    <string name="labelAD">支持的话帮忙点一下下面的广告，多谢啦!</string>
-    <string name="version">版本: 1.7</string>
-    <string name="readme">使用说明：主界面点击启动按钮，启用任意键唤醒，同时按钮文本变为停止，再次点击禁用任意键唤醒，配置界面可以配置启用和禁用的时间，定时启用和禁用</string>
+    <string name="version">版本: 1.1</string>
+    <string name="readme"><![CDATA[
+<b>如有问题，可以采取以下形式获得支持：</b><br/>
+1. 新浪微博 <a href="http://weibo.com/unidevel">@unidevel</a> <br/> 
+2. 小米社区论坛<a href="http://home.xiaomi.cn/home.php?mod=spacecp&ac=pm&op=showmsg&handlekey=showmsg_75765&touid=75765&pmid=0&daterange=4">私信 unidevel</a> </br>
+<br/><br/>
+<b>为了获得最佳体验，本程序主界面完全去除广告，如果您想支持这个程序，可以通过以下方式:</b>
+<br>
+点下最上方的广告 或者 关注新浪微博 <a href="http://weibo.com/unidevel">unidevel</a> 支持一下, 您的一点支持就是我最大的动力!
+    ]]></string>
 	<string name="menu_remoter">小米遥控器</string>    
 	<string name="menu_home">程序列表</string>    
 	<string name="menu_refresh">刷新应用</string>    
 	<string name="menu_about">关于</string>    
 	<string name="label_setting">设置</string>    
 	<string name="msg_open_wifi">Wifi未启用，点击“设置”按钮启用.</string>    
-	<string name="btn_back">返回</string>    
-	
+	<string name="btn_back">返回</string>
 </resources>

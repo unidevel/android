@@ -44,9 +44,8 @@
         android:layout_marginRight="20dp"
         android:layout_marginTop="10dp"
         android:layout_weight="1"
-        android:autoLink="all"
         android:text="@string/readme"
-        android:textSize="24dp" >
+        android:textAppearance="?android:attr/textAppearanceMedium" >
 
     </TextView>
 
