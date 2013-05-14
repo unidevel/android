@@ -166,11 +166,4 @@
                 android:src="@drawable/btn_upload" />
         </TableRow>
     </TableLayout>
-
-    <LinearLayout
-        android:id="@+id/adLayout"
-        android:layout_width="640px"
-        android:layout_height="wrap_content" >
-    </LinearLayout>
-
 </LinearLayout>

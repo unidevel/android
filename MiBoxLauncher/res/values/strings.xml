@@ -17,5 +17,5 @@
 	<string name="menu_about">About</string>    
 	<string name="label_setting">Settings</string>    
 	<string name="msg_open_wifi">Wifi is not connected, click "Settings" button to enable it.</string>    
-	
+	<string name="btn_back">Back</string>    
 </resources>

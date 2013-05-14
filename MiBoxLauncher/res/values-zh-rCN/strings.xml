@@ -21,5 +21,6 @@
 	<string name="menu_about">关于</string>    
 	<string name="label_setting">设置</string>    
 	<string name="msg_open_wifi">Wifi未启用，点击“设置”按钮启用.</string>    
+	<string name="btn_back">返回</string>    
 	
 </resources>

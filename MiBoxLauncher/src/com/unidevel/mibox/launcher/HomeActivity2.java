@@ -1,32 +1,63 @@
 package com.unidevel.mibox.launcher;
 
-import android.app.*;
-import android.content.*;
-import android.graphics.drawable.*;
-import android.net.*;
-import android.net.wifi.*;
-import android.os.*;
-import android.provider.*;
-import android.text.format.*;
-import android.util.*;
-import android.view.*;
-import android.view.ContextMenu.*;
-import android.view.GestureDetector.*;
-import android.view.View.*;
-import android.view.animation.*;
-import android.widget.*;
-import android.widget.AdapterView.*;
-import com.google.ads.*;
-import com.unidevel.mibox.data.*;
-import com.unidevel.mibox.launcher.client.*;
-import com.unidevel.mibox.util.*;
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import javax.jmdns.*;
-
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Set;
+import javax.jmdns.JmDNS;
+import javax.jmdns.ServiceEvent;
+import javax.jmdns.ServiceInfo;
+import javax.jmdns.ServiceListener;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.provider.Settings;
 import android.text.format.Formatter;
+import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.GestureDetector;
+import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.Animation;
+import android.view.animation.Transformation;
+import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
+import android.widget.GridView;
+import android.widget.Toast;
+import com.unidevel.mibox.data.BasicAppInfo;
+import com.unidevel.mibox.data.Constants;
+import com.unidevel.mibox.data.GetAppIconResponse;
+import com.unidevel.mibox.data.ListAppResponse;
+import com.unidevel.mibox.data.StartAppResponse;
+import com.unidevel.mibox.launcher.client.MiBoxClient;
+import com.unidevel.mibox.launcher.client.MiBoxRemoter;
+import com.unidevel.mibox.util.BitmapUtil;
 
 public class HomeActivity2 extends Activity implements ServiceListener {
 	GridView appView;
@@ -647,12 +678,6 @@ public class HomeActivity2 extends Activity implements ServiceListener {
 		 * "com.unidevel.mibox.server.HomeActivity"; //$NON-NLS-1$ new
 		 * StartAppTask().execute( packageName, className ); } } );
 		 */
-
-		AdView adView = new AdView(this, AdSize.BANNER, "a1518d142014149"); //$NON-NLS-1$
-		LinearLayout layout = (LinearLayout) findViewById(R.id.adLayout);
-		layout.addView(adView);
-		AdRequest req = new AdRequest();
-		adView.loadAd(req);
 
 		this.appView.setOnTouchListener(gestureListener);
 
