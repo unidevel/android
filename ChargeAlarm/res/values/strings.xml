@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">ChargeAlarm</string>
+    <string name="widget_name">Analog Clock Widget</string>
+    <string name="info_text">This is a widget, not a regular application. Unlike regular applications, widgets are placed on the home screen.</string>
+    <string name="charge_start">Start charging</string>
+	<string name="charge_stop">Stop charging</string>
+	
+</resources>

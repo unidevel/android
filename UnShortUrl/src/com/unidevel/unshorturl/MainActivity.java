@@ -183,6 +183,8 @@ public class MainActivity extends Activity implements OnItemClickListener, Runna
 				{
 					continue;
 				}
+				url=url.trim();
+				Log.i("URI.create",url);
 				URI uri = URI.create( url );
 				MainActivity.this.realLinks.add( url );
 				this.publishProgress( n );
