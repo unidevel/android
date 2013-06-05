@@ -46,7 +46,7 @@ public class ChargeStatService extends Service
 	public void startStat(){
 		AlarmManager am = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
 		Intent i=new Intent("ChargeStat");
-		pi=PendingIntent.getService(this, 0, i, 0);
+		pi=PendingIntent.getBroadcast(this, 0, i, 0);
 		am.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 1000L, pi);
 	}
 	

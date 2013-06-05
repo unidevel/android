@@ -28,7 +28,16 @@ public class Info extends Activity {
 		});
 		Intent i=new Intent(this, ChargeStatService.class);
 		startService(i);
+		//startStat();
 	}
+	
+	public void startStat(){
+		AlarmManager am = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+		Intent i=new Intent("ChargeStat");
+		PendingIntent pi=PendingIntent.getService(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
+		am.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 1000L, pi);
+	}
+	
 	
 	public void playNotify(Context context){
 		try {

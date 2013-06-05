@@ -30,6 +30,9 @@ public class PowerConnectionReceiver extends BroadcastReceiver
 				playNotify(context);
 			//}
 		}
+		else{
+			context.startService(i);
+		}
 	}
 	
 	public void playNotify(Context context){
