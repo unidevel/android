@@ -1,17 +1,26 @@
 package com.unidevel.chargealarm;
 
-import android.app.*;
-import android.content.*;
-import android.media.*;
-import android.net.*;
-import android.os.*;
-import android.util.*;
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.Service;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.os.BatteryManager;
+import android.os.Handler;
+import android.os.IBinder;
+import android.util.Log;
 
 public class ChargeStatService extends Service
 {
 	NotificationManager nm;
 	PendingIntent pi;
-	
+	Handler handler;
 	public IBinder onBind(Intent i)
 	{
 		return null;
@@ -22,21 +31,13 @@ public class ChargeStatService extends Service
 		// handleCommand(intent);
 		// We want this service to continue running until it is explicitly
 		// stopped, so return sticky.
-		int state=getState();
-		Log.i("onStart",""+state);
-		if(state>=100){
-			playNotify(this);
-			stopStat();
-			stopSelf();
-			return this.START_NOT_STICKY;
-		}
-		
 		return START_STICKY;
 	}
 	
 	@Override
     public void onCreate() {
-        nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+		this.nm = (NotificationManager)getSystemService( NOTIFICATION_SERVICE );
+		this.handler = new Handler();
 
         // Display a notification about us starting.
         showNotification();
@@ -44,12 +45,38 @@ public class ChargeStatService extends Service
     }
 	
 	public void startStat(){
-		AlarmManager am = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-		Intent i=new Intent("ChargeStat");
-		pi=PendingIntent.getBroadcast(this, 0, i, 0);
-		am.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 1000L, pi);
+		// AlarmManager am = (AlarmManager)
+		// this.getSystemService(Context.ALARM_SERVICE);
+		// Intent i=new Intent("ChargeStat");
+		// pi=PendingIntent.getBroadcast(this, 0, i, 0);
+		// am.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),
+		// 1000L, pi);
+		handler.postDelayed( new Runnable()
+		{
+
+			@Override
+			public void run()
+			{
+				doStat();
+			}
+
+		}, 1000L );
 	}
 	
+	public void doStat()
+	{
+		int state = getState();
+		Log.i( "doStat", "" + state );
+		if ( state >= 100 )
+		{
+			playNotify( this );
+			stopStat();
+			stopSelf();
+			return;
+		}
+		startStat();
+	}
+
 	public void stopStat(){
 		AlarmManager am = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
 		am.cancel(pi);
