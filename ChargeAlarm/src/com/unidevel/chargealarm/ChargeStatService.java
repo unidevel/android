@@ -21,6 +21,30 @@ public class ChargeStatService extends Service
 	NotificationManager nm;
 	PendingIntent pi;
 	Handler handler;
+	int fullRepeat=3;
+	long lastFullAlarmTime;
+	long alarmInterval;
+	ChargeCalc c;
+	
+	class ChargeCalc
+	{
+		float startState;
+		long startTime;
+		public ChargeCalc(){
+			this.startState=getState();
+			this.startTime=System.currentTimeMillis();
+		}
+		
+		public int update(){
+			float dc=Math.abs(getState()-startState);
+			long dt=System.currentTimeMillis()-this.startTime;
+			if(dc<0.1f){
+				return 0;
+			}
+			return (int)((float)dt/dc);
+		}
+	}
+	
 	public IBinder onBind(Intent i)
 	{
 		return null;
@@ -38,7 +62,10 @@ public class ChargeStatService extends Service
     public void onCreate() {
 		this.nm = (NotificationManager)getSystemService( NOTIFICATION_SERVICE );
 		this.handler = new Handler();
-
+		this.fullRepeat = 3;
+		this.alarmInterval = 60000;
+		this.lastFullAlarmTime = 0L;
+		this.c=new ChargeCalc();
         // Display a notification about us starting.
         showNotification();
 		startStat();
@@ -65,21 +92,26 @@ public class ChargeStatService extends Service
 	
 	public void doStat()
 	{
-		int state = getState();
+		int state = (int)getState();
 		Log.i( "doStat", "" + state );
-		if ( state >= 100 )
+		int left=c.update();
+		Log.i( "doStat,left", "" + left );
+		if(fullRepeat>0)
 		{
-			playNotify( this );
-			stopStat();
-			stopSelf();
+			if ( state >= 55 )
+			{
+				long now=System.currentTimeMillis();
+				if (now-lastFullAlarmTime>alarmInterval){
+					lastFullAlarmTime=now;
+					playNotify( this );
+				}
+			}
+		}
+		else{
+			stopSelf();		
 			return;
 		}
 		startStat();
-	}
-
-	public void stopStat(){
-		AlarmManager am = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-		am.cancel(pi);
 	}
 
     @Override
@@ -125,14 +157,14 @@ public class ChargeStatService extends Service
 	}
 
 
-	public int getState(){
+	public float getState(){
 		Intent batteryStatus=this.registerReceiver(null,
 												   new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 		int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
 		int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
 
-		float batteryPct = level *100 / (float)scale+0.5f;
-		return (int)batteryPct;
+		float batteryPct = (float)level *100.0f / (float)scale;
+		return batteryPct;
 	}
 	
 }

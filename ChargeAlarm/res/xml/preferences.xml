@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <PreferenceCategory
+		android:title="Notification settings"
+		android:key="cat_notify"
+		>
+		<RingtonePreference android:key="alarm_url" 
+			android:ringtoneType="all"
+			android:showSilent="true"/>
+		<!-- PreferenceCategory
+		android:title="@string/cat_bluetooth"
+		android:key="cat_phone">
+		<CheckBoxPreference android:summaryOn="@string/automatic_on" 
+			android:key="auto_incoming" 
+			android:title="@string/automatic_incoming" 
+			android:summaryOff="@string/automatic_off"
+			android:enabled="true" android:defaultValue="true" />
+
+    <PreferenceCategory android:title="@string/cat_volume" android:key="cat_volume"-->
+
+    </PreferenceCategory>
+	
+    <!-- PreferenceCategory android:key="cat_about">
+	<Preference android:key="keyMoreApp" android:title="@string/keyMoreApp" android:summary="@string/summaryMoreApp"/> 
+	</PreferenceCategory-->
+</PreferenceScreen>
