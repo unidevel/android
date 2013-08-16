@@ -4,31 +4,30 @@ package com.unidvel.grayreference;
 import android.app.Activity;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
 import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.widget.GridView;
+import android.view.View;
+import com.jess.ui.TwoWayGridView;
 
 public class MainActivity extends Activity implements SurfaceHolder.Callback
 {
-	class Card
-	{
-		String name;
-		int level; // 0 - 255
-	}
-	
 	SurfaceView cardView;
 	SurfaceHolder cardHolder;
-	GridView cardList;
+	TwoWayGridView cardList;
 	
 	@Override
 	protected void onCreate( Bundle savedInstanceState )
 	{
 		super.onCreate( savedInstanceState );
 		setContentView( R.layout.main );
-		this.cardList = (GridView)this.findViewById( R.id.gridView );
+		View view = this.findViewById( R.id.gridView );
+		this.cardList = (TwoWayGridView)view;
+		this.cardList.setAdapter( new CardAdapter(this.cardList) );
 		this.cardView = (SurfaceView)this.findViewById( R.id.surfaceView );
 		this.cardHolder = this.cardView.getHolder(); 
 		this.cardHolder.addCallback( this );
@@ -48,24 +47,45 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback
 		this.cardHolder.unlockCanvasAndPost( canvas );
 	}
 	
-	public void drawGrid()
+	public void drawGrid(int block)
 	{
 		Canvas canvas = this.cardHolder.lockCanvas( null );
-		float dx = ((float)canvas.getWidth())/16.0f; 
-		float dy = ((float)canvas.getHeight())/16.0f;
+		float dx = ((float)canvas.getWidth())/(float)block; 
+		float dy = ((float)canvas.getHeight())/(float)block;
 		float x = 0.0f, y = 0.0f;
+		Paint linePaint = new Paint();
+		linePaint.setColor( Color.BLACK );
+		linePaint.setAntiAlias( false );
+		linePaint.setStrokeWidth( 1.0f );
+		linePaint.setStyle( Style.STROKE );
+		linePaint.setPathEffect( new DashPathEffect( new float[]{10,20}, 0 ) );
+
 		Paint paint = new Paint();
-		for ( int i = 0; i < 256; ++ i  ) {
-			int color = (i & 0xFF) | ((i << 8) & 0xFF00) | ((i<< 16)& 0xFF0000) | 0xFF000000;
+		int count = block * block;
+		float dl = 256.0f/(float)count;
+		float level = 0;
+		for ( int i = 0; i < count; ++ i  ) {
+			int l = (int)level;
+			int color = (l & 0xFF) | ((l << 8) & 0xFF00) | ((l<< 16)& 0xFF0000) | 0xFF000000;
+			level += dl;
 			paint.setColor( color );
 			canvas.drawRect( x, y, x+dx, y+dy, paint );
-			if ( (i+1) %16 == 0 ){
+			if ( (i+1) %block == 0 ){
 				x = 0;
 				y += dy;
 			}
 			else {
 				x += dx;
 			}
+		}
+		x = dx; y = dy;
+		float w = canvas.getWidth();
+		float h = canvas.getHeight();
+		for ( int i = 0; i < block-1; ++ i ) 
+		{
+			canvas.drawLine( 0, y, w, y, linePaint );
+			canvas.drawLine( x, 0, x, h, linePaint );
+			x+=dx; y+=dy;
 		}
 		this.cardHolder.unlockCanvasAndPost( canvas );		
 	}
@@ -86,7 +106,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback
 	@Override
 	public void surfaceCreated( SurfaceHolder holder )
 	{
-		this.drawGrid();		
+		this.drawGrid(4);		
 	}
 
 	@Override

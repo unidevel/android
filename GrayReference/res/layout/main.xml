@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,33 +13,27 @@
     <SurfaceView
         android:id="@+id/surfaceView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="100" />
-
-    <HorizontalScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_weight="1"
-        android:scrollbars="none" >
+	/>
+    
+    <com.jess.ui.TwoWayGridView
+        android:id="@+id/gridView"
+        android:layout_width="match_parent"
+        android:layout_height="150dip"
+        android:background="@color/bg_color"
+	    app:cacheColorHint="#E8E8E8"
+	    app:columnWidth="80dp"
+	    app:rowHeight="80dp"
+        app:gravity="center"
+        app:horizontalSpacing="10dip"
+        app:numColumns="auto_fit"
+        app:numRows="1"
+        app:scrollDirectionLandscape="horizontal"
+        app:scrollDirectionPortrait="horizontal"
+        app:stretchMode="spacingWidthUniform"
+        app:verticalSpacing="10dip" >
 
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal" >
-
-            <GridView
-                android:id="@+id/gridView"
-                android:layout_width="1300dp"
-                android:layout_height="132dp"
-                android:layout_weight="1"
-                android:columnWidth="100dip"
-                android:gravity="center"
-                android:horizontalSpacing="10dip"
-                android:numColumns="3"
-                android:verticalSpacing="10dip" >
-
-            </GridView>
-        </LinearLayout>
-    </HorizontalScrollView>
+    </com.jess.ui.TwoWayGridView>
 
 </LinearLayout>
