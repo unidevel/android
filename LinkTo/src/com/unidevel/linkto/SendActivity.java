@@ -32,7 +32,6 @@ public class SendActivity extends Activity
 		{
 //			intent.setType( "text/plain" );
 			intent.setType( "image/*" );
-			intent.putExtra( Intent.EXTRA_STREAM, new byte[0] );
 		}
 		else
 		{
@@ -46,6 +45,9 @@ public class SendActivity extends Activity
 		}
 		intent.putExtra( Intent.EXTRA_SUBJECT, "Share" );
 		intent.putExtra( Intent.EXTRA_TEXT, shareContent );
+		intent.putExtra( "Kdescription", shareContent );
+		
+		intent.putExtra( "Ksnsupload_empty_img", true );
 		intent.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
 		startActivity( Intent.createChooser( intent, getTitle() ) );
 	}
