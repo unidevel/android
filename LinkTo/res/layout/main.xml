@@ -2,12 +2,33 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content" >
-
+    android:layout_height="wrap_content"
+    android:background="#EFEFEF"
+    android:orientation="vertical" >
+    
     <LinearLayout
         android:id="@+id/adLayout"
         android:layout_width="640px"
+        android:layout_gravity="center_horizontal"
         android:layout_height="wrap_content" >
+
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/text_ad"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/text_ad"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#000000" />
+
+    <Button
+        android:id="@+id/btn_share"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:text="@string/btn_share" />
 
 </LinearLayout>

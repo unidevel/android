@@ -21,22 +21,28 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.view.Display;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 import com.google.ads.AdRequest;
 import com.google.ads.AdSize;
 import com.google.ads.AdView;
 
-public class SendActivity extends Activity
+public class SendActivity extends Activity implements OnClickListener
 {
-	boolean showDialog = true;
+	static final String MMPKG = "com.tencent.mm";
+	static final String MMCLS = "com.tencent.mm.ui.tools.ShareToTimeLineUI";
+	boolean showDialog = false;
 	Intent shareIntent;
 	protected void isShowDialog()
 	{
 		Random rand = new Random();
 		rand.setSeed( System.currentTimeMillis() );
 		float f = rand.nextFloat();
-		if ( f < 0.1 ) this.showDialog = true;
-		else this.showDialog = true;
+		if ( f > 0.80f ) this.showDialog = true;
+		else this.showDialog = false;
 	}
 	
 	@Override
@@ -44,6 +50,8 @@ public class SendActivity extends Activity
 	{
 		super.onCreate( savedInstanceState );
 		setContentView( R.layout.main );
+		Button button = (Button)this.findViewById( R.id.btn_share );
+		button.setOnClickListener( this );
 		this.isShowDialog();
 		Intent intent = getIntent();
 		if( intent.getAction() == Intent.ACTION_VIEW ) 
@@ -92,7 +100,7 @@ public class SendActivity extends Activity
 		
 		//intent.putExtra( "Ksnsupload_empty_img", true );
 		intent.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
-		intent.setClassName( "com.tencent.mm", "com.tencent.mm.ui.tools.ShareToTimeLineUI" );
+		intent.setClassName( MMPKG, MMCLS );
 		//startActivity( Intent.createChooser( intent, getTitle() ) );
 		this.shareIntent = intent;
 		if ( !this.showDialog )
@@ -102,7 +110,7 @@ public class SendActivity extends Activity
 				startActivity(intent);
 			}
 			catch(Throwable ex){
-				
+				failedOpenMM();
 			}
 			this.finish();
 		}
@@ -208,5 +216,28 @@ public class SendActivity extends Activity
 	protected void onDestroy()
 	{
 		super.onDestroy();
+	}
+
+	private void failedOpenMM()
+	{
+		Toast.makeText( this, getString(R.string.install_mm), Toast.LENGTH_LONG ).show();
+		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id="+MMPKG));
+		try { 
+			startActivity(intent); 
+		}
+		catch(Throwable ex){}
+	}
+	
+	@Override
+	public void onClick( View v )
+	{
+		try 
+		{
+			this.startActivity( this.shareIntent );
+		}
+		catch(Throwable ex)
+		{
+			failedOpenMM();
+		}
 	}
 }
