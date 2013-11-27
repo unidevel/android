@@ -13,12 +13,22 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import com.jess.ui.TwoWayGridView;
+import com.jess.ui.TwoWayGridView.OnItemClickListener;
+import android.widget.*;
+import com.jess.ui.*;
 
-public class MainActivity extends Activity implements SurfaceHolder.Callback
+public class MainActivity extends Activity implements SurfaceHolder.Callback,OnItemClickListener
 {
+
+	public void onItemClick(TwoWayAdapterView<?> parent, View view, int position, long id)
+	{
+		// TODO: Implement this method
+	}
+	
 	SurfaceView cardView;
 	SurfaceHolder cardHolder;
 	TwoWayGridView cardList;
+	CardAdapter adapter;
 	
 	@Override
 	protected void onCreate( Bundle savedInstanceState )
@@ -27,7 +37,9 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback
 		setContentView( R.layout.main );
 		View view = this.findViewById( R.id.gridView );
 		this.cardList = (TwoWayGridView)view;
-		this.cardList.setAdapter( new CardAdapter(this.cardList) );
+		this.adapter = new CardAdapter(this.cardList);
+		this.cardList.setAdapter( this.adapter );
+		this.cardList.setOnItemClickListener(this);
 		this.cardView = (SurfaceView)this.findViewById( R.id.surfaceView );
 		this.cardHolder = this.cardView.getHolder(); 
 		this.cardHolder.addCallback( this );

@@ -1,13 +1,11 @@
 package com.unidevel.btbot;
 
-import android.bluetooth.BluetoothAdapter;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-import android.telephony.TelephonyManager;
-import android.util.Log;
+import android.bluetooth.*;
+import android.content.*;
+import android.media.*;
+import android.preference.*;
+import android.telephony.*;
+import android.util.*;
 
 public class BTBotReceiver extends BroadcastReceiver {
 	@Override
@@ -47,4 +45,11 @@ public class BTBotReceiver extends BroadcastReceiver {
 			btAdapter.disable();
 		}
 	}	
+	
+	private void saveVolume(String key, Context ctx){
+		final AudioManager manager = (AudioManager)ctx.getSystemService(Context.AUDIO_SERVICE);
+		int vol=manager.getStreamVolume(AudioManager.STREAM_VOICE_CALL);
+		SharedPreferences pref=PreferenceManager.getDefaultSharedPreferences(ctx);
+		pref.edit().putInt(key, vol).commit();
+	}
 }

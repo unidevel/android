@@ -1,15 +1,16 @@
 
 package com.unidevel.linkto;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import android.app.Activity;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Rect;
-import android.net.Uri;
-import android.os.Bundle;
+import android.app.*;
+import android.content.*;
+import android.graphics.*;
+import android.graphics.drawable.*;
+import android.net.*;
+import android.os.*;
+import android.util.*;
+import android.view.*;
+import java.io.*;
+import java.util.*;
 
 public class SendActivity extends Activity
 {
@@ -18,13 +19,19 @@ public class SendActivity extends Activity
 	{
 		super.onCreate( savedInstanceState );
 		Intent intent = getIntent();
+		String p="/sdcard/DCIM/1.jpg";
 		if( intent.getAction() == Intent.ACTION_VIEW ) 
 		{
 			Uri uri = intent.getData();
 			share(uri.toString(), null);
 		}
+		else if( intent.getAction() == Intent.ACTION_SEND ) 
+		{
+			String text=intent.getStringExtra(Intent.EXTRA_TEXT);
+			share(text, null);
+		}
 	}
-	
+		
 	public void share( String shareContent, String imgPath )
 	{
 		Intent intent = new Intent( Intent.ACTION_SEND );
@@ -32,6 +39,10 @@ public class SendActivity extends Activity
 		{
 //			intent.setType( "text/plain" );
 			intent.setType( "image/*" );
+			File f=createBitmap(shareContent);
+			Uri u = Uri.fromFile(f);
+			intent.putExtra( Intent.EXTRA_STREAM, f);
+			f.deleteOnExit();
 		}
 		else
 		{
@@ -47,35 +58,62 @@ public class SendActivity extends Activity
 		intent.putExtra( Intent.EXTRA_TEXT, shareContent );
 		intent.putExtra( "Kdescription", shareContent );
 		
-		intent.putExtra( "Ksnsupload_empty_img", true );
+		//intent.putExtra( "Ksnsupload_empty_img", true );
 		intent.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
 		startActivity( Intent.createChooser( intent, getTitle() ) );
 	}
 
-	private static byte[] getBitmapBytes( Bitmap bitmap, boolean paramBoolean )
+	private File createBitmap( String text )
 	{
-		int w = bitmap.getWidth();
-		int h = bitmap.getHeight();
-		Bitmap localBitmap = Bitmap.createBitmap( w, h, Bitmap.Config.RGB_565 );
-		Canvas localCanvas = new Canvas( localBitmap );
+		Display display = getWindowManager().getDefaultDisplay();
+		Point size = new Point();
+		display.getSize(size);
+		DisplayMetrics metrics = getResources().getDisplayMetrics();
+		int maxW = (int)((float)size.x/metrics.scaledDensity);
+		
+		Paint p=new Paint();
+		p.setTextSize(16);
+		p.setSubpixelText(true);
+		p.setTypeface(Typeface.create(Typeface.SERIF, Typeface.NORMAL));
+		
+		List<String> l=new ArrayList<String>();
+		int p1=0;
+		int p2=text.length();
+		int h=0;
+		do{
+			int n = p.breakText(text, p1,p2,true,maxW,null);
+			if (n>0){
+				String s=text.substring(p1,p1+n);
+				l.add(s);
+				p1+=n;
+				h+=16+2;
+			}
+			else break;
+		}while(p1<p2);
+		
+		Bitmap localBitmap = Bitmap.createBitmap( maxW, h, Bitmap.Config.RGB_565 );
+		Canvas c = new Canvas( localBitmap );
 		{
-			localCanvas.drawBitmap( bitmap, new Rect( 0, 0, w, h ), new Rect( 0, 0, w, h ), null );
-			if ( paramBoolean )
-				bitmap.recycle();
-			ByteArrayOutputStream localByteArrayOutputStream = new ByteArrayOutputStream();
-			localBitmap.compress( Bitmap.CompressFormat.JPEG, 100, localByteArrayOutputStream );
-			localBitmap.recycle();
-			byte[] arrayOfByte = localByteArrayOutputStream.toByteArray();
+			float y=0;
+			for(String s:l){
+				c.drawText(s,0,y,p);
+				y+=18;
+			}
+			File d = getDir( "tmp", Context.MODE_WORLD_READABLE | Context.MODE_WORLD_WRITEABLE ); //$NON-NLS-1$
+			
+			File f=new File(d,""+System.currentTimeMillis()+".jpg");
 			try
 			{
-				localByteArrayOutputStream.close();
-				return arrayOfByte;
+				FileOutputStream os = new FileOutputStream(f);
+				localBitmap.compress( Bitmap.CompressFormat.JPEG, 100, os);
+				localBitmap.recycle();
+				os.close();
 			}
 			catch (Exception e)
 			{
 				e.printStackTrace();
 			}
-			return null;
+			return f;
 		}
 	}
 
