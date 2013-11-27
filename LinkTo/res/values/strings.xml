@@ -3,7 +3,7 @@
 
     <string name="app_name">朋友圈文本分享</string>
     <string name="send_name">分享文本到朋友圈</string>
-    <string name="app_logo">来自 &quot;朋友圈分享&quot;</string>
+    <string name="app_logo">来自应用 &quot;朋友圈文本分享&quot;</string>
     <string name="btn_share">继续分享</string>
     <string name="text_ad">点击上面广告，支持一下！\n或点击下方按钮继续分享操作！</string>
     <string name="install_mm">微信未安装或非最新版，请安装或者更新！</string>

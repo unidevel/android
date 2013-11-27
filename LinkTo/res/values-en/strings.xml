@@ -3,7 +3,7 @@
 
     <string name="app_name">Moments Text Share</string>
     <string name="send_name">Share text on Moments</string>
-    <string name="app_logo">Shared by app &quot;Moments Share&quot;</string>
+    <string name="app_logo">Shared by app &quot;Moments Text Share&quot;</string>
     <string name="btn_share">Continue sharing</string>
     <string name="text_ad">Click Ad above to support!\n Or click button below to continue sharing!</string>
     <string name="install_mm">WeChat not installed or not latest version, install or update it!</string>
