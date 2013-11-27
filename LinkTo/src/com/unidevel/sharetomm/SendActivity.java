@@ -1,70 +1,109 @@
 
 package com.unidevel.sharetomm;
 
-import android.app.*;
-import android.content.*;
-import android.graphics.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Paint.Align;
-import android.graphics.drawable.*;
-import android.net.*;
-import android.os.*;
-import android.util.*;
-import android.view.*;
-import java.io.*;
-import java.util.*;
+import android.graphics.Point;
+import android.graphics.Typeface;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Environment;
+import android.util.DisplayMetrics;
+import android.view.Display;
+import android.widget.LinearLayout;
+import com.google.ads.AdRequest;
+import com.google.ads.AdSize;
+import com.google.ads.AdView;
 
 public class SendActivity extends Activity
 {
+	boolean showDialog = true;
+	protected void isShowDialog()
+	{
+		Random rand = new Random();
+		rand.setSeed( System.currentTimeMillis() );
+		float f = rand.nextFloat();
+		if ( f < 0.1 ) this.showDialog = true;
+		else this.showDialog = true;
+	}
+	
 	@Override
 	protected void onCreate( Bundle savedInstanceState )
 	{
 		super.onCreate( savedInstanceState );
+		setContentView( R.layout.main );
+		this.isShowDialog();
 		Intent intent = getIntent();
-		String p="/sdcard/DCIM/1.jpg";
 		if( intent.getAction() == Intent.ACTION_VIEW ) 
 		{
 			Uri uri = intent.getData();
-			share(uri.toString(), null);
+			if ( uri != null )
+			{
+				share(uri.toString(), intent.getStringExtra( Intent.EXTRA_SUBJECT ));
+			}
 		}
 		else if( intent.getAction() == Intent.ACTION_SEND ) 
 		{
 			String text=intent.getStringExtra(Intent.EXTRA_TEXT);
-			share(text, null);
+			share(text, intent.getStringExtra( Intent.EXTRA_SUBJECT ));
+		}
+		if ( this.showDialog )
+		{
+			AdView adView = new AdView( this, AdSize.BANNER, "a15295781f962ce" ); //$NON-NLS-1$
+			LinearLayout layout = (LinearLayout)findViewById( R.id.adLayout );
+			layout.addView( adView );
+			AdRequest req = new AdRequest();
+			adView.loadAd( req );
 		}
 	}
 		
-	public void share( String shareContent, String imgPath )
+	public void share( String shareContent, String subject )
 	{
 		Intent intent = new Intent( Intent.ACTION_SEND );
-		if ( imgPath == null || imgPath.equals( "" ) )
+		intent.setType( "image/*" );
+		String shareText = shareContent;
+		if ( subject != null )
 		{
-//			intent.setType( "text/plain" );
-			intent.setType( "image/*" );
-			File f=createBitmap(shareContent);
-			Uri u = Uri.fromFile(f);
-			intent.putExtra( Intent.EXTRA_STREAM, u);
-			f.deleteOnExit();
-		}
-		else
-		{
-			File f = new File( imgPath );
-			if ( f != null && f.exists() && f.isFile() )
+			if (! shareContent.contains( subject ) )
 			{
-				intent.setType( "image/*" );
-				Uri u = Uri.fromFile( f );
-				intent.putExtra( Intent.EXTRA_STREAM, u );
+				shareText = subject +"\n"+shareContent;
 			}
 		}
-		intent.putExtra( Intent.EXTRA_SUBJECT, "Share" );
-		intent.putExtra( Intent.EXTRA_TEXT, shareContent );
-		intent.putExtra( "Kdescription", shareContent );
+
+		File f=createBitmap(shareText);
+		Uri u = Uri.fromFile(f);
+		intent.putExtra( Intent.EXTRA_STREAM, u);
+		f.deleteOnExit();
+		
+		intent.putExtra( Intent.EXTRA_TEXT, shareText );
+		intent.putExtra( "Kdescription", shareText );
 		
 		//intent.putExtra( "Ksnsupload_empty_img", true );
 		intent.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
 		intent.setClassName( "com.tencent.mm", "com.tencent.mm.ui.tools.ShareToTimeLineUI" );
 		//startActivity( Intent.createChooser( intent, getTitle() ) );
-		startActivity(intent);
-		this.finish();
+		if ( !this.showDialog )
+		{
+			try
+			{
+				startActivity(intent);
+			}
+			catch(Throwable ex){
+				
+			}
+			this.finish();
+		}
 	}
 
 	private File getPictureDir()
@@ -79,12 +118,21 @@ public class SendActivity extends Activity
 		return d;
 	}
 	
+	@SuppressLint ("NewApi")
 	private File createBitmap( String text )
 	{
 		text += "\n\n"+getString(R.string.app_logo);
 		Display display = getWindowManager().getDefaultDisplay();
 		Point size = new Point();
-		display.getSize(size);
+		if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2 )
+		{
+			display.getSize(size);
+		}
+		else
+		{
+			size.x = display.getWidth();
+			size.y = display.getHeight();
+		}
 		DisplayMetrics metrics = getResources().getDisplayMetrics();
 		int maxW = (int)((float)size.x/metrics.scaledDensity);
 		float fontSize = 16;
