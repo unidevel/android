@@ -1,9 +1,10 @@
 
-package com.unidevel.linkto;
+package com.unidevel.sharetomm;
 
 import android.app.*;
 import android.content.*;
 import android.graphics.*;
+import android.graphics.Paint.Align;
 import android.graphics.drawable.*;
 import android.net.*;
 import android.os.*;
@@ -41,7 +42,7 @@ public class SendActivity extends Activity
 			intent.setType( "image/*" );
 			File f=createBitmap(shareContent);
 			Uri u = Uri.fromFile(f);
-			intent.putExtra( Intent.EXTRA_STREAM, f);
+			intent.putExtra( Intent.EXTRA_STREAM, u);
 			f.deleteOnExit();
 		}
 		else
@@ -60,48 +61,78 @@ public class SendActivity extends Activity
 		
 		//intent.putExtra( "Ksnsupload_empty_img", true );
 		intent.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
-		startActivity( Intent.createChooser( intent, getTitle() ) );
+		intent.setClassName( "com.tencent.mm", "com.tencent.mm.ui.tools.ShareToTimeLineUI" );
+		//startActivity( Intent.createChooser( intent, getTitle() ) );
+		startActivity(intent);
+		this.finish();
 	}
 
+	private File getPictureDir()
+	{
+		File d = new File(Environment.getExternalStorageDirectory(), "ShareToMM");
+		d.mkdirs();
+		File[] files = d.listFiles();
+		for (File f: files)
+		{
+			f.delete();
+		}
+		return d;
+	}
+	
 	private File createBitmap( String text )
 	{
+		text += "\n\n"+getString(R.string.app_logo);
 		Display display = getWindowManager().getDefaultDisplay();
 		Point size = new Point();
 		display.getSize(size);
 		DisplayMetrics metrics = getResources().getDisplayMetrics();
 		int maxW = (int)((float)size.x/metrics.scaledDensity);
-		
+		float fontSize = 16;
 		Paint p=new Paint();
-		p.setTextSize(16);
+		p.setTextSize(fontSize);
 		p.setSubpixelText(true);
-		p.setTypeface(Typeface.create(Typeface.SERIF, Typeface.NORMAL));
+		p.setTextAlign( Align.LEFT );
+		p.setAntiAlias( true );
+		Typeface tf = Typeface.defaultFromStyle( Typeface.NORMAL );
+		p.setTypeface(tf);
 		
 		List<String> l=new ArrayList<String>();
 		int p1=0;
 		int p2=text.length();
-		int h=0;
+		int h=2;
 		do{
 			int n = p.breakText(text, p1,p2,true,maxW,null);
 			if (n>0){
 				String s=text.substring(p1,p1+n);
-				l.add(s);
-				p1+=n;
-				h+=16+2;
+				int p3 = s.indexOf( '\n' );
+				if ( p3 >= 0 )
+				{
+					s=s.substring(0,p3); 
+					l.add(s);
+					p1 += p3+1;
+				}
+				else
+				{
+					l.add(s);
+					p1+=n;
+				}
+				h+=fontSize+2;
 			}
 			else break;
 		}while(p1<p2);
-		
+
 		Bitmap localBitmap = Bitmap.createBitmap( maxW, h, Bitmap.Config.RGB_565 );
 		Canvas c = new Canvas( localBitmap );
 		{
-			float y=0;
+			c.drawColor( 0xFFFFFFFF );
+			float y=fontSize;
 			for(String s:l){
 				c.drawText(s,0,y,p);
-				y+=18;
+				y+=fontSize+2;
 			}
-			File d = getDir( "tmp", Context.MODE_WORLD_READABLE | Context.MODE_WORLD_WRITEABLE ); //$NON-NLS-1$
-			
+			File d = this.getPictureDir();
 			File f=new File(d,""+System.currentTimeMillis()+".jpg");
+			f.getParentFile().mkdirs();
 			try
 			{
 				FileOutputStream os = new FileOutputStream(f);

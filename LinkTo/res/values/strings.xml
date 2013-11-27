@@ -7,5 +7,6 @@
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>
     <string name="send_name">Share to MM</string>
+    <string name="app_logo">Shared by app &quot;ShareToMM&quot;</string>
 
 </resources>
