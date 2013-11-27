@@ -29,6 +29,7 @@ import com.google.ads.AdView;
 public class SendActivity extends Activity
 {
 	boolean showDialog = true;
+	Intent shareIntent;
 	protected void isShowDialog()
 	{
 		Random rand = new Random();
@@ -93,6 +94,7 @@ public class SendActivity extends Activity
 		intent.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
 		intent.setClassName( "com.tencent.mm", "com.tencent.mm.ui.tools.ShareToTimeLineUI" );
 		//startActivity( Intent.createChooser( intent, getTitle() ) );
+		this.shareIntent = intent;
 		if ( !this.showDialog )
 		{
 			try
