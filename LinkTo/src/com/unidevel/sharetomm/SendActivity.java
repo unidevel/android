@@ -131,7 +131,7 @@ public class SendActivity extends Activity
 		else
 		{
 			size.x = display.getWidth();
-			size.y = display.getHeight();
+			size.y = display.getHeight(); 
 		}
 		DisplayMetrics metrics = getResources().getDisplayMetrics();
 		int maxW = (int)((float)size.x/metrics.scaledDensity);
