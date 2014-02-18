@@ -37,11 +37,11 @@
         android:content="@+id/content"
         android:handle="@+id/handle" >
 
-        <Button
+        <ImageButton
             android:id="@+id/handle"
             android:layout_width="60px"
             android:layout_height="20px"
-            android:background="@drawable/arrow_up" />
+            android:src="@drawable/arrow_up" />
 
         <LinearLayout
             android:id="@+id/content"
@@ -71,6 +71,7 @@
                 android:orientation="vertical" >
 
                 <ToggleButton
+                    android:id="@+id/showCode"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Code" />

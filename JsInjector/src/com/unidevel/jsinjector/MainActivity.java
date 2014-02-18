@@ -80,7 +80,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener {
 		if (uri != null) {
 			openUrl(uri.toString());
 		}
-		ToggleButton code= (ToggleButton) this.findViewById(R.id.code);
+		ToggleButton code= (ToggleButton) this.findViewById(R.id.showCode);
 		code.setOnCheckedChangeListener(this);
 	}
 	
