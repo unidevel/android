@@ -1,23 +1,39 @@
 package com.unidevel.jsinjector;
 
-import android.app.*;
-import android.content.*;
-import android.database.*;
-import android.net.*;
-import android.os.*;
-import android.provider.*;
-import android.util.*;
-import android.view.*;
-import android.webkit.*;
-import java.io.*;
-import android.widget.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import android.app.Activity;
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
+import android.opengl.Visibility;
+import android.os.Bundle;
+import android.os.Handler;
+import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.View;
+import android.webkit.JsResult;
+import android.webkit.WebChromeClient;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.ToggleButton;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements OnCheckedChangeListener {
 	WebView view;
 	Handler handler;
 	JavaScriptLibrary jsLib;
 	Console console;
-
+	EditText codeView;
+	TextView consoleView;
+	EditText urlView;
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -25,7 +41,9 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.main);
 		this.handler = new Handler();
 		this.jsLib = new JavaScriptLibrary(this);
-		TextView consoleView=(TextView) this.findViewById(R.id.console);
+		this.consoleView=(TextView) this.findViewById(R.id.console);
+		this.codeView = (EditText)this.findViewById( R.id.code );
+		this.urlView = (EditText) this.findViewById(R.id.url);
 		this.console = new Console(consoleView);
 		view = (WebView)this.findViewById(R.id.web);//new WebView(this);
 		view.getSettings().setJavaScriptEnabled(true);
@@ -57,15 +75,19 @@ public class MainActivity extends Activity {
 		view.addJavascriptInterface(this.console, "console");
 		view.loadDataWithBaseURL(base, getHtmlData("www/index.html", null),
 				"text/html", null, null);
-		EditText url= (EditText) this.findViewById(R.id.url);
-	//	url.addTextChangedListener(this);
+		//url.addTextChangedListener(this);
 		Uri uri = getIntent().getData();
 		if (uri != null) {
-			view.loadUrl(uri.toString());
-			url.setText(uri.toString());
+			openUrl(uri.toString());
 		}
 		ToggleButton code= (ToggleButton) this.findViewById(R.id.code);
-	//	code.setOnCheckedChangeListener(this);
+		code.setOnCheckedChangeListener(this);
+	}
+	
+	public void openUrl(String url)
+	{
+		this.view.loadUrl(url);
+		this.urlView.setText(url);
 	}
 	
 	@Override
@@ -175,5 +197,20 @@ public class MainActivity extends Activity {
 			return true;
 		}
 		return super.onKeyDown(keyCode, event);
+	}
+
+	@Override
+	public void onCheckedChanged( CompoundButton button, boolean checked )
+	{
+		if ( checked )
+		{
+			this.codeView.setVisibility( View.VISIBLE );
+			this.consoleView.setVisibility( View.GONE );
+		}
+		else
+		{
+			this.codeView.setVisibility( View.GONE );
+			this.consoleView.setVisibility( View.VISIBLE );
+		}
 	}
 }

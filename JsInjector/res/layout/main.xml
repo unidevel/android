@@ -1,85 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="fill_parent"
-	android:layout_height="fill_parent"
-	android:orientation="vertical">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
 
-	<LinearLayout
-		android:layout_height="wrap_content"
-		android:layout_width="match_parent"
-		android:orientation="horizontal">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
 
-		<EditText
-			android:layout_height="wrap_content"
-			android:inputType="textPostalAddress"
-			android:ems="10"
-			android:layout_width="match_parent"
-			android:id="@+id/url"/>
+        <EditText
+            android:id="@+id/url"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPostalAddress" />
+    </LinearLayout>
 
-	</LinearLayout>
+    <LinearLayout
+        android:id="@+id/webContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="10"
+        android:orientation="vertical" >
 
-	<LinearLayout
-		android:layout_height="wrap_content"
-		android:layout_width="match_parent"
-		android:orientation="vertical"
-		android:layout_weight="10"
-		android:id="@+id/webContainer">
+        <WebView
+            android:id="@+id/web"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
 
-		<WebView
-			android:layout_height="match_parent"
-			android:layout_width="match_parent"
-			android:id="@+id/web"/>
+    <SlidingDrawer
+        android:id="@+id/codeSection"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:content="@+id/content"
+        android:handle="@+id/handle" >
 
-	</LinearLayout>
+        <Button
+            android:id="@+id/handle"
+            android:layout_width="60px"
+            android:layout_height="20px"
+            android:background="@drawable/arrow_up" />
 
-	<LinearLayout
-		android:layout_height="200dp"
-		android:layout_width="match_parent"
-		android:orientation="horizontal">
+        <LinearLayout
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal" >
 
-		<TextView
-			android:layout_height="match_parent"
-			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:layout_width="wrap_content"
-			android:layout_weight="10"
-			android:id="@+id/console"/>
+            <TextView
+                android:id="@+id/console"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="10"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
 
-		<EditText
-			android:layout_height="match_parent"
-			android:inputType="textMultiLine"
-			android:ems="10"
-			android:layout_width="wrap_content"
-			android:layout_weight="10"
-			android:id="@+id/code"
-			android:visibility="gone"/>
+            <EditText
+                android:id="@+id/code"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="10"
+                android:ems="10"
+                android:inputType="textMultiLine"
+                android:visibility="gone" />
 
-		<LinearLayout
-			android:layout_height="match_parent"
-			android:layout_width="wrap_content"
-			android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical" >
 
-			<ImageButton
-				android:layout_height="wrap_content"
-				android:layout_width="wrap_content"
-				android:src="@android:drawable/ic_menu_close_clear_cancel"
-				android:id="@+id/closeBtn"/>
+                <ToggleButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Code" />
 
-			<ToggleButton
-				android:layout_height="wrap_content"
-				android:layout_width="wrap_content"
-				android:text="Code"/>
-
-			<Button
-				android:layout_height="wrap_content"
-				style="?android:attr/buttonStyleSmall"
-				android:text="&gt;"
-				android:layout_width="wrap_content"
-				android:id="@+id/run"/>
-
-		</LinearLayout>
-
-	</LinearLayout>
+                <Button
+                    android:id="@+id/run"
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=">" />
+            </LinearLayout>
+        </LinearLayout>
+    </SlidingDrawer>
 
 </LinearLayout>
-
