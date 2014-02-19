@@ -14,11 +14,26 @@ public class Console
 			@Override
 			public void run()
 			{
-				Console.this.view.setText(msg);
+				Console.this.view.append(msg+"\n");
 			}
 
 			
 		};
 		this.view.post(r);
+	}
+	
+	public void clear(){
+		Runnable r= new Runnable(){
+
+			@Override
+			public void run()
+			{
+				Console.this.view.setText("");
+			}
+
+
+		};
+		this.view.post(r);
+		
 	}
 }

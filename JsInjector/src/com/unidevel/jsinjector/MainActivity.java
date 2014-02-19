@@ -25,8 +25,19 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.ToggleButton;
+import android.preference.*;
+import android.content.*;
 
-public class MainActivity extends Activity implements OnCheckedChangeListener {
+public class MainActivity extends Activity implements OnCheckedChangeListener,View.OnClickListener
+{
+
+	@Override
+	public void onClick(View p1)
+	{
+		String js=this.codeView.getText().toString();
+		this.callJS(js);
+	}
+
 	WebView view;
 	Handler handler;
 	JavaScriptLibrary jsLib;
@@ -34,6 +45,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener {
 	EditText codeView;
 	TextView consoleView;
 	EditText urlView;
+	View runBtn;
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -44,6 +56,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener {
 		this.consoleView=(TextView) this.findViewById(R.id.console);
 		this.codeView = (EditText)this.findViewById( R.id.code );
 		this.urlView = (EditText) this.findViewById(R.id.url);
+		this.runBtn =this.findViewById(R.id.run);
 		this.console = new Console(consoleView);
 		view = (WebView)this.findViewById(R.id.web);//new WebView(this);
 		view.getSettings().setJavaScriptEnabled(true);
@@ -82,6 +95,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener {
 		}
 		ToggleButton code= (ToggleButton) this.findViewById(R.id.showCode);
 		code.setOnCheckedChangeListener(this);
+		this.runBtn.setOnClickListener(this);
 	}
 	
 	public void openUrl(String url)
@@ -98,6 +112,9 @@ public class MainActivity extends Activity implements OnCheckedChangeListener {
 			callJS(callback+"()");
 		}
 		super.onPause();
+		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+		String code= this.codeView.getText().toString();
+		sp.edit().putString("code",code).commit();
 	}
 	
 	@Override
@@ -108,6 +125,10 @@ public class MainActivity extends Activity implements OnCheckedChangeListener {
 			callJS(callback+"()");
 		}
 		super.onResume();
+		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+		
+		String code = sp.getString("code","");
+		this.codeView.setText(code);
 	}
 
 	public String getHtmlData(String assetPath, String encoding) {
