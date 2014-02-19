@@ -5,11 +5,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
-import android.opengl.Visibility;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -23,12 +24,14 @@ import android.webkit.WebViewClient;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.SlidingDrawer;
+import android.widget.SlidingDrawer.OnDrawerCloseListener;
+import android.widget.SlidingDrawer.OnDrawerOpenListener;
 import android.widget.TextView;
 import android.widget.ToggleButton;
-import android.preference.*;
-import android.content.*;
 
-public class MainActivity extends Activity implements OnCheckedChangeListener,View.OnClickListener
+public class MainActivity extends Activity implements OnCheckedChangeListener,View.OnClickListener, OnDrawerOpenListener, OnDrawerCloseListener
 {
 
 	@Override
@@ -46,6 +49,11 @@ public class MainActivity extends Activity implements OnCheckedChangeListener,Vi
 	TextView consoleView;
 	EditText urlView;
 	View runBtn;
+	ImageButton handleBtn;
+	SlidingDrawer codeSection;
+	View webContainer;
+	boolean urlChanged = false;
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -56,8 +64,13 @@ public class MainActivity extends Activity implements OnCheckedChangeListener,Vi
 		this.consoleView=(TextView) this.findViewById(R.id.console);
 		this.codeView = (EditText)this.findViewById( R.id.code );
 		this.urlView = (EditText) this.findViewById(R.id.url);
-		this.runBtn =this.findViewById(R.id.run);
+		this.runBtn = this.findViewById(R.id.run);
+		this.handleBtn = (ImageButton)this.findViewById( R.id.handle );
 		this.console = new Console(consoleView);
+		this.webContainer = this.findViewById( R.id.webContainer );
+		this.codeSection = (SlidingDrawer)this.findViewById( R.id.codeSection );
+		this.codeSection.setOnDrawerOpenListener( this );
+		this.codeSection.setOnDrawerCloseListener( this );
 		view = (WebView)this.findViewById(R.id.web);//new WebView(this);
 		view.getSettings().setJavaScriptEnabled(true);
 		view.getSettings().setAllowFileAccess(true);
@@ -96,12 +109,43 @@ public class MainActivity extends Activity implements OnCheckedChangeListener,Vi
 		ToggleButton code= (ToggleButton) this.findViewById(R.id.showCode);
 		code.setOnCheckedChangeListener(this);
 		this.runBtn.setOnClickListener(this);
+		this.urlView.addTextChangedListener( new TextWatcher()
+		{
+			
+			@Override
+			public void onTextChanged( CharSequence s, int start, int before, int count )
+			{
+				urlChanged = true;
+			}
+			
+			@Override
+			public void beforeTextChanged( CharSequence s, int start, int count, int after )
+			{
+			}
+			
+			@Override
+			public void afterTextChanged( Editable s )
+			{
+			}
+		} );
+		this.urlView.setOnFocusChangeListener( new View.OnFocusChangeListener()
+		{
+			@Override
+			public void onFocusChange( View v, boolean hasFocus )
+			{
+				if ( !hasFocus && urlChanged )
+				{
+					openUrl( urlView.getText().toString() );
+				}
+			}
+		} );
 	}
 	
 	public void openUrl(String url)
 	{
 		this.view.loadUrl(url);
 		this.urlView.setText(url);
+		this.urlChanged = false;
 	}
 	
 	@Override
@@ -113,8 +157,9 @@ public class MainActivity extends Activity implements OnCheckedChangeListener,Vi
 		}
 		super.onPause();
 		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-		String code= this.codeView.getText().toString();
-		sp.edit().putString("code",code).commit();
+		String code = this.codeView.getText().toString();
+		String url = this.urlView.getText().toString();
+		sp.edit().putString("code",code).putString( "url", url ).commit();
 	}
 	
 	@Override
@@ -128,7 +173,13 @@ public class MainActivity extends Activity implements OnCheckedChangeListener,Vi
 		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
 		
 		String code = sp.getString("code","");
+		String url = sp.getString( "url", "" );
 		this.codeView.setText(code);
+		String currentUrl = this.urlView.getText().toString();
+		if ( !url.equals( currentUrl ) )
+		{
+			//this.openUrl( currentUrl );
+		}
 	}
 
 	public String getHtmlData(String assetPath, String encoding) {
@@ -233,5 +284,17 @@ public class MainActivity extends Activity implements OnCheckedChangeListener,Vi
 			this.codeView.setVisibility( View.GONE );
 			this.consoleView.setVisibility( View.VISIBLE );
 		}
+	}
+
+	@Override
+	public void onDrawerClosed()
+	{
+		this.handleBtn.setImageResource( android.R.drawable.arrow_up_float );
+	}
+
+	@Override
+	public void onDrawerOpened()
+	{
+		this.handleBtn.setImageResource( android.R.drawable.arrow_down_float );
 	}
 }
