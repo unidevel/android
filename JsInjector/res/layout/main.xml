@@ -80,22 +80,8 @@
                         android:layout_height="fill_parent" >
 
                         <LinearLayout
-                            android:id="@+id/consoleContainer"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:orientation="vertical" >
-
-                            <TextView
-                                android:id="@+id/console"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_weight="10"
-                                android:textAppearance="?android:attr/textAppearanceSmall" />
-                        </LinearLayout>
-
-                        <LinearLayout
                             android:id="@+id/codeContainer"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:orientation="vertical" >
 
@@ -105,28 +91,29 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text=">" />
+
                             <EditText
                                 android:id="@+id/code"
-                                android:layout_width="wrap_content"
+                                android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_weight="10"
                                 android:ems="10"
                                 android:gravity="top|left"
-                                android:inputType="textMultiLine"
-                                android:visibility="gone" />
+                                android:inputType="textMultiLine" />
                         </LinearLayout>
 
                         <LinearLayout
-                            android:layout_width="wrap_content"
+                            android:id="@+id/consoleContainer"
+                            android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:orientation="vertical" >
 
-                            <ToggleButton
-                                android:id="@+id/showCode"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Code" />
-
+                            <TextView
+                                android:id="@+id/console"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="10"
+                                android:textAppearance="?android:attr/textAppearanceSmall" />
                         </LinearLayout>
                     </FrameLayout>
                 </LinearLayout>

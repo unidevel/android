@@ -79,7 +79,8 @@ public class MainActivity extends Activity implements OnCheckedChangeListener,Vi
 		this.localActMgr.dispatchCreate(savedInstanceState);
 
 		this.tabHost.setup(this.localActMgr);	
-
+		this.setupTabs();
+		
 		view = (WebView)this.findViewById(R.id.web);//new WebView(this);
 		view.getSettings().setJavaScriptEnabled(true);
 		view.getSettings().setAllowFileAccess(true);
@@ -115,8 +116,8 @@ public class MainActivity extends Activity implements OnCheckedChangeListener,Vi
 		if (uri != null) {
 			openUrl(uri.toString());
 		}
-		ToggleButton code= (ToggleButton) this.findViewById(R.id.showCode);
-		code.setOnCheckedChangeListener(this);
+		//ToggleButton code= (ToggleButton) this.findViewById(R.id.showCode);
+		//code.setOnCheckedChangeListener(this);
 		this.runBtn.setOnClickListener(this);
 		this.urlView.addTextChangedListener( new TextWatcher()
 		{
@@ -153,8 +154,8 @@ public class MainActivity extends Activity implements OnCheckedChangeListener,Vi
 	public void setupTabs()
 	{
 		tabHost.setup();  
-        tabHost.addTab(tabHost.newTabSpec("tab1").setIndicator("Console").setContent(R.id.consoleContainer));  
-        tabHost.addTab(tabHost.newTabSpec("tab2").setIndicator("Code").setContent(R.id.codeContainer));  
+        tabHost.addTab(tabHost.newTabSpec("tab1").setIndicator("Code").setContent(R.id.codeContainer));  
+        tabHost.addTab(tabHost.newTabSpec("tab2").setIndicator("Console").setContent(R.id.consoleContainer));  
 	}
 	
 	public void openUrl(String url)
@@ -162,6 +163,8 @@ public class MainActivity extends Activity implements OnCheckedChangeListener,Vi
 		this.view.loadUrl(url);
 		this.urlView.setText(url);
 		this.urlChanged = false;
+		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+		sp.edit().putString( "url", url ).commit();
 	}
 	
 	@Override
@@ -175,8 +178,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener,Vi
 		super.onPause();
 		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
 		String code = this.codeView.getText().toString();
-		String url = this.urlView.getText().toString();
-		sp.edit().putString("code",code).putString( "url", url ).commit();
+		sp.edit().putString("code",code).commit();
 	}
 	
 	@Override
