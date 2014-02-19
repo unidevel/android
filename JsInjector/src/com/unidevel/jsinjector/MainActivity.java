@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import android.app.Activity;
+import android.app.LocalActivityManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -28,6 +29,7 @@ import android.widget.ImageButton;
 import android.widget.SlidingDrawer;
 import android.widget.SlidingDrawer.OnDrawerCloseListener;
 import android.widget.SlidingDrawer.OnDrawerOpenListener;
+import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -52,8 +54,9 @@ public class MainActivity extends Activity implements OnCheckedChangeListener,Vi
 	ImageButton handleBtn;
 	SlidingDrawer codeSection;
 	View webContainer;
+	LocalActivityManager localActMgr;
 	boolean urlChanged = false;
-
+	TabHost tabHost; 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -71,6 +74,12 @@ public class MainActivity extends Activity implements OnCheckedChangeListener,Vi
 		this.codeSection = (SlidingDrawer)this.findViewById( R.id.codeSection );
 		this.codeSection.setOnDrawerOpenListener( this );
 		this.codeSection.setOnDrawerCloseListener( this );
+		this.tabHost = (TabHost)this.findViewById( R.id.tabhost );
+		this.localActMgr = new LocalActivityManager(MainActivity.this, false);
+		this.localActMgr.dispatchCreate(savedInstanceState);
+
+		this.tabHost.setup(this.localActMgr);	
+
 		view = (WebView)this.findViewById(R.id.web);//new WebView(this);
 		view.getSettings().setJavaScriptEnabled(true);
 		view.getSettings().setAllowFileAccess(true);
@@ -141,6 +150,13 @@ public class MainActivity extends Activity implements OnCheckedChangeListener,Vi
 		} );
 	}
 	
+	public void setupTabs()
+	{
+		tabHost.setup();  
+        tabHost.addTab(tabHost.newTabSpec("tab1").setIndicator("Console").setContent(R.id.consoleContainer));  
+        tabHost.addTab(tabHost.newTabSpec("tab2").setIndicator("Code").setContent(R.id.codeContainer));  
+	}
+	
 	public void openUrl(String url)
 	{
 		this.view.loadUrl(url);
@@ -150,6 +166,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener,Vi
 	
 	@Override
 	protected void onPause() {
+		this.localActMgr.dispatchPause( isFinishing() );
 		String callback = this.jsLib.getEventCallback("pause");
 		if  ( callback != null )
 		{
@@ -164,6 +181,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener,Vi
 	
 	@Override
 	protected void onResume() {
+		this.localActMgr.dispatchResume();
 		String callback = this.jsLib.getEventCallback("resume");
 		if  ( callback != null )
 		{
