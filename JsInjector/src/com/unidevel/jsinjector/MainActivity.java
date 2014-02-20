@@ -46,9 +46,11 @@ public class MainActivity extends Activity implements OnCheckedChangeListener,Vi
 	WebView view;
 	Handler handler;
 	JavaScriptLibrary jsLib;
-	Console console;
+	Console consoleObject;
+	Source sourceObject;
 	EditText codeView;
 	TextView consoleView;
+	EditText sourceView;
 	EditText urlView;
 	View runBtn;
 	ImageButton handleBtn;
@@ -66,10 +68,12 @@ public class MainActivity extends Activity implements OnCheckedChangeListener,Vi
 		this.jsLib = new JavaScriptLibrary(this);
 		this.consoleView=(TextView) this.findViewById(R.id.console);
 		this.codeView = (EditText)this.findViewById( R.id.code );
+		this.sourceView = (EditText)this.findViewById( R.id.source );
 		this.urlView = (EditText) this.findViewById(R.id.url);
 		this.runBtn = this.findViewById(R.id.run);
 		this.handleBtn = (ImageButton)this.findViewById( R.id.handle );
-		this.console = new Console(consoleView);
+		this.consoleObject = new Console(this.consoleView);
+		this.sourceObject = new Source(this.sourceView);
 		this.webContainer = this.findViewById( R.id.webContainer );
 		this.codeSection = (SlidingDrawer)this.findViewById( R.id.codeSection );
 		this.codeSection.setOnDrawerOpenListener( this );
@@ -99,6 +103,13 @@ public class MainActivity extends Activity implements OnCheckedChangeListener,Vi
 					return true;
 				}
 			}
+			
+			@Override
+			public void onPageFinished( WebView view, String url )
+			{
+				super.onPageFinished( view, url );
+				callJS("__sourceView.set(document.documentElement.innerHTML);");
+			}
 		});
 		WebChromeClient client = new WebChromeClient() {
 			public boolean onJsAlert(WebView view, String url, String message,
@@ -108,7 +119,8 @@ public class MainActivity extends Activity implements OnCheckedChangeListener,Vi
 		};
 		view.setWebChromeClient(client);
 		view.addJavascriptInterface(this.jsLib, "unidevel");
-		view.addJavascriptInterface(this.console, "console");
+		view.addJavascriptInterface(this.consoleObject, "console");
+		view.addJavascriptInterface(this.sourceObject, "__sourceView");
 		view.loadDataWithBaseURL(base, getHtmlData("www/index.html", null),
 				"text/html", null, null);
 		//url.addTextChangedListener(this);
@@ -155,11 +167,25 @@ public class MainActivity extends Activity implements OnCheckedChangeListener,Vi
 	{
 		tabHost.setup();  
         tabHost.addTab(tabHost.newTabSpec("tab1").setIndicator("Code").setContent(R.id.codeContainer));  
-        tabHost.addTab(tabHost.newTabSpec("tab2").setIndicator("Console").setContent(R.id.consoleContainer));  
+        tabHost.addTab(tabHost.newTabSpec("tab2").setIndicator("Console").setContent(R.id.consoleContainer));
+        tabHost.addTab(tabHost.newTabSpec("tab2").setIndicator("Source").setContent(R.id.sourceContainer));
 	}
 	
 	public void openUrl(String url)
 	{
+		if ( url == null )
+			return;
+		if ( !url.startsWith( "about:" ) && !url.startsWith( "http:" ) && !url.startsWith( "https:" ) && !url.startsWith( "ftp:" ) )
+		{
+			if ( !url.startsWith( "/" ) )
+			{
+				url = "http://"+url;
+			}
+			else
+			{
+				url = "http:/"+url;
+			}
+		}
 		this.view.loadUrl(url);
 		this.urlView.setText(url);
 		this.urlChanged = false;
