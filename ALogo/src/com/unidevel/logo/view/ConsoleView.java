@@ -15,6 +15,7 @@ import com.unidevel.logo.model.ALogoContext;
 import com.unidevel.logo.model.Pen;
 import com.unidevel.logo.model.Turtle;
 import com.unidevel.logo.model.ALogoContext.OnUpdateListener;
+import android.util.*;
 
 public class ConsoleView extends View {
 	Turtle turtle;
@@ -51,7 +52,8 @@ public class ConsoleView extends View {
 		try {
 			logoVM.eval(ctx, script);
 		} catch (Throwable e) {
-			Toast.makeText(getContext(), e.getMessage(), 3);
+			Log.e("LogoVM", "eval failed!", e);
+			//Toast.makeText(getContext(), e.getMessage(), 3);
 		}
 		ConsoleView.this.postInvalidate();
 	}
