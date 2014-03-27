@@ -19,7 +19,6 @@ package com.unidevel.whereareyou;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -38,8 +37,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
-
-import com.ibm.bluelist.R;
 import com.ibm.mobile.services.data.IBMDataException;
 import com.ibm.mobile.services.data.IBMDataObject;
 import com.ibm.mobile.services.data.IBMObjectResult;
