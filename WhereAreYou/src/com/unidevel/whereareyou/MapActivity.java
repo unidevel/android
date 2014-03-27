@@ -16,6 +16,6 @@ public class MapActivity extends Activity
 		setContentView( R.layout.map);
 		this.mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
 		this.mMap.getUiSettings().setCompassEnabled( true );
-		this.mMap.getUiSettings().setMyLocationButtonEnabled( true );
+		this.mMap.setMyLocationEnabled( true );
 	}
 }
