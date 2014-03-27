@@ -54,6 +54,9 @@
             android:label="@string/title_activity_edit" >
         </activity>
         <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyAMKq81huQX-TuqOmKZ_27-6HQVkxrHTQQ"/>
+		<meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
     </application>
 
 </manifest>
