@@ -1,0 +1,9 @@
+<resources>
+    <color name="white">#FFFFFF</color>
+    <color name="actionBarBackground">#457EB1</color>
+    <color name="actionBarBorder">#255F95</color>
+    <color name="list_text_color">#5b5b5b</color>
+    <color name="background">#E4F3F5</color>
+    <color name="done_button_background">#398355</color>
+    <color name="divider_color">#959595</color>
+</resources>

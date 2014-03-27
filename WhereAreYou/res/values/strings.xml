@@ -1,0 +1,10 @@
+<resources>
+
+    <string name="app_name">BlueList</string>
+    <string name="item_to_buy">What do you want to buy?</string>
+    <string name="title_activity_edit">Edit Item</string>
+    <string name="done">Done</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_delete">Delete</string>
+    <string name="title_text">GROCERY LIST</string>
+</resources>
