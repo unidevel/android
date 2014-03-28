@@ -1,0 +1,48 @@
+package com.unidevel.whereareyou;
+
+import com.ibm.mobile.services.data.IBMDataObject;
+import com.ibm.mobile.services.data.IBMDataObjectSpecialization;
+
+@IBMDataObjectSpecialization("User")
+public class User extends IBMDataObject
+{
+
+	public static final String CLASS_NAME = "Item";
+	private static final String USERID = "userid";
+	private static final String USERNAME = "username";
+	private static final String PASSWORD = "password";
+	
+	public String getUserId() {
+		return (String) getObject(USERID);
+	}
+
+	public void setUserId(String userId) {
+		setObject(USERID, (userId != null) ? userId : "");
+	}
+
+	public String getUserName()
+	{
+		return (String) getObject(USERNAME);
+	}
+	
+	public void setUserName(String userName) {
+		setObject(USERID, (userName != null) ? userName : "");
+	}
+	
+	public String getPassword()
+	{
+		return (String) getObject(PASSWORD);
+	}
+	
+	public void setPassword(String password)
+	{
+		setObject(USERID, (password != null) ? password : "");
+	}
+	
+	public String toString() {
+		String theId = "";
+		theId = getUserId();
+		return theId;
+	}
+
+}
