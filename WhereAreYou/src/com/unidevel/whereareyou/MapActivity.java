@@ -1,24 +1,48 @@
 package com.unidevel.whereareyou;
 
-import android.app.Activity;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.SeekBar;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.*;
-import java.text.*;
-import android.util.*;
-import java.util.*;
-import com.unidevel.util.*;
-import com.unidevel.*;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.unidevel.BaseActivity;
+
 
 public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClickListener, GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener
 {
 
 	@Override
-	public void onInfoWindowClick(Marker m)
+	public void onInfoWindowClick(final Marker m)
 	{
-		//alert("hello");
-		
+		AlertDialog.Builder builder = new AlertDialog.Builder( this );
+		LayoutInflater inflater = LayoutInflater.from( this );
+		View view = inflater.inflate( R.layout.marker, null, false );
+		final EditText titleText = (EditText)view.findViewById(R.id.title);
+		final SeekBar rangeBar = (SeekBar)view.findViewById( R.id.radius );
+		builder.setView( view );
+		builder.setPositiveButton( android.R.string.ok, new  DialogInterface.OnClickListener() {
+			@Override
+			public void onClick( DialogInterface dialog, int which )
+			{
+				String title = titleText.getText().toString();
+				int radius = rangeBar.getProgress();
+			}
+		} );
+		AlertDialog dialog = builder.create();
+		dialog.show();
 	}
 
 
