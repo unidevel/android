@@ -40,6 +40,14 @@ public class Position extends IBMDataObject
 		setObject(LNG, (lng != null) ? lng : "");
 	}
 	
+	public double getOffset(){
+		return (Double) getObject("offset");
+	}
+	
+	public void setOffset(double offset){
+		setObject("offset", offset);
+	}
+	
 	public String getTime()
 	{
 		return (String) getObject(TIME);
