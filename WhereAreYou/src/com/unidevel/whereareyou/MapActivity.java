@@ -17,7 +17,8 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 	@Override
 	public void onInfoWindowClick(Marker m)
 	{
-		alert("hello");
+		//alert("hello");
+		
 	}
 
 
