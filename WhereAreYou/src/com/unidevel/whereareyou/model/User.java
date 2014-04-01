@@ -1,4 +1,4 @@
-package com.unidevel.whereareyou;
+package com.unidevel.whereareyou.model;
 
 import com.ibm.mobile.services.data.IBMDataObject;
 import com.ibm.mobile.services.data.IBMDataObjectSpecialization;
@@ -8,8 +8,8 @@ public class User extends IBMDataObject
 {
 
 	public static final String CLASS_NAME = "Item";
-	private static final String USERNAME = "username";
-	private static final String PASSWORD = "password";
+	public static final String USERNAME = "username";
+	public static final String PASSWORD = "password";
 	
 	public String getUserName()
 	{

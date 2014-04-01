@@ -1,4 +1,4 @@
-package com.unidevel.whereareyou;
+package com.unidevel.whereareyou.model;
 
 import com.ibm.mobile.services.data.IBMDataObject;
 import com.ibm.mobile.services.data.IBMDataObjectSpecialization;

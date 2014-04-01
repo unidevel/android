@@ -30,13 +30,14 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import com.ibm.mobile.services.data.IBMDataException;
 import com.ibm.mobile.services.data.IBMObjectResult;
+import com.unidevel.whereareyou.model.User;
 
 public class EditActivity extends Activity {
 
 	String originalItem;
 	int location;
 	BlueListApplication blApplication;
-	List<Item> itemList;
+	List<User> userList;
 	public static final String CLASS_NAME="EditActivity";
 	
 	@Override
@@ -51,7 +52,7 @@ public class EditActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		/*get application context, item list*/
 		blApplication = (BlueListApplication) getApplicationContext();
-		itemList = blApplication.getItemList();
+		userList = blApplication.getUserList();
 		setContentView(R.layout.activity_edit);
 		
 		/*information required to edit item*/
@@ -79,10 +80,10 @@ public class EditActivity extends Activity {
 	 * @param View v
 	 */
 	public void finishedEdit(View v) {
-		Item item = itemList.get(location);
+		User user = userList.get(location);
 		EditText itemToEdit = (EditText) findViewById(R.id.itemToEdit);
 		String text = itemToEdit.getText().toString();
-		item.setName(text);
+		user.setUserName(text);
 		/**
 		 * IBMObjectResult is used to handle the response from the server after 
 		 * either creating or saving an object.
@@ -90,8 +91,8 @@ public class EditActivity extends Activity {
 		 * onResult is called if the object was successfully saved
 		 * onError is called if an error occurred saving the object 
 		 */
-		item.saveInBackground(new IBMObjectResult<Item>() {
-			public void onResult(Item object) {
+		user.saveInBackground(new IBMObjectResult<User>() {
+			public void onResult(User object) {
 				if (!isFinishing()) {
 					runOnUiThread(new Runnable() {
 						public void run() {

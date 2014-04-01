@@ -17,18 +17,19 @@ package com.unidevel.whereareyou;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
 import android.util.Log;
-
 import com.ibm.mobile.services.core.IBMBaaS;
+import com.unidevel.whereareyou.model.Position;
+import com.unidevel.whereareyou.model.User;
 
 public final class BlueListApplication extends Application {
 	public static final int EDIT_ACTIVITY_RC = 1;
 	private static final String CLASS_NAME = BlueListApplication.class.getSimpleName();
-	List<Item> itemList;
+	User currentUser;
+	List<User> userList;
 
 	public BlueListApplication() {
 		registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
@@ -68,15 +69,23 @@ public final class BlueListApplication extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		itemList = new ArrayList<Item>();
-	    Item.registerSpecialization(Item.class);
+		this.userList = new ArrayList<User>();
+		this.currentUser = new User();
+	    User.registerSpecialization(User.class);
+	    Position.registerSpecialization( Position.class );
 	}
 	
-	/**
-	 * returns the itemList, an array of Item objects.
-	 * @return itemList
-	 */
-	public List<Item> getItemList() {
-		return itemList;
+	public User getCurrentUser() {
+		return this.currentUser;
+	}
+	
+	public void setCurrentUser( User currentUser )
+	{
+		this.currentUser = currentUser;
+	}
+	
+	public List<User> getUserList()
+	{
+		return this.userList;
 	}
 }
