@@ -19,19 +19,29 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.unidevel.BaseActivity;
+import java.util.*;
+import com.unidevel.*;
 
 
 public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClickListener, GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener
 {
+	Map<String, MarkerInfo> mi;
 
 	@Override
 	public void onInfoWindowClick(final Marker m)
 	{
+		String id = m.getId();
+		MarkerInfo i = mi.get(id);
+		if (i==null) return;
+		
 		AlertDialog.Builder builder = new AlertDialog.Builder( this );
 		LayoutInflater inflater = LayoutInflater.from( this );
 		View view = inflater.inflate( R.layout.marker, null, false );
 		final EditText titleText = (EditText)view.findViewById(R.id.title);
+		titleText.setText(i.title);
+		
 		final SeekBar rangeBar = (SeekBar)view.findViewById( R.id.radius );
+		rangeBar.setProgress((int)(i.radius*100.0));
 		builder.setView( view );
 		builder.setPositiveButton( android.R.string.ok, new  DialogInterface.OnClickListener() {
 			@Override
@@ -39,6 +49,7 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 			{
 				String title = titleText.getText().toString();
 				int radius = rangeBar.getProgress();
+				dialog.dismiss();
 			}
 		} );
 		AlertDialog dialog = builder.create();
@@ -68,7 +79,18 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 					   .title("Hello world")
 					   .flat(true).draggable(true));
 		this.markers.add(m);
+		MarkerInfo i=new MarkerInfo();
+		i.title = "Position";
+		i.id = m.getId();
+		i.lat = p.latitude;
+		i.lng = p.longitude;
+		i.radius = this.getDefaultRadius();
+		mi.put(i.id,i);
 		//m.showInfoWindow();
+	}
+	
+	protected double getDefaultRadius(){
+		return .5;
 	}
 
 	private GoogleMap mMap;
@@ -86,6 +108,7 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 		this.mMap.setOnMapLongClickListener(this);
 		//this.mMap.setOnMarkerClickListener(this);
 		this.mMap.setOnInfoWindowClickListener(this);
+		mi = new HashMap<String,MarkerInfo>();
 	}
 	
 	public double CalculationByDistance(LatLng StartP, LatLng EndP) {
