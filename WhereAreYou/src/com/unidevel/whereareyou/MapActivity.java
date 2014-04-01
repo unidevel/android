@@ -1,10 +1,12 @@
 package com.unidevel.whereareyou;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,19 +21,17 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.unidevel.BaseActivity;
-import java.util.*;
-import com.unidevel.*;
 
 
 public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClickListener, GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener
 {
-	Map<String, MarkerInfo> mi;
+	Map<String, MarkerInfo> markers;
 
 	@Override
 	public void onInfoWindowClick(final Marker m)
 	{
 		String id = m.getId();
-		MarkerInfo i = mi.get(id);
+		MarkerInfo i = markers.get(id);
 		if (i==null) return;
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder( this );
@@ -65,7 +65,8 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 	}
 
 	List<Circle> circles;
-	List<Marker> markers;
+	Intent serviceIntent = new Intent("LOCATE_SERVICE");
+
 	@Override
 	public void onMapLongClick(LatLng p)
 	{
@@ -78,14 +79,14 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 					   .position(p)
 					   .title("Hello world")
 					   .flat(true).draggable(true));
-		this.markers.add(m);
 		MarkerInfo i=new MarkerInfo();
 		i.title = "Position";
 		i.id = m.getId();
 		i.lat = p.latitude;
 		i.lng = p.longitude;
 		i.radius = this.getDefaultRadius();
-		mi.put(i.id,i);
+		i.marker = m;
+		markers.put(i.id,i);
 		//m.showInfoWindow();
 	}
 	
@@ -100,15 +101,21 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 	{
 		super.onCreate( savedInstanceState );
 		setContentView( R.layout.map);
-		
-		this.markers = new ArrayList<Marker>();
+		this.markers = new HashMap<String,MarkerInfo>();
 		this.mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
 		this.mMap.getUiSettings().setCompassEnabled( true );
 		this.mMap.setMyLocationEnabled( true );
 		this.mMap.setOnMapLongClickListener(this);
 		//this.mMap.setOnMarkerClickListener(this);
 		this.mMap.setOnInfoWindowClickListener(this);
-		mi = new HashMap<String,MarkerInfo>();
+		this.startService( serviceIntent );
+	}
+	
+	@Override
+	protected void onDestroy()
+	{
+		super.onDestroy();
+		this.stopService( serviceIntent );
 	}
 	
 	public double CalculationByDistance(LatLng StartP, LatLng EndP) {

@@ -1,5 +1,7 @@
 package com.unidevel.whereareyou;
 
+import com.google.android.gms.maps.model.Marker;
+
 public class MarkerInfo
 {
 	public String id;
@@ -8,4 +10,5 @@ public class MarkerInfo
 	public double radius;
 	public String title;
 	public String extra;
+	public Marker marker;
 }
