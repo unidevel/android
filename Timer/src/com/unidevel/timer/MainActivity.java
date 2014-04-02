@@ -79,6 +79,7 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener
     	this.alarmUri = pref.getString( "alarm", null );
     	this.alarmEndUri = pref.getString( "alarm_end", null );
     	this.alarmWarnUri = pref.getString( "alarm_warn", null );
+    	updateTimeDisplay();
     }
     
     private void updateUI()
@@ -97,17 +98,16 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener
    		}
    		this.cardView.setBackgroundColor( Color.BLACK );
    	}
-        
+    
     private void updateTime()
     {
     	handler.post( new Runnable(){
     		@Override
     		public void run()
     		{
-    			 int seconds =(int) (time/1000.0);
-    			 int left = alarmEndTime - seconds;
     			 int color = Color.BLACK;
-    			 
+    			 int seconds =(int) (time/1000.0);
+
     			 if ( seconds >= alarmEndTime )
     			 {
     				 if ( !alarmEndPlayed )
@@ -126,7 +126,19 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener
     					 alarmWarnPlayed = true;
     				 }
         			 blink = !blink;
-					 color = Color.YELLOW;
+					 //color = Color.YELLOW;
+        			 int delta = seconds - alarmWarnTime;
+        			 int totalDelta = alarmEndTime - alarmWarnTime;
+        			 if ( totalDelta == 0  || delta == 0)
+        			 {
+        				 color = Color.YELLOW;
+        			 }
+        			 else
+        			 {
+        				 color = 0xFFFF0000;
+        				 int g = 255 - (int)((float)255 * (float)delta / (float)totalDelta);
+        				 color |= g << 8;
+        			 }
     			 }
     			 else if ( seconds >= alarmTime )
     			 {
@@ -135,15 +147,26 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener
     					 play( alarmUri );
     					 alarmPlayed = true;
     				 }
-					 color = Color.GREEN;
 					 blink = true;
+					 color = Color.GREEN;
+        			 int delta = seconds - alarmTime;
+        			 int totalDelta = alarmWarnTime - alarmTime;
+        			 if ( totalDelta == 0  || delta == 0)
+        			 {
+        				 color = Color.GREEN;
+        			 }
+        			 else
+        			 {
+        				 color = 0xFF00FF00;
+        				 int g = (int)((float)255 * (float)delta / (float)totalDelta);
+        				 color |= g << 16;
+        			 }
     			 }
     			 else
     			 {
     				 blink = true;
     			 }
-    			 String message="Total: " + alarmEndTime+" seconds\nWarning: "+alarmTime+" seconds\nLast warning: "+alarmWarnTime+" seconds\nTime: "+seconds+" seconds\nLeft: "+left+" seconds\n";
-    			 messageView.setText(message);
+    			 updateTimeDisplay();
 				 cardView.setBackgroundColor( blink? color: Color.BLACK );
     		}
     	});
@@ -263,9 +286,23 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener
 		updateTimeDisplay();
 	}
 	
+	private String formatTime(int seconds)
+	{
+		if ( seconds < 0 )
+		{
+			seconds = - seconds;
+		}
+		int m = seconds/60;
+		int s = seconds%60;
+		return ""+(m<10?"0"+m:m)+":"+(s<10?"0"+s:s);
+	}
+	
 	private void updateTimeDisplay()
 	{
-		 String message="Total: " + alarmEndTime+" seconds\nWarning: "+alarmTime+" seconds\nLast warning: "+alarmWarnTime+" seconds\n";
+		 int seconds =(int) (time/1000.0);
+		 int left = alarmEndTime - seconds;
+		 String message="Total: " + formatTime(alarmEndTime)+"\nFirst: "+formatTime(alarmTime)+"\nLast : "+formatTime(alarmWarnTime)+"\n";
+		 message +="------------\nTime : "+formatTime(seconds)+"\nLeft : "+formatTime(left)+"\n";
 		 messageView.setText(message);
 	}
 
