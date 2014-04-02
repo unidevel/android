@@ -2,10 +2,16 @@
 package com.unidevel.whereareyou;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,8 +19,11 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.SeekBar;
@@ -27,18 +36,19 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.ibm.mobile.services.data.IBMDataException;
+import com.ibm.mobile.services.data.IBMQuery;
+import com.ibm.mobile.services.data.IBMQueryResult;
 import com.unidevel.BaseActivity;
-import android.view.*;
-import android.app.*;
-import com.unidevel.whereareyou.model.*;
-import java.util.*;
-import com.ibm.mobile.services.data.*;
+import com.unidevel.whereareyou.model.Relation;
+import com.unidevel.whereareyou.model.User;
 
 public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClickListener,
 		GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener
 {
 	Map<String, MarkerInfo> markers;
-
+	Handler handler;
+	
 	@Override
 	public void onInfoWindowClick( final Marker m )
 	{
@@ -85,12 +95,68 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 		item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener(){
 			@Override
 			public boolean onMenuItemClick(MenuItem item) {
-				AlertDialog.Builder b=new AlertDialog.Builder(MapActivity.this);
-				
+				showManageFriendsDailog();
 				return true;
 			}
 		});
 		return true;
+	}
+	
+	private void _showFriendsDialog(final String[] users, final boolean[] friends)
+	{
+		final HashMap<Integer, Boolean> changedValues = new HashMap<Integer, Boolean>();
+		boolean[] checked = Arrays.copyOf( friends, friends.length );
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMultiChoiceItems( users, checked, new DialogInterface.OnMultiChoiceClickListener(){
+			@Override
+			public void onClick( DialogInterface dailog, int position, boolean checked )
+			{
+				changedValues.put( position, checked );
+			}
+		});
+		builder.setPositiveButton( android.R.string.ok, new DialogInterface.OnClickListener()
+		{
+			@Override
+			public void onClick( DialogInterface dialog, int which )
+			{
+				BlueListApplication app = (BlueListApplication)getApplication();
+				final User my = app.getCurrentUser();
+				dialog.dismiss();
+				for ( Integer position: changedValues.keySet() )
+				{
+					String name = users[position];
+					boolean newValue = changedValues.get(position);
+					boolean oldValue = friends[position];
+					if ( newValue != oldValue )
+					{
+						if ( newValue )
+						{
+							String uid = allUsers.get( name ).getObjectId();
+							Relation relation = new Relation();
+							relation.setFriendId( uid );
+							relation.setUserId( my.getObjectId() );
+							relation.saveInBackground();
+						}
+						else
+						{
+							String uid = allUsers.get( name ).getObjectId();
+							Relation relation = allRelations.get( uid );
+							relation.deleteInBackground();							
+						}
+					}
+				}
+			}
+		} );
+		builder.setNegativeButton( android.R.string.cancel, new DialogInterface.OnClickListener()
+		{	
+			@Override
+			public void onClick( DialogInterface dialog, int which )
+			{
+				dialog.dismiss();
+			}
+		} );
+		builder.setTitle( "Manage friends" );
+		builder.create().show();
 	}
 	
 	@Override
@@ -120,68 +186,98 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 	}
 
 	private GoogleMap mMap;
-
-	private void getUserAndFriendNames(List<String> users, List<String> friends, ProgressDialog progress){
-		
-	}	
-
-	public List<User> getAllUsers(final ProgressDialog progress){
-		final List<User> users= new ArrayList<User>();
-		try{
-			IBMQuery query = IBMQuery.queryForClass( User.class );
-			//query.whereKeyEqualsTo( User.USERNAME, userName );
-			query.findObjectsInBackground( new IBMQueryResult<User>(){
-					@Override
-					public void onError( IBMDataException except )
+	private Map<String, User> allUsers;
+	private Map<String, Relation> allRelations;
+	private void showManageFriendsDailog(){
+		BlueListApplication app = (BlueListApplication)getApplication();
+		final User my = app.getCurrentUser();
+		final ProgressDialog progress = ProgressDialog.show( this, "", "Getting user and friends information...", true, false);
+		final List<String> names = new ArrayList<String>();
+		final List<String> friendNames = new ArrayList<String>();
+		if ( my == null || my.getObjectId() == null )
+		{
+			return;
+		}
+		try
+		{
+			getAllUsers( new IBMQueryResult<User>()
+			{
+				@Override
+				public void onError( IBMDataException ex )
+				{
+					progress.cancel();
+				}
+				
+				@Override
+				public void onResult( final List<User> users )
+				{
+					allUsers = new LinkedHashMap<String, User>();
+					for ( User user: users )
+					{
+						allUsers.put( user.getUserName(), user );
+						names.add( user.getUserName() );
+					}
+					try
+					{
+						getAllRelations( my.getObjectId(), new IBMQueryResult<Relation>(){
+							@Override
+							public void onError( IBMDataException ex )
+							{
+								progress.cancel();
+							}
+							
+							@Override
+							public void onResult( List<Relation> relations )
+							{
+								progress.dismiss();
+								Set<String> ids = new HashSet<String>();
+								allRelations = new LinkedHashMap<String, Relation>();
+								for (Relation relation: relations)
+								{
+									allRelations.put( relation.getFriendId(), relation );
+									ids.add( relation.getFriendId() );
+								}
+								final boolean[] checked = new boolean[allUsers.size()];
+								final String[] userNames = names.toArray(new String[0]);
+								for ( int i = 0; i < users.size(); ++ i )
+								{
+									User user = users.get( i );
+									checked[i] = ids.contains( user.getObjectId() );
+								}
+								handler.post( new Runnable(){
+									public void run() {
+										_showFriendsDialog( userNames, checked );
+									};
+								});
+							}
+						});
+					}
+					catch (IBMDataException ex)
 					{
 						progress.cancel();
+						Log.e("getRelations", ex.getMessage(), ex);
 					}
+				}
+			} );
+		}
+		catch(Exception ex)
+		{
+			progress.cancel();
+			Log.e("getUsers", ex.getMessage(), ex);
+		}
+	}
 
-					@Override 
-					public void onResult( List<User> results )
-					{
-						progress.dismiss();
-						if(results!=null){
-							users.addAll(results);
-						}
-					}
-				});
-		}
-		catch(Exception e){
-			Log.e("getAllUsers", e.getMessage(), e);
-			progress.dismiss();
-		}
-		return users;
+	public void getAllUsers(IBMQueryResult<User> resultCallback) throws IBMDataException{
+		IBMQuery<User> query = IBMQuery.queryForClass( User.class );
+			//query.whereKeyEqualsTo( User.USERNAME, userName );
+		query.findObjectsInBackground( resultCallback );
 	}
 	
-	public List<Relation> getAllRelations(String uid, final ProgressDialog progress){
-		final List<Relation> relations= new ArrayList<Relation>();
-		try{
-			IBMQuery<Relation> query = IBMQuery.queryForClass( Relation.class );
+	public void getAllRelations(String uid, IBMQueryResult<Relation> resultCallback) throws IBMDataException{
+		IBMQuery<Relation> query = IBMQuery.queryForClass( Relation.class );
 			//query.whereKeyEqualsTo( User.USERNAME, userName );
-			query.whereKeyEqualsTo("uid", uid);
-			query.findObjectsInBackground( new IBMQueryResult<Relation>(){
-					@Override
-					public void onError( IBMDataException except )
-					{
-						progress.cancel();
-					}
-
-					@Override 
-					public void onResult( List<Relation> results )
-					{
-						progress.dismiss();
-						if(results!=null){
-							relations.addAll(results);
-						}
-					}
-				});
-		}
-		catch(Exception e){
-			Log.e("getAllUsers", e.getMessage(), e);
-			progress.dismiss();
-		}
-		return relations;
+		query.whereKeyEqualsTo("uid", uid);
+		query.findObjectsInBackground(resultCallback );
 	}
 	
 	
@@ -190,6 +286,7 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 	{
 		super.onCreate( savedInstanceState );
 		setContentView( R.layout.map );
+		this.handler = new Handler();
 		this.markers = new HashMap<String, MarkerInfo>();
 		this.mMap = ((MapFragment)getFragmentManager().findFragmentById( R.id.map )).getMap();
 		this.mMap.getUiSettings().setCompassEnabled( true );

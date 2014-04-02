@@ -14,6 +14,10 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.ibm.mobile.services.data.IBMDataException;
+import com.ibm.mobile.services.data.IBMQuery;
+import com.unidevel.whereareyou.model.Position;
+import com.unidevel.whereareyou.model.User;
 
 public class LocateService extends Service implements GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener, LocationListener 
 {
@@ -91,7 +95,7 @@ public class LocateService extends Service implements GooglePlayServicesClient.C
         
         client.requestLocationUpdates( request, this );
 	}
-
+	Position position;
 	@Override
 	public void onLocationChanged( Location location )
 	{
@@ -99,6 +103,31 @@ public class LocateService extends Service implements GooglePlayServicesClient.C
 				location.getLongitude()+"),Accuracy="+location.getAccuracy()+",Speed="+location.getSpeed()+
 				"time="+location.getTime()+",altitude="+location.getAltitude()+",Bearing="+location.getBearing());
 				//",elapsedTime="+location.getElapsedRealtimeNanos());
+		BlueListApplication app = (BlueListApplication)this.getApplication();
+		User user = app.getCurrentUser();
+		if ( user != null && user.getObjectId() != null )
+		{
+			if ( position == null )
+			{
+				try
+				{
+					IBMQuery<Position> query = IBMQuery.queryForClass( Position.class );
+					query.whereKeyEqualsTo( "uid", user.getObjectId() );
+					//query.findObjectsInBackground )
+				}
+				catch (IBMDataException e)
+				{
+				}
+			}
+			else
+			{
+				position.setLat( location.getLatitude() );
+				position.setLng( location.getLongitude() );
+				position.setAccuracy( location.getAccuracy() );
+				position.setTime( location.getTime() );
+				position.setUserId( user.getObjectId() );
+			}
+		}
 	}
 
 	@Override

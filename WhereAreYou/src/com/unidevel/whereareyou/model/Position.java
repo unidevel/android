@@ -7,11 +7,12 @@ import com.ibm.mobile.services.data.IBMDataObjectSpecialization;
 public class Position extends IBMDataObject
 {
 
-	public static final String CLASS_NAME = "Item";
+	public static final String CLASS_NAME = "Position";
 	private static final String USERID = "userid";
 	private static final String LAT = "LAT";
 	private static final String LNG = "LNG";
 	private static final String TIME = "TIME";
+	private static final String ACCURACY = "ACCURACY";
 
 	public String getUserId() {
 		return (String) getObject(USERID);
@@ -26,8 +27,8 @@ public class Position extends IBMDataObject
 		return (String) getObject(LAT);
 	}
 	
-	public void setLat(String lat) {
-		setObject(LAT, (lat != null) ? lat : "");
+	public void setLat(double lat) {
+		setObject(LAT, lat);
 	}
 	
 	public String getLng()
@@ -35,26 +36,28 @@ public class Position extends IBMDataObject
 		return (String) getObject(LNG);
 	}
 	
-	public void setLng(String lng)
+	public void setLng(double lng)
 	{
-		setObject(LNG, (lng != null) ? lng : "");
+		setObject(LNG, lng);
 	}
-	
-	public double getOffset(){
-		return (Double) getObject("offset");
-	}
-	
-	public void setOffset(double offset){
-		setObject("offset", offset);
-	}
-	
-	public String getTime()
+
+	public String getAccuracy()
 	{
-		return (String) getObject(TIME);
+		return (String) getObject(LNG);
 	}
 	
-	public void setTime(String time) {
-		setObject(TIME, (time != null) ? time : "");
+	public void setAccuracy(double accuracy)
+	{
+		setObject(ACCURACY, accuracy);
+	}
+	
+	public Long getTime()
+	{
+		return (Long) getObject(TIME);
+	}
+	
+	public void setTime(long time) {
+		setObject(TIME, time);
 	}
 	
 	public String toString() {
