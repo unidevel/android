@@ -1,125 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="fill_parent"
-	android:layout_height="fill_parent"
-	android:gravity="top"
-	android:orientation="vertical">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="top"
+    android:orientation="vertical" >
 
-	<TextView
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_gravity="center"
-		android:layout_weight="10"
-		android:text=""
-		android:textAppearance="?android:attr/textAppearanceLarge"
-		android:id="@+id/time"/>
+    <LinearLayout
+        android:id="@+id/card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="10"
+        android:gravity="center"
+        android:orientation="horizontal" >
 
-	<LinearLayout
-		android:layout_height="wrap_content"
-		android:layout_width="match_parent"
-		android:orientation="horizontal"
-		android:gravity="center">
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+    </LinearLayout>
 
-		<SeekBar
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_weight="10"
-			android:id="@+id/alarmEndBar"
-			android:max="24"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal" >
 
-		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceMedium"/>
+        <SeekBar
+            android:id="@+id/alarmEndBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="10"
+            android:max="24" />
 
-		<Button
-			android:layout_height="wrap_content"
-			style="?android:attr/buttonStyleSmall"
-			android:layout_width="wrap_content"
-			android:background="@android:drawable/ic_menu_upload"
-			android:id="@+id/alarmEnd"
-			android:onClick="onChooseAlarm"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
-	</LinearLayout>
+        <Button
+            android:id="@+id/alarmEnd"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/ic_menu_upload"
+            android:onClick="onChooseAlarm" />
+    </LinearLayout>
 
-	<LinearLayout
-		android:layout_height="wrap_content"
-		android:layout_width="match_parent"
-		android:orientation="horizontal"
-		android:gravity="center">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal" >
 
-		<SeekBar
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_weight="10"
-			android:id="@+id/alarmBar"
-			android:max="24"/>
+        <SeekBar
+            android:id="@+id/alarmWarnBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="10"
+            android:max="24" />
 
-		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceMedium"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
-		<Button
-			android:layout_height="wrap_content"
-			style="?android:attr/buttonStyleSmall"
-			android:background="@android:drawable/ic_menu_upload"
-			android:layout_width="wrap_content"
-			android:id="@+id/alarm"
-			android:onClick="onChooseAlarm"/>
+        <Button
+            android:id="@+id/alarmWarn"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/ic_menu_upload"
+            android:onClick="onChooseAlarm" />
+    </LinearLayout>
 
-	</LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal" >
 
-	<LinearLayout
-		android:layout_height="wrap_content"
-		android:layout_width="match_parent"
-		android:orientation="horizontal"
-		android:gravity="center">
+        <SeekBar
+            android:id="@+id/alarmBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="10"
+            android:max="24" />
 
-		<SeekBar
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_weight="10"
-			android:id="@+id/alarmWarnBar"
-			android:max="24"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
-		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceMedium"/>
+        <Button
+            android:id="@+id/alarm"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/ic_menu_upload"
+            android:onClick="onChooseAlarm" />
+    </LinearLayout>
 
-		<Button
-			android:layout_height="wrap_content"
-			style="?android:attr/buttonStyleSmall"
-			android:background="@android:drawable/ic_menu_upload"
-			android:layout_width="wrap_content"
-			android:onClick="onChooseAlarm"
-			android:id="@+id/alarmWarn"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal" >
 
-	</LinearLayout>
+        <ImageButton
+            android:id="@+id/start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onStartStop"
+            android:src="@android:drawable/ic_media_play" />
 
-	<LinearLayout
-		android:layout_height="wrap_content"
-		android:layout_width="match_parent"
-		android:orientation="horizontal"
-		android:gravity="center">
-
-		<ImageButton
-			android:id="@+id/start"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:onClick="onStartStop"
-			android:src="@android:drawable/ic_media_play"/>
-
-		<ImageButton
-			android:id="@+id/reset"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:onClick="onReset"
-			android:src="@android:drawable/ic_media_next"/>
-
-	</LinearLayout>
+        <ImageButton
+            android:id="@+id/reset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onReset"
+            android:src="@android:drawable/ic_media_next" />
+    </LinearLayout>
 
 </LinearLayout>
-
