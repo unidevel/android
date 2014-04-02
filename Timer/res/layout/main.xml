@@ -20,15 +20,15 @@
 		android:gravity="center">
 
 		<SeekBar
-			android:layout_height="wrap_content"
-			android:layout_width="wrap_content"
-			android:layout_weight="10"/>
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_weight="10"
+		    android:max="24" />
 
 		<TextView
-			android:layout_height="wrap_content"
-			android:text="Medium Text"
-			android:textAppearance="?android:attr/textAppearanceMedium"
-			android:layout_width="wrap_content"/>
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:textAppearance="?android:attr/textAppearanceMedium" />
 
 		<Button
 			android:layout_height="wrap_content"
@@ -47,15 +47,15 @@
 		android:gravity="center">
 
 		<SeekBar
-			android:layout_height="wrap_content"
-			android:layout_width="wrap_content"
-			android:layout_weight="10"/>
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_weight="10"
+		    android:max="24" />
 
 		<TextView
-			android:layout_height="wrap_content"
-			android:text="Medium Text"
-			android:textAppearance="?android:attr/textAppearanceMedium"
-			android:layout_width="wrap_content"/>
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:textAppearance="?android:attr/textAppearanceMedium" />
 
 		<Button
 			android:layout_height="wrap_content"
@@ -74,15 +74,15 @@
 		android:gravity="center">
 
 		<SeekBar
-			android:layout_height="wrap_content"
-			android:layout_width="wrap_content"
-			android:layout_weight="10"/>
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_weight="10"
+		    android:max="24" />
 
 		<TextView
-			android:layout_height="wrap_content"
-			android:text="Medium Text"
-			android:textAppearance="?android:attr/textAppearanceMedium"
-			android:layout_width="wrap_content"/>
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:textAppearance="?android:attr/textAppearanceMedium" />
 
 		<Button
 			android:layout_height="wrap_content"
@@ -100,19 +100,18 @@
 		android:orientation="horizontal"
 		android:gravity="center">
 
-		<Button
-			android:layout_height="wrap_content"
-			android:layout_width="wrap_content"
-			android:id="@+id/start"
-			android:background="@android:drawable/ic_media_play"
-			android:onClick="onStartStop"/>
+		<ImageButton
+		    android:id="@+id/start"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:onClick="onStartStop"
+		    android:src="@android:drawable/ic_media_play" />
 
-		<Button
-			android:layout_height="wrap_content"
-			android:layout_width="wrap_content"
-			android:id="@+id/reset"
-			android:background="@android:drawable/ic_media_next"
-			android:onClick="onReset"/>
+		<ImageButton
+		    android:id="@+id/reset"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:onClick="onReset" />
 
 	</LinearLayout>
 
