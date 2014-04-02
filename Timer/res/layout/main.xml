@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:gravity="top"
+	android:orientation="vertical">
+
+	<TextView
+		android:layout_height="wrap_content"
+		android:text="Large Text"
+		android:textAppearance="?android:attr/textAppearanceLarge"
+		android:layout_width="match_parent"
+		android:layout_weight="10"/>
+
+	<LinearLayout
+		android:layout_height="wrap_content"
+		android:layout_width="match_parent"
+		android:orientation="horizontal"
+		android:gravity="center">
+
+		<SeekBar
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:layout_weight="10"/>
+
+		<TextView
+			android:layout_height="wrap_content"
+			android:text="Medium Text"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:layout_width="wrap_content"/>
+
+		<Button
+			android:layout_height="wrap_content"
+			style="?android:attr/buttonStyleSmall"
+			android:layout_width="wrap_content"
+			android:background="@android:drawable/ic_menu_upload"
+			android:id="@+id/alarmEnd"
+			android:onClick="onChooseAlarm"/>
+
+	</LinearLayout>
+
+	<LinearLayout
+		android:layout_height="wrap_content"
+		android:layout_width="match_parent"
+		android:orientation="horizontal"
+		android:gravity="center">
+
+		<SeekBar
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:layout_weight="10"/>
+
+		<TextView
+			android:layout_height="wrap_content"
+			android:text="Medium Text"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:layout_width="wrap_content"/>
+
+		<Button
+			android:layout_height="wrap_content"
+			style="?android:attr/buttonStyleSmall"
+			android:background="@android:drawable/ic_menu_upload"
+			android:layout_width="wrap_content"
+			android:id="@+id/alarm"
+			android:onClick="onChooseAlarm"/>
+
+	</LinearLayout>
+
+	<LinearLayout
+		android:layout_height="wrap_content"
+		android:layout_width="match_parent"
+		android:orientation="horizontal"
+		android:gravity="center">
+
+		<SeekBar
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:layout_weight="10"/>
+
+		<TextView
+			android:layout_height="wrap_content"
+			android:text="Medium Text"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:layout_width="wrap_content"/>
+
+		<Button
+			android:layout_height="wrap_content"
+			style="?android:attr/buttonStyleSmall"
+			android:background="@android:drawable/ic_menu_upload"
+			android:layout_width="wrap_content"
+			android:onClick="onChooseAlarm"
+			android:id="@+id/alarmWarn"/>
+
+	</LinearLayout>
+
+	<LinearLayout
+		android:layout_height="wrap_content"
+		android:layout_width="match_parent"
+		android:orientation="horizontal"
+		android:gravity="center">
+
+		<Button
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:id="@+id/start"
+			android:background="@android:drawable/ic_media_play"
+			android:onClick="onStartStop"/>
+
+		<Button
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:id="@+id/reset"
+			android:background="@android:drawable/ic_media_next"
+			android:onClick="onReset"/>
+
+	</LinearLayout>
+
+</LinearLayout>
+
