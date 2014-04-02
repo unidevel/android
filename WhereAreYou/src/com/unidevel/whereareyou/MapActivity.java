@@ -28,6 +28,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.unidevel.BaseActivity;
+import android.view.*;
+import android.app.*;
+import com.unidevel.whereareyou.model.*;
+import java.util.*;
+import com.ibm.mobile.services.data.*;
 
 public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClickListener,
 		GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener
@@ -68,13 +73,26 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 	@Override
 	public boolean onMarkerClick( Marker m )
 	{
-
 		return false;
 	}
 
 	List<Circle> circles;
 	Intent serviceIntent = new Intent( "LOCATE_SERVICE" );
 
+	public boolean onCreateOptionsMenu(Menu menu) {
+		
+		MenuItem item = menu.add(0, 0, Menu.NONE, "Manage friends");
+		item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener(){
+			@Override
+			public boolean onMenuItemClick(MenuItem item) {
+				AlertDialog.Builder b=new AlertDialog.Builder(MapActivity.this);
+				
+				return true;
+			}
+		});
+		return true;
+	}
+	
 	@Override
 	public void onMapLongClick( LatLng p )
 	{
@@ -103,6 +121,70 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 
 	private GoogleMap mMap;
 
+	private void getUserAndFriendNames(List<String> users, List<String> friends, ProgressDialog progress){
+		
+	}	
+
+	public List<User> getAllUsers(final ProgressDialog progress){
+		final List<User> users= new ArrayList<User>();
+		try{
+			IBMQuery query = IBMQuery.queryForClass( User.class );
+			//query.whereKeyEqualsTo( User.USERNAME, userName );
+			query.findObjectsInBackground( new IBMQueryResult<User>(){
+					@Override
+					public void onError( IBMDataException except )
+					{
+						progress.cancel();
+					}
+
+					@Override 
+					public void onResult( List<User> results )
+					{
+						progress.dismiss();
+						if(results!=null){
+							users.addAll(results);
+						}
+					}
+				});
+		}
+		catch(Exception e){
+			Log.e("getAllUsers", e.getMessage(), e);
+			progress.dismiss();
+		}
+		return users;
+	}
+	
+	public List<Relation> getAllRelations(String uid, final ProgressDialog progress){
+		final List<Relation> relations= new ArrayList<Relation>();
+		try{
+			IBMQuery<Relation> query = IBMQuery.queryForClass( Relation.class );
+			//query.whereKeyEqualsTo( User.USERNAME, userName );
+			query.whereKeyEqualsTo("uid", uid);
+			query.findObjectsInBackground( new IBMQueryResult<Relation>(){
+					@Override
+					public void onError( IBMDataException except )
+					{
+						progress.cancel();
+					}
+
+					@Override 
+					public void onResult( List<Relation> results )
+					{
+						progress.dismiss();
+						if(results!=null){
+							relations.addAll(results);
+						}
+					}
+				});
+		}
+		catch(Exception e){
+			Log.e("getAllUsers", e.getMessage(), e);
+			progress.dismiss();
+		}
+		return relations;
+	}
+	
+	
 	@Override
 	protected void onCreate( Bundle savedInstanceState )
 	{

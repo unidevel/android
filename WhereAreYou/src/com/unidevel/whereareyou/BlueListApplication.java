@@ -24,6 +24,7 @@ import android.util.Log;
 import com.ibm.mobile.services.core.IBMBaaS;
 import com.unidevel.whereareyou.model.Position;
 import com.unidevel.whereareyou.model.User;
+import com.unidevel.whereareyou.model.*;
 
 public final class BlueListApplication extends Application {
 	public static final int EDIT_ACTIVITY_RC = 1;
@@ -73,6 +74,7 @@ public final class BlueListApplication extends Application {
 		this.currentUser = new User();
 	    User.registerSpecialization(User.class);
 	    Position.registerSpecialization( Position.class );
+		Relation.registerSpecialization(Relation.class);
 	}
 	
 	public User getCurrentUser() {
