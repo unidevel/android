@@ -12,6 +12,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.*;
+import android.media.*;
 
 public class MainActivity extends Activity implements OnSeekBarChangeListener
 {
@@ -24,9 +26,9 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener
 	SeekBar sbAlarm ;
 	SeekBar sbAlarmEnd;
 	SeekBar sbAlarmWarn;
-	
-	Button btnStart;
-	Button btnReset;
+	TextView messageView;
+	ImageButton btnStart;
+	ImageButton btnReset;
 	
 	long alarmTime;
 	long alarmEndTime;
@@ -43,15 +45,16 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 		this.started=false;
-		this.sbAlarm = (SeekBar)this.findViewById( R.id.alarm );
-		this.sbAlarmEnd = (SeekBar)this.findViewById( R.id.alarmEnd );
-		this.sbAlarmWarn = (SeekBar)this.findViewById( R.id.alarmWarn );
+		this.sbAlarm = (SeekBar)this.findViewById( R.id.alarmBar );
+		this.sbAlarmEnd = (SeekBar)this.findViewById( R.id.alarmEndBar );
+		this.sbAlarmWarn = (SeekBar)this.findViewById( R.id.alarmWarnBar );
 		this.sbAlarm.setOnSeekBarChangeListener( this );
 		this.sbAlarmEnd.setOnSeekBarChangeListener( this );
 		this.sbAlarmWarn.setOnSeekBarChangeListener( this );
-		this.btnStart = (Button)this.findViewById( R.id.start );
-		this.btnReset = (Button)this.findViewById( R.id.reset );
+		this.btnStart = (ImageButton)this.findViewById( R.id.start );
+		this.btnReset = (ImageButton)this.findViewById( R.id.reset );
 		this.handler = new Handler();
+		this.messageView = (TextView)this.findViewById(R.id.time);
     }
 	
     private void updateUI()
@@ -61,11 +64,11 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener
    		this.sbAlarmWarn.setEnabled( !this.started );
    		if ( this.started )
    		{
-   			this.btnStart.setBackgroundResource( android.R.drawable.ic_media_pause );
+   			this.btnStart.setImageResource( android.R.drawable.ic_media_pause );
    		}
    		else
    		{
-   			this.btnStart.setBackgroundResource( android.R.drawable.ic_media_play );
+   			this.btnStart.setImageResource( android.R.drawable.ic_media_play );
    		}
    	}
     
@@ -75,7 +78,9 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener
     		@Override
     		public void run()
     		{
-    			
+    			 int seconds =(int) (time/1000.0);
+				 String message=""+seconds;
+				 messageView.setText(message);
     		}
     	});
     }
@@ -96,7 +101,7 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener
 		{
 			this.lastTime = System.currentTimeMillis();
 			this.timer = new Timer();
-			this.timer.schedule( task, 100 );
+			this.timer.schedule( task, 0, 100 );
 		}
 		else
 		{
@@ -150,16 +155,32 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener
 		{
 			if ( seekBar == this.sbAlarm )
 			{
-				this.alarmTime = seekBar.getProgress()*500;
+				this.alarmTime = seekBar.getProgress();
 			}
 			if ( seekBar == this.sbAlarmEnd )
 			{
-				this.alarmTime = seekBar.getProgress()*500;
+				this.alarmTime = seekBar.getProgress();
 			}
 			if ( seekBar == this.sbAlarmWarn )
 			{
-				this.alarmTime = seekBar.getProgress()*500;
+				this.alarmTime = seekBar.getProgress();
 			}
+		}
+	}
+	
+	public void play(String uri){
+		try {
+			Uri n;
+			if(uri==null){
+				n = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+			}
+			else{
+				n=Uri.parse(uri);
+			}
+			Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), n);
+			r.play();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 

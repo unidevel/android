@@ -7,12 +7,13 @@
 	android:orientation="vertical">
 
 	<TextView
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:layout_gravity="center"
-	    android:layout_weight="10"
-	    android:text=""
-	    android:textAppearance="?android:attr/textAppearanceLarge" />
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center"
+		android:layout_weight="10"
+		android:text=""
+		android:textAppearance="?android:attr/textAppearanceLarge"
+		android:id="@+id/time"/>
 
 	<LinearLayout
 		android:layout_height="wrap_content"
@@ -21,15 +22,16 @@
 		android:gravity="center">
 
 		<SeekBar
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:layout_weight="10"
-		    android:max="24" />
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="10"
+			android:id="@+id/alarmEndBar"
+			android:max="24"/>
 
 		<TextView
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:textAppearance="?android:attr/textAppearanceMedium" />
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceMedium"/>
 
 		<Button
 			android:layout_height="wrap_content"
@@ -48,15 +50,16 @@
 		android:gravity="center">
 
 		<SeekBar
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:layout_weight="10"
-		    android:max="24" />
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="10"
+			android:id="@+id/alarmBar"
+			android:max="24"/>
 
 		<TextView
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:textAppearance="?android:attr/textAppearanceMedium" />
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceMedium"/>
 
 		<Button
 			android:layout_height="wrap_content"
@@ -75,15 +78,16 @@
 		android:gravity="center">
 
 		<SeekBar
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:layout_weight="10"
-		    android:max="24" />
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="10"
+			android:id="@+id/alarmWarnBar"
+			android:max="24"/>
 
 		<TextView
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:textAppearance="?android:attr/textAppearanceMedium" />
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceMedium"/>
 
 		<Button
 			android:layout_height="wrap_content"
@@ -102,17 +106,18 @@
 		android:gravity="center">
 
 		<ImageButton
-		    android:id="@+id/start"
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:onClick="onStartStop"
-		    android:src="@android:drawable/ic_media_play" />
+			android:id="@+id/start"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:onClick="onStartStop"
+			android:src="@android:drawable/ic_media_play"/>
 
 		<ImageButton
-		    android:id="@+id/reset"
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:onClick="onReset" />
+			android:id="@+id/reset"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:onClick="onReset"
+			android:src="@android:drawable/ic_media_next"/>
 
 	</LinearLayout>
 
