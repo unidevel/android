@@ -1,10 +1,13 @@
 package com.unidevel.timer;
 
+import java.util.Timer;
+import java.util.TimerTask;
 import android.app.Activity;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
@@ -12,6 +15,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 
 public class MainActivity extends Activity implements OnSeekBarChangeListener
 {
+	Handler handler;
 	boolean started;
 	String alarmUri;
 	String alarmWarnUri;
@@ -27,6 +31,11 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener
 	long alarmTime;
 	long alarmEndTime;
 	long alarmWarnTime;
+	
+	long time;
+	long lastTime;
+	
+	Timer timer;
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -42,6 +51,7 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener
 		this.sbAlarmWarn.setOnSeekBarChangeListener( this );
 		this.btnStart = (Button)this.findViewById( R.id.start );
 		this.btnReset = (Button)this.findViewById( R.id.reset );
+		this.handler = new Handler();
     }
 	
     private void updateUI()
@@ -57,15 +67,47 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener
    		{
    			this.btnStart.setBackgroundResource( android.R.drawable.ic_media_play );
    		}
-   		
+   	}
+    
+    private void updateTime()
+    {
+    	handler.post( new Runnable(){
+    		@Override
+    		public void run()
+    		{
+    			
+    		}
+    	});
     }
     
 	public void onStartStop(View view){
 		this.started = !this.started;
+		TimerTask task = new TimerTask()
+		{
+			@Override
+			public void run()
+			{
+				time += System.currentTimeMillis() - lastTime;
+				lastTime = System.currentTimeMillis();
+				updateTime();
+			}
+		};
+		if ( this.started )
+		{
+			this.lastTime = System.currentTimeMillis();
+			this.timer = new Timer();
+			this.timer.schedule( task, 100 );
+		}
+		else
+		{
+			this.timer.cancel();
+			this.timer = null;
+		}
 		updateUI();
 	}
 	
 	public void onReset(View view){
+		this.time = 0;
 	}
 	
 	public void onChooseAlarm(View view){
