@@ -7,7 +7,6 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.Ringtone;
@@ -39,7 +38,7 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener
 	View cardView;
 	ImageButton btnStart;
 	ImageButton btnReset;
-
+	ImageButton btnAdd;
 	int alarmTime;
 	int alarmEndTime;
 	int alarmWarnTime;
@@ -78,11 +77,26 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener
 		this.alarmPlayed = false;
 		this.alarmWarnPlayed = false;
 
+		this.btnAdd = (ImageButton)this.findViewById( R.id.newTimer );
+		this.addNewTimer();
 		/* IntentFilter mediaButtonIntentFilter = new IntentFilter( Intent.ACTION_MEDIA_BUTTON );
 		receiver = new MediaButtonBroadcastReceiver();
 		this.registerReceiver( receiver, mediaButtonIntentFilter ); */
 	}
 
+	protected void addNewTimer()
+	{
+		this.btnAdd.setOnClickListener( new View.OnClickListener()
+		{
+			@Override
+			public void onClick( View v )
+			{
+				Intent intent = new Intent(MainActivity.this, SubActivity.class);
+				startActivity( intent );
+			}
+		} );
+	}
+	
 	public class MediaButtonBroadcastReceiver extends BroadcastReceiver
 	{
 
