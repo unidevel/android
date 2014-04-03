@@ -22,18 +22,18 @@ public class Position extends IBMDataObject
 		setObject(USERID, (userId != null) ? userId : "");
 	}
 
-	public String getLat()
+	public double getLat()
 	{
-		return (String) getObject(LAT);
+		return (Double) getObject(LAT);
 	}
 	
 	public void setLat(double lat) {
 		setObject(LAT, lat);
 	}
 	
-	public String getLng()
+	public double getLng()
 	{
-		return (String) getObject(LNG);
+		return (Double) getObject(LNG);
 	}
 	
 	public void setLng(double lng)

@@ -57,6 +57,11 @@
 				<action android:name="LOCATE_SERVICE"/>
 			</intent-filter>
 		</service>
-    </application>
+		<service android:name="MonitorService">
+			<intent-filter>
+				<action android:name="MONITOR_SERVICE"/>
+			</intent-filter>
+		</service>
+	</application>
 
 </manifest>

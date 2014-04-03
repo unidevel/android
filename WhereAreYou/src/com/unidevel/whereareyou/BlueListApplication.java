@@ -16,6 +16,7 @@
 package com.unidevel.whereareyou;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import android.app.Activity;
 import android.app.Application;
@@ -23,14 +24,15 @@ import android.os.Bundle;
 import android.util.Log;
 import com.ibm.mobile.services.core.IBMBaaS;
 import com.unidevel.whereareyou.model.Position;
+import com.unidevel.whereareyou.model.Relation;
 import com.unidevel.whereareyou.model.User;
-import com.unidevel.whereareyou.model.*;
 
 public final class BlueListApplication extends Application {
 	public static final int EDIT_ACTIVITY_RC = 1;
 	private static final String CLASS_NAME = BlueListApplication.class.getSimpleName();
 	User currentUser;
 	List<User> userList;
+	List<MarkerInfo> markers;
 
 	public BlueListApplication() {
 		registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
@@ -71,6 +73,7 @@ public final class BlueListApplication extends Application {
 	public void onCreate() {
 		super.onCreate();
 		this.userList = new ArrayList<User>();
+		this.markers = new ArrayList<MarkerInfo>();
 		this.currentUser = new User();
 	    User.registerSpecialization(User.class);
 	    Position.registerSpecialization( Position.class );
@@ -89,5 +92,38 @@ public final class BlueListApplication extends Application {
 	public List<User> getUserList()
 	{
 		return this.userList;
+	}
+	
+	public List<MarkerInfo> getMarkers()
+	{
+		synchronized (markers)
+		{
+			return Collections.unmodifiableList( markers );
+		}
+	}
+	
+	public void addMarker(MarkerInfo marker)
+	{
+		synchronized (markers)
+		{
+			this.markers.add( marker );
+		}
+	}
+	
+	public void removeMarker(String id)
+	{
+		synchronized (markers)
+		{
+			MarkerInfo foundMarker = null;
+			for ( MarkerInfo marker: markers)
+			{
+				if ( id.equals( marker.id ) )
+				{
+					foundMarker = marker;
+					break;
+				}
+			}
+			markers.remove( foundMarker );
+		}
 	}
 }

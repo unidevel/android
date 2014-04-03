@@ -117,6 +117,7 @@ public class LocateService extends Service implements GooglePlayServicesClient.C
 				}
 				catch (IBMDataException e)
 				{
+					Log.e("onLocationChanged", e.getMessage(), e);
 				}
 			}
 			else
