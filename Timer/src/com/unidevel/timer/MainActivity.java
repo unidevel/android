@@ -4,8 +4,6 @@ package com.unidevel.timer;
 import java.util.Timer;
 import java.util.TimerTask;
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -52,7 +50,6 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener
 	long lastTime;
 
 	Timer timer;
-	MediaButtonBroadcastReceiver receiver;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -97,30 +94,6 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener
 		} );
 	}
 	
-	public class MediaButtonBroadcastReceiver extends BroadcastReceiver
-	{
-
-		@Override
-		public void onReceive( Context ctx, Intent intent )
-		{
-			KeyEvent event = (KeyEvent)intent.getParcelableExtra( Intent.EXTRA_KEY_EVENT );
-			/* if ( event != null)
-			{
-				Log.i("KeyEvent", "keycode = "+event.getKeyCode());
-
-				 if (event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE)
-				 {
-					 Log.i("KeyEvent", "Play");
-				 }
-				 else if (event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_NEXT) 
-				 {
-					 Log.i("KeyEvent", "Next");
-				 }
-			} */ 
-		}
-
-	}
-
 	@Override
 	protected void onDestroy()
 	{
@@ -270,6 +243,24 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener
 		updateTimeDisplay();
 	}
 
+	public void onPlayAlarm(View view)
+	{
+		if ( view == null )
+			return;
+		if ( view.getId() == R.id.alarmPlay )
+		{
+			play(alarmUri);
+		}
+		else if ( view.getId() == R.id.alarmEndPlay )
+		{
+			play(alarmEndUri);
+		}
+		else if ( view.getId() == R.id.alarmWarnPlay )
+		{
+			play(alarmWarnUri);
+		}
+	}
+	
 	public void onChooseAlarm( View view )
 	{
 		Intent intent = new Intent( RingtoneManager.ACTION_RINGTONE_PICKER );

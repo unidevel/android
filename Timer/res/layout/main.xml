@@ -48,6 +48,13 @@
             android:layout_height="wrap_content"
             android:background="@android:drawable/ic_menu_upload"
             android:onClick="onChooseAlarm" />
+        <Button
+            android:id="@+id/alarmEndPlay"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/ic_media_play"
+            android:onClick="onPlayAlarm" />
     </LinearLayout>
 
     <LinearLayout
@@ -75,7 +82,14 @@
             android:layout_height="wrap_content"
             android:background="@android:drawable/ic_menu_upload"
             android:onClick="onChooseAlarm" />
-    </LinearLayout>
+        <Button
+            android:id="@+id/alarmWarnPlay"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/ic_media_play"
+            android:onClick="onPlayAlarm" />
+        </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -102,7 +116,14 @@
             android:layout_height="wrap_content"
             android:background="@android:drawable/ic_menu_upload"
             android:onClick="onChooseAlarm" />
-    </LinearLayout>
+        <Button
+            android:id="@+id/alarmPlay"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/ic_media_play"
+            android:onClick="onPlayAlarm" />
+        </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
