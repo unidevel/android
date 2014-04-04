@@ -110,7 +110,7 @@ public final class BlueListApplication extends Application {
 		}
 	}
 	
-	public void removeMarker(String id)
+	public MarkerInfo removeMarker(String id)
 	{
 		synchronized (markers)
 		{
@@ -123,7 +123,11 @@ public final class BlueListApplication extends Application {
 					break;
 				}
 			}
-			markers.remove( foundMarker );
+			if ( foundMarker != null )
+			{
+				markers.remove( foundMarker );
+			}
+			return foundMarker;
 		}
 	}
 }

@@ -1,7 +1,6 @@
 
 package com.unidevel.whereareyou;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -46,14 +45,13 @@ import com.unidevel.whereareyou.model.User;
 public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClickListener,
 		GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener
 {
-	Map<String, MarkerInfo> markers;
 	Handler handler;
 	
 	@Override
 	public void onInfoWindowClick( final Marker m )
 	{
 		String id = m.getId();
-		MarkerInfo i = markers.get( id );
+		MarkerInfo i =getMarkerInfo(m);
 		if ( i == null )
 			return;
 
@@ -162,22 +160,65 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 	@Override
 	public void onMapLongClick( LatLng p )
 	{
-		CircleOptions circleOptions = new CircleOptions().center( p ).radius( 1000 ); // In
-																						// meters
-
 		// Get back the mutable Circle
 		// Circle circle = mMap.addCircle(circleOptions);
-		Marker m =
-				mMap.addMarker( new MarkerOptions().position( p ).title( "Hello world" ).flat( true ).draggable( true ) );
 		MarkerInfo i = new MarkerInfo();
-		i.title = "Position";
-		i.id = m.getId();
+		i.title = "New alert";
 		i.lat = p.latitude;
 		i.lng = p.longitude;
 		i.radius = this.getDefaultRadius();
+
+		Marker m =
+				mMap.addMarker( new MarkerOptions().position( p ).title( i.title ).flat( true ).draggable( true ) );
+		
+		CircleOptions circleOptions = new CircleOptions().center( p )
+				.radius( i.radius*1000 ); // In  meters
+		Circle circle = mMap.addCircle( circleOptions );
+		
+		i.id = m.getId();
 		i.marker = m;
-		markers.put( i.id, i );
-		// m.showInfoWindow();
+		i.circle = circle;
+		addMarker(i);
+		m.showInfoWindow();
+	}
+	
+	public void addMarker(MarkerInfo marker)
+	{
+		((BlueListApplication)getApplication()).addMarker( marker );
+	}
+	
+	public List<MarkerInfo> getMarkers()
+	{
+		return ((BlueListApplication)getApplication()).getMarkers();
+	}
+	
+	public MarkerInfo getMarkerInfo(Marker marker)
+	{
+		List<MarkerInfo> markers = getMarkers();
+		for (MarkerInfo info :markers )
+		{
+			if ( info.marker == marker)
+			{
+				return info;
+			}
+		}
+		return null;
+	}
+	
+	public void removeMarker(String id)
+	{
+		MarkerInfo marker = ((BlueListApplication)getApplication()).removeMarker( id );
+		if ( marker != null )
+		{
+			if ( marker.marker != null )
+			{
+				marker.marker.remove();
+			}
+			if ( marker.circle != null )
+			{
+				marker.circle.remove();
+			}
+		}
 	}
 
 	protected double getDefaultRadius()
@@ -287,7 +328,6 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 		super.onCreate( savedInstanceState );
 		setContentView( R.layout.map );
 		this.handler = new Handler();
-		this.markers = new HashMap<String, MarkerInfo>();
 		this.mMap = ((MapFragment)getFragmentManager().findFragmentById( R.id.map )).getMap();
 		this.mMap.getUiSettings().setCompassEnabled( true );
 		this.mMap.setMyLocationEnabled( true );

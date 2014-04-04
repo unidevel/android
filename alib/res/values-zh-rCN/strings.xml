@@ -2,7 +2,6 @@
 <resources>
 
     <string name="hello">Hello World, MainActivity!</string>
-    <string name="app_name">alib</string>
     <string name="loading_app_message">读取程序列表...</string>
     <string name="app_list_title">选择应用</string>
     <string name="empty_app">空白</string>

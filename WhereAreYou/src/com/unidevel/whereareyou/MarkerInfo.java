@@ -1,5 +1,6 @@
 package com.unidevel.whereareyou;
 
+import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.Marker;
 
 public class MarkerInfo
@@ -13,4 +14,5 @@ public class MarkerInfo
 	public String title;
 	public String extra;
 	public Marker marker;
+	public Circle circle;
 }
