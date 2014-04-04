@@ -172,6 +172,7 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 				mMap.addMarker( new MarkerOptions().position( p ).title( i.title ).flat( true ).draggable( true ) );
 		
 		CircleOptions circleOptions = new CircleOptions().center( p )
+			.fillColor(0x800000FF)
 				.radius( i.radius*1000 ); // In  meters
 		Circle circle = mMap.addCircle( circleOptions );
 		
@@ -197,7 +198,7 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 		List<MarkerInfo> markers = getMarkers();
 		for (MarkerInfo info :markers )
 		{
-			if ( info.marker == marker)
+			if ( marker.equals( info.marker ))
 			{
 				return info;
 			}
