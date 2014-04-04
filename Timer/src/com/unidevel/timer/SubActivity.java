@@ -10,4 +10,15 @@ public class SubActivity extends MainActivity
 	{
 		this.btnAdd.setVisibility( View.GONE );
 	}
+	
+	@Override
+	protected void onPause()
+	{
+		super.onPause();
+		if ( this.started )
+		{
+			this.onStartStop( this.btnStart );
+		}
+	}
+	
 }

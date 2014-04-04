@@ -235,18 +235,19 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener
 	public void onStartStop( View view )
 	{
 		this.started = !this.started;
-		TimerTask task = new TimerTask()
-		{
-			@Override
-			public void run()
-			{
-				time += System.currentTimeMillis() - lastTime;
-				lastTime = System.currentTimeMillis();
-				updateTime();
-			}
-		};
+		
 		if ( this.started )
 		{
+			TimerTask task = new TimerTask()
+			{
+				@Override
+				public void run()
+				{
+					time += System.currentTimeMillis() - lastTime;
+					lastTime = System.currentTimeMillis();
+					updateTime();
+				}
+			};
 			this.lastTime = System.currentTimeMillis();
 			this.timer = new Timer();
 			this.timer.schedule( task, 0, 500 );
