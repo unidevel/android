@@ -1,6 +1,7 @@
 
 package com.unidevel.whereareyou;
 
+import java.util.List;
 import android.app.Service;
 import android.content.Intent;
 import android.location.Location;
@@ -16,6 +17,7 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.ibm.mobile.services.data.IBMDataException;
 import com.ibm.mobile.services.data.IBMQuery;
+import com.ibm.mobile.services.data.IBMQueryResult;
 import com.unidevel.whereareyou.model.Position;
 import com.unidevel.whereareyou.model.User;
 
@@ -97,14 +99,14 @@ public class LocateService extends Service implements GooglePlayServicesClient.C
 	}
 	Position position;
 	@Override
-	public void onLocationChanged( Location location )
+	public void onLocationChanged( final Location location )
 	{
 		Log.i( "Location", "("+location.getLatitude()+","+
 				location.getLongitude()+"),Accuracy="+location.getAccuracy()+",Speed="+location.getSpeed()+
 				"time="+location.getTime()+",altitude="+location.getAltitude()+",Bearing="+location.getBearing());
 				//",elapsedTime="+location.getElapsedRealtimeNanos());
 		BlueListApplication app = (BlueListApplication)this.getApplication();
-		User user = app.getCurrentUser();
+		final User user = app.getCurrentUser();
 		if ( user != null && user.getObjectId() != null )
 		{
 			if ( position == null )
@@ -112,8 +114,33 @@ public class LocateService extends Service implements GooglePlayServicesClient.C
 				try
 				{
 					IBMQuery<Position> query = IBMQuery.queryForClass( Position.class );
-					query.whereKeyEqualsTo( "uid", user.getObjectId() );
-					//query.findObjectsInBackground )
+					query.whereKeyEqualsTo( "userid", user.getObjectId() );
+					query.findObjectsInBackground (new IBMQueryResult<Position>()
+					{
+						@Override
+						public void onError( IBMDataException ex )
+						{
+							Log.e( "query position", ex.getMessage(), ex );
+						}
+						
+						@Override
+						public void onResult( List<Position> positions )
+						{
+							if ( positions != null && positions.size() > 0 ) 
+							{
+								position = positions.get( 0 );
+							}
+							else
+							{
+								position = new Position();
+								position.setLat( location.getLatitude() );
+								position.setLng( location.getLongitude() );
+								position.setAccuracy( location.getAccuracy() );
+								position.setTime( location.getTime() );
+								position.setUserId( user.getObjectId() );
+							}
+						}
+					});
 				}
 				catch (IBMDataException e)
 				{
@@ -126,7 +153,8 @@ public class LocateService extends Service implements GooglePlayServicesClient.C
 				position.setLng( location.getLongitude() );
 				position.setAccuracy( location.getAccuracy() );
 				position.setTime( location.getTime() );
-				position.setUserId( user.getObjectId() );
+				position.setUserId( user.getObjectId() );	
+				position.saveInBackground();
 			}
 		}
 	}
@@ -136,6 +164,7 @@ public class LocateService extends Service implements GooglePlayServicesClient.C
 	{
 		client.removeLocationUpdates( this );
 	}
+
 
 
 }

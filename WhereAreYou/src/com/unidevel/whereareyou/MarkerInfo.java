@@ -5,7 +5,7 @@ import com.google.android.gms.maps.model.Marker;
 
 public class MarkerInfo
 {
-	public String id;
+	public int index;
 	public String uid;
 	public String type;
 	public double lat;

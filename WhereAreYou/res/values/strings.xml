@@ -19,4 +19,6 @@
     <string name="info_leave">Leave</string>
     <string name="info_km">km</string>
     <string name="alert_name">NewAlert</string>
+    <string name="alert_title">Add alert</string>
+    <string name="alert_user">People</string>
 </resources>

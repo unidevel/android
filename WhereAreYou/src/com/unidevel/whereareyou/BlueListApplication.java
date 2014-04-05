@@ -17,12 +17,19 @@ package com.unidevel.whereareyou;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
 import android.util.Log;
 import com.ibm.mobile.services.core.IBMBaaS;
+import com.ibm.mobile.services.data.IBMDataException;
+import com.ibm.mobile.services.data.IBMQuery;
+import com.ibm.mobile.services.data.IBMQueryResult;
 import com.unidevel.whereareyou.model.Position;
 import com.unidevel.whereareyou.model.Relation;
 import com.unidevel.whereareyou.model.User;
@@ -31,7 +38,7 @@ public final class BlueListApplication extends Application {
 	public static final int EDIT_ACTIVITY_RC = 1;
 	private static final String CLASS_NAME = BlueListApplication.class.getSimpleName();
 	User currentUser;
-	List<User> userList;
+	List<User> friendsList;
 	List<MarkerInfo> markers;
 
 	public BlueListApplication() {
@@ -72,7 +79,7 @@ public final class BlueListApplication extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		this.userList = new ArrayList<User>();
+		this.friendsList = new ArrayList<User>();
 		this.markers = new ArrayList<MarkerInfo>();
 		this.currentUser = new User();
 	    User.registerSpecialization(User.class);
@@ -89,9 +96,96 @@ public final class BlueListApplication extends Application {
 		this.currentUser = currentUser;
 	}
 	
-	public List<User> getUserList()
+	private void getAllUsers(IBMQueryResult<User> resultCallback) throws IBMDataException{
+		IBMQuery<User> query = IBMQuery.queryForClass( User.class );
+			//query.whereKeyEqualsTo( User.USERNAME, userName );
+		query.findObjectsInBackground( resultCallback );
+	}
+	
+	private void getAllRelations(String uid, IBMQueryResult<Relation> resultCallback) throws IBMDataException{
+		IBMQuery<Relation> query = IBMQuery.queryForClass( Relation.class );
+			//query.whereKeyEqualsTo( User.USERNAME, userName );
+		query.whereKeyEqualsTo("uid", uid);
+		query.findObjectsInBackground(resultCallback );
+	}
+	
+	public List<User> getFriends()
 	{
-		return this.userList;
+		return this.friendsList;
+	}
+	
+	public void getFriends(final IBMQueryResult<User> friendsResult)
+	{
+		final User my = this.getCurrentUser();
+		if ( my == null || my.getObjectId() == null )
+		{
+			return;
+		}
+		try
+		{
+			getAllUsers( new IBMQueryResult<User>()
+			{
+				@Override
+				public void onError( IBMDataException ex )
+				{
+					Log.e("getAllUsers", ex.getMessage(), ex);
+					friendsResult.onError( ex );
+				}
+				
+				@Override
+				public void onResult( final List<User> users )
+				{
+					final Map<String,User> allUsers = new LinkedHashMap<String, User>();
+					for ( User user: users )
+					{
+						allUsers.put( user.getUserName(), user );
+					}
+					try
+					{
+						getAllRelations( my.getObjectId(), new IBMQueryResult<Relation>(){
+							@Override
+							public void onError( IBMDataException ex )
+							{
+								Log.e("getRelations", ex.getMessage(), ex);
+								friendsResult.onError( ex );
+							}
+							
+							@Override
+							public void onResult( List<Relation> relations )
+							{
+								Set<String> ids = new HashSet<String>();
+								final Map<String, Relation> allRelations = new LinkedHashMap<String, Relation>();
+								for (Relation relation: relations)
+								{
+									allRelations.put( relation.getFriendId(), relation );
+									ids.add( relation.getFriendId() );
+								}
+								List<User> friends = new ArrayList<User>();
+								for ( int i = 0; i < users.size(); ++ i )
+								{
+									User user = users.get( i );
+									if ( ids.contains( user.getObjectId() ) )
+									{
+										friends.add( user );
+									}
+								}
+								friendsList.clear();
+								friendsList.addAll( friends );
+								friendsResult.onResult( friends );
+							}
+						});
+					}
+					catch (IBMDataException ex)
+					{
+						Log.e("getRelations", ex.getMessage(), ex);
+					}
+				}
+			} );
+		}
+		catch(Exception ex)
+		{
+			Log.e("getUsers", ex.getMessage(), ex);
+		}
 	}
 	
 	public List<MarkerInfo> getMarkers()
@@ -110,24 +204,19 @@ public final class BlueListApplication extends Application {
 		}
 	}
 	
-	public MarkerInfo removeMarker(String id)
+	public void removeMarker(MarkerInfo marker)
 	{
 		synchronized (markers)
 		{
-			MarkerInfo foundMarker = null;
-			for ( MarkerInfo marker: markers)
-			{
-				if ( id.equals( marker.id ) )
-				{
-					foundMarker = marker;
-					break;
-				}
-			}
-			if ( foundMarker != null )
-			{
-				markers.remove( foundMarker );
-			}
-			return foundMarker;
+			this.markers.remove( marker );
+		}
+		if ( marker.marker != null )
+		{
+			marker.marker.remove();
+		}
+		if ( marker.circle != null )
+		{
+			marker.circle.remove();
 		}
 	}
 }

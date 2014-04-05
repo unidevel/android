@@ -2,6 +2,7 @@ package com.unidevel.whereareyou;
 
 import java.util.List;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -145,6 +146,8 @@ public class LogonActivity extends BaseActivity
 		saveUser(user.getUserName(), user.getPassword());
 		this.setResult( RESULT_OK );
 		this.finish();
+		Intent intent = new Intent( this, MapActivity.class );
+		startActivity( intent );
 	}
 	
 	public void saveUser(String user, String password)

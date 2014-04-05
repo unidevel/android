@@ -5,6 +5,8 @@ import java.text.DecimalFormat;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -22,6 +24,7 @@ import com.unidevel.whereareyou.model.User;
 public class MonitorService extends Service 
 {
 	User currentUser;
+	Timer timer;
 	@Override
 	public void onCreate()
 	{
@@ -31,6 +34,17 @@ public class MonitorService extends Service
 	@Override
 	public int onStartCommand( Intent intent, int flags, int startId )
 	{
+		if ( timer == null )
+		{
+			timer = new Timer();
+			timer.schedule( new TimerTask(){
+				@Override
+				public void run()
+				{
+					getFriendsLocation();
+				}
+			}, 0, 5000);
+		}
 		return super.onStartCommand( intent, flags, startId );
 	}
 
@@ -45,7 +59,7 @@ public class MonitorService extends Service
 	{
 		return null;
 	}
-	
+
 	private void getCurrentUser()
 	{
 		this.currentUser = ((BlueListApplication)getApplication()).getCurrentUser();
@@ -75,7 +89,7 @@ public class MonitorService extends Service
 			IBMQuery<Position> query = IBMQuery.queryForClass( Position.class );
 			for(String uid: userIds)
 			{
-				query.whereKeyEqualsTo( "uid",  uid);
+				query.whereKeyEqualsTo( "userid",  uid);
 				query.findObjectsInBackground( new PositionChecker(uid, markers) );
 			}
 		}
@@ -114,6 +128,11 @@ public class MonitorService extends Service
 				Position pos = positions.get( 0 );
 				for (MarkerInfo marker: markers)
 				{
+					if ( marker.uid == null && currentUser != null )
+					{
+						marker.uid = currentUser.getObjectId();
+					}
+					
 					if ( userId.equals( marker.uid ) )
 					{
 						double distance = calcDistance(new LatLng(marker.lat, marker.lng), new LatLng(pos.getLat(), pos.getLng()));

@@ -26,8 +26,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.Spinner;
+import android.widget.TextView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
@@ -43,13 +46,14 @@ import com.unidevel.whereareyou.model.Relation;
 import com.unidevel.whereareyou.model.User;
 
 public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClickListener,
-		GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener
+		GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener, InfoWindowAdapter
 {
 	static final String TYPE_ENTER = "enter";
 	static final String TYPE_LEAVE = "leave";
 	Handler handler;
 	String type;
-	
+	LayoutInflater inflater; 
+
 	@Override
 	public void onInfoWindowClick( final Marker m )
 	{
@@ -59,11 +63,10 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 			return;
 
 		AlertDialog.Builder builder = new AlertDialog.Builder( this );
-		LayoutInflater inflater = LayoutInflater.from( this );
 		View view = inflater.inflate( R.layout.marker, null, false );
 		final EditText titleText = (EditText)view.findViewById( R.id.title );
 		titleText.setText( i.title );
-
+		builder.setTitle( R.string.alert_title );
 		final EditText radiusText = (EditText)view.findViewById( R.id.radius );
 		radiusText.setText( ""+i.radius );
 		final RadioButton enterBtn = (RadioButton)view.findViewById( R.id.type_enter );
@@ -78,6 +81,10 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 			enterBtn.setChecked( false );
 			leaveBtn.setChecked( true );			
 		}
+		final Spinner spinner = (Spinner)view.findViewById(R.id.alertUser);
+		UserAdapter adapter = getFriendsAndMeAdapter(spinner, i.uid);
+		spinner.setAdapter( adapter );
+		
 		builder.setView( view );
 		builder.setPositiveButton( android.R.string.ok, new DialogInterface.OnClickListener()
 		{
@@ -99,8 +106,68 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 				m.showInfoWindow();
 			}
 		} );
+		builder.setNegativeButton( android.R.string.cancel, new DialogInterface.OnClickListener()
+		{
+			@Override
+			public void onClick( DialogInterface dialog, int which )
+			{
+				dialog.dismiss();
+				m.showInfoWindow();
+			}
+		} );
 		AlertDialog dialog = builder.create();
 		dialog.show();
+	}
+
+	private UserAdapter getFriendsAndMeAdapter(final Spinner spinner, final String selectedUid)
+	{
+		final List<User> friendsAndMe = new ArrayList<User>();
+		BlueListApplication app = ((BlueListApplication)getApplication());
+		friendsAndMe.add( app.getCurrentUser() );
+		final UserAdapter adapter = new UserAdapter(this, friendsAndMe);
+		List<User> friends = app.getFriends();
+		if ( friends == null  || friends.size() == 0 )
+		{
+			app.getFriends( new IBMQueryResult<User>()
+			{
+				@Override
+				public void onError( IBMDataException ex )
+				{
+					
+				}
+				@Override
+				public void onResult( final List<User> friends )
+				{
+					handler.post( new Runnable(){
+						public void run() {
+							adapter.addFriends( friends );
+							adapter.notifyDataSetChanged();
+							if ( selectedUid == null || selectedUid.trim().length() == 0 )
+							{
+								spinner.setSelection( 0 );
+							}
+							else
+							{
+								for ( int i = 0; i <  friends.size(); ++ i )
+								{
+									User user = friends.get( i );
+									if ( selectedUid.equals( user.getObjectId() ) )
+									{
+										spinner.setSelection( i+1 );
+										return;
+									}
+								}
+							}							
+						}
+					});
+				}
+			} );
+		}
+		else
+		{
+			friendsAndMe.addAll( app.getFriends() );
+		}
+		return adapter;
 	}
 
 	@Override
@@ -111,6 +178,7 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 
 	List<Circle> circles;
 	Intent serviceIntent = new Intent( "LOCATE_SERVICE" );
+	Intent monitorIntent = new Intent( "MONITOR_SERVICE" );
 
 	public boolean onCreateOptionsMenu(Menu menu) {
 		
@@ -193,19 +261,9 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 		i.lng = p.longitude;
 		i.radius = this.getDefaultRadius();
 		i.type = this.type;
-		Marker m =
-				mMap.addMarker( new MarkerOptions().position( p ).title( i.title ).flat( true ).draggable( true ) );
-		
-		CircleOptions circleOptions = new CircleOptions().center( p )
-			.fillColor(0x800000FF)
-			.radius( i.radius*1000 ); // In  meters
-		Circle circle = mMap.addCircle( circleOptions );
-		i.id = m.getId();
-		i.marker = m;
-		i.circle = circle;
 		addMarker(i);
 		updateMarkerOnMap(i);
-		m.showInfoWindow();
+		i.marker.showInfoWindow();
 	}
 	
 	int index = 0;
@@ -217,24 +275,42 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 	
 	public void updateMarkerOnMap(MarkerInfo m)
 	{
-		if ( m.circle != null )
+		LatLng p = null;
+		if ( m.circle == null )
 		{
-			if ( TYPE_ENTER == m.type )
-			{
-				m.circle.setFillColor( 0x80FF0000 );
-				m.circle.setStrokeColor( 0xC0FF0000 );
-			}
-			else
-			{
-				m.circle.setFillColor( 0x8000FF00 );
-				m.circle.setStrokeColor( 0xC000FF00 );
-			}
-			m.circle.setRadius( m.radius*1000 );
-			m.circle.setStrokeWidth( 1 );
+			p = new LatLng(m.lat, m.lng);
+			CircleOptions circleOptions = new CircleOptions().center( p )
+					.radius( m.radius*1000 ); // In  meters
+			Circle circle = mMap.addCircle( circleOptions );
+			m.circle = circle;
 		}
-		if ( m.marker != null )
+		if ( TYPE_ENTER == m.type )
 		{
-			m.marker.setTitle( getMarkerDescription(m) );
+			m.circle.setFillColor( 0x800000FF );
+			m.circle.setStrokeColor( 0xC00000FF );
+		}
+		else
+		{
+			m.circle.setFillColor( 0x8000FF00 );
+			m.circle.setStrokeColor( 0xC000FF00 );
+		}
+		m.circle.setRadius( m.radius*1000 );
+		m.circle.setStrokeWidth( 1 );
+		if ( m.marker == null )
+		{
+			if  ( p == null )
+			{
+				p = new LatLng(m.lat, m.lng);
+			}
+			Marker marker =
+					mMap.addMarker( new MarkerOptions().position( p ).
+							title( m.title ).snippet( getMarkerDescription(m) ).flat( true ).draggable( true ) );
+			m.marker = marker;
+		}
+		else
+		{
+			m.marker.setTitle( m.title );
+			m.marker.setSnippet( getMarkerDescription(m) );
 		}
 	}
 	
@@ -251,7 +327,32 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 	
 	private Object getUserName( String uid )
 	{
-		return "";
+		BlueListApplication app  = ((BlueListApplication)this.getApplication());
+		if ( uid == null || uid.length() == 0 )
+		{
+			User user = app.getCurrentUser();
+			if ( user != null )
+			{
+				return user.getUserName();
+			}
+			else
+			{
+				return uid;
+			}
+		}
+		List<User> friends = app.getFriends();
+		if ( friends == null )
+		{
+			return uid;
+		}
+		for ( User user : friends )
+		{
+			if ( uid.equals( user.getObjectId() ))
+			{
+				return user.getUserName();
+			}
+		}
+		return uid;
 	}
 
 	public void addMarker(MarkerInfo marker)
@@ -277,6 +378,7 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 		return null;
 	}
 	
+	/*
 	public void removeMarker(String id)
 	{
 		MarkerInfo marker = ((BlueListApplication)getApplication()).removeMarker( id );
@@ -292,6 +394,7 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 			}
 		}
 	}
+	*/
 
 	protected double getDefaultRadius()
 	{
@@ -400,12 +503,15 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 		super.onCreate( savedInstanceState );
 		setContentView( R.layout.map );
 		this.handler = new Handler();
+		this.inflater = LayoutInflater.from( this );
+
 		this.mMap = ((MapFragment)getFragmentManager().findFragmentById( R.id.map )).getMap();
 		this.mMap.getUiSettings().setCompassEnabled( true );
 		this.mMap.setMyLocationEnabled( true );
 		this.mMap.setOnMapLongClickListener( this );
 		// this.mMap.setOnMarkerClickListener(this);
 		this.mMap.setOnInfoWindowClickListener( this );
+		this.mMap.setInfoWindowAdapter( this );
 		this.type = TYPE_ENTER;
 		
 		LocationManager locationManager = (LocationManager)getSystemService( Context.LOCATION_SERVICE );
@@ -428,8 +534,9 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 		}
 
 		this.startService( serviceIntent );
-		Intent intent = new Intent( this, LogonActivity.class );
-		this.startActivityForResult( intent, 1 );
+		this.startService( monitorIntent );
+		//Intent intent = new Intent( this, LogonActivity.class );
+		//this.startActivityForResult( intent, 1 );
 	}
 
 	@Override
@@ -447,5 +554,20 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 	{
 		super.onDestroy();
 		this.stopService( serviceIntent );
+	}
+
+	@Override
+	public View getInfoContents( Marker marker )
+	{
+		View view = this.inflater.inflate( R.layout.infowin, null );
+		TextView textView = (TextView)view.findViewById( R.id.text );
+		textView.setText( marker.getSnippet() );
+		return view;
+	}
+
+	@Override
+	public View getInfoWindow( Marker marker )
+	{
+		return null;
 	}
 }
