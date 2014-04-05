@@ -5,6 +5,9 @@ import java.text.DecimalFormat;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
@@ -136,7 +139,26 @@ public class MonitorService extends Service
 	
 	private void showAlarm(Position position, MarkerInfo marker, String uid)
 	{
+		NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE); 
+		Notification n = new Notification();  
+		n.icon = android.R.drawable.ic_dialog_alert;  
+		n.tickerText = "You clicked BaseNF!";  
+		n.defaults = Notification.DEFAULT_SOUND;  
+		Intent intent = new Intent(this, MapActivity.class);
+		PendingIntent pd = PendingIntent.getActivity( this, 0, intent, 0 );
+		n.setLatestEventInfo(this, "Title01", "Content01", pd);   
 		
+		//The first parameter is the unique ID for the Notification   
+		// and the second is the Notification object.  
+		nm.notify(0, n);  
+		/*
+        n.defaults |= Notification.DEFAULT_SOUND;  
+        n.defaults |= Notification.DEFAULT_VIBRATE;  
+        n.defaults |= Notification.DEFAULT_LIGHTS;            
+        n.flags |= Notification.FLAG_INSISTENT;  
+        n.flags |= Notification.FLAG_AUTO_CANCEL;  
+        n.flags |= Notification.FLAG_NO_CLEAR;  
+          */
 	}
 	
 	public double calcDistance( LatLng StartP, LatLng EndP )
