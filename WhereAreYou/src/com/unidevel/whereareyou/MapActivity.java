@@ -25,7 +25,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.SeekBar;
+import android.widget.RadioButton;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -45,13 +45,16 @@ import com.unidevel.whereareyou.model.User;
 public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClickListener,
 		GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener
 {
+	static final String TYPE_ENTER = "enter";
+	static final String TYPE_LEAVE = "leave";
 	Handler handler;
+	String type;
 	
 	@Override
 	public void onInfoWindowClick( final Marker m )
 	{
-		String id = m.getId();
-		MarkerInfo i =getMarkerInfo(m);
+		m.hideInfoWindow();
+		final MarkerInfo i =getMarkerInfo(m);
 		if ( i == null )
 			return;
 
@@ -61,17 +64,39 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 		final EditText titleText = (EditText)view.findViewById( R.id.title );
 		titleText.setText( i.title );
 
-		final SeekBar rangeBar = (SeekBar)view.findViewById( R.id.radius );
-		rangeBar.setProgress( (int)(i.radius * 100.0) );
+		final EditText radiusText = (EditText)view.findViewById( R.id.radius );
+		radiusText.setText( ""+i.radius );
+		final RadioButton enterBtn = (RadioButton)view.findViewById( R.id.type_enter );
+		final RadioButton leaveBtn = (RadioButton)view.findViewById( R.id.type_leave );
+		if( TYPE_ENTER.equals( i.type ))
+		{
+			enterBtn.setChecked( true );
+			leaveBtn.setChecked( false );
+		}
+		else
+		{
+			enterBtn.setChecked( false );
+			leaveBtn.setChecked( true );			
+		}
 		builder.setView( view );
 		builder.setPositiveButton( android.R.string.ok, new DialogInterface.OnClickListener()
 		{
 			@Override
 			public void onClick( DialogInterface dialog, int which )
 			{
-				String title = titleText.getText().toString();
-				int radius = rangeBar.getProgress();
+				i.title = titleText.getText().toString();
+				try
+				{
+					i.radius = Double.valueOf( radiusText.getText().toString() );
+				}
+				catch(Exception ex)
+				{
+					
+				}
+				i.type = enterBtn.isChecked()?TYPE_ENTER:TYPE_LEAVE;
 				dialog.dismiss();
+				updateMarkerOnMap( i );
+				m.showInfoWindow();
 			}
 		} );
 		AlertDialog dialog = builder.create();
@@ -163,26 +188,72 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 		// Get back the mutable Circle
 		// Circle circle = mMap.addCircle(circleOptions);
 		MarkerInfo i = new MarkerInfo();
-		i.title = "New alert";
+		i.title = getNextAlertName();
 		i.lat = p.latitude;
 		i.lng = p.longitude;
 		i.radius = this.getDefaultRadius();
-
+		i.type = this.type;
 		Marker m =
 				mMap.addMarker( new MarkerOptions().position( p ).title( i.title ).flat( true ).draggable( true ) );
 		
 		CircleOptions circleOptions = new CircleOptions().center( p )
 			.fillColor(0x800000FF)
-				.radius( i.radius*1000 ); // In  meters
+			.radius( i.radius*1000 ); // In  meters
 		Circle circle = mMap.addCircle( circleOptions );
-		
 		i.id = m.getId();
 		i.marker = m;
 		i.circle = circle;
 		addMarker(i);
+		updateMarkerOnMap(i);
 		m.showInfoWindow();
 	}
 	
+	int index = 0;
+	public String getNextAlertName()
+	{
+		index ++;
+		return getString(R.string.alert_name)+index;
+	}
+	
+	public void updateMarkerOnMap(MarkerInfo m)
+	{
+		if ( m.circle != null )
+		{
+			if ( TYPE_ENTER == m.type )
+			{
+				m.circle.setFillColor( 0x80FF0000 );
+				m.circle.setStrokeColor( 0xC0FF0000 );
+			}
+			else
+			{
+				m.circle.setFillColor( 0x8000FF00 );
+				m.circle.setStrokeColor( 0xC000FF00 );
+			}
+			m.circle.setRadius( m.radius*1000 );
+			m.circle.setStrokeWidth( 1 );
+		}
+		if ( m.marker != null )
+		{
+			m.marker.setTitle( getMarkerDescription(m) );
+		}
+	}
+	
+	private String getMarkerDescription(MarkerInfo m)
+	{
+		StringBuffer buf = new StringBuffer();
+		buf.append( getString(R.string.info_alarm) ).append( m.title ).append( "\n" )
+			.append( getString(R.string.info_type) ).append(
+					TYPE_ENTER.equals( m.type )?getString(R.string.info_enter):getString(R.string.info_leave) ).append( "\n" )
+			.append( getString(R.string.info_radius) ).append( m.radius ).append( getString(R.string.info_km) ).append( "\n" )
+			.append( getString(R.string.info_people) ).append( getUserName(m.uid) );
+		return buf.toString();
+	}
+	
+	private Object getUserName( String uid )
+	{
+		return "";
+	}
+
 	public void addMarker(MarkerInfo marker)
 	{
 		((BlueListApplication)getApplication()).addMarker( marker );
@@ -224,7 +295,7 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 
 	protected double getDefaultRadius()
 	{
-		return .5;
+		return 0.05;
 	}
 
 	private GoogleMap mMap;
@@ -335,7 +406,8 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 		this.mMap.setOnMapLongClickListener( this );
 		// this.mMap.setOnMarkerClickListener(this);
 		this.mMap.setOnInfoWindowClickListener( this );
-
+		this.type = TYPE_ENTER;
+		
 		LocationManager locationManager = (LocationManager)getSystemService( Context.LOCATION_SERVICE );
 		Criteria criteria = new Criteria();
 

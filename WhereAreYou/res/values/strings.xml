@@ -7,4 +7,16 @@
     <string name="action_edit">Edit</string>
     <string name="action_delete">Delete</string>
     <string name="title_text">GROCERY LIST</string>
+    <string name="type_enter">Enter</string>
+    <string name="type_leave">Leave</string>
+    <string name="marker_title">Title:</string>
+    <string name="marker_radius">Radius:</string>
+    <string name="info_alarm">Alarm: </string>
+    <string name="info_radius">Radius: </string>
+    <string name="info_people">People:</string>
+    <string name="info_type">Type: </string>
+    <string name="info_enter">Enter</string>
+    <string name="info_leave">Leave</string>
+    <string name="info_km">km</string>
+    <string name="alert_name">NewAlert</string>
 </resources>
