@@ -22,4 +22,7 @@
     <string name="alert_user">People</string>
     <string name="notify_title_enter">User %s entered an alert area!</string>
     <string name="notify_title_leave">User %s left an alert area!</string>
+    <string name="menu_manage_friends">Manage friends</string>
+    <string name="menu_manage_alerts">Manage alerts</string>
+    <string name="alerts_title">Alerts</string>
 </resources>

@@ -58,6 +58,7 @@
 				<action android:name="MONITOR_SERVICE"/>
 			</intent-filter>
 		</service>
+		<activity android:name="AlertListActivity" android:label="@string/alerts_title"></activity>
 	</application>
 
 </manifest>

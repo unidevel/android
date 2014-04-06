@@ -39,7 +39,7 @@ public final class BlueListApplication extends Application {
 	public static final int EDIT_ACTIVITY_RC = 1;
 	private static final String CLASS_NAME = BlueListApplication.class.getSimpleName();
 	//boolean inited;
-	AtomicBoolean loaded;
+	AtomicBoolean loaded = new AtomicBoolean(false);
 	User currentUser;
 	List<User> friendsList;
 	List<MarkerInfo> markers;

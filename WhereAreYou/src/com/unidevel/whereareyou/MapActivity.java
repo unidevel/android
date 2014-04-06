@@ -192,11 +192,21 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 
 	public boolean onCreateOptionsMenu(Menu menu) {
 		
-		MenuItem item = menu.add(0, 0, Menu.NONE, "Manage friends");
+		MenuItem item;
+		item = menu.add(Menu.NONE, Menu.NONE, Menu.NONE, getString(R.string.menu_manage_friends));
 		item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener(){
 			@Override
 			public boolean onMenuItemClick(MenuItem item) {
 				showManageFriendsDailog();
+				return true;
+			}
+		});
+		item = menu.add(Menu.NONE, Menu.NONE, Menu.NONE, getString(R.string.menu_manage_alerts));
+		item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener(){
+			@Override
+			public boolean onMenuItemClick(MenuItem item) {
+				Intent intent = new Intent(MapActivity.this, AlertListActivity.class);
+				startActivity( intent );
 				return true;
 			}
 		});
