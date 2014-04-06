@@ -90,7 +90,7 @@ public class AlertListActivity extends ExpandableListActivity implements Constan
 		@Override
 		public boolean hasStableIds()
 		{
-			return true;
+			return false;
 		}
 
 		@Override
@@ -186,7 +186,7 @@ public class AlertListActivity extends ExpandableListActivity implements Constan
 		this.adapter = new AlertAdapter() ;
 		this.getExpandableListView().setAdapter( this.adapter );
 		this.getExpandableListView().setLongClickable( true );
-		// this.getExpandableListView().setOnItemLongClickListener( this );
+		this.getExpandableListView().setOnItemLongClickListener( this );
 		registerForContextMenu( getExpandableListView() );
 	}
 
@@ -209,6 +209,7 @@ public class AlertListActivity extends ExpandableListActivity implements Constan
 		if ( m == null )
 			return;
 		m.enabled = isChecked;
+		this.adapter.notifyDataSetChanged();
 	}
 
 	@Override
