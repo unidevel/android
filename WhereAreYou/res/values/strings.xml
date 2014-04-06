@@ -1,5 +1,4 @@
 <resources>
-
     <string name="app_name">PositionAlarm</string>
     <string name="item_to_buy">What do you want to buy?</string>
     <string name="title_activity_edit">Edit Item</string>
@@ -21,4 +20,6 @@
     <string name="alert_name">NewAlert</string>
     <string name="alert_title">Add alert</string>
     <string name="alert_user">People</string>
+    <string name="notify_title_enter">User %s entered an alert area!</string>
+    <string name="notify_title_leave">User %s left an alert area!</string>
 </resources>

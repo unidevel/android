@@ -14,11 +14,14 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -46,10 +49,8 @@ import com.unidevel.whereareyou.model.Relation;
 import com.unidevel.whereareyou.model.User;
 
 public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClickListener,
-		GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener, InfoWindowAdapter
+		GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener, InfoWindowAdapter, Constants
 {
-	static final String TYPE_ENTER = "enter";
-	static final String TYPE_LEAVE = "leave";
 	Handler handler;
 	String type;
 	LayoutInflater inflater; 
@@ -535,8 +536,6 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 
 		this.startService( serviceIntent );
 		this.startService( monitorIntent );
-		//Intent intent = new Intent( this, LogonActivity.class );
-		//this.startActivityForResult( intent, 1 );
 	}
 
 	@Override
@@ -569,5 +568,79 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 	public View getInfoWindow( Marker marker )
 	{
 		return null;
+	}
+	
+	@Override
+	protected void onPause()
+	{
+		super.onPause();
+		saveMarkers();
+	}
+	
+	private void saveMarkers()
+	{
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences( this );
+		Editor edit = pref.edit();
+		BlueListApplication app = (BlueListApplication)getApplication();
+		List<MarkerInfo> markers = app.getMarkers();
+		for ( int i = 0; i < markers.size(); ++i )
+		{
+			MarkerInfo marker = markers.get( i );
+			String prefix = "marker.";
+			edit.putInt( prefix+"index."+i, marker.index);
+			edit.putBoolean( prefix+"enabled."+i, marker.enabled);
+			edit.putString( prefix+"title."+i, marker.title);
+			edit.putString( prefix+"type."+i, marker.type);
+			edit.putString( prefix+"extra."+i, marker.extra);
+			edit.putString( prefix+"uid."+i, marker.uid);
+			edit.putString( prefix+"username."+i, marker.userName);
+			edit.putString( prefix+"lat."+i, String.valueOf( marker.lat ) );
+			edit.putString( prefix+"lng."+i, String.valueOf( marker.lng ) );
+			edit.putString( prefix+"radius."+i, String.valueOf( marker.radius ) );
+		}
+		edit.commit();
+	}
+
+	@Override
+	protected void onResume()
+	{
+		super.onResume();
+		//loarMarkers();
+	}
+
+	private void loarMarkers()
+	{
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences( this );
+		BlueListApplication app = (BlueListApplication)getApplication();
+
+		for ( int i = 0; true; ++ i )
+		{
+			String prefix = "marker.";
+			MarkerInfo marker = new MarkerInfo();
+			int index = pref.getInt( prefix+"index."+i, -1);
+			if ( index < 0 ) break;
+			marker.enabled = pref.getBoolean( prefix+"enabled."+i, true);
+			marker.title = pref.getString( prefix+"title."+i, "Unknown");
+			marker.type = pref.getString( prefix+"type."+i, TYPE_ENTER);
+			marker.extra = pref.getString( prefix+"extra."+i, marker.extra);
+			marker.uid = pref.getString( prefix+"uid."+i, null);
+			marker.userName = pref.getString( prefix+"username."+i, "");
+			try
+			{
+				marker.lat = Double.valueOf( pref.getString( prefix+"lat."+i, "0" ) );
+			}
+			catch(Exception ex){}
+			try
+			{
+				marker.lng = Double.valueOf( pref.getString( prefix+"lng."+i, "0" ) );
+			}
+			catch(Exception ex){}
+			try
+			{
+				marker.radius = Double.valueOf( pref.getString( prefix+"radius."+i, String.valueOf( marker.radius ) ) );
+			}
+			catch(Exception ex){}
+			app.addMarker( marker );
+		}
 	}
 }

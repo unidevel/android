@@ -21,6 +21,15 @@ public class Position extends IBMDataObject
 	public void setUserId(String userId) {
 		setObject(USERID, (userId != null) ? userId : "");
 	}
+	
+	public String getUserName() {
+		return (String) getObject("username");
+	}
+
+	public void setUserName(String userId) {
+		setObject("username", (userId != null) ? userId : "");
+	}
+
 
 	public double getLat()
 	{

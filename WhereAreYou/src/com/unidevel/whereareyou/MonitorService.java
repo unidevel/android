@@ -21,7 +21,7 @@ import com.ibm.mobile.services.data.IBMQueryResult;
 import com.unidevel.whereareyou.model.Position;
 import com.unidevel.whereareyou.model.User;
 
-public class MonitorService extends Service 
+public class MonitorService extends Service implements Constants
 {
 	User currentUser;
 	Timer timer;
@@ -126,8 +126,14 @@ public class MonitorService extends Service
 			if ( positions != null && positions.size() > 0 )
 			{
 				Position pos = positions.get( 0 );
+				String userId = pos.getUserId();
+				String userName = pos.getUserName();
+				boolean enterAlarm = false;
+				boolean leaveAlarm = true;
+				boolean hasLeave = false;
 				for (MarkerInfo marker: markers)
 				{
+					if ( !marker.enabled ) continue;
 					if ( marker.uid == null && currentUser != null )
 					{
 						marker.uid = currentUser.getObjectId();
@@ -136,48 +142,62 @@ public class MonitorService extends Service
 					if ( userId.equals( marker.uid ) )
 					{
 						double distance = calcDistance(new LatLng(marker.lat, marker.lng), new LatLng(pos.getLat(), pos.getLng()));
-						if ( "enter".equalsIgnoreCase( marker.type ) )
+						if ( TYPE_ENTER.equalsIgnoreCase( marker.type ) )
 						{
 							if ( distance < marker.radius )
 							{
-								showAlarm(pos, marker, userId);
+								enterAlarm = true;
 							}
 						}
 						else
 						{
-							if ( distance > marker.radius )
+							hasLeave = true;
+							if ( distance >= marker.radius )
 							{
-								showAlarm(pos, marker, userId);
+								leaveAlarm &= true;
+							}
+							else
+							{
+								leaveAlarm &= false;
 							}
 						}
+					}
+					
+					if ( hasLeave && leaveAlarm )
+					{
+						showAlarm(pos, TYPE_LEAVE);
+					}
+					if ( enterAlarm )
+					{
+						showAlarm(pos, TYPE_LEAVE);
 					}
 				}
 			}
 		}
 	}
 	
-	private void showAlarm(Position position, MarkerInfo marker, String uid)
+	private void showAlarm(Position position, /* MarkerInfo marker, String uid, String userName,*/ String type)
 	{
 		NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE); 
 		Notification n = new Notification();  
 		n.icon = android.R.drawable.ic_dialog_alert;  
-		n.tickerText = "You clicked BaseNF!";  
+		if ( TYPE_ENTER.equals( type ) )
+		{
+			n.tickerText = this.getString( R.string.notify_title_enter, position.getUserName()==null?"":position.getUserName() );
+		}
+		else
+		{
+			n.tickerText = this.getString( R.string.notify_title_leave, position.getUserName()==null?"":position.getUserName() );
+		}
+		
 		n.defaults = Notification.DEFAULT_SOUND;  
 		Intent intent = new Intent(this, MapActivity.class);
+		intent.getExtras().putString( "uid", position.getUserId() );
+		intent.getExtras().putString( "username", position.getUserName() );
 		PendingIntent pd = PendingIntent.getActivity( this, 0, intent, 0 );
-		n.setLatestEventInfo(this, "Title01", "Content01", pd);   
+		n.setLatestEventInfo(this, n.tickerText, "", pd);   
 		
-		//The first parameter is the unique ID for the Notification   
-		// and the second is the Notification object.  
 		nm.notify(0, n);  
-		/*
-        n.defaults |= Notification.DEFAULT_SOUND;  
-        n.defaults |= Notification.DEFAULT_VIBRATE;  
-        n.defaults |= Notification.DEFAULT_LIGHTS;            
-        n.flags |= Notification.FLAG_INSISTENT;  
-        n.flags |= Notification.FLAG_AUTO_CANCEL;  
-        n.flags |= Notification.FLAG_NO_CLEAR;  
-          */
 	}
 	
 	public double calcDistance( LatLng StartP, LatLng EndP )

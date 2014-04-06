@@ -133,6 +133,7 @@ public class LocateService extends Service implements GooglePlayServicesClient.C
 							else
 							{
 								position = new Position();
+								position.setUserName( user.getUserName() );
 								position.setLat( location.getLatitude() );
 								position.setLng( location.getLongitude() );
 								position.setAccuracy( location.getAccuracy() );
@@ -149,6 +150,7 @@ public class LocateService extends Service implements GooglePlayServicesClient.C
 			}
 			else
 			{
+				position.setUserName( user.getUserName() );
 				position.setLat( location.getLatitude() );
 				position.setLng( location.getLongitude() );
 				position.setAccuracy( location.getAccuracy() );
