@@ -571,7 +571,7 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 	protected void onActivityResult( int requestCode, int resultCode, Intent data )
 	{
 		super.onActivityResult( requestCode, resultCode, data );
-		if (requestCode == 100)
+		if (requestCode == 100 && data != null)
 		{
 			int index = data.getIntExtra( "index", -1 );
 			if ( index >= 0 )
@@ -694,7 +694,7 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 					marker.enabled = alert.getBoolean( "enabled" );
 					marker.title = alert.getString( "title" );
 					marker.type = alert.getString( "type" );
-					marker.extra = alert.getString( "extra" );
+					//marker.extra = alert.getString( "extra" );
 					marker.uid = alert.getString( "uid" );
 					marker.userName = alert.getString( "username" );
 					marker.lat = alert.getDouble( "lat" );
@@ -704,7 +704,7 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 				}
 				catch (JSONException e)
 				{
-					e.printStackTrace();
+					Log.e( "loadAlert", e.getMessage(), e );
 				}
 			}
 		}
