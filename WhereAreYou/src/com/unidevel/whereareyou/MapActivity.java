@@ -35,6 +35,7 @@ import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ToggleButton;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
@@ -580,6 +581,9 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 				MarkerInfo marker = markers.get( index );
 				if ( marker != null )
 				{
+					LatLng p = new LatLng(marker.lat, marker.lng);
+					CameraUpdate update = CameraUpdateFactory.newLatLng( p );
+					mMap.moveCamera( update );
 					marker.marker.showInfoWindow();
 				}
 			}

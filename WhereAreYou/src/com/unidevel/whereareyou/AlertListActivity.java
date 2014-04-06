@@ -185,8 +185,8 @@ public class AlertListActivity extends ExpandableListActivity implements Constan
 		this.inflater = LayoutInflater.from( this );
 		this.adapter = new AlertAdapter() ;
 		this.getExpandableListView().setAdapter( this.adapter );
-		this.getExpandableListView().setLongClickable( true );
-		this.getExpandableListView().setOnItemLongClickListener( this );
+		//this.getExpandableListView().setLongClickable( true );
+		//this.getExpandableListView().setOnItemLongClickListener( this );
 		registerForContextMenu( getExpandableListView() );
 	}
 

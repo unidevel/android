@@ -87,10 +87,12 @@ public class MonitorService extends Service implements Constants
 		try
 		{
 			IBMQuery<Position> query = IBMQuery.queryForClass( Position.class );
+			int index = 0;
 			for(String uid: userIds)
 			{
 				query.whereKeyEqualsTo( "userid",  uid);
-				query.findObjectsInBackground( new PositionChecker(uid, markers) );
+				query.findObjectsInBackground( new PositionChecker(uid, markers, index) );
+				index ++; 
 			}
 		}
 		catch (IBMDataException e)
@@ -103,10 +105,12 @@ public class MonitorService extends Service implements Constants
 	{
 		String userId;
 		List<MarkerInfo> markers;
-		public PositionChecker(String uid, List<MarkerInfo> markers)
+		int index;
+		public PositionChecker(String uid, List<MarkerInfo> markers, int index)
 		{
 			this.userId = uid;
 			this.markers = markers;
+			this.index = index;
 		}
 		
 		public String getUserId()
@@ -165,18 +169,18 @@ public class MonitorService extends Service implements Constants
 					
 					if ( hasLeave && leaveAlarm )
 					{
-						showAlarm(pos, TYPE_LEAVE);
+						showAlarm(pos, TYPE_LEAVE, index);
 					}
 					if ( enterAlarm )
 					{
-						showAlarm(pos, TYPE_LEAVE);
+						showAlarm(pos, TYPE_LEAVE, index*2);
 					}
 				}
 			}
 		}
 	}
 	
-	private void showAlarm(Position position, /* MarkerInfo marker, String uid, String userName,*/ String type)
+	private void showAlarm(Position position, /* MarkerInfo marker, String uid, String userName,*/ String type, int index)
 	{
 		NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE); 
 		Notification n = new Notification();  
@@ -194,10 +198,10 @@ public class MonitorService extends Service implements Constants
 		Intent intent = new Intent(this, AlertListActivity.class);
 		intent.putExtra( "uid", position.getUserId() );
 		intent.putExtra( "username", position.getUserName() );
-		PendingIntent pd = PendingIntent.getActivity( this, 0, intent, 0 );
+		PendingIntent pd = PendingIntent.getActivity( this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT );
 		n.setLatestEventInfo(this, n.tickerText, "", pd);   
 		
-		nm.notify(0, n);  
+		nm.notify(index, n);  
 	}
 	
 	public double calcDistance( LatLng StartP, LatLng EndP )
