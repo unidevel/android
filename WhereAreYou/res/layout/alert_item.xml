@@ -6,28 +6,33 @@
 	android:orientation="horizontal">
 
 	<CheckBox
-		android:layout_height="wrap_content"
-		android:layout_width="wrap_content"
-		android:layout_marginLeft="25dp"/>
+	    android:id="@+id/enabled"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_marginLeft="40dp" />
 
 	<LinearLayout
-		android:layout_height="wrap_content"
-		android:layout_width="wrap_content"
-		android:orientation="vertical">
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_weight="10"
+	    android:focusable="false"
+	    android:orientation="vertical" >
 
 		<TextView
-			android:layout_height="wrap_content"
-			android:text="Small Text"
-			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:layout_width="wrap_content"
-			android:id="@+id/type"/>
+		    android:id="@+id/type"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:focusable="false"
+		    android:text="Small Text"
+		    android:textAppearance="?android:attr/textAppearanceSmall" />
 
 		<TextView
-			android:layout_height="wrap_content"
-			android:text="Small Text"
-			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:layout_width="wrap_content"
-			android:id="@+id/info"/>
+		    android:id="@+id/info"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:focusable="false"
+		    android:text="Small Text"
+		    android:textAppearance="?android:attr/textAppearanceSmall" />
 
 	</LinearLayout>
 

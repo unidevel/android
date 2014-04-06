@@ -191,9 +191,9 @@ public class MonitorService extends Service implements Constants
 		}
 		
 		n.defaults = Notification.DEFAULT_SOUND;  
-		Intent intent = new Intent(this, MapActivity.class);
-		intent.getExtras().putString( "uid", position.getUserId() );
-		intent.getExtras().putString( "username", position.getUserName() );
+		Intent intent = new Intent(this, AlertListActivity.class);
+		intent.putExtra( "uid", position.getUserId() );
+		intent.putExtra( "username", position.getUserName() );
 		PendingIntent pd = PendingIntent.getActivity( this, 0, intent, 0 );
 		n.setLatestEventInfo(this, n.tickerText, "", pd);   
 		

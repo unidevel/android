@@ -25,4 +25,11 @@
     <string name="menu_manage_friends">Manage friends</string>
     <string name="menu_manage_alerts">Manage alerts</string>
     <string name="alerts_title">Alerts</string>
+    <string name="alert_list_title_format" formatted="false">%s %s, alert when %s</string>
+    <string name="alert_list_enabled">enabled</string>
+    <string name="alert_list_dsiabled">disabled</string>
+    <string name="alert_list_info_format" formatted="false">Location (%.2f, %.2f), radius %.3f km</string>
+    <string name="alert_list_type_enter">enter</string>
+    <string name="alert_list_type_leave">leave</string>
+    <string name="delete_button">Delete</string>
 </resources>

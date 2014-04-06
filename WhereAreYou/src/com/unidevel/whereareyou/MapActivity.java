@@ -9,6 +9,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -31,6 +34,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
@@ -47,7 +51,6 @@ import com.ibm.mobile.services.data.IBMQueryResult;
 import com.unidevel.BaseActivity;
 import com.unidevel.whereareyou.model.Relation;
 import com.unidevel.whereareyou.model.User;
-import android.widget.*;
 
 public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClickListener,
 		GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener, InfoWindowAdapter, Constants
@@ -116,13 +119,13 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 				m.showInfoWindow();
 			}
 		} );
-		builder.setNegativeButton( android.R.string.cancel, new DialogInterface.OnClickListener()
+		builder.setNegativeButton( R.string.delete_button, new DialogInterface.OnClickListener()
 		{
 			@Override
 			public void onClick( DialogInterface dialog, int which )
 			{
+				((BlueListApplication)getApplication()).removeMarker( i );
 				dialog.dismiss();
-				m.showInfoWindow();
 			}
 		} );
 		AlertDialog dialog = builder.create();
@@ -206,7 +209,7 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 			@Override
 			public boolean onMenuItemClick(MenuItem item) {
 				Intent intent = new Intent(MapActivity.this, AlertListActivity.class);
-				startActivity( intent );
+				startActivityForResult( intent, 100 );
 				return true;
 			}
 		});
@@ -346,7 +349,9 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 			.append( getString(R.string.info_type) ).append(
 					TYPE_ENTER.equals( m.type )?getString(R.string.info_enter):getString(R.string.info_leave) ).append( "\n" )
 			.append( getString(R.string.info_radius) ).append( m.radius ).append( getString(R.string.info_km) ).append( "\n" )
-			.append( getString(R.string.info_people) ).append( getUserName(m.uid) );
+			.append( getString(R.string.info_people) )
+			.append( m.userName == null?"":m.userName );
+			//.append( getUserName(m.uid) );
 		return buf.toString();
 	}
 	
@@ -566,9 +571,18 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 	protected void onActivityResult( int requestCode, int resultCode, Intent data )
 	{
 		super.onActivityResult( requestCode, resultCode, data );
-		if ( resultCode != RESULT_OK )
+		if (requestCode == 100)
 		{
-			this.finish();
+			int index = data.getIntExtra( "index", -1 );
+			if ( index >= 0 )
+			{
+				List<MarkerInfo> markers = ((BlueListApplication)getApplication()).getMarkers();
+				MarkerInfo marker = markers.get( index );
+				if ( marker != null )
+				{
+					marker.marker.showInfoWindow();
+				}
+			}
 		}
 	}
 
@@ -604,24 +618,29 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 	private void saveMarkers()
 	{
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences( this );
-		Editor edit = pref.edit();
 		BlueListApplication app = (BlueListApplication)getApplication();
 		List<MarkerInfo> markers = app.getMarkers();
+		JSONArray alerts = new JSONArray();
 		for ( int i = 0; i < markers.size(); ++i )
 		{
+			JSONObject alert = new JSONObject();
 			MarkerInfo marker = markers.get( i );
-			String prefix = "marker.";
-			edit.putInt( prefix+"index."+i, marker.index);
-			edit.putBoolean( prefix+"enabled."+i, marker.enabled);
-			edit.putString( prefix+"title."+i, marker.title);
-			edit.putString( prefix+"type."+i, marker.type);
-			edit.putString( prefix+"extra."+i, marker.extra);
-			edit.putString( prefix+"uid."+i, marker.uid);
-			edit.putString( prefix+"username."+i, marker.userName);
-			edit.putString( prefix+"lat."+i, String.valueOf( marker.lat ) );
-			edit.putString( prefix+"lng."+i, String.valueOf( marker.lng ) );
-			edit.putString( prefix+"radius."+i, String.valueOf( marker.radius ) );
+			alerts.put( alert );
+			try
+			{
+				alert.put( "title", marker.title ).put( "enabled", marker.enabled )
+					.put( "type", marker.type ).put( "extra", marker.extra )
+					.put( "uid", marker.uid ).put( "username", marker.userName )
+					.put( "lat", marker.lat ).put("lng", marker.lng )
+					.put( "radius", marker.radius );
+			}
+			catch (JSONException e)
+			{
+				e.printStackTrace();
+			}
 		}
+		Editor edit = pref.edit();
+		edit.putString( "alerts", alerts.toString() );
 		edit.commit();
 	}
 
@@ -630,12 +649,9 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 	{
 		super.onResume();
 		BlueListApplication app = (BlueListApplication)getApplication();
-		if (app.isLoaded()){
-			loarMarkers();
-			for(MarkerInfo m:app.getMarkers()){
-				updateMarkerOnMap(m);
-			}
-			app.setLoaded(true);
+		loarMarkers();
+		for(MarkerInfo m:app.getMarkers()){
+			updateMarkerOnMap(m);
 		}
 	}
 
@@ -643,35 +659,54 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 	{
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences( this );
 		BlueListApplication app = (BlueListApplication)getApplication();
-
-		for ( int i = 0; true; ++ i )
+		List<MarkerInfo> markers = app.getMarkers();
+		for ( MarkerInfo m: markers )
 		{
-			String prefix = "marker.";
-			MarkerInfo marker = new MarkerInfo();
-			int index = pref.getInt( prefix+"index."+i, -1);
-			if ( index < 0 ) break;
-			marker.enabled = pref.getBoolean( prefix+"enabled."+i, true);
-			marker.title = pref.getString( prefix+"title."+i, "Unknown");
-			marker.type = pref.getString( prefix+"type."+i, TYPE_ENTER);
-			marker.extra = pref.getString( prefix+"extra."+i, marker.extra);
-			marker.uid = pref.getString( prefix+"uid."+i, null);
-			marker.userName = pref.getString( prefix+"username."+i, "");
-			try
+			if ( m.circle != null )
 			{
-				marker.lat = Double.valueOf( pref.getString( prefix+"lat."+i, "0" ) );
+				m.circle.remove();
 			}
-			catch(Exception ex){}
-			try
+			if ( m.marker != null )
 			{
-				marker.lng = Double.valueOf( pref.getString( prefix+"lng."+i, "0" ) );
+				m.marker.remove();
 			}
-			catch(Exception ex){}
-			try
+		}
+		app.clearMarkers();
+		String data = pref.getString( "alerts", null );
+		JSONArray alerts = null;
+		try
+		{
+			alerts = new JSONArray(data);
+		}
+		catch(Exception ex)
+		{
+			ex.printStackTrace();
+		}
+		if ( alerts != null )
+		{
+			for ( int i = 0; i < alerts.length(); ++ i )
 			{
-				marker.radius = Double.valueOf( pref.getString( prefix+"radius."+i, String.valueOf( marker.radius ) ) );
+				try
+				{
+					JSONObject alert = alerts.getJSONObject( i );
+					MarkerInfo marker = new MarkerInfo();
+					marker.index = i;
+					marker.enabled = alert.getBoolean( "enabled" );
+					marker.title = alert.getString( "title" );
+					marker.type = alert.getString( "type" );
+					marker.extra = alert.getString( "extra" );
+					marker.uid = alert.getString( "uid" );
+					marker.userName = alert.getString( "username" );
+					marker.lat = alert.getDouble( "lat" );
+					marker.lng = alert.getDouble( "lng" );
+					marker.radius = alert.getDouble( "radius" );
+					app.addMarker( marker );
+				}
+				catch (JSONException e)
+				{
+					e.printStackTrace();
+				}
 			}
-			catch(Exception ex){}
-			app.addMarker( marker );
 		}
 	}
 }

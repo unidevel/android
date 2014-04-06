@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
@@ -33,7 +34,6 @@ import com.ibm.mobile.services.data.IBMQueryResult;
 import com.unidevel.whereareyou.model.Position;
 import com.unidevel.whereareyou.model.Relation;
 import com.unidevel.whereareyou.model.User;
-import java.util.concurrent.atomic.*;
 
 public final class BlueListApplication extends Application {
 	public static final int EDIT_ACTIVITY_RC = 1;
@@ -215,6 +215,14 @@ public final class BlueListApplication extends Application {
 			this.markers.add( marker );
 		}
 	}
+
+	public void clearMarkers()
+	{
+		synchronized (markers)
+		{
+			this.markers.clear();
+		}
+	}
 	
 	public void removeMarker(MarkerInfo marker)
 	{
@@ -225,10 +233,12 @@ public final class BlueListApplication extends Application {
 		if ( marker.marker != null )
 		{
 			marker.marker.remove();
+			marker.marker = null;
 		}
 		if ( marker.circle != null )
 		{
 			marker.circle.remove();
+			marker.circle = null;
 		}
 	}
 }
