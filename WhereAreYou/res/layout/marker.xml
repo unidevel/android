@@ -1,88 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="vertical" >
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:orientation="vertical">
 
-    <TableLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:shrinkColumns="0"
-        android:stretchColumns="1" >
+	<TableLayout
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:shrinkColumns="0"
+		android:stretchColumns="1">
 
-        <TableRow
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
+		<TableRow
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/marker_title"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/marker_title"
+				android:textAppearance="?android:attr/textAppearanceMedium"/>
 
-            <EditText
-                android:id="@+id/title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10" />
-		</TableRow>
-
-        <TableRow
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/marker_radius"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-            <EditText
-                android:id="@+id/radius"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="number" />
+			<EditText
+				android:id="@+id/title"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:ems="10"/>
 
 		</TableRow>
-		        <TableRow
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/alert_user"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+		<TableRow
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
 
-            
-		    <Spinner
-		        android:id="@+id/alertUser"
-		        android:layout_width="match_parent"
-		        android:layout_height="wrap_content" />
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/marker_radius"
+				android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+			<EditText
+				android:id="@+id/radius"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:ems="10"
+				android:inputType="number"/>
+
 		</TableRow>
-    </TableLayout>
 
-    <RadioGroup
-        android:id="@+id/typeGroup"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+		<TableRow
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
 
-        <RadioButton
-            android:id="@+id/type_enter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="10"
-            android:text="@string/type_enter" />
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/alert_user"
+				android:textAppearance="?android:attr/textAppearanceMedium"/>
 
-        <RadioButton
-            android:id="@+id/type_leave"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="10"
-            android:text="@string/type_leave" />
-    </RadioGroup>
+			<Spinner
+				android:id="@+id/alertUser"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"/>
 
+		</TableRow>
+
+	</TableLayout>
+
+	<RadioGroup
+		android:id="@+id/typeGroup"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal">
+
+		<RadioButton
+			android:id="@+id/type_enter"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="10"
+			android:text="@string/type_enter"/>
+
+		<RadioButton
+			android:id="@+id/type_leave"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="10"
+			android:text="@string/type_leave"/>
+
+	</RadioGroup>
+
+	<ToggleButton
+		android:id="@+id/enable"
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"/>
 
 </LinearLayout>
+

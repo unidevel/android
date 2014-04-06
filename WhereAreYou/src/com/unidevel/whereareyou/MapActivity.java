@@ -47,6 +47,7 @@ import com.ibm.mobile.services.data.IBMQueryResult;
 import com.unidevel.BaseActivity;
 import com.unidevel.whereareyou.model.Relation;
 import com.unidevel.whereareyou.model.User;
+import android.widget.*;
 
 public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClickListener,
 		GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener, InfoWindowAdapter, Constants
@@ -72,6 +73,7 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 		radiusText.setText( ""+i.radius );
 		final RadioButton enterBtn = (RadioButton)view.findViewById( R.id.type_enter );
 		final RadioButton leaveBtn = (RadioButton)view.findViewById( R.id.type_leave );
+		final ToggleButton enableBtn=(ToggleButton)view.findViewById(R.id.enable);
 		if( TYPE_ENTER.equals( i.type ))
 		{
 			enterBtn.setChecked( true );
@@ -82,8 +84,9 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 			enterBtn.setChecked( false );
 			leaveBtn.setChecked( true );			
 		}
+		enableBtn.setChecked(i.enabled);
 		final Spinner spinner = (Spinner)view.findViewById(R.id.alertUser);
-		UserAdapter adapter = getFriendsAndMeAdapter(spinner, i.uid);
+		final UserAdapter adapter = getFriendsAndMeAdapter(spinner, i.uid);
 		spinner.setAdapter( adapter );
 		
 		builder.setView( view );
@@ -102,6 +105,12 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 					
 				}
 				i.type = enterBtn.isChecked()?TYPE_ENTER:TYPE_LEAVE;
+				i.enabled = enableBtn.isChecked();
+				User user= (User)spinner.getSelectedItem();
+				if(user!=null){
+					i.uid=user.getObjectId();
+					i.userName=user.getUserName();
+				}
 				dialog.dismiss();
 				updateMarkerOnMap( i );
 				m.showInfoWindow();
@@ -254,6 +263,8 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 	@Override
 	public void onMapLongClick( LatLng p )
 	{
+		BlueListApplication app  = ((BlueListApplication)this.getApplication());
+		User user=app.getCurrentUser();
 		// Get back the mutable Circle
 		// Circle circle = mMap.addCircle(circleOptions);
 		MarkerInfo i = new MarkerInfo();
@@ -262,6 +273,9 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 		i.lng = p.longitude;
 		i.radius = this.getDefaultRadius();
 		i.type = this.type;
+		i.enabled = true;
+		i.uid=user.getObjectId();
+		i.userName=user.getUserName();
 		addMarker(i);
 		updateMarkerOnMap(i);
 		i.marker.showInfoWindow();
@@ -605,7 +619,14 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 	protected void onResume()
 	{
 		super.onResume();
-		//loarMarkers();
+		BlueListApplication app = (BlueListApplication)getApplication();
+		if (app.isLoaded()){
+			loarMarkers();
+			for(MarkerInfo m:app.getMarkers()){
+				updateMarkerOnMap(m);
+			}
+			app.setLoaded(true);
+		}
 	}
 
 	private void loarMarkers()

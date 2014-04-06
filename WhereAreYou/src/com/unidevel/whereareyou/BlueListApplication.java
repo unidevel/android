@@ -33,10 +33,13 @@ import com.ibm.mobile.services.data.IBMQueryResult;
 import com.unidevel.whereareyou.model.Position;
 import com.unidevel.whereareyou.model.Relation;
 import com.unidevel.whereareyou.model.User;
+import java.util.concurrent.atomic.*;
 
 public final class BlueListApplication extends Application {
 	public static final int EDIT_ACTIVITY_RC = 1;
 	private static final String CLASS_NAME = BlueListApplication.class.getSimpleName();
+	//boolean inited;
+	AtomicBoolean loaded;
 	User currentUser;
 	List<User> friendsList;
 	List<MarkerInfo> markers;
@@ -79,6 +82,7 @@ public final class BlueListApplication extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		this.loaded.set(false);
 		this.friendsList = new ArrayList<User>();
 		this.markers = new ArrayList<MarkerInfo>();
 		this.currentUser = new User();
@@ -94,6 +98,14 @@ public final class BlueListApplication extends Application {
 	public void setCurrentUser( User currentUser )
 	{
 		this.currentUser = currentUser;
+	}
+	
+	public boolean isLoaded(){
+		return this.loaded.get();
+	}
+	
+	public void setLoaded(boolean flag){
+		this.loaded.set(flag);
 	}
 	
 	private void getAllUsers(IBMQueryResult<User> resultCallback) throws IBMDataException{
