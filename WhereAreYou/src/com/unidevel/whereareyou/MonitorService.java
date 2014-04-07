@@ -198,7 +198,7 @@ public class MonitorService extends Service implements Constants
 		Intent intent = new Intent(this, AlertListActivity.class);
 		intent.putExtra( "uid", position.getUserId() );
 		intent.putExtra( "username", position.getUserName() );
-		PendingIntent pd = PendingIntent.getActivity( this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT );
+		PendingIntent pd = PendingIntent.getActivity( this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT );
 		n.setLatestEventInfo(this, n.tickerText, "", pd);   
 		
 		nm.notify(index, n);  

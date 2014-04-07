@@ -28,6 +28,7 @@ public class AlertListActivity extends ExpandableListActivity implements Constan
 	LayoutInflater inflater;
 	LinkedHashMap<String, List<MarkerInfo>> data;
 	AlertAdapter adapter;
+	boolean notifyMode;
 	class AlertAdapter extends BaseExpandableListAdapter
 	{
 		List<String> keys;
@@ -148,6 +149,7 @@ public class AlertListActivity extends ExpandableListActivity implements Constan
 		BlueListApplication app = (BlueListApplication)getApplication();
 		User my = app.getCurrentUser();
 		List<MarkerInfo> markers = app.getMarkers();
+		this.notifyMode = false;
 		String userName = getIntent().getStringExtra( "username" );
 		if ( false )
 		{
@@ -170,6 +172,7 @@ public class AlertListActivity extends ExpandableListActivity implements Constan
 		{
 			if ( userName != null && userName.trim().length() > 0 )
 			{
+				this.notifyMode = true;
 				if ( !userName.equals( m.userName ) )
 					continue;
 			}
@@ -219,7 +222,7 @@ public class AlertListActivity extends ExpandableListActivity implements Constan
 		ExpandableListView.ExpandableListContextMenuInfo info =
 				(ExpandableListView.ExpandableListContextMenuInfo)menuInfo;
 		int type = ExpandableListView.getPackedPositionType( info.packedPosition );
-
+		
 		if ( type == ExpandableListView.PACKED_POSITION_TYPE_CHILD )
 		{
 			int groupPos = ExpandableListView.getPackedPositionGroup( info.packedPosition );
@@ -227,10 +230,21 @@ public class AlertListActivity extends ExpandableListActivity implements Constan
 			MarkerInfo m = (MarkerInfo)this.adapter.getChild( groupPos, childPos );
 			if ( m != null )
 			{
-				Intent intent = new Intent();
-				intent.putExtra( "index", m.index );
-				setResult( RESULT_OK, intent );
-				this.finish();				
+				if ( this.notifyMode )
+				{
+					Intent intent = new Intent(AlertListActivity.this, MapActivity.class);
+					intent.putExtra( "index", m.index );
+					//intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP
+				     //       | Intent.FLAG_ACTIVITY_SINGLE_TOP );
+					startActivity( intent );
+				}
+				else
+				{
+					Intent intent = new Intent();
+					intent.putExtra( "index", m.index );
+					setResult( RESULT_OK, intent );
+				}
+				this.finish();
 			}
 		}
 		else if ( type == ExpandableListView.PACKED_POSITION_TYPE_GROUP )

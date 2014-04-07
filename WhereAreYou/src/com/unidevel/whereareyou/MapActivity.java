@@ -25,6 +25,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -313,6 +314,8 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 			Circle circle = mMap.addCircle( circleOptions );
 			m.circle = circle;
 		}
+		if ( m.enabled )
+		{
 		if ( TYPE_ENTER == m.type )
 		{
 			m.circle.setFillColor( 0x800000FF );
@@ -322,6 +325,12 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 		{
 			m.circle.setFillColor( 0x8000FF00 );
 			m.circle.setStrokeColor( 0xC000FF00 );
+		}
+		}
+		else
+		{
+			m.circle.setFillColor( 0x80808080 );
+			m.circle.setStrokeColor( 0xC0808080 );			
 		}
 		m.circle.setRadius( m.radius*1000 );
 		m.circle.setStrokeWidth( 1 );
@@ -346,12 +355,12 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 	private String getMarkerDescription(MarkerInfo m)
 	{
 		StringBuffer buf = new StringBuffer();
-		buf.append( getString(R.string.info_alarm) ).append( m.title ).append( "\n" )
-			.append( getString(R.string.info_type) ).append(
-					TYPE_ENTER.equals( m.type )?getString(R.string.info_enter):getString(R.string.info_leave) ).append( "\n" )
-			.append( getString(R.string.info_radius) ).append( m.radius ).append( getString(R.string.info_km) ).append( "\n" )
-			.append( getString(R.string.info_people) )
-			.append( m.userName == null?"":m.userName );
+		buf./*append( getString(R.string.info_alarm) ).*/append( "<b>" ).append( m.title ).append( "</b><br/><ul>" )
+			.append("<li>").append( getString(R.string.info_type) ).append(
+					TYPE_ENTER.equals( m.type )?getString(R.string.info_enter):getString(R.string.info_leave) ).append( "</li>" )
+			.append("<li>").append( getString(R.string.info_radius) ).append( m.radius ).append( getString(R.string.info_km) ).append( "</li>" )
+			.append("<li>").append( getString(R.string.info_people) )
+			.append( m.userName == null?"":m.userName ).append( "</li></ul>" );
 			//.append( getUserName(m.uid) );
 		return buf.toString();
 	}
@@ -581,14 +590,21 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 				MarkerInfo marker = markers.get( index );
 				if ( marker != null )
 				{
-					LatLng p = new LatLng(marker.lat, marker.lng);
-					CameraUpdate update = CameraUpdateFactory.newLatLng( p );
-					mMap.moveCamera( update );
-					marker.marker.showInfoWindow();
+					showMarker( marker );
 				}
 			}
 		}
 	}
+
+	private void showMarker( MarkerInfo marker )
+	{
+		LatLng p = new LatLng(marker.lat, marker.lng);
+		CameraUpdate update = CameraUpdateFactory.newLatLng( p );
+		mMap.moveCamera( update );
+		marker.marker.showInfoWindow();
+	}
+	
+	
 
 	@Override
 	protected void onDestroy()
@@ -602,7 +618,7 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 	{
 		View view = this.inflater.inflate( R.layout.infowin, null );
 		TextView textView = (TextView)view.findViewById( R.id.text );
-		textView.setText( marker.getSnippet() );
+		textView.setText( Html.fromHtml( marker.getSnippet() ) );
 		return view;
 	}
 
@@ -654,9 +670,19 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 		super.onResume();
 		BlueListApplication app = (BlueListApplication)getApplication();
 		loarMarkers();
-		for(MarkerInfo m:app.getMarkers()){
+		List<MarkerInfo> markers = app.getMarkers();
+		for(MarkerInfo m: markers){
 			updateMarkerOnMap(m);
 		}
+		
+		Intent intent = getIntent();
+		int index = intent.getIntExtra( "index", -1 );
+		if ( index >= 0 && index < app.getMarkers().size())
+		{
+			MarkerInfo m = markers.get( index );
+			showMarker(m);
+		}
+		intent.putExtra( "index", -1 );
 	}
 
 	private void loarMarkers()
