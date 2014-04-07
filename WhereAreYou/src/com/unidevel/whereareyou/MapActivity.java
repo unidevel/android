@@ -355,12 +355,13 @@ public class MapActivity extends BaseActivity implements GoogleMap.OnMapLongClic
 	private String getMarkerDescription(MarkerInfo m)
 	{
 		StringBuffer buf = new StringBuffer();
-		buf./*append( getString(R.string.info_alarm) ).*/append( "<b>" ).append( m.title ).append( "</b><br/><ul>" )
-			.append("<li>").append( getString(R.string.info_type) ).append(
-					TYPE_ENTER.equals( m.type )?getString(R.string.info_enter):getString(R.string.info_leave) ).append( "</li>" )
-			.append("<li>").append( getString(R.string.info_radius) ).append( m.radius ).append( getString(R.string.info_km) ).append( "</li>" )
-			.append("<li>").append( getString(R.string.info_people) )
-			.append( m.userName == null?"":m.userName ).append( "</li></ul>" );
+		buf./*append( getString(R.string.info_alarm) ).*/append( "<big><b>" ).append( m.title ).append( "</b></big><br/><blockquote>" )
+			.append( getString(R.string.marker_status) ).append( getString( m.enabled?R.string.alert_list_enabled:R.string.alert_list_dsiabled ) ).append( "<br/>" )
+			.append("").append( getString(R.string.info_type) ).append(
+					TYPE_ENTER.equals( m.type )?getString(R.string.info_enter):getString(R.string.info_leave) ).append( "<br/>" )
+			.append("").append( getString(R.string.info_radius) ).append( m.radius ).append( getString(R.string.info_km) ).append( "<br/>" )
+			.append("").append( getString(R.string.info_people) )
+			.append( m.userName == null?"":m.userName ).append( "</blockquote>" );
 			//.append( getUserName(m.uid) );
 		return buf.toString();
 	}
