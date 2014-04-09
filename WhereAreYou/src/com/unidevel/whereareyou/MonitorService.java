@@ -173,7 +173,7 @@ public class MonitorService extends Service implements Constants
 					}
 					if ( enterAlarm )
 					{
-						showAlarm(pos, TYPE_LEAVE, index*2);
+						showAlarm(pos, TYPE_ENTER, index*2);
 					}
 				}
 			}
