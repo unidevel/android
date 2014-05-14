@@ -1,6 +1,7 @@
 package com.unidevel.power2;
 import java.util.*;
 import java.io.*;
+import com.badlogic.gdx.utils.*;
 
 public class TriangleBlocks
 {
@@ -70,7 +71,7 @@ public class TriangleBlocks
 		return true;
 	}
 	
-	public void move(int d, boolean next)
+	public boolean move(int d, boolean next)
 	{
 		List<Box> h = new ArrayList<Box>();
 		for(Box b:data){
@@ -79,10 +80,11 @@ public class TriangleBlocks
 				h.add(b);
 			}
 		}
+		boolean moved = false;
 		for(Box b:h){
 			Box t=b;
 			while(t!=null){
-				t.move(d,next);
+				moved|=t.move(d,next);
 				t=next?t.prev[d]:t.next[d];
 				/*
 				Box p=t.prev[d];
@@ -101,8 +103,9 @@ public class TriangleBlocks
 				t=p;
 				*/
 			}
-			System.out.println();
+			//System.out.println();
 		}		
+		return moved;
 	}
 	
 	public int[] getValues(){

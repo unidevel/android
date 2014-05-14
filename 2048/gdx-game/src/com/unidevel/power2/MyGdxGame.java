@@ -219,21 +219,27 @@ public class MyGdxGame extends InputAdapter implements ApplicationListener
 		// TODO: Implement this method
 		dx=(dx==0?0.001f:dx);
 		dy=(dy==0?0.001f:dy);
-		log("moving %f,%f",dx,dy);
 		float d=Math.abs(dx)+Math.abs(dy);
 		if(d>sw/3f){
 			float ang=dy/dx;
-			if(Math.abs(ang)<0.08f){
-				blocks.move(0,dx>0);
+			boolean moved=false;
+			log("moving dx=%f,dy=%f,d=%f,ang=%f",dx,dy,d,ang);
+			if(Math.abs(ang)<0.2f){
+				moved=blocks.move(0,dx>0);
 			}
-			else if(Math.abs(ang)>1.6&&Math.abs(ang)<1.85){
-				if(dx<0){
-					blocks.move(2,dy>0);
+			else if(Math.abs(ang)>0.8&&Math.abs(ang)<2){
+				if(ang<0){
+					moved=blocks.move(1,dy>0);
 				}
 				else{
-					blocks.move(1,dy>0);
+					moved=blocks.move(2,dy>0);
 				}
 			}
+			if(moved){
+				blocks.dump3();
+				blocks.fill();
+			}
+			blocks.dump3();
 			blocks.fill();
 		}
 		return true;

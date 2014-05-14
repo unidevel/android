@@ -21,8 +21,9 @@ public class Box
 		return this.next[dir];
 	}
 	
-	public void move(int d,boolean next){
-		if(this.value==0)return;
+	public boolean move(int d,boolean next){
+		boolean moved=false;
+		if(this.value==0)return moved;
 		Box[] link=next?this.next:this.prev;
 		Box n=link[d];
 		if(n!=null)
@@ -30,13 +31,15 @@ public class Box
 			if(n.value==this.value){
 				n.value+=this.value;
 				this.value=0;
+				moved=true;
 			}
 			else if(n.value==0){
 				n.value=this.value;
 				this.value=0;
-				n.move(d,next);
+				moved=n.move(d,next);
 			}
 		}
+		return moved;
 	}
 	
 	@Override
