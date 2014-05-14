@@ -1,5 +1,6 @@
 package com.unidevel.power2;
 import java.util.*;
+import java.io.*;
 
 public class TriangleBlocks
 {
@@ -140,6 +141,7 @@ public class TriangleBlocks
 	}
 	
 	public void dump3(){
+		//PrintWriter out=new PrintWriter
 		for(int l=0,p=0,n=1;l<size;++l,n+=2){
 			for(int j =0;j<size-l-1;++j){
 				System.out.print("   ");					

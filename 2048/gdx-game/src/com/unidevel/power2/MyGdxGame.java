@@ -222,14 +222,14 @@ public class MyGdxGame extends InputAdapter implements ApplicationListener
 		if(d>sw/3f){
 			float ang=dy/dx;
 			if(Math.abs(ang)<0.08f){
-				blocks.move(0,ang>0);
+				blocks.move(0,dx>0);
 			}
-			else if(Math.abs(ang)>0.5&&Math.abs(ang)<0.7){
+			else if(Math.abs(ang)>1.6&&Math.abs(ang)<1.85){
 				if(dx<0){
-					blocks.move(1,dy>0);
+					blocks.move(2,dy>0);
 				}
 				else{
-					blocks.move(2,dy>0);
+					blocks.move(1,dy>0);
 				}
 			}
 			blocks.fill();
