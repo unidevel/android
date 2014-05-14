@@ -1,11 +1,16 @@
 package com.unidevel.power2;
 
-import com.badlogic.gdx.*;
-import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.g2d.*;
-import com.badlogic.gdx.input.GestureDetector.GestureListener;
-import com.badlogic.gdx.math.*;
-import com.badlogic.gdx.input.*;
+import com.badlogic.gdx.ApplicationListener;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Gdx2DPixmap;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
@@ -80,7 +85,6 @@ public class MyGdxGame extends InputAdapter implements ApplicationListener
 		}
 	}
 	
-	@Override
 	public void create2()
 	{
 		this.size=4;
@@ -119,12 +123,11 @@ public class MyGdxGame extends InputAdapter implements ApplicationListener
 	public void render()
 	{
 	    Gdx.gl.glClearColor(0, 0, 0, 1);
-	    Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+	    Gdx.gl.glClear(Gdx.gl.GL_COLOR_BUFFER_BIT);
 		Gdx.gl.glViewport(0,0,sw,sh);
 		ShapeRenderer s=shapeRenderer;
 		
 		cam.update();
-		cam.apply(Gdx.gl10);
 		s.setProjectionMatrix(cam.combined);
 		//s.begin(ShapeType.Line);
 		//shapeRenderer.setColor(1, 1, 1, 1);
@@ -153,11 +156,11 @@ public class MyGdxGame extends InputAdapter implements ApplicationListener
 		shapeRenderer.end();
 
 	}	
-	@Override
+
 	public void render1()
 	{        
 	    Gdx.gl.glClearColor(1, 1, 1, 1);
-	    Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+	    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		batch.begin();//batch.
 		//batch.draw(texture, Gdx.graphics.getWidth() / 4, 0, 
 		//		   Gdx.graphics.getWidth() / 2, Gdx.graphics.getWidth() / 2);
@@ -166,7 +169,6 @@ public class MyGdxGame extends InputAdapter implements ApplicationListener
 		font.setColor(Color.BLACK);
 		font.draw(batch, "hello world", 20,20);
 		batch.end();
-		GLCommon g = Gdx.gl;
 		int w=Gdx.graphics.getWidth();
 		int h=Gdx.graphics.getHeight();
 	}
