@@ -243,7 +243,7 @@ public class MyGdxGame extends InputAdapter implements ApplicationListener
 		dx=(dx==0?0.001f:dx);
 		dy=(dy==0?0.001f:dy);
 		float d=Math.abs(dx)+Math.abs(dy);
-		if(d>sw/3f){
+		if(d>sw/5f){
 			float ang=dy/dx;
 			boolean moved=false;
 			log("moving dx=%f,dy=%f,d=%f,ang=%f",dx,dy,d,ang);

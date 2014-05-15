@@ -15,7 +15,7 @@ public class TriangleBlocks
 		int n=size*size;
 		data= new Box[n];
 		for(int i=0;i<n;++i){
-			data[i]=new Box(0);
+			data[i]=new Box(i);
 		}
 		this.createNext();
 	}

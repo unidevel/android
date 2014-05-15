@@ -2,12 +2,14 @@ package com.unidevel.power2;
 
 public class Box
 {
+	int index;
 	int value;
 	public Box next[];
 	public Box prev[];
 	
-	public Box(int value){
-		this.value =value;
+	public Box(int index){
+		this.index = index;
+		this.value =0;
 		this.next = new Box[3];
 		this.prev = new Box[3];
 	}
@@ -29,17 +31,27 @@ public class Box
 		if(n!=null)
 		{
 			if(n.value==this.value){
+				t("move (%d,%d) to (%d, %d)",
+				  this.index,this.value,n.index,n.value);
 				n.value+=this.value;
 				this.value=0;
-				moved=true;
+				if(n.value>0)
+					moved=true;
 			}
 			else if(n.value==0){
+				t("move (%d,%d) to (%d, %d)",
+				  this.index,this.value,n.index,n.value);
 				n.value=this.value;
 				this.value=0;
 				moved=n.move(d,next);
 			}
 		}
 		return moved;
+	}
+	
+	void t(String fmt, Object... args){
+		String s=String.format(fmt, args);
+		System.out.println(s);
 	}
 	
 	@Override
