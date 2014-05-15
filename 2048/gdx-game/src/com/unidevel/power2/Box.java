@@ -4,6 +4,7 @@ public class Box
 {
 	int index;
 	int value;
+	boolean added;
 	public Box next[];
 	public Box prev[];
 	
@@ -30,30 +31,28 @@ public class Box
 		Box n=link[d];
 		if(n!=null)
 		{
-			if(n.value==this.value){
-				t("move (%d,%d) to (%d, %d)",
+			if(n.value==0){
+				Log.i("move (%d,%d) to (%d, %d)",
+				  this.index,this.value,n.index,n.value);
+				n.value=this.value;
+				if(this.value>0)
+					moved=true;
+				this.value=0;
+				n.move(d,next);
+			}
+			else if(n.value==this.value&&!n.added){
+				Log.i("move (%d,%d) to (%d, %d)",
 				  this.index,this.value,n.index,n.value);
 				n.value+=this.value;
 				this.value=0;
+				n.added=true;
 				if(n.value>0)
 					moved=true;
-			}
-			else if(n.value==0){
-				t("move (%d,%d) to (%d, %d)",
-				  this.index,this.value,n.index,n.value);
-				n.value=this.value;
-				this.value=0;
-				moved=n.move(d,next);
 			}
 		}
 		return moved;
 	}
-	
-	void t(String fmt, Object... args){
-		String s=String.format(fmt, args);
-		System.out.println(s);
-	}
-	
+		
 	@Override
 	public String toString()
 	{

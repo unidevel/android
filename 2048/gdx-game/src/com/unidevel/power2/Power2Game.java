@@ -16,7 +16,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
 
 
-public class MyGdxGame extends InputAdapter implements ApplicationListener
+public class Power2Game extends InputAdapter implements ApplicationListener
 {
 	Texture texture;
 	SpriteBatch batch;
@@ -92,18 +92,7 @@ public class MyGdxGame extends InputAdapter implements ApplicationListener
 		}
 		translate(npos);
 	}
-	
-	public void create2()
-	{
-		this.size=4;
-		this.blocks=new TriangleBlocks(size);
-		//texture = new Texture(Gdx.files.internal("android.jpg"));
-		texture=textureFromPixmap(createBlocks());
-		batch = new SpriteBatch();
-		font = new BitmapFont(Gdx.files.internal("verdana39.fnt"));
-	//	Gdx.input.setInputProcessor(new GestureDetector(new Controller()));
-	}
-	
+		
 	Texture textureFromPixmap (Gdx2DPixmap pixmap) {
 		Texture texture = new Texture(pixmap.getWidth(), pixmap.getHeight(), Pixmap.Format.RGBA4444);
 		texture.bind();
@@ -123,7 +112,7 @@ public class MyGdxGame extends InputAdapter implements ApplicationListener
 	private void translate(float[] p){
 		for(int i = 0;i<p.length;++i){
 			if(i%2==1){
-				p[i]=sh-p[i];
+				p[i]=sh-sh/6f-p[i];
 			}
 		}
 	}
@@ -143,7 +132,7 @@ public class MyGdxGame extends InputAdapter implements ApplicationListener
 		//shapeRenderer.line(0, 0, 120, 40);
 		//s.end();
 		s.begin(ShapeType.Filled);
-		s.setColor(0.8f,0.8f,0.8f,1.0f);
+		s.setColor(0.7f,0.7f,0.7f,1.0f);
 		s.rect(0,0,sw-1,sh-1);
 		int[] v=blocks.getValues();
 		float ln2=(float)Math.log(2);
@@ -169,9 +158,10 @@ public class MyGdxGame extends InputAdapter implements ApplicationListener
 		for(int i=0;i<v.length;++i){
 			int value=v[i];
 			if(value>0){
-			float x=npos[2*i]-sw*1.5f;
-			float y=npos[2*i+1];
-			font.draw(batch,""+value,x,y);
+				String sv=String.valueOf(value);
+				float x=npos[2*i]-sw*((float)sv.length());
+				float y=npos[2*i+1];
+				font.draw(batch,""+value,x,y);
 			}
 		}
 		//font.draw(batch, "hello world", 20,20);
@@ -179,30 +169,6 @@ public class MyGdxGame extends InputAdapter implements ApplicationListener
 		//font.setColor(Color.WHITE);
 		//font.draw(
 	}	
-
-	public void render1()
-	{        
-	    Gdx.gl.glClearColor(1, 1, 1, 1);
-	    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		batch.begin();//batch.
-		//batch.draw(texture, Gdx.graphics.getWidth() / 4, 0, 
-		//		   Gdx.graphics.getWidth() / 2, Gdx.graphics.getWidth() / 2);
-		batch.draw(texture, Gdx.graphics.getWidth() / 4, 0, 
-				   256,256);
-		font.setColor(Color.BLACK);
-		font.draw(batch, "hello world", 20,20);
-		batch.end();
-		int w=Gdx.graphics.getWidth();
-		int h=Gdx.graphics.getHeight();
-	}
-
-	public void log(String fmt, Object ...args){
-		Gdx.app.log(this.getClass().getSimpleName(),String.format(fmt,args));
-	}
-
-	public void log(Throwable ex){
-		Gdx.app.log(this.getClass().getSimpleName(),ex.getMessage(),ex);
-	}
 	
 	@Override
 	public void dispose()
@@ -243,27 +209,33 @@ public class MyGdxGame extends InputAdapter implements ApplicationListener
 		dx=(dx==0?0.001f:dx);
 		dy=(dy==0?0.001f:dy);
 		float d=Math.abs(dx)+Math.abs(dy);
-		if(d>sw/5f){
+		if(d>sw/8f){
 			float ang=dy/dx;
 			boolean moved=false;
-			log("moving dx=%f,dy=%f,d=%f,ang=%f",dx,dy,d,ang);
+			//log("moving dx=%f,dy=%f,d=%f,ang=%f",dx,dy,d,ang);
 			if(Math.abs(ang)<0.2f){
 				moved=blocks.move(0,dx>0);
+				Log.i("move(%d,%s)",0,dx>0?"true":"false");
 			}
-			else if(Math.abs(ang)>0.8&&Math.abs(ang)<2){
+			else if(Math.abs(ang)>0.6&&Math.abs(ang)<3){
 				if(ang<0){
 					moved=blocks.move(1,dy>0);
+					Log.i("move(%d,%s)=%s",1,dy>0?"true":"false",String.valueOf(moved));
 				}
 				else{
 					moved=blocks.move(2,dy>0);
+					Log.i("move(%d,%s)=%s",2,dy>0?"true":"false",String.valueOf(moved));
 				}
 			}
 			if(moved){
 				blocks.dump3();
-				blocks.fill();
+				if(!blocks.fill()){
+					if(!blocks.canMove()){
+						return false;
+					}
+				}
+				
 			}
-			blocks.dump3();
-			blocks.fill();
 		}
 		return true;
 	}

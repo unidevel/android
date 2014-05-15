@@ -2,6 +2,7 @@ package com.unidevel.power2;
 import java.util.*;
 import java.io.*;
 import com.badlogic.gdx.utils.*;
+import android.util.*;
 
 public class TriangleBlocks
 {
@@ -31,7 +32,6 @@ public class TriangleBlocks
 						int x=last+i+1;
 						b.setNext(1,data[x]);
 						b.setNext(2,data[x]);
-						t("p,x="+p+","+x);
 					}
 					else{
 						
@@ -63,7 +63,6 @@ public class TriangleBlocks
 				p++;
 			}
 		}
-		t("fill "+p+" with "+r);
 		if(p>=data.length || data[p].value!=0){
 			return false;
 		}
@@ -76,6 +75,7 @@ public class TriangleBlocks
 		List<Box> h = new ArrayList<Box>();
 		for(Box b:data){
 			Box n=next?b.next[d]:b.prev[d];
+			b.added=false;
 			if(n==null){
 				h.add(b);
 			}
@@ -85,25 +85,11 @@ public class TriangleBlocks
 			Box t=b;
 			while(t!=null){
 				moved|=t.move(d,next);
-				t=next?t.prev[d]:t.next[d];
-				/*
-				Box p=t.prev[d];
-				if(p!=null){
-					if(t.value!=0){
-						if(p.value==t.value){
-							t.value+=p.value;
-							p.value=0;
-						}
-					}
-					else{
-						t.value=p.value;
-						p.value=0;
-					}
+				if(moved){
+					Log.i("(%d,%d) moved",t.index,t.value);
 				}
-				t=p;
-				*/
+				t=next?t.prev[d]:t.next[d];
 			}
-			//System.out.println();
 		}		
 		return moved;
 	}
@@ -115,27 +101,31 @@ public class TriangleBlocks
 		}
 		return values;
 	}
-	
-	void t(String m){
-		System.out.println(m);
-	}
-	/*
-	public int next(int n, int x,int y){
-		int p=x+y;
-		int q=x+1
-		if(n==0){
-			return x
+
+	public boolean canMove(){
+		for(Box b:data){
+			if (b.value==0)return true;
+			for(int i=0;i<3;++i){
+				Box n,p;
+				n=b.next[i];
+				p=b.prev[i];
+				if(n!=null){
+					if(n.value==0)
+						return true;
+					if(n.value==b.value)
+						return true;
+				}
+				if(p!=null){
+					if(p.value==0)
+						return true;
+					if(p.value==b.value)
+						return true;
+				}
+			}
 		}
-		return 0;
+		return false;
 	}
-	public void test(){
-		for(int i=0;i<data.length;++i){
-			data[i]=i+1;
-		}
-	}
-	//protected int 
-	 */
-	 
+
 	public void dump2(){
 		for(Box b:data){
 			System.out.print(b+",");
