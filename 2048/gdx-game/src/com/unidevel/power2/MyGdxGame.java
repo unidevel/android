@@ -27,6 +27,7 @@ public class MyGdxGame extends InputAdapter implements ApplicationListener
 	OrthographicCamera cam;
 	int sw,sh;
 	float[][] points;
+	float[] npos;
 	
 	public void create()
 	{
@@ -37,12 +38,15 @@ public class MyGdxGame extends InputAdapter implements ApplicationListener
 		this.shapeRenderer=new ShapeRenderer();
 		this.prepareBlocks(4,48);
 		blocks.fill();
+		font = new BitmapFont(Gdx.files.internal("verdana39.fnt"));
 		//Gdx.input.setInputProcessor(new GestureDetector(new Controller()));
 		Gdx.input.setInputProcessor(this);
+		batch = new SpriteBatch();
 	}
 
 	void prepareBlocks(int n, float ypos){
 		points = new float[n*n][];
+		npos= new float[n*n*2];
 		this.blocks=new TriangleBlocks(n);
 		float len=sw>sh?sh -4:sw-4;
 		float x = len/2.0f;
@@ -51,13 +55,14 @@ public class MyGdxGame extends InputAdapter implements ApplicationListener
 		float cos60=(float)Math.cos(60/180*3.1415926359);
 		
 		float dy= dx*2.0f*cos60;	
+		float ty= dy*2f/3f;
 		int p=0;
 		float sx=4.0f*cos60;
 		float sy=4.0f;
 		for(int i=0;i<n;++i){
 			float xx=x;
 			for(int j=0;j<=2*i;++j,++p){
-				
+				npos[p*2]=x;
 				if(j%2==0)
 				{
 					points[p]=new float[6];
@@ -67,6 +72,7 @@ public class MyGdxGame extends InputAdapter implements ApplicationListener
 					points[p][3]=y+dy-sy;
 					points[p][4]=x+dx-sx;
 					points[p][5]=y+dy-sy;
+					npos[p*2+1]=y+sy+ty;
 				}
 				else{
 					points[p]=new float[6];
@@ -76,6 +82,7 @@ public class MyGdxGame extends InputAdapter implements ApplicationListener
 					points[p][3]=y+sy;
 					points[p][4]=x+dx-sx;
 					points[p][5]=y+sy;
+					npos[p*2+1]=y+sy;
 				}
 				translate(points[p]);
 				x+=dx;
@@ -83,6 +90,7 @@ public class MyGdxGame extends InputAdapter implements ApplicationListener
 			x=xx-dx;
 			y+=dy;
 		}
+		translate(npos);
 	}
 	
 	public void create2()
@@ -141,7 +149,7 @@ public class MyGdxGame extends InputAdapter implements ApplicationListener
 		float ln2=(float)Math.log(2);
 		for(int i=0;i<points.length;++i){
 			float c=(float)Math.log(v[i])/ln2/4.0f;
-			s.setColor(c, 0, 0, 1);
+			s.setColor(c, 0, c, 1);
 			float p[] = points[i];
 			//translate(p);
 			s.triangle(p[0],p[1],p[2],
@@ -154,7 +162,22 @@ public class MyGdxGame extends InputAdapter implements ApplicationListener
 		shapeRenderer.circle(80, 80, 50);
 		*/
 		shapeRenderer.end();
-
+		batch.begin();//batch.
+		font.setColor(Color.WHITE);
+		float sw=font.getSpaceWidth();
+		float lh=font.getLineHeight();
+		for(int i=0;i<v.length;++i){
+			int value=v[i];
+			if(value>0){
+			float x=npos[2*i]-sw*1.5f;
+			float y=npos[2*i+1];
+			font.draw(batch,""+value,x,y);
+			}
+		}
+		//font.draw(batch, "hello world", 20,20);
+		batch.end();
+		//font.setColor(Color.WHITE);
+		//font.draw(
 	}	
 
 	public void render1()
