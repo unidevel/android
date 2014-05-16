@@ -94,7 +94,7 @@ public class TriangleBlocks
 				t=next?t.prev[d]:t.next[d];
 			}
 		}		
-		for(Box b:h){
+		for(Box b:data){
 			this.score+=b.score;
 		}
 		Log.i("Score: %d", score);
@@ -117,16 +117,24 @@ public class TriangleBlocks
 				n=b.next[i];
 				p=b.prev[i];
 				if(n!=null){
-					if(n.value==0)
+					if(n.value==0){
+						Log.i("%d can move next 0",b.index);
 						return true;
-					if(n.value==b.value)
+					}
+					if(n.value==b.value){
+						Log.i("%d can move next %d",b.index, b.value);
 						return true;
+					}
 				}
 				if(p!=null){
-					if(p.value==0)
+					if(p.value==0){
+						Log.i("%d can move prev %d",b.index, b.value);
 						return true;
-					if(p.value==b.value)
+					}
+					if(p.value==b.value){
+						Log.i("%d can move prev %d",b.index, b.value);
 						return true;
+					}
 				}
 			}
 		}

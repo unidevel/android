@@ -28,7 +28,7 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 	int sw,sh;
 	float[][] points;
 	float[] npos;
-	
+	boolean over;
 	public void create()
 	{
 		sw=Gdx.graphics.getWidth();
@@ -36,14 +36,19 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 		this.cam = new OrthographicCamera(sw, sh);
 		cam.position.set(sw / 2-1, sh / 2, 0);
 		this.shapeRenderer=new ShapeRenderer();
-		this.prepareBlocks(4,48);
-		blocks.fill();
 		font = new BitmapFont(Gdx.files.internal("verdana39.fnt"));
 		//Gdx.input.setInputProcessor(new GestureDetector(new Controller()));
 		Gdx.input.setInputProcessor(this);
 		batch = new SpriteBatch();
+		newGame();
 	}
 
+	public void newGame(){
+		this.prepareBlocks(4,48);
+		blocks.fill();
+		over = false;
+	}
+	
 	void prepareBlocks(int n, float ypos){
 		points = new float[n*n][];
 		npos= new float[n*n*2];
@@ -150,7 +155,7 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 		shapeRenderer.rect(40,40, 100, 120);
 		shapeRenderer.circle(80, 80, 50);
 		*/
-		shapeRenderer.end();
+		s.end();
 		batch.begin();//batch.
 		font.setColor(Color.WHITE);
 		float sw=font.getSpaceWidth();
@@ -171,6 +176,19 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 		batch.end();
 		//font.setColor(Color.WHITE);
 		//font.draw(
+		if(over){
+			cam.update();
+			s.setProjectionMatrix(cam.combined);
+			s.begin(ShapeType.Filled);
+			s.setColor(1.0f,0.5f,0.5f,0.8f);
+			s.rect(0,0,sw-1,sh-1);
+			s.end();
+			batch.begin();//batch.
+			String os="Game over!";
+			font.setColor(Color.RED);
+			font.draw(batch, os, 30,sh-60);
+			batch.end();
+		}
 	}	
 	
 	@Override
@@ -233,11 +251,11 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 			if(moved){
 				blocks.dump3();
 				if(!blocks.fill()){
-					if(!blocks.canMove()){
-						return false;
-					}
 				}
-				
+			}
+			if(!blocks.canMove()){
+				over=true;
+				return false;
 			}
 		}
 		return true;

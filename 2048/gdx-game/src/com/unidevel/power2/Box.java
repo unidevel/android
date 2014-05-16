@@ -45,7 +45,8 @@ public class Box
 				Log.i("move (%d,%d) to (%d, %d)",
 				  this.index,this.value,n.index,n.value);
 				n.value+=this.value;
-				score+=n.value;
+				this.score+=n.value;
+				Log.i("Score: %d, %d", index, score);
 				this.value=0;
 				n.added=true;
 				if(n.value>0)
