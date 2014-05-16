@@ -164,7 +164,10 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 				font.draw(batch,""+value,x,y);
 			}
 		}
-		//font.draw(batch, "hello world", 20,20);
+		
+		String score=String.format("Your score: %d",blocks.score);
+		font.setColor(Color.BLUE);
+		font.draw(batch, score, 30,sh-60);
 		batch.end();
 		//font.setColor(Color.WHITE);
 		//font.draw(

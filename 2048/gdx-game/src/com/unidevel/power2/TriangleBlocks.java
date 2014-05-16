@@ -9,9 +9,11 @@ public class TriangleBlocks
 	Box[] data;
 	int size;
 	Random random;
+	int score;
 	
 	public TriangleBlocks(int size){
 		this.size=size;
+		score=0;
 		this.random = new Random(System.currentTimeMillis());
 		int n=size*size;
 		data= new Box[n];
@@ -76,6 +78,7 @@ public class TriangleBlocks
 		for(Box b:data){
 			Box n=next?b.next[d]:b.prev[d];
 			b.added=false;
+			b.score=0;
 			if(n==null){
 				h.add(b);
 			}
@@ -91,6 +94,10 @@ public class TriangleBlocks
 				t=next?t.prev[d]:t.next[d];
 			}
 		}		
+		for(Box b:h){
+			this.score+=b.score;
+		}
+		Log.i("Score: %d", score);
 		return moved;
 	}
 	

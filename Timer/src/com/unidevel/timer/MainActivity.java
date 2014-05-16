@@ -50,7 +50,8 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener
 	long lastTime;
 
 	Timer timer;
-
+	int uint=30;
+	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate( Bundle savedInstanceState )
@@ -324,17 +325,17 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener
 		{
 			if ( seekBar == this.sbAlarm )
 			{
-				this.alarmTime = seekBar.getProgress() * 30;
+				this.alarmTime = seekBar.getProgress() * uint;
 			}
 			if ( seekBar == this.sbAlarmEnd )
 			{
-				this.alarmEndTime = seekBar.getProgress() * 30;
+				this.alarmEndTime = seekBar.getProgress() * uint;
 				adjustSeekBar( this.sbAlarmWarn, seekBar.getProgress(), 1 );
 				adjustSeekBar( this.sbAlarm, seekBar.getProgress(), 2 );
 			}
 			if ( seekBar == this.sbAlarmWarn )
 			{
-				this.alarmWarnTime = seekBar.getProgress() * 30;
+				this.alarmWarnTime = seekBar.getProgress() * uint;
 				adjustSeekBar( this.sbAlarm, seekBar.getProgress(), 1 );
 			}
 		}
@@ -419,5 +420,50 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener
 			return true;
 		}
 		return super.onKeyDown( keyCode, event );
+	}
+	
+	private void setMax(int max){
+		int p=max/uint;
+		sbAlarm.setMax(p);
+		sbAlarmWarn.setMax(p);
+		sbAlarmEnd.setMax(p);
+	}
+	
+	
+	private void setAlarm(int alarm, int warn, int end){
+		int p1=alarm/uint;
+		int p2=warn/uint;
+		int p3=end/uint;
+		sbAlarm.setProgress(p1);
+		sbAlarmWarn.setProgress(p2);
+		sbAlarmEnd.setProgress(p3);
+	}
+	public void onSet1(View v){
+		setMax(720);
+		setAlarm(40,50,60);
+	}
+	public void onSet2(View v){
+		setMax(720);
+		setAlarm(75,100,120);
+	}
+	public void onSet3(View v){
+		setMax(720);
+		setAlarm(135,155,180);
+	}
+	public void onSet4(View v){
+		setMax(720);
+		setAlarm(180,210,240);
+	}
+	public void onSet5(View v){
+		setMax(720);
+		setAlarm(240,270,300);
+	}
+	public void onSet6(View v){
+		setMax(720);
+		setAlarm(240,330,360);
+	}
+	public void onSet20(View v){
+		setMax(1200);
+		setAlarm(1140,1170,1200);
 	}
 }

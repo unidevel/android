@@ -150,7 +150,59 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@android:drawable/ic_menu_add" />
-
+		<Button
+            android:id="@+id/set1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onSet5"
+            android:text="5" />
+		<Button
+            android:id="@+id/set20"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onSet20"
+            android:text="20" />
+		
     </LinearLayout>
 
+	<LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/set1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onSet1"
+            android:text="1" />
+		<Button
+            android:id="@+id/set2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onSet2"
+            android:text="2" />
+		<Button
+            android:id="@+id/set3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onSet3"
+            android:text="3" />
+		<Button
+            android:id="@+id/set4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onSet4"
+            android:text="4" />
+		<Button
+            android:id="@+id/set6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onSet6"
+            android:text="6" />
+		
+    </LinearLayout>
+
+	
 </LinearLayout>

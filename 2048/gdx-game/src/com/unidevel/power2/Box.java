@@ -4,6 +4,7 @@ public class Box
 {
 	int index;
 	int value;
+	int score;
 	boolean added;
 	public Box next[];
 	public Box prev[];
@@ -44,6 +45,7 @@ public class Box
 				Log.i("move (%d,%d) to (%d, %d)",
 				  this.index,this.value,n.index,n.value);
 				n.value+=this.value;
+				score+=n.value;
 				this.value=0;
 				n.added=true;
 				if(n.value>0)
