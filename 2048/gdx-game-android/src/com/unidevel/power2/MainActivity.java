@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
@@ -17,13 +18,14 @@ public class MainActivity extends AndroidApplication implements GameListener
 	static final String MAX_SCORE = "max_score";
 	static final String DATA = "data";
 	
+	Handler handler;
 	Power2Game game;
 	SharedPreferences pref;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+        this.handler = new Handler();
 		pref=PreferenceManager.getDefaultSharedPreferences(this);
         AndroidApplicationConfiguration cfg = new AndroidApplicationConfiguration();
         //cfg.useGL20 = false;
@@ -55,6 +57,16 @@ public class MainActivity extends AndroidApplication implements GameListener
 		int maxScore=this.game.getMaxScore();
 		pref.edit().putInt(MAX_SCORE, maxScore).remove( DATA ).remove( SCORE ).commit();
 		
+		this.handler.post( new Runnable(){
+			@Override
+			public void run()
+			{
+				showPlayAgainDialog();
+			}
+		});
+	}
+	
+	private void showPlayAgainDialog(){
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setPositiveButton( R.string.play_again, new DialogInterface.OnClickListener()
 		{
@@ -75,7 +87,7 @@ public class MainActivity extends AndroidApplication implements GameListener
 			}
 		} );
 		builder.setTitle( R.string.game_over );
-		builder.create().show();
+		builder.create().show();		
 	}
 
 	private void shareScreen(int score){
