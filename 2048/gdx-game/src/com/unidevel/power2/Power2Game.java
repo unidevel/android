@@ -33,6 +33,7 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 	{
 		sw=Gdx.graphics.getWidth();
 		sh=Gdx.graphics.getHeight();
+		Gdx.graphics.setContinuousRendering(false);
 		this.cam = new OrthographicCamera(sw, sh);
 		cam.position.set(sw / 2-1, sh / 2, 0);
 		this.shapeRenderer=new ShapeRenderer();
@@ -117,8 +118,17 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 	private void translate(float[] p){
 		for(int i = 0;i<p.length;++i){
 			if(i%2==1){
-				p[i]=sh-sh/6f-p[i];
+				//p[i]=sh-sh/6f-p[i];
+				p[i]=sh-p[i]-sh/4f;
 			}
+		}
+	}
+	
+	public void delay(long v){
+		try{
+			Thread.sleep(v);
+		}catch(Exception e){
+			
 		}
 	}
 	
@@ -132,11 +142,6 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 		
 		cam.update();
 		s.setProjectionMatrix(cam.combined);
-		//s.begin(ShapeType.Line);
-		//shapeRenderer.setColor(1, 1, 1, 1);
-		//s.rect(0,0,sw-1,sh-1);
-		//shapeRenderer.line(0, 0, 120, 40);
-		//s.end();
 		s.begin(ShapeType.Filled);
 		s.setColor(0.7f,0.7f,0.7f,1.0f);
 		s.rect(0,0,sw-1,sh-1);
@@ -150,16 +155,11 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 			s.triangle(p[0],p[1],p[2],
 				p[3],p[4],p[5]);
 		}
-		
-		/*
-		shapeRenderer.setColor(1, 1, 0, 1);
-		shapeRenderer.rect(40,40, 100, 120);
-		shapeRenderer.circle(80, 80, 50);
-		*/
 		s.end();
 				
 		batch.begin();//batch.
 		font.setColor(Color.WHITE);
+		font.setScale(1.0f);
 		float sw=font.getSpaceWidth();
 		float lh=font.getLineHeight();
 		for(int i=0;i<v.length;++i){
@@ -176,8 +176,6 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 		font.setColor(Color.BLUE);
 		font.draw(batch, score, 30,sh-60);
 		batch.end();
-		//font.setColor(Color.WHITE);
-		//font.draw(
 		if(over)
 		{
 			Gdx.gl.glEnable( GL20.GL_BLEND );
@@ -188,10 +186,14 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 			s.setColor(0.5f,0.5f,0.5f,0.8f);
 			s.rect(0,0,this.sw-1,this.sh-1);
 			s.end();
-			batch.begin();//batch.
+			batch.begin();
 			String os="Game over!";
+			font.setScale(2.0f);
 			font.setColor(Color.RED);
-			font.draw(batch, os, 30,sh-60);
+			BitmapFont.TextBounds r = font.getBounds(os);
+			float px=(this.sw-r.width)/2f;
+			float py=(this.sh-r.height)/2f;
+			font.draw(batch, os, px,py);
 			batch.end();
 			Gdx.gl.glDisable( GL20.GL_BLEND );
 		}
@@ -224,44 +226,74 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 	}
 
 	public boolean touchUp (int x, int y, int pointer, int button) {
+		if(over)
+			return false;
 		float dx,dy;
 		dx=x-px;dy=y-py;
 		handleInput(dx,dy);
 		return true; // return true to indicate the event was handled
 	}
 	
+	boolean animating = false;
+	
+	class MoveThread extends Thread{
+		int dir;
+		boolean next;
+		public MoveThread(int d,boolean n){
+			dir=d;
+			next=n;
+		}
+		public void run(){
+			try{
+				boolean moved=false;
+				while(blocks.move(dir,next)){
+					Gdx.graphics.requestRendering();
+					try{sleep(70);}catch(Exception ex){}
+					moved=true;						
+				}				
+				if(moved){
+					Log.i("move(%d,%s)",0,String.valueOf(next));
+					blocks.fill();
+				}
+				if(!blocks.canMove()){
+					over=true;
+				}
+			}
+			finally{
+				animating=false;
+				Gdx.graphics.requestRendering();
+			}
+		}
+	}
+	
 	public boolean handleInput(float dx,float dy)
 	{
-		// TODO: Implement this method
 		dx=(dx==0?0.001f:dx);
 		dy=(dy==0?0.001f:dy);
 		float d=Math.abs(dx)+Math.abs(dy);
-		if(d>sw/8f){
+		if(d>20f){
+			blocks.resetState();
 			float ang=dy/dx;
-			boolean moved=false;
-			//log("moving dx=%f,dy=%f,d=%f,ang=%f",dx,dy,d,ang);
-			if(Math.abs(ang)<0.2f){
-				moved=blocks.move(0,dx>0);
-				Log.i("move(%d,%s)",0,dx>0?"true":"false");
+			int dir=-1; 
+			boolean next=false;
+			if(Math.abs(ang)<0.35f){
+				dir=0;
+				next=dx>0;
 			}
-			else if(Math.abs(ang)>0.6&&Math.abs(ang)<3){
+			else if(Math.abs(ang)>0.6&&Math.abs(ang)<15){
 				if(ang<0){
-					moved=blocks.move(1,dy>0);
-					Log.i("move(%d,%s)=%s",1,dy>0?"true":"false",String.valueOf(moved));
+					dir=1;
+					next=dy>0;
 				}
 				else{
-					moved=blocks.move(2,dy>0);
-					Log.i("move(%d,%s)=%s",2,dy>0?"true":"false",String.valueOf(moved));
+					dir=2;
+					next=dy>0;
 				}
 			}
-			if(moved){
-				blocks.dump3();
-				if(!blocks.fill()){
-				}
-			}
-			if(!blocks.canMove()){
-				over=true;
-				return false;
+			
+			if(dir>=0){
+				MoveThread thread=new MoveThread(dir,next);
+				thread.start();
 			}
 		}
 		return true;

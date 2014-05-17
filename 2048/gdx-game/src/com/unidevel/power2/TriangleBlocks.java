@@ -71,13 +71,18 @@ public class TriangleBlocks
 		return true;
 	}
 	
+	public void resetState(){
+		for(Box b:data){
+			b.added=false;
+			b.score=0;
+		}
+	}
+	
 	public boolean move(int d, boolean next)
 	{
 		List<Box> h = new ArrayList<Box>();
 		for(Box b:data){
 			Box n=next?b.next[d]:b.prev[d];
-			b.added=false;
-			b.score=0;
 			if(n==null){
 				h.add(b);
 			}
@@ -95,11 +100,12 @@ public class TriangleBlocks
 		}		
 		for(Box b:data){
 			this.score+=b.score;
+			b.score=0;
 		}
 		Log.i("Score: %d", score);
 		return moved;
 	}
-	
+		
 	public int[] getValues(){
 		int[] values=new int[data.length];
 		for(int i=0;i<data.length;++i){

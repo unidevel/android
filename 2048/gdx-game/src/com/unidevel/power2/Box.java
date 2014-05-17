@@ -34,16 +34,18 @@ public class Box
 		{
 			if(n.value==0){
 				Log.i("move (%d,%d) to (%d, %d)",
-				  this.index,this.value,n.index,n.value);
+					  this.index,this.value,n.index,n.value);
 				n.value=this.value;
+				n.added = this.added;
 				if(this.value>0)
 					moved=true;
 				this.value=0;
-				n.move(d,next);
+				this.added=false;
+				//n.move(d,next);
 			}
-			else if(n.value==this.value&&!n.added){
+			else if(n.value==this.value&&!n.added&&!this.added){
 				Log.i("move (%d,%d) to (%d, %d)",
-				  this.index,this.value,n.index,n.value);
+					  this.index,this.value,n.index,n.value);
 				n.value+=this.value;
 				this.score+=n.value;
 				Log.i("Score: %d, %d", index, score);
@@ -55,7 +57,7 @@ public class Box
 		}
 		return moved;
 	}
-		
+	
 	@Override
 	public String toString()
 	{
