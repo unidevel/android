@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">三角2048</string>
+    <string name="share">分享</string>
+    <string name="play_again">再玩一次</string>
+    <string name="share_text">看，我在三角2048中得了%d高分. ^_^</string>
+    <string name="game_over">游戏结束</string>
+</resources>

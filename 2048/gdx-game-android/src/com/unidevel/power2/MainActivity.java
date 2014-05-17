@@ -1,6 +1,11 @@
 package com.unidevel.power2;
 
+import java.io.File;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import com.badlogic.gdx.backends.android.AndroidApplication;
@@ -49,8 +54,45 @@ public class MainActivity extends AndroidApplication implements GameListener
 		SharedPreferences pref=PreferenceManager.getDefaultSharedPreferences(this);
 		int maxScore=this.game.getMaxScore();
 		pref.edit().putInt(MAX_SCORE, maxScore).remove( DATA ).remove( SCORE ).commit();
+		
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setPositiveButton( R.string.play_again, new DialogInterface.OnClickListener()
+		{
+			@Override
+			public void onClick( DialogInterface dialog, int which )
+			{
+				game.newGame();
+			}
+		} );
+		
+		builder.setNegativeButton( R.string.share, new DialogInterface.OnClickListener()
+		{
+			
+			@Override
+			public void onClick( DialogInterface dialog, int which )
+			{
+				shareScreen(game.getScore());
+			}
+		} );
+		builder.setTitle( R.string.game_over );
+		builder.create().show();
 	}
 
+	private void shareScreen(int score){
+		Intent intent = new Intent( Intent.ACTION_SEND );
+		intent.setType( "image/*" );
+		File f = ScreenshotFactory.saveScreenshot( "2048" );
+		Uri u = Uri.fromFile(f);
+		intent.putExtra( Intent.EXTRA_STREAM, u);
+		f.deleteOnExit();
+		String shareText = getString(R.string.share_text, score);
+		intent.putExtra( Intent.EXTRA_TEXT, shareText );
+		intent.putExtra( "Kdescription", shareText );
+		intent.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
+		//intent.setClassName( MMPKG, MMCLS );
+		startActivity( intent );
+	}
+	
 	@Override
 	public void onGamePause()
 	{

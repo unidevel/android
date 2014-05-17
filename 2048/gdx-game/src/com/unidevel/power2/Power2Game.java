@@ -54,21 +54,30 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 		//Gdx.input.setInputProcessor(new GestureDetector(new Controller()));
 		Gdx.input.setInputProcessor(this);
 		batch = new SpriteBatch();
-		newGame();
+		startGame();
 	}
 
-	public void newGame(){
+	private void startGame(){
 		this.prepareBlocks(SIZE,48);
+		over = false;
 		if ( this.isResume )
 		{
-			over = !blocks.canMove();
 			this.isResume = false;
+			if ( !blocks.canMove() )
+			{
+				setGameOver();
+			}
 		}
 		else
 		{
 			blocks.fill();
-			over = false;
 		}
+		Gdx.graphics.requestRendering();
+	}
+	
+	public void newGame(){
+		this.blocks = new TriangleBlocks( SIZE );
+		this.startGame();
 	}
 	
 	void prepareBlocks(int n, float ypos){
@@ -360,8 +369,7 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 					blocks.fill();
 				}
 				if(!blocks.canMove()){
-					over=true;
-					onGameOver();
+					setGameOver();
 				}
 			}
 			finally{
@@ -369,6 +377,12 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 				Gdx.graphics.requestRendering();
 			}
 		}
+	}
+	
+	private void setGameOver()
+	{
+		over=true;
+		onGameOver();
 	}
 	
 	public void onGameOver(){
