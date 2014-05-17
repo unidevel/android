@@ -29,6 +29,20 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 	float[][] points;
 	float[] npos;
 	boolean over;
+	int maxScore;
+	GameListener listener;
+	public Power2Game(){
+		this(0);
+	}
+	
+	public Power2Game(int maxScore){
+		this.maxScore = maxScore;
+	}
+	
+	public void setGameListener(GameListener l){
+		this.listener = l;
+	}
+	
 	public void create()
 	{
 		sw=Gdx.graphics.getWidth();
@@ -123,13 +137,36 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 			}
 		}
 	}
-	
-	public void delay(long v){
-		try{
-			Thread.sleep(v);
-		}catch(Exception e){
-			
-		}
+		
+	private float drawScore(BitmapFont font,float offx,float offy, String s1, int n ){
+		BitmapFont.TextBounds b1,b2;
+		String s2=String.valueOf(n);
+		font.setScale(0.8f);
+		b1=font.getBounds(s1);
+		font.setScale(1.2f);		
+		b2=font.getBounds(s2);
+		float x,y,w,h;
+		h=b1.height+6+b2.height;
+		w=b1.width>b2.width?b1.width:b2.width;
+		w+=10;
+		x=offx;y=h+offy;
+		ShapeRenderer s=shapeRenderer;
+		cam.update();
+		s.setProjectionMatrix(cam.combined);
+		s.begin(ShapeType.Filled);
+		s.setColor(Color.GRAY);
+		s.rect(x,sh-y,w,h);
+		s.end();
+		
+		batch.begin();
+		font.setColor(Color.BLUE);
+		font.setScale(0.8f);
+		font.draw(batch, s1, x+2,sh-(y+2));
+		font.setScale(1.2f);
+		font.draw(batch, s2, w-b2.width-2, sh-(y+b1.height+2));
+		batch.end();
+		
+		return w;
 	}
 	
 	public void render()
@@ -172,10 +209,12 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 			}
 		}
 		
-		String score=String.format("Your score: %d",blocks.score);
+	/*	String score=String.format("Your score: %d",blocks.score);
 		font.setColor(Color.BLUE);
 		font.draw(batch, score, 30,sh-60);
+		*/
 		batch.end();
+		drawScore(font, 10f, 10f, "Score", blocks.score);
 		if(over)
 		{
 			Gdx.gl.glEnable( GL20.GL_BLEND );
@@ -225,6 +264,10 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 		return true; // return true to indicate the event was handled
 	}
 
+	public int getScore(){
+		return blocks.score;
+	}
+	
 	public boolean touchUp (int x, int y, int pointer, int button) {
 		if(over)
 			return false;
@@ -257,12 +300,22 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 				}
 				if(!blocks.canMove()){
 					over=true;
+					onGameOver();
 				}
 			}
 			finally{
 				animating=false;
 				Gdx.graphics.requestRendering();
 			}
+		}
+	}
+	
+	public void onGameOver(){
+		if(blocks.score>this.maxScore){
+			this.maxScore=blocks.score;
+		}
+		if(listener!=null){
+			listener.onGameOver();
 		}
 	}
 	
