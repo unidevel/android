@@ -1,8 +1,7 @@
 package com.unidevel.power2;
-import java.util.*;
-import java.io.*;
-import com.badlogic.gdx.utils.*;
-import android.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class TriangleBlocks
 {
