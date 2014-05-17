@@ -24,12 +24,25 @@ public class MainActivity extends AndroidApplication implements GameListener
         //cfg.useGL20 = false;
 		cfg.hideStatusBar=false;
 		cfg.useWakelock=false;
-		int maxScore=pref.getInt(MAX_SCORE,0);
-        this.game = new Power2Game(maxScore);
+        this.game = new Power2Game();
+        this.game.setGameListener( this );
         initialize(game, cfg);
-        onGameResume();
     }
 	
+    @Override
+    protected void onRestart()
+    {
+    	super.onRestart();
+//        onGameResume();
+    }
+    
+    @Override
+    protected void onResume()
+    {
+    	super.onResume();
+        onGameResume();
+	}
+    
 	@Override
 	public void onGameOver()
 	{

@@ -18,6 +18,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
 public class Power2Game extends InputAdapter implements ApplicationListener
 {
+	static final int SIZE=4;
 	Texture texture;
 	SpriteBatch batch;
 	TriangleBlocks blocks;
@@ -31,14 +32,12 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 	boolean over;
 	int maxScore;
 	GameListener listener;
+	boolean isResume;
 	public Power2Game(){
-		this(0);
+		this.blocks = new TriangleBlocks(SIZE);
+		this.isResume = false;
 	}
-	
-	public Power2Game(int maxScore){
-		this.maxScore = maxScore;
-	}
-	
+		
 	public void setGameListener(GameListener l){
 		this.listener = l;
 	}
@@ -59,15 +58,22 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 	}
 
 	public void newGame(){
-		this.prepareBlocks(4,48);
-		blocks.fill();
-		over = false;
+		this.prepareBlocks(SIZE,48);
+		if ( this.isResume )
+		{
+			over = !blocks.canMove();
+			this.isResume = false;
+		}
+		else
+		{
+			blocks.fill();
+			over = false;
+		}
 	}
 	
 	void prepareBlocks(int n, float ypos){
 		points = new float[n*n][];
 		npos= new float[n*n*2];
-		this.blocks=new TriangleBlocks(n);
 		float len=sw>sh?sh -4:sw-4;
 		float x = len/2.0f;
 		float y = ypos;
@@ -319,6 +325,7 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 		{
 			Box b = blocks.data[i];
 			b.value = values[i];
+			this.isResume = true;
 		}
 	}
 	
