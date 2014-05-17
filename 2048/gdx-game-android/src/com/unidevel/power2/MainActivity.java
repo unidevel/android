@@ -27,6 +27,7 @@ public class MainActivity extends AndroidApplication implements GameListener
 		int maxScore=pref.getInt(MAX_SCORE,0);
         this.game = new Power2Game(maxScore);
         initialize(game, cfg);
+        onGameResume();
     }
 	
 	@Override
@@ -52,11 +53,14 @@ public class MainActivity extends AndroidApplication implements GameListener
 	{
 		int maxScore = pref.getInt( MAX_SCORE, 0 );
 		int score = pref.getInt( SCORE, 0 );
-		String ds = pref.getString( DATA, "" );
-		int[] data = toArray(ds);
+		String ds = pref.getString( DATA, null );
 		this.game.setMaxScore( maxScore );
 		this.game.setScore( score );
-		this.game.setData( data );
+		if ( ds!= null && ds.length()>0 )
+		{
+			int[] data = toArray(ds);
+			this.game.setData( data );
+		}
 	}
 	
 	private int[] toArray(String value)
