@@ -4,15 +4,18 @@ package com.unidevel.power2;
 import java.io.File;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Gdx2DPixmap;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
@@ -237,9 +240,9 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 
 	public void render()
 	{
+		Gdx.gl.glViewport( 0, 0, sw, sh );
 		Gdx.gl.glClearColor( 0, 0, 0, 1 );
 		Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT );
-		Gdx.gl.glViewport( 0, 0, sw, sh );
 
 		ShapeRenderer s = shapeRenderer;
 
@@ -454,8 +457,18 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 		{
 			this.maxScore = blocks.score;
 		}
-		
-		File f = ScreenshotFactory.saveScreenshot( "2048.png" );
+		Graphics g = Gdx.graphics;
+		final FrameBuffer buffer = new FrameBuffer(Format.RGBA8888, g.getWidth(), g.getHeight(), false);
+		File f = null;
+		try {
+            buffer.begin();
+            g.requestRendering();
+    		f = ScreenshotFactory.saveScreenshot( "2048.png" );
+    		buffer.end();
+		}
+		catch(Exception ex){
+			
+		}
 		if ( listener != null )
 		{
 			listener.onGameOver( f );
