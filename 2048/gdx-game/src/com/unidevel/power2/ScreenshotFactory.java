@@ -13,7 +13,7 @@ public class ScreenshotFactory {
     public static File saveScreenshot(String name){
         try{
             FileHandle fh = Gdx.files.local( name );
-            Pixmap pixmap = getScreenshot(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
+            Pixmap pixmap = getScreenshot(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
             PixmapIO.writePNG(fh, pixmap);
             pixmap.dispose();
             return fh.file();

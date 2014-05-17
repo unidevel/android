@@ -51,7 +51,7 @@ public class MainActivity extends AndroidApplication implements GameListener
 	}
     
 	@Override
-	public void onGameOver()
+	public void onGameOver(final File screenShot)
 	{
 		SharedPreferences pref=PreferenceManager.getDefaultSharedPreferences(this);
 		int maxScore=this.game.getMaxScore();
@@ -61,18 +61,19 @@ public class MainActivity extends AndroidApplication implements GameListener
 			@Override
 			public void run()
 			{
-				showPlayAgainDialog();
+				showPlayAgainDialog(screenShot);
 			}
 		});
 	}
 	
-	private void showPlayAgainDialog(){
+	private void showPlayAgainDialog(final File screenShot){
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setPositiveButton( R.string.play_again, new DialogInterface.OnClickListener()
 		{
 			@Override
 			public void onClick( DialogInterface dialog, int which )
 			{
+				dialog.dismiss();
 				game.newGame();
 			}
 		} );
@@ -83,20 +84,24 @@ public class MainActivity extends AndroidApplication implements GameListener
 			@Override
 			public void onClick( DialogInterface dialog, int which )
 			{
-				shareScreen(game.getScore());
+				dialog.dismiss();
+				shareScreen(game.getScore(), screenShot);
 			}
 		} );
 		builder.setTitle( R.string.game_over );
 		builder.create().show();		
 	}
 
-	private void shareScreen(int score){
+	private void shareScreen(int score, File screenShot){
+		if ( screenShot == null )
+		{
+			return;
+		}
 		Intent intent = new Intent( Intent.ACTION_SEND );
 		intent.setType( "image/*" );
-		File f = ScreenshotFactory.saveScreenshot( "2048" );
-		Uri u = Uri.fromFile(f);
+		Uri u = Uri.fromFile(screenShot);
 		intent.putExtra( Intent.EXTRA_STREAM, u);
-		f.deleteOnExit();
+		//f.deleteOnExit();
 		String shareText = getString(R.string.share_text, score);
 		intent.putExtra( Intent.EXTRA_TEXT, shareText );
 		intent.putExtra( "Kdescription", shareText );
