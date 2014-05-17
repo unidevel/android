@@ -1,14 +1,17 @@
 package com.unidevel.power2;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
-
+import android.preference.PreferenceManager;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
-import android.content.*;
-import android.preference.*;
 
 public class MainActivity extends AndroidApplication implements GameListener
 {
+	static final String SCORE = "score";
+	static final String MAX_SCORE = "max_score";
+	static final String DATA = "data";
+	
 	Power2Game game;
 	SharedPreferences pref;
 	
@@ -21,8 +24,8 @@ public class MainActivity extends AndroidApplication implements GameListener
         //cfg.useGL20 = false;
 		cfg.hideStatusBar=false;
 		cfg.useWakelock=false;
-		int score=pref.getInt("score",0);
-        this.game = new Power2Game(score);
+		int maxScore=pref.getInt(MAX_SCORE,0);
+        this.game = new Power2Game(maxScore);
         initialize(game, cfg);
     }
 	
@@ -30,11 +33,56 @@ public class MainActivity extends AndroidApplication implements GameListener
 	public void onGameOver()
 	{
 		SharedPreferences pref=PreferenceManager.getDefaultSharedPreferences(this);
-		int maxScore=this.game.getScore();
-		pref.edit().putInt("score", maxScore).commit();
+		int maxScore=this.game.getMaxScore();
+		pref.edit().putInt(MAX_SCORE, maxScore).remove( DATA ).remove( SCORE ).commit();
 	}
 
-	public void onResume(){
-		super.onResume();
+	@Override
+	public void onGamePause()
+	{
+		int maxScore = this.game.getMaxScore();
+		int score = this.game.getScore();
+		int[] data = this.game.getData();
+		String ds = toString(data);
+		pref.edit().putInt(MAX_SCORE, maxScore).putString( DATA, ds ).putInt( SCORE, score ).commit();
+	}
+	
+	@Override
+	public void onGameResume()
+	{
+		int maxScore = pref.getInt( MAX_SCORE, 0 );
+		int score = pref.getInt( SCORE, 0 );
+		String ds = pref.getString( DATA, "" );
+		int[] data = toArray(ds);
+		this.game.setMaxScore( maxScore );
+		this.game.setScore( score );
+		this.game.setData( data );
+	}
+	
+	private int[] toArray(String value)
+	{
+		String[] items = value.split( "," );
+		int[] data = new int[items.length];
+		for ( int i = 0; i < data.length; i++ )
+		{
+			try 
+			{
+				data[i] = Integer.valueOf( items[i] );
+			}
+			catch(Exception ex){}
+		}
+		return data;
+	}
+	
+	private String toString(int[] data)
+	{
+		StringBuffer buf = new StringBuffer();
+		for ( int d: data)
+		{
+			if ( buf.length() != 0 )
+				buf.append( "," );
+			buf.append( d );
+		}
+		return buf.toString();
 	}
 }

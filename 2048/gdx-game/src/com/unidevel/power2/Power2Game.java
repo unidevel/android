@@ -219,7 +219,7 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 		font.setColor(Color.WHITE);
 		font.setScale(1.0f);
 		float sw=font.getSpaceWidth();
-		float lh=font.getLineHeight();
+//		float lh=font.getLineHeight();
 		for(int i=0;i<v.length;++i){
 			int value=v[i];
 			if(value>0){
@@ -230,10 +230,6 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 			}
 		}
 		
-	/*	String score=String.format("Your score: %d",blocks.score);
-		font.setColor(Color.BLUE);
-		font.draw(batch, score, 30,sh-60);
-		*/
 		batch.end();
 		drawScore(font, true, 10f, 10f, "SCORE", blocks.score);
 		drawScore(font, false, 10f, 10f, "BEST", maxScore);
@@ -273,11 +269,20 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 	@Override
 	public void pause()
 	{
+		if( this.listener != null )
+		{
+			this.listener.onGamePause();
+		}
 	}
 
 	@Override
 	public void resume()
 	{
+		if ( this.listener != null )
+		{
+			this.listener.onGameResume();
+		}
+		Gdx.graphics.requestRendering();
 	}
 	
 	int px,py;
@@ -286,8 +291,35 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 		return true; // return true to indicate the event was handled
 	}
 
+	public int getMaxScore(){
+		return maxScore;
+	}
+
 	public int getScore(){
 		return blocks.score;
+	}
+
+	public int[] getData(){
+		return blocks.getValues();
+	}
+	
+	public void setScore(int score)
+	{
+		blocks.score = score;
+	}
+	
+	public void setMaxScore(int maxScore)
+	{
+		this.maxScore = maxScore;
+	}
+	
+	public void setData(int[] values)
+	{
+		for (int i = 0; i < blocks.data.length && i < values.length; ++ i)
+		{
+			Box b = blocks.data[i];
+			b.value = values[i];
+		}
 	}
 	
 	public boolean touchUp (int x, int y, int pointer, int button) {

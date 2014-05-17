@@ -169,6 +169,7 @@ public class TriangleBlocks
 	}
 	
 	public void dump4(){
+		@SuppressWarnings ("unused")
 		int r=1;
 		for(int l=0,p=0,n=1;l<size;++l,n+=2){
 			if(l>0)r=2;
