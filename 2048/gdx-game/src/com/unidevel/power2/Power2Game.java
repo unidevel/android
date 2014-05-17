@@ -300,18 +300,7 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 			font.draw( batch, os, px, py );
 			batch.end();
 			Gdx.gl.glDisable( GL20.GL_BLEND );
-			
-			if ( !screenshot )
-			{
-				screenshot = true;
-				File f = ScreenshotFactory.saveScreenshot( "2048.png" );
-				if ( listener != null )
-				{
-					listener.onGameOver( f );
-				}
-			}
 		}
-
 	}
 
 	@Override
@@ -465,6 +454,14 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 		{
 			this.maxScore = blocks.score;
 		}
+		
+		File f = ScreenshotFactory.saveScreenshot( "2048.png" );
+		if ( listener != null )
+		{
+			listener.onGameOver( f );
+		}
+		
+		//listener.onGameOver( null );
 	}
 
 	

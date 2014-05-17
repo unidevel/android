@@ -78,6 +78,16 @@ public class MainActivity extends AndroidApplication implements GameListener
 			}
 		} );
 		
+		builder.setNegativeButton( R.string.exit, new DialogInterface.OnClickListener()
+		{
+			
+			@Override
+			public void onClick( DialogInterface dialog, int which )
+			{
+				dialog.dismiss();
+				finish();
+			}
+		} );
 		builder.setNegativeButton( R.string.share, new DialogInterface.OnClickListener()
 		{
 			
@@ -87,7 +97,7 @@ public class MainActivity extends AndroidApplication implements GameListener
 				dialog.dismiss();
 				shareScreen(game.getScore(), screenShot);
 			}
-		} );
+		} ); 
 		builder.setTitle( R.string.game_over );
 		builder.create().show();		
 	}
