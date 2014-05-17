@@ -125,8 +125,9 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 	public void render()
 	{
 	    Gdx.gl.glClearColor(0, 0, 0, 1);
-	    Gdx.gl.glClear(Gdx.gl.GL_COLOR_BUFFER_BIT);
+	    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		Gdx.gl.glViewport(0,0,sw,sh);
+
 		ShapeRenderer s=shapeRenderer;
 		
 		cam.update();
@@ -156,6 +157,7 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 		shapeRenderer.circle(80, 80, 50);
 		*/
 		s.end();
+				
 		batch.begin();//batch.
 		font.setColor(Color.WHITE);
 		float sw=font.getSpaceWidth();
@@ -176,18 +178,22 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 		batch.end();
 		//font.setColor(Color.WHITE);
 		//font.draw(
-		if(over){
+		if(over)
+		{
+			Gdx.gl.glEnable( GL20.GL_BLEND );
+			Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 			cam.update();
 			s.setProjectionMatrix(cam.combined);
 			s.begin(ShapeType.Filled);
-			s.setColor(1.0f,0.5f,0.5f,0.8f);
-			s.rect(0,0,sw-1,sh-1);
+			s.setColor(0.5f,0.5f,0.5f,0.8f);
+			s.rect(0,0,this.sw-1,this.sh-1);
 			s.end();
 			batch.begin();//batch.
 			String os="Game over!";
 			font.setColor(Color.RED);
 			font.draw(batch, os, 30,sh-60);
 			batch.end();
+			Gdx.gl.glDisable( GL20.GL_BLEND );
 		}
 	}	
 	
