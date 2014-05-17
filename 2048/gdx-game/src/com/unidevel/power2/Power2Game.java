@@ -137,33 +137,54 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 			}
 		}
 	}
-		
-	private float drawScore(BitmapFont font,float offx,float offy, String s1, int n ){
+
+	private float drawScore(BitmapFont font, boolean left, float offx,float offy, String s1, int n ){
+		float textScale = 0.5f;
+		float scoreScale = 1.0f;
 		BitmapFont.TextBounds b1,b2;
-		String s2=String.valueOf(n);
-		font.setScale(0.8f);
-		b1=font.getBounds(s1);
-		font.setScale(1.2f);		
-		b2=font.getBounds(s2);
 		float x,y,w,h;
-		h=b1.height+6+b2.height;
-		w=b1.width>b2.width?b1.width:b2.width;
-		w+=10;
+		float w1, w2, h1, h2;
+		String s2=String.format( "%05d", n);
+		font.setScale(textScale);
+		b1=font.getBounds(s1);
+		w1 = b1.width;
+		h1 = b1.height;
+		font.setScale(scoreScale);
+		b2=font.getBounds(s2);
+		w2 = b2.width;
+		h2 = b2.height;
+		h=h1+6+h2;
+		w=w2>w1?w2:w1;
+		w+=4;
 		x=offx;y=h+offy;
 		ShapeRenderer s=shapeRenderer;
-		cam.update();
-		s.setProjectionMatrix(cam.combined);
 		s.begin(ShapeType.Filled);
 		s.setColor(Color.GRAY);
-		s.rect(x,sh-y,w,h);
+		if ( left ) {
+			s.rect(x,sh-y,w,h);
+		}
+		else {
+			s.rect(sw-x-w,sh-y,w,h);
+		}
 		s.end();
 		
 		batch.begin();
-		font.setColor(Color.BLUE);
-		font.setScale(0.8f);
-		font.draw(batch, s1, x+2,sh-(y+2));
-		font.setScale(1.2f);
-		font.draw(batch, s2, w-b2.width-2, sh-(y+b1.height+2));
+		font.setColor(0.7f,0.7f,0.7f,1.0f);
+		font.setScale(textScale);
+		if ( left ){
+			font.draw(batch, s1, x+(w-w1)/2f+2,sh-(y+2-h));
+		}
+		else{
+			font.draw(batch, s1, sw-(x+(w-w1)/2f+2)-w1,sh-(y+2-h));
+		}
+		font.setColor(1f,1f,1f,1.0f);
+		font.setScale(scoreScale);
+		if ( left ){
+			font.draw(batch, s2, x+2, sh-(y+2-h+h1));
+		}
+		else{
+			font.draw(batch, s2, sw-(x-2)-w, sh-(y+2-h+h1));
+		}
 		batch.end();
 		
 		return w;
@@ -214,7 +235,8 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 		font.draw(batch, score, 30,sh-60);
 		*/
 		batch.end();
-		drawScore(font, 10f, 10f, "Score", blocks.score);
+		drawScore(font, true, 10f, 10f, "SCORE", blocks.score);
+		drawScore(font, false, 10f, 10f, "BEST", maxScore);
 		if(over)
 		{
 			Gdx.gl.glEnable( GL20.GL_BLEND );
