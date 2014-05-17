@@ -30,14 +30,13 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 	float[][] points;
 	float[] npos;
 	boolean over;
+	boolean screenshot;
 	int maxScore;
 	GameListener listener;
-	boolean isResume;
 
 	public Power2Game()
 	{
 		this.blocks = new TriangleBlocks( SIZE );
-		this.isResume = false;
 	}
 
 	public void setGameListener( GameListener l )
@@ -64,9 +63,14 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 	{
 		this.prepareBlocks( SIZE, 48 );
 		over = false;
-		if ( this.isResume )
+		boolean isResume = false;
+		for ( Box b: blocks.data )
 		{
-			this.isResume = false;
+			if ( b.value != 0 )
+				isResume = true;
+		}
+		if ( isResume )
+		{
 			if ( !blocks.canMove() )
 			{
 				setGameOver();
@@ -296,7 +300,18 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 			font.draw( batch, os, px, py );
 			batch.end();
 			Gdx.gl.glDisable( GL20.GL_BLEND );
+			
+			if ( !screenshot )
+			{
+				screenshot = true;
+				File f = ScreenshotFactory.saveScreenshot( "2048.png" );
+				if ( listener != null )
+				{
+					listener.onGameOver( f );
+				}
+			}
 		}
+
 	}
 
 	@Override
@@ -372,7 +387,6 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 		{
 			Box b = blocks.data[ i ];
 			b.value = values[ i ];
-			this.isResume = true;
 		}
 	}
 
@@ -441,6 +455,7 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 	private void setGameOver()
 	{
 		over = true;
+		screenshot = false;
 		onGameOver();
 	}
 
@@ -450,18 +465,6 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 		{
 			this.maxScore = blocks.score;
 		}
-		Gdx.app.postRunnable( new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				File f = ScreenshotFactory.saveScreenshot( "2048.png" );
-				if ( listener != null )
-				{
-					listener.onGameOver( f );
-				}
-			}
-		} );
 	}
 
 	
