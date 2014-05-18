@@ -285,6 +285,10 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 		}
 
 		batch.end();
+		if ( maxScore < blocks.score )
+		{
+			maxScore = blocks.score;
+		}
 		drawScore( font, true, 10f, 10f, "SCORE", blocks.score );
 		drawScore( font, false, 10f, 10f, "BEST", maxScore );
 		if ( over )

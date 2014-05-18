@@ -51,7 +51,6 @@ public class MainActivity extends AndroidApplication implements GameListener
         this.gameView = initializeForView( game, cfg );
         
         AdView adView = new AdView(this, AdSize.BANNER, "a15377fb6dcdf79"); // Put in your secret key here
-        adView.loadAd(new AdRequest());
         RelativeLayout layout = new RelativeLayout(this);
         // Add the libgdx view
         layout.addView(gameView);
@@ -66,6 +65,7 @@ public class MainActivity extends AndroidApplication implements GameListener
         layout.addView(adView, adParams);
         
         setContentView(layout);
+        adView.loadAd(new AdRequest());
     }
 	
     @Override
