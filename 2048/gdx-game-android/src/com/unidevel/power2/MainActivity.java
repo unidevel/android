@@ -170,6 +170,13 @@ public class MainActivity extends AndroidApplication implements GameListener
 		if ( R.id.newGame == item.getItemId() )
 		{
 			game.newGame();
+//			game.newFlashScreen();
+		}
+		else if ( R.id.rateApp == item.getItemId() )
+		{
+			Intent intent = new Intent(Intent.ACTION_VIEW);
+			intent.setData( Uri.parse("market://details?id=com.unidevel.power2") );
+			startActivity( intent );
 		}
 		return true;
 	}

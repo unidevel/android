@@ -5,5 +5,7 @@
     <string name="play_again">再玩一次</string>
     <string name="share_text">看，我在三角2048中得了%d高分. ^_^</string>
     <string name="game_over">游戏结束</string>
+    <string name="new_game">新游戏</string>
+    <string name="rate">反馈</string>
 	<string name="exit">结束</string>  
 </resources>

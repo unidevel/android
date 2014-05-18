@@ -6,6 +6,7 @@
     <string name="share_text">Look, I got %d in game Tri2048. ^_^</string>
     <string name="game_over">Game over</string>
     <string name="new_game">New Game</string>
+    <string name="rate">Feedback</string>
     <string name="exit">Exit</string>
     
 </resources>

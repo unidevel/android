@@ -96,6 +96,22 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 		this.startGame();
 	}
 
+	public void newFlashScreen()
+	{
+		this.maxScore = 99999;
+		this.blocks = new TriangleBlocks( SIZE );
+		this.blocks.score = 99999;
+		for (int i =0, n=0 ; i < blocks.data.length; i++ )
+		{
+			blocks.data[i].value = n;
+			if ( n == 0 )
+				n = 2;
+			else
+				n += n;
+		}
+		over = false;
+	}
+	
 	void prepareBlocks( int n, float ypos )
 	{
 		points = new float[ n * n ][];
@@ -241,6 +257,74 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 
 		return w;
 	}
+	
+	private void setColor(ShapeRenderer render, int value)
+	{
+		if ( value < 2 )
+		{
+			render.setColor( 0f, 0f, 0f, 1f );
+		}
+		else if ( value < 4  )
+		{
+			render.setColor( 0.4f, 0.4f, 0.4f, 1f );	
+		}
+		else if ( value < 8 )
+		{
+			render.setColor( 0.4f, 0.4f, 0.5f, 1f );
+		}
+		else if ( value < 16 )
+		{
+			render.setColor( 0.6f, 0.5f, 0.4f, 1f );
+		}
+		else if ( value < 32 )
+		{
+			render.setColor( 0.6f, 0.6f, 0.4f, 1f );
+		}
+		else if ( value < 64 )
+		{
+			render.setColor( 0.4f, 0.6f, 0.4f, 1f );
+		}
+		else if ( value < 128 )
+		{
+			render.setColor( 0.4f, 0.6f, 0.6f, 1f );
+		}
+		else if ( value < 256 )
+		{
+			render.setColor( 0.4f, 0.5f, 0.6f, 1f );
+		}
+		else if ( value < 512 )
+		{
+			render.setColor( 0.6f, 0.8f, 0.8f, 1f );
+		}
+		else if ( value < 1024 )
+		{
+			render.setColor( 0.6f, 0.8f, 0.6f, 1f );
+		}
+		else if ( value < 2048 )
+		{
+			render.setColor( 0.8f, 0.6f, 0.6f, 1f );
+		}
+		else if ( value < 4096 )
+		{
+			render.setColor( 0.8f, 0.4f, 0.4f, 1f );
+		}
+		else if ( value < 8192 )
+		{
+			render.setColor( 0.8f, 0.6f, 0.4f, 1f );
+		}
+		else if ( value < 16384 )
+		{
+			render.setColor( 0.8f, 0.4f, 0.8f, 1f );
+		}
+		else if ( value < 32768 )
+		{
+			render.setColor( 0.9f, 0.6f, 0.8f, 1f );
+		}
+		else
+		{
+			render.setColor( 1f, 0.4f, 0.4f, 1f );
+		}
+	}
 
 	public void render()
 	{
@@ -253,14 +337,15 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 		cam.update();
 		s.setProjectionMatrix( cam.combined );
 		s.begin( ShapeType.Filled );
-		s.setColor( 0.7f, 0.7f, 0.7f, 1.0f );
+		s.setColor( 0.8f, 0.8f, 0.8f, 1.0f );
 		s.rect( 0, 0, sw - 1, sh - 1 );
 		int[] v = blocks.getValues();
-		float ln2 = (float)Math.log( 2 );
+//		float ln2 = (float)Math.log( 2 );
 		for ( int i = 0; i < points.length; ++i )
 		{
-			float c = (float)Math.log( v[ i ] ) / ln2 / 4.0f;
-			s.setColor( c, 0, c, 1 );
+//			float c = (float)Math.log( v[ i ] ) / ln2 / 4.0f;
+//			s.setColor( c, 0, c, 1 );
+			setColor(s, v[i]);
 			float p[] = points[ i ];
 			// translate(p);
 			s.triangle( p[ 0 ], p[ 1 ], p[ 2 ], p[ 3 ], p[ 4 ], p[ 5 ] );
@@ -426,7 +511,7 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 						Gdx.graphics.requestRendering();
 						try
 						{
-							Thread.sleep( 70 );
+							Thread.sleep( 50 );
 						}
 						catch (Exception ex)
 						{
