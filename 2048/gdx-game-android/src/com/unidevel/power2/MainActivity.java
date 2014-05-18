@@ -26,6 +26,10 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.games.*;
+import com.google.android.gms.appstate.*;
+import com.google.android.gms.plus.*;
+import com.google.android.gms.common.*;
 
 public class MainActivity extends AndroidApplication implements GameListener,GameHelper.GameHelperListener
 {
@@ -54,7 +58,7 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
     public MainActivity()
 	{
     	super();
-    	mHelper = new GameHelper(this);
+    	//mHelper = new GameHelper(this);
 	}
     
 	//a15377fb6dcdf79 
@@ -62,6 +66,10 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.handler = new Handler();
+		//mHelper = new GameHelper( this );
+		//mHelper.enableDebugLog(true,"Games");
+		//mHelper.setup( this, mRequestedClients );
+		login();
 		pref=PreferenceManager.getDefaultSharedPreferences(this);
         AndroidApplicationConfiguration cfg = new AndroidApplicationConfiguration();
         //cfg.useGL20 = false;
@@ -78,7 +86,7 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
         adView = new AdView(this);
         adView.setAdUnitId("ca-app-pub-2348443469199344/1566590918");
         adView.setAdSize(AdSize.BANNER);
-        
+        //adView.setVisibility(View.GONE);
         //        	AdView adView = new AdView(this, AdSize.BANNER, "a15377fb6dcdf79"); // Put in your secret key here
         RelativeLayout layout = new RelativeLayout(this);
         // Add the libgdx view
@@ -98,6 +106,45 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
         
         setContentView(layout);
     }
+	
+	@Override
+    protected void onStart()
+    {
+    	super.onStart();
+		//mHelper.onStart(this);
+    }
+	
+	//	@Override
+	protected void onStop()
+	{
+		super.onStop();
+		//mHelper.onStop();
+	}
+	
+	public void login() {
+		try {
+			runOnUiThread(new Runnable(){
+				public void run(){
+					mHelper.beginUserInitiatedSignIn();
+				}
+			});
+		}catch (final Exception ex){
+
+		}
+	}
+
+	@Override
+	protected void onActivityResult( int request, int response, Intent data )
+	{
+		super.onActivityResult( request, response, data );
+		mHelper.onActivityResult( request, response, data );
+	}
+
+	protected GamesClient getGamesClient()
+	{
+		return mHelper.getGamesClient();
+	}
+	
 	
     @Override
     protected void onRestart()
@@ -164,7 +211,7 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 			}
 		} );
 		*/ 
-		builder.setTitle( R.string.game_over );
+		builder.setMessage( R.string.game_over );
 		builder.create().show();		
 	}
 	
@@ -265,10 +312,17 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 	
 	//1 High score CgkImN3rmbgNEAIQAQ
 	//TRIANGLE 2048 461763178136
-	private void submitScore()
-	{
-//		Games.Leaderboards.submitScore(getApiClient(), LEADERBOARD_ID, 1337);
-//		startActivityForResult(Games.Leaderboards.getLeaderboardIntent(getApiClient(), LEADERBOARD_ID), REQUEST_LEADERBOARD);
+	private void submitScore(){
+		mHelper = new GameHelper( this );
+		mHelper.enableDebugLog(true,"Games");
+		mHelper.setup( this, mRequestedClients );
+		mHelper.beginUserInitiatedSignIn();
+		//String id="CgkImN3rmbgNEAIQAQ";
+		//mHelper.getGamesClient().submitScore(id, game.getScore());
+		//Games.Leaderboards.submitScore(getApiClient(), LEADERBOARD_ID, 1337);
+		//Intent intent=mHelper.getGamesClient().getLeaderboardIntent(id);
+		//startActivity(intent);
+		//startActivityForResult(Games.Leaderboards.getLeaderboardIntent(getApiClient(), LEADERBOARD_ID), REQUEST_LEADERBOARD);
 	}
 	
 	@Override
@@ -336,6 +390,78 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 		super.onDestroy();
 		adView.destroy();
 	}
+	
+	protected AppStateClient getAppStateClient()
+	{
+		return mHelper.getAppStateClient();
+	}
+
+	protected PlusClient getPlusClient()
+	{
+		return mHelper.getPlusClient();
+	}
+
+	protected boolean isSignedIn()
+	{
+		return mHelper.isSignedIn();
+	}
+
+	protected void beginUserInitiatedSignIn()
+	{
+		mHelper.beginUserInitiatedSignIn();
+	}
+
+	protected void signOut()
+	{
+		mHelper.signOut();
+	}
+
+	protected void showAlert( String title, String message )
+	{
+		mHelper.showAlert( title, message );
+	}
+
+	protected void showAlert( String message )
+	{
+		mHelper.showAlert( message );
+	}
+
+	protected void enableDebugLog( boolean enabled, String tag )
+	{
+		mHelper.enableDebugLog( enabled, tag );
+	}
+
+	protected String getInvitationId()
+	{
+		return mHelper.getInvitationId();
+	}
+
+	protected void reconnectClients( int whichClients )
+	{
+		mHelper.reconnectClients( whichClients );
+	}
+
+	protected String getScopes()
+	{
+		return mHelper.getScopes();
+	}
+
+	protected boolean hasSignInError()
+	{
+		return mHelper.hasSignInError();
+	}
+
+	protected ConnectionResult getSignInError()
+	{
+		return mHelper.getSignInError();
+	}
+
+	protected void setSignInMessages( String signingInMessage, String signingOutMessage )
+	{
+		mHelper.setSigningInMessage( signingInMessage );
+		mHelper.setSigningOutMessage( signingOutMessage );
+	}
+	
 
 	@Override
 	public void onSignInFailed()
