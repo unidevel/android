@@ -9,8 +9,16 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.RelativeLayout;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
+import com.google.ads.AdRequest;
+import com.google.ads.AdSize;
+import com.google.ads.AdView;
 
 public class MainActivity extends AndroidApplication implements GameListener
 {
@@ -21,7 +29,8 @@ public class MainActivity extends AndroidApplication implements GameListener
 	Handler handler;
 	Power2Game game;
 	SharedPreferences pref;
-	
+	View gameView;
+	//a15377fb6dcdf79 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,7 +42,30 @@ public class MainActivity extends AndroidApplication implements GameListener
 		cfg.useWakelock=false;
         this.game = new Power2Game();
         this.game.setGameListener( this );
-        initialize(game, cfg);
+//        initialize(game, cfg);
+        
+//        requestWindowFeature(Window.FEATURE_NO_TITLE);
+//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
+//                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+        this.gameView = initializeForView( game, cfg );
+        
+        AdView adView = new AdView(this, AdSize.BANNER, "a15377fb6dcdf79"); // Put in your secret key here
+        adView.loadAd(new AdRequest());
+        RelativeLayout layout = new RelativeLayout(this);
+        // Add the libgdx view
+        layout.addView(gameView);
+
+        // Add the AdMob view
+        RelativeLayout.LayoutParams adParams = 
+            new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, 
+                    RelativeLayout.LayoutParams.WRAP_CONTENT);
+        adParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        adParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+
+        layout.addView(adView, adParams);
+        
+        setContentView(layout);
     }
 	
     @Override
@@ -88,6 +120,7 @@ public class MainActivity extends AndroidApplication implements GameListener
 				finish();
 			}
 		} );
+		/*
 		builder.setNegativeButton( R.string.share, new DialogInterface.OnClickListener()
 		{
 			
@@ -97,7 +130,8 @@ public class MainActivity extends AndroidApplication implements GameListener
 				dialog.dismiss();
 				shareScreen(game.getScore(), screenShot);
 			}
-		} ); 
+		} );
+		*/ 
 		builder.setTitle( R.string.game_over );
 		builder.create().show();		
 	}
@@ -118,6 +152,26 @@ public class MainActivity extends AndroidApplication implements GameListener
 		intent.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
 		//intent.setClassName( MMPKG, MMCLS );
 		startActivity( intent );
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu( Menu menu )
+	{
+		super.onCreateOptionsMenu( menu );
+		MenuInflater inflater = new MenuInflater( this );
+		inflater.inflate( R.menu.menu, menu );
+		return true;
+	}
+	
+
+	@Override
+	public boolean onOptionsItemSelected( MenuItem item )
+	{
+		if ( R.id.newGame == item.getItemId() )
+		{
+			game.newGame();
+		}
+		return true;
 	}
 	
 	@Override
