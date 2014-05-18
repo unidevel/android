@@ -244,7 +244,8 @@ public class MainActivity extends AndroidApplication implements GameListener
 		return true;
 	}
 	
-	
+	//1 High score CgkImN3rmbgNEAIQAQ
+	//TRIANGLE 2048 461763178136
 	private void submitScore()
 	{
 //		Games.Leaderboards.submitScore(getApiClient(), LEADERBOARD_ID, 1337);
