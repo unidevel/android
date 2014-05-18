@@ -8,8 +8,7 @@ public class TriangleBlocks
 	Box[] data;
 	int size;
 	Random random;
-	int score;
-	
+	int score;	
 	public TriangleBlocks(int size){
 		this.size=size;
 		score=0;

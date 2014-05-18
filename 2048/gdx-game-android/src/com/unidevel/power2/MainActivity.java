@@ -23,9 +23,9 @@ import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;
-import com.google.ads.AdRequest;
-import com.google.ads.AdSize;
-import com.google.ads.AdView;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
 
 public class MainActivity extends AndroidApplication implements GameListener
 {
@@ -37,6 +37,7 @@ public class MainActivity extends AndroidApplication implements GameListener
 	Power2Game game;
 	SharedPreferences pref;
 	View gameView;
+	AdView adView;
 	//a15377fb6dcdf79 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,22 +56,28 @@ public class MainActivity extends AndroidApplication implements GameListener
 //        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         this.gameView = initializeForView( game, cfg );
         
-        AdView adView = new AdView(this, AdSize.BANNER, "a15377fb6dcdf79"); // Put in your secret key here
+        adView = new AdView(this);
+        adView.setAdUnitId("ca-app-pub-2348443469199344/1566590918");
+        adView.setAdSize(AdSize.BANNER);
+        
+        //        	AdView adView = new AdView(this, AdSize.BANNER, "a15377fb6dcdf79"); // Put in your secret key here
         RelativeLayout layout = new RelativeLayout(this);
         // Add the libgdx view
         layout.addView(gameView);
+        
+        AdRequest adRequest = new AdRequest.Builder().build();
+//        AdRequest request = new AdRequest();
+        adView.loadAd(adRequest);
 
         // Add the AdMob view
         RelativeLayout.LayoutParams adParams = 
-            new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, 
+            new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 
                     RelativeLayout.LayoutParams.WRAP_CONTENT);
         adParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        adParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-
+        adParams.addRule(RelativeLayout.CENTER_IN_PARENT);
         layout.addView(adView, adParams);
         
         setContentView(layout);
-        adView.loadAd(new AdRequest());
     }
 	
     @Override
@@ -85,6 +92,7 @@ public class MainActivity extends AndroidApplication implements GameListener
     {
     	super.onResume();
         onGameResume();
+        adView.resume();
 	}
     
 	@Override
@@ -142,14 +150,14 @@ public class MainActivity extends AndroidApplication implements GameListener
 	}
 	
 	private void shareScreen(){
-		Gdx.app.postRunnable( new Runnable(){
+		game.addToRendererQueue( new Runnable(){
 			@Override
 			public void run()
 			{
 				Pixmap pixmap = game.getScreenshot();
 				if ( pixmap == null ) 
 					return;
-				FileHandle fh = Gdx.files.local( "2048.jpg" );
+				FileHandle fh = Gdx.files.local( "2048.png" );
 				try
 				{
 					write(fh, pixmap);
@@ -199,7 +207,7 @@ public class MainActivity extends AndroidApplication implements GameListener
 	      }
 	      
 	      Bitmap b = Bitmap.createBitmap(pixels, w, h, Config.ARGB_8888);
-	      b.compress(CompressFormat.JPEG, 80, handle.write(false));
+	      b.compress(CompressFormat.PNG, 80, handle.write(false));
 	   }
 	
 	@Override
@@ -225,11 +233,22 @@ public class MainActivity extends AndroidApplication implements GameListener
 			intent.setData( Uri.parse("market://details?id=com.unidevel.power2") );
 			startActivity( intent );
 		}
-		else if ( false )//R.id.share == item.getItemId() )
+		else if ( R.id.share == item.getItemId() )
 		{
 			this.shareScreen();
 		}
+		else if ( R.id.submit == item.getItemId() )
+		{
+			this.submitScore();
+		}
 		return true;
+	}
+	
+	
+	private void submitScore()
+	{
+//		Games.Leaderboards.submitScore(getApiClient(), LEADERBOARD_ID, 1337);
+//		startActivityForResult(Games.Leaderboards.getLeaderboardIntent(getApiClient(), LEADERBOARD_ID), REQUEST_LEADERBOARD);
 	}
 	
 	@Override
@@ -282,5 +301,19 @@ public class MainActivity extends AndroidApplication implements GameListener
 			buf.append( d );
 		}
 		return buf.toString();
+	}
+	
+	@Override
+	protected void onPause()
+	{
+		adView.pause();
+		super.onPause();
+	}
+	
+	@Override
+	protected void onDestroy()
+	{
+		super.onDestroy();
+		adView.destroy();
 	}
 }

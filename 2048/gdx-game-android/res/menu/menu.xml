@@ -2,7 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item android:id="@+id/newGame" android:title="@string/new_game"></item>
     <item android:id="@+id/rateApp" android:title="@string/rate"></item>
-    <!--  item android:id="@+id/share" android:title="@string/share"></item  -->
-    
-
+    <item android:id="@+id/share" android:title="@string/share" android:visible="false"></item>
+    <item android:id="@+id/submit" android:title="@string/submit_score"></item>
 </menu>

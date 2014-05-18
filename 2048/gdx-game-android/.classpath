@@ -7,6 +7,5 @@
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry exported="true" kind="lib" path="/gdx-game/libs/gdx.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/gdx-backend-android.jar"/>
-	<classpathentry exported="true" kind="lib" path="/alib/lib/GoogleAdMobAdsSdk-6.1.0.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

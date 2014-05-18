@@ -2,6 +2,7 @@
 package com.unidevel.power2;
 
 import java.io.File;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
@@ -34,10 +35,12 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 	boolean screenshot;
 	int maxScore;
 	GameListener listener;
+	protected ConcurrentLinkedQueue<Runnable> renderQueue;
 
 	public Power2Game()
 	{
 		this.blocks = new TriangleBlocks( SIZE );
+		this.renderQueue = new ConcurrentLinkedQueue<Runnable>();
 	}
 
 	public void setGameListener( GameListener l )
@@ -60,6 +63,11 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 		startGame();
 	}
 
+	public void addToRendererQueue(Runnable runnable){
+		this.renderQueue.add( runnable );
+		Gdx.graphics.requestRendering();
+	}
+	
 	private void startGame()
 	{
 		this.prepareBlocks( SIZE, 48 );
@@ -391,6 +399,12 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 			batch.end();
 			Gdx.gl.glDisable( GL20.GL_BLEND );
 		}
+		
+		if ( !renderQueue.isEmpty() )
+		{
+			Runnable runnable = renderQueue.poll();
+			runnable.run();
+		}
 	}
 
 	@Override
@@ -613,7 +627,7 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 		int h = Gdx.graphics.getHeight();
         try {
         	//buffer.begin();
-            render(); // Or however you normally draw it
+//            render(); // Or however you normally draw it
             //buffer.end();
             return ScreenUtils.getFrameBufferPixmap( 0, 0, w, h );
         } catch (final Exception e) {
