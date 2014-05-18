@@ -26,10 +26,8 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.games.*;
-import com.google.android.gms.appstate.*;
-import com.google.android.gms.plus.*;
-import com.google.android.gms.common.*;
+import com.google.android.gms.games.Games;
+import com.unidevel.power2.GameHelper.SignInFailureReason;
 
 public class MainActivity extends AndroidApplication implements GameListener,GameHelper.GameHelperListener
 {
@@ -54,11 +52,11 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 
     // Requested clients. By default, that's just the games client.
     protected int mRequestedClients = CLIENT_GAMES;
-
+    protected int REQUEST_LEADERBOARD = 100;
+    
     public MainActivity()
 	{
     	super();
-    	//mHelper = new GameHelper(this);
 	}
     
 	//a15377fb6dcdf79 
@@ -66,10 +64,9 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.handler = new Handler();
-		//mHelper = new GameHelper( this );
-		//mHelper.enableDebugLog(true,"Games");
-		//mHelper.setup( this, mRequestedClients );
-		login();
+		mHelper = new GameHelper( this, mRequestedClients );
+		mHelper.enableDebugLog(true,"Games");
+		mHelper.setup( this );
 		pref=PreferenceManager.getDefaultSharedPreferences(this);
         AndroidApplicationConfiguration cfg = new AndroidApplicationConfiguration();
         //cfg.useGL20 = false;
@@ -138,11 +135,6 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 	{
 		super.onActivityResult( request, response, data );
 		mHelper.onActivityResult( request, response, data );
-	}
-
-	protected GamesClient getGamesClient()
-	{
-		return mHelper.getGamesClient();
 	}
 	
 	
@@ -313,10 +305,7 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 	//1 High score CgkImN3rmbgNEAIQAQ
 	//TRIANGLE 2048 461763178136
 	private void submitScore(){
-		mHelper = new GameHelper( this );
-		mHelper.enableDebugLog(true,"Games");
-		mHelper.setup( this, mRequestedClients );
-		mHelper.beginUserInitiatedSignIn();
+		login();
 		//String id="CgkImN3rmbgNEAIQAQ";
 		//mHelper.getGamesClient().submitScore(id, game.getScore());
 		//Games.Leaderboards.submitScore(getApiClient(), LEADERBOARD_ID, 1337);
@@ -391,89 +380,19 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 		adView.destroy();
 	}
 	
-	protected AppStateClient getAppStateClient()
-	{
-		return mHelper.getAppStateClient();
-	}
-
-	protected PlusClient getPlusClient()
-	{
-		return mHelper.getPlusClient();
-	}
-
-	protected boolean isSignedIn()
-	{
-		return mHelper.isSignedIn();
-	}
-
-	protected void beginUserInitiatedSignIn()
-	{
-		mHelper.beginUserInitiatedSignIn();
-	}
-
-	protected void signOut()
-	{
-		mHelper.signOut();
-	}
-
-	protected void showAlert( String title, String message )
-	{
-		mHelper.showAlert( title, message );
-	}
-
-	protected void showAlert( String message )
-	{
-		mHelper.showAlert( message );
-	}
-
-	protected void enableDebugLog( boolean enabled, String tag )
-	{
-		mHelper.enableDebugLog( enabled, tag );
-	}
-
-	protected String getInvitationId()
-	{
-		return mHelper.getInvitationId();
-	}
-
-	protected void reconnectClients( int whichClients )
-	{
-		mHelper.reconnectClients( whichClients );
-	}
-
-	protected String getScopes()
-	{
-		return mHelper.getScopes();
-	}
-
-	protected boolean hasSignInError()
-	{
-		return mHelper.hasSignInError();
-	}
-
-	protected ConnectionResult getSignInError()
-	{
-		return mHelper.getSignInError();
-	}
-
-	protected void setSignInMessages( String signingInMessage, String signingOutMessage )
-	{
-		mHelper.setSigningInMessage( signingInMessage );
-		mHelper.setSigningOutMessage( signingOutMessage );
-	}
-	
-
 	@Override
 	public void onSignInFailed()
 	{
-		// TODO Auto-generated method stub
-		
+		SignInFailureReason result = mHelper.getSignInError();
+		android.util.Log.e( "MainActivity", "Login failed with error code "+result.mServiceErrorCode+", "+result.toString() );
 	}
 
 	@Override
 	public void onSignInSucceeded()
 	{
-		// TODO Auto-generated method stub
-		
+		String leaderboardId = getString(R.string.leaderboard_high_score);
+		Games.Leaderboards.submitScore( mHelper.getApiClient(), leaderboardId, game.getScore() );
+		Intent intent = Games.Leaderboards.getLeaderboardIntent( mHelper.getApiClient(), leaderboardId );
+		startActivityForResult(intent, REQUEST_LEADERBOARD);
 	}
 }
