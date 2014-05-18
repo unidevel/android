@@ -27,7 +27,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 
-public class MainActivity extends AndroidApplication implements GameListener
+public class MainActivity extends AndroidApplication implements GameListener,GameHelper.GameHelperListener
 {
 	static final String SCORE = "score";
 	static final String MAX_SCORE = "max_score";
@@ -38,6 +38,25 @@ public class MainActivity extends AndroidApplication implements GameListener
 	SharedPreferences pref;
 	View gameView;
 	AdView adView;
+	
+	protected GameHelper mHelper;
+
+    // We expose these constants here because we don't want users of this class
+    // to have to know about GameHelper at all.
+    public static final int CLIENT_GAMES = GameHelper.CLIENT_GAMES;
+    public static final int CLIENT_APPSTATE = GameHelper.CLIENT_APPSTATE;
+    public static final int CLIENT_PLUS = GameHelper.CLIENT_PLUS;
+    public static final int CLIENT_ALL = GameHelper.CLIENT_ALL;
+
+    // Requested clients. By default, that's just the games client.
+    protected int mRequestedClients = CLIENT_GAMES;
+
+    public MainActivity()
+	{
+    	super();
+    	mHelper = new GameHelper(this);
+	}
+    
 	//a15377fb6dcdf79 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -316,5 +335,19 @@ public class MainActivity extends AndroidApplication implements GameListener
 	{
 		super.onDestroy();
 		adView.destroy();
+	}
+
+	@Override
+	public void onSignInFailed()
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSignInSucceeded()
+	{
+		// TODO Auto-generated method stub
+		
 	}
 }
