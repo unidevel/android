@@ -2,26 +2,20 @@
 package com.unidevel.power2;
 
 import java.io.File;
-import java.nio.ByteBuffer;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.InputAdapter;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Pixmap.Format;
-import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Gdx2DPixmap;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.utils.BufferUtils;
+import com.badlogic.gdx.utils.ScreenUtils;
 
 public class Power2Game extends InputAdapter implements ApplicationListener
 {
@@ -566,9 +560,7 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 
 		// listener.onGameOver( null );
 	}
-
-	MoveThread thread;
-
+	
 	public boolean handleInput( float dx, float dy )
 	{
 		dx = (dx == 0
@@ -607,7 +599,7 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 			{
 				synchronized (this)
 				{
-					this.thread = new MoveThread( dir, next );
+					MoveThread thread = new MoveThread( dir, next );
 					thread.start();
 				}
 			}
@@ -615,44 +607,20 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 		return true;
 	}
 	
-	public File saveScreenshot(String name) {
-        FileHandle fh = Gdx.files.local( name );
-        Graphics g = Gdx.graphics;
-        final Pixmap picture = new Pixmap(g.getWidth(), g.getHeight(), Format.RGBA8888);
-        final FrameBuffer buffer = new FrameBuffer(Format.RGBA8888, g.getWidth(), g.getHeight(), false);
+	public Pixmap getScreenshot() {
+		//final FrameBuffer buffer = new FrameBuffer(Format.RGBA8888, width, height, false);
+		int w = Gdx.graphics.getWidth();
+		int h = Gdx.graphics.getHeight();
         try {
-            Gdx.graphics.getGL20().glViewport(0, 0, g.getWidth(), g.getHeight());
-            buffer.begin();
+        	//buffer.begin();
             render(); // Or however you normally draw it
-            final byte[] data = this.readData(g.getWidth(), g.getHeight());
-            buffer.end();
-            picture.getPixels().put(data, 0, data.length);
-            PixmapIO.writePNG(fh, picture);
-            return fh.file();
+            //buffer.end();
+            return ScreenUtils.getFrameBufferPixmap( 0, 0, w, h );
         } catch (final Exception e) {
         	Log.e( e );
-            e.printStackTrace();
         } finally {
-            picture.dispose();
-            buffer.dispose();
+            //buffer.dispose();
         }
         return null;
-    }
-
-    // Adapted from ScreenUtil class
-    public byte[] readData(final int width, final int height) {
-        final int numBytes = width * height * 4;
-        final ByteBuffer pixels = BufferUtils.newByteBuffer(numBytes);
-        Gdx.gl.glPixelStorei(GL20.GL_PACK_ALIGNMENT, 1);
-        Gdx.gl.glReadPixels(0, 0, width, height, GL20.GL_RGBA, GL20.GL_UNSIGNED_BYTE, pixels);
-
-        final byte[] lines = new byte[numBytes];
-        final int numBytesPerLine = width * 4;
-        for (int i = 0; i < height; i++) {
-            pixels.position((height - i - 1) * numBytesPerLine);
-            pixels.get(lines, i * numBytesPerLine, numBytesPerLine);
-        }
-
-        return lines;
     }
 }

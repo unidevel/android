@@ -1,10 +1,14 @@
 package com.unidevel.power2;
 
 import java.io.File;
+import java.io.IOException;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.Bitmap.Config;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,8 +18,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.google.ads.AdRequest;
 import com.google.ads.AdSize;
 import com.google.ads.AdView;
@@ -38,8 +45,6 @@ public class MainActivity extends AndroidApplication implements GameListener
 		pref=PreferenceManager.getDefaultSharedPreferences(this);
         AndroidApplicationConfiguration cfg = new AndroidApplicationConfiguration();
         //cfg.useGL20 = false;
-		cfg.hideStatusBar=false;
-		cfg.useWakelock=false;
         this.game = new Power2Game();
         this.game.setGameListener( this );
 //        initialize(game, cfg);
@@ -135,24 +140,67 @@ public class MainActivity extends AndroidApplication implements GameListener
 		builder.setTitle( R.string.game_over );
 		builder.create().show();		
 	}
-
-	private void shareScreen(int score, File screenShot){
-		if ( screenShot == null )
-		{
-			return;
-		}
-		Intent intent = new Intent( Intent.ACTION_SEND );
-		intent.setType( "image/*" );
-		Uri u = Uri.fromFile(screenShot);
-		intent.putExtra( Intent.EXTRA_STREAM, u);
-		//f.deleteOnExit();
-		String shareText = getString(R.string.share_text, score);
-		intent.putExtra( Intent.EXTRA_TEXT, shareText );
-		intent.putExtra( "Kdescription", shareText );
-		intent.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
-		//intent.setClassName( MMPKG, MMCLS );
-		startActivity( intent );
+	
+	private void shareScreen(){
+		Gdx.app.postRunnable( new Runnable(){
+			@Override
+			public void run()
+			{
+				Pixmap pixmap = game.getScreenshot();
+				if ( pixmap == null ) 
+					return;
+				FileHandle fh = Gdx.files.local( "2048.jpg" );
+				try
+				{
+					write(fh, pixmap);
+				}
+				catch(Exception ex)
+				{
+					Log.e( ex );
+					//Toast.makeText( this, ex.getLocalizedMessage(), Toast.LENGTH_LONG ).show();
+					return;
+				}
+				finally
+				{
+					pixmap.dispose();
+				}
+				Intent intent = new Intent( Intent.ACTION_SEND );
+				intent.setType( "image/*" );
+				Uri u = Uri.fromFile(fh.file());
+				intent.putExtra( Intent.EXTRA_STREAM, u);
+				//f.deleteOnExit();
+				String shareText = getString(R.string.share_text, game.getScore());
+				intent.putExtra( Intent.EXTRA_TEXT, shareText );
+				intent.putExtra( "Kdescription", shareText );
+				intent.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
+				//intent.setClassName( MMPKG, MMCLS );
+				startActivity( intent );
+			}
+		});
 	}
+	
+	public void write(FileHandle handle, Pixmap p) throws IOException {
+	      int w = p.getWidth();
+	      int h = p.getHeight();
+	      
+	      int[] pixels = new int[w * h];      
+	      for (int y=0; y<h; y++) {
+	         for (int x=0; x<w; x++) {
+	            //convert RGBA to RGB
+	            int value = p.getPixel(x, y);
+	            int R = ((value & 0xff000000) >>> 24);
+	            int G = ((value & 0x00ff0000) >>> 16);
+	            int B = ((value & 0x0000ff00) >>> 8);
+	            int A = ((value & 0x000000ff));
+	            
+	            int i = x + (y * w);
+	            pixels[ i ] = (A << 24) | (R << 16) | (G << 8) | B;
+	         }
+	      }
+	      
+	      Bitmap b = Bitmap.createBitmap(pixels, w, h, Config.ARGB_8888);
+	      b.compress(CompressFormat.JPEG, 80, handle.write(false));
+	   }
 	
 	@Override
 	public boolean onCreateOptionsMenu( Menu menu )
@@ -170,13 +218,16 @@ public class MainActivity extends AndroidApplication implements GameListener
 		if ( R.id.newGame == item.getItemId() )
 		{
 			game.newGame();
-//			game.newFlashScreen();
 		}
 		else if ( R.id.rateApp == item.getItemId() )
 		{
 			Intent intent = new Intent(Intent.ACTION_VIEW);
 			intent.setData( Uri.parse("market://details?id=com.unidevel.power2") );
 			startActivity( intent );
+		}
+		else if ( false )//R.id.share == item.getItemId() )
+		{
+			this.shareScreen();
 		}
 		return true;
 	}
