@@ -33,7 +33,7 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 	float[] npos;
 	boolean over;
 	boolean screenshot;
-	int maxScore;
+	int maxScore,maxNumber;
 	GameListener listener;
 	protected ConcurrentLinkedQueue<Runnable> renderQueue;
 
@@ -112,6 +112,16 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 				n += n;
 		}
 		over = false;
+	}
+	
+	public int getNumber(){
+		int max=0;
+		for(Box b:blocks.data){
+			if(b.value>max){
+				max=b.value;
+			}
+		}
+		return max;
 	}
 	
 	void prepareBlocks( int n, float ypos )
@@ -198,7 +208,7 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 		}
 	}
 
-	private float drawScore( BitmapFont font, boolean left, float offx, float offy, String s1, int n )
+	private float drawScore( BitmapFont font, boolean left, float offx, float offy, String s1, int n, int level )
 	{
 		float textScale = 0.5f;
 		float scoreScale = 1.0f;
@@ -206,6 +216,7 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 		float x, y, w, h;
 		float w1, w2, h1, h2;
 		String s2 = String.format( "%05d", n );
+		String s3 =String.format("L%04d",level);
 		font.setScale( textScale );
 		b1 = font.getBounds( s1 );
 		w1 = b1.width;
@@ -214,7 +225,7 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 		b2 = font.getBounds( s2 );
 		w2 = b2.width;
 		h2 = b2.height;
-		h = h1 + 6 + h2;
+		h = h1 + 6 + h2+2+h2;
 		w = w2 > w1
 				? w2
 				: w1;
@@ -250,10 +261,12 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 		if ( left )
 		{
 			font.draw( batch, s2, x + 2, sh - (y + 2 - h + h1) );
+			font.draw( batch, s3, x + 2, sh - (y + 2 - h + h1+h2+2) );
 		}
 		else
 		{
 			font.draw( batch, s2, sw - (x - 2) - w, sh - (y + 2 - h + h1) );
+			font.draw( batch, s3, sw - (x - 2) - w, sh - (y + 2 - h + h1+h2+2) );
 		}
 		batch.end();
 
@@ -376,8 +389,12 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 		{
 			maxScore = blocks.score;
 		}
-		drawScore( font, true, 10f, 10f, "SCORE", blocks.score );
-		drawScore( font, false, 10f, 10f, "BEST", maxScore );
+		int num=getNumber();
+		if( maxNumber<num){
+			maxNumber=num;
+		}
+		drawScore( font, true, 10f, 10f, "SCORE", blocks.score,num );
+		drawScore( font, false, 10f, 10f, "BEST", maxScore,maxNumber );
 		if ( over )
 		{
 			Gdx.gl.glEnable( GL20.GL_BLEND );
@@ -449,6 +466,11 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 		return true; // return true to indicate the event was handled
 	}
 
+	public int getMaxNumber()
+	{
+		return maxNumber;
+	}
+	
 	public int getMaxScore()
 	{
 		return maxScore;
@@ -472,6 +494,10 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 	public void setMaxScore( int maxScore )
 	{
 		this.maxScore = maxScore;
+	}
+	
+	public void setMaxNumber(int value){
+		this.maxNumber=value;
 	}
 
 	public void setData( int[] values )
@@ -557,6 +583,10 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 		if ( blocks.score > this.maxScore )
 		{
 			this.maxScore = blocks.score;
+		}
+		int n =getNumber();
+		if( n>maxNumber){
+			maxNumber=n;
 		}
 		Gdx.app.postRunnable( new Runnable()
 		{

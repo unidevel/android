@@ -33,6 +33,7 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 {
 	static final String SCORE = "score";
 	static final String MAX_SCORE = "max_score";
+	static final String MAX_NUMBER = "max_number";
 	static final String DATA = "data";
 	
 	Handler handler;
@@ -158,7 +159,8 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 	{
 		SharedPreferences pref=PreferenceManager.getDefaultSharedPreferences(this);
 		int maxScore=this.game.getMaxScore();
-		pref.edit().putInt(MAX_SCORE, maxScore).remove( DATA ).remove( SCORE ).commit();
+		int maxNumber=this.game.getMaxNumber();
+		pref.edit().putInt(MAX_SCORE, maxScore).putInt(MAX_NUMBER,maxNumber).remove( DATA ).remove( SCORE ).commit();
 		
 		this.handler.post( new Runnable(){
 			@Override
@@ -324,31 +326,28 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 	//TRIANGLE 2048 461763178136
 	private void submitScore(){
 		login();
-		//String id="CgkImN3rmbgNEAIQAQ";
-		//mHelper.getGamesClient().submitScore(id, game.getScore());
-		//Games.Leaderboards.submitScore(getApiClient(), LEADERBOARD_ID, 1337);
-		//Intent intent=mHelper.getGamesClient().getLeaderboardIntent(id);
-		//startActivity(intent);
-		//startActivityForResult(Games.Leaderboards.getLeaderboardIntent(getApiClient(), LEADERBOARD_ID), REQUEST_LEADERBOARD);
 	}
 	
 	@Override
 	public void onGamePause()
 	{
 		int maxScore = this.game.getMaxScore();
+		int maxNumber=this.game.getMaxNumber();
 		int score = this.game.getScore();
 		int[] data = this.game.getData();
 		String ds = toString(data);
-		pref.edit().putInt(MAX_SCORE, maxScore).putString( DATA, ds ).putInt( SCORE, score ).commit();
+		pref.edit().putInt(MAX_SCORE, maxScore).putString( DATA, ds ).putInt( SCORE, score ).putInt(MAX_NUMBER,maxNumber).commit();
 	}
 	
 	@Override
 	public void onGameResume()
 	{
 		int maxScore = pref.getInt( MAX_SCORE, 0 );
+		int maxNumber = pref.getInt( MAX_NUMBER, 0 );
 		int score = pref.getInt( SCORE, 0 );
 		String ds = pref.getString( DATA, null );
 		this.game.setMaxScore( maxScore );
+		this.game.setMaxNumber( maxNumber );
 		this.game.setScore( score );
 		if ( ds!= null && ds.length()>0 )
 		{
@@ -409,8 +408,11 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 	public void onSignInSucceeded()
 	{
 		String leaderboardId = getString(R.string.leaderboard_high_score);
+		String leaderboardId2 = getString(R.string.leaderboard_max_number);
 		Games.Leaderboards.submitScore( mHelper.getApiClient(), leaderboardId, game.getMaxScore() );
-		Intent intent = Games.Leaderboards.getLeaderboardIntent( mHelper.getApiClient(), leaderboardId );
+		Games.Leaderboards.submitScore( mHelper.getApiClient(), leaderboardId2, game.getMaxNumber() );
+		//Intent intent = Games.Leaderboards.getLeaderboardIntent( mHelper.getApiClient(), leaderboardId );
+		Intent intent = Games.Leaderboards.getAllLeaderboardsIntent( mHelper.getApiClient());
 		startActivityForResult(intent, REQUEST_LEADERBOARD);
 	}
 }
