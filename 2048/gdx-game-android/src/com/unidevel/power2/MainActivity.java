@@ -180,7 +180,7 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 				game.newGame();
 			}
 		} );
-		
+		/*
 		builder.setNegativeButton( R.string.exit, new DialogInterface.OnClickListener()
 		{
 			
@@ -191,7 +191,7 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 				finish();
 			}
 		} );
-		/*
+		
 		builder.setNegativeButton( R.string.share, new DialogInterface.OnClickListener()
 		{
 			
@@ -203,6 +203,20 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 			}
 		} );
 		*/ 
+		
+		builder.setNegativeButton( R.string.submit_score, new DialogInterface.OnClickListener()
+			{
+
+				@Override
+				public void onClick( DialogInterface dialog, int which )
+				{
+					dialog.dismiss();
+					//finish();
+					submitScore();
+				}
+			} );
+
+		
 		builder.setMessage( R.string.game_over );
 		builder.create().show();		
 	}
@@ -299,6 +313,10 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 		{
 			this.submitScore();
 		}
+		else if ( R.id.exitApp == item.getItemId() )
+		{
+			this.finish();
+		}
 		return true;
 	}
 	
@@ -391,7 +409,7 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 	public void onSignInSucceeded()
 	{
 		String leaderboardId = getString(R.string.leaderboard_high_score);
-		Games.Leaderboards.submitScore( mHelper.getApiClient(), leaderboardId, game.getScore() );
+		Games.Leaderboards.submitScore( mHelper.getApiClient(), leaderboardId, game.getMaxScore() );
 		Intent intent = Games.Leaderboards.getLeaderboardIntent( mHelper.getApiClient(), leaderboardId );
 		startActivityForResult(intent, REQUEST_LEADERBOARD);
 	}
