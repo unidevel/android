@@ -6,4 +6,5 @@ Save this file as res/values/games-ids.xml in your project.
 <resources>
   <string name="app_id">461763178136</string>
   <string name="leaderboard_high_score">CgkImN3rmbgNEAIQAQ</string>
+  <string name="leaderboard_max_number">CgkImN3rmbgNEAIQCA</string>
 </resources>
