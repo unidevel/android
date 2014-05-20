@@ -3,7 +3,7 @@
     <string name="app_name">Tri2048</string>
     <string name="share">Share</string>
     <string name="play_again">Play again</string>
-    <string name="share_text">Look, I got %1$d points with level %2$d in game Tri2048. ^_^</string>
+    <string name="share_text">Ha, I got %1$d points with level %2$d in game Tri2048. Check it now - https://play.google.com/store/apps/details?id=com.unidevel.power2 ^_^</string>
     <string name="game_over">Game over</string>
     <string name="new_game">New Game</string>
     <string name="new_game_warning">Do you want to cancel current and start a new game?</string>
