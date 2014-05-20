@@ -75,10 +75,13 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 		this.prepareBlocks( SIZE, 48 );
 		over = false;
 		boolean isResume = false;
+
 		for ( Box b : blocks.data )
 		{
 			if ( b.value != 0 )
+			{
 				isResume = true;
+			}
 		}
 		if ( isResume )
 		{
@@ -89,6 +92,8 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 		}
 		else
 		{
+			// new game
+			blocks.score = 0;
 			blocks.fill();
 		}
 		Gdx.graphics.requestRendering();
@@ -116,7 +121,7 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 		over = false;
 	}
 	
-	public int getNumber(){
+	public int getLevel(){
 		int max=0;
 		for(Box b:blocks.data){
 			if(b.value>max){
@@ -391,7 +396,7 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 		{
 			maxScore = blocks.score;
 		}
-		int num=getNumber();
+		int num=getLevel();
 		if( maxNumber<num){
 			maxNumber=num;
 		}
@@ -468,7 +473,7 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 		return true; // return true to indicate the event was handled
 	}
 
-	public int getMaxNumber()
+	public int getMaxLevel()
 	{
 		return maxNumber;
 	}
@@ -586,7 +591,7 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 		{
 			this.maxScore = blocks.score;
 		}
-		int n =getNumber();
+		int n =getLevel();
 		if( n>maxNumber){
 			maxNumber=n;
 		}

@@ -37,8 +37,9 @@ import com.unidevel.power2.GameHelper.SignInFailureReason;
 public class MainActivity extends AndroidApplication implements GameListener,GameHelper.GameHelperListener
 {
 	static final String SCORE = "score";
+	static final String LEVEL = "level";
 	static final String MAX_SCORE = "max_score";
-	static final String MAX_NUMBER = "max_number";
+	static final String MAX_LEVEL = "max_number";
 	static final String DATA = "data";
 	
 	Handler handler;
@@ -155,15 +156,15 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
     {
     	super.onResume();
         adView.resume();
+        loadGame();
 	}
     
 	@Override
 	public void onGameOver(final File screenShot)
 	{
 		SharedPreferences pref=PreferenceManager.getDefaultSharedPreferences(this);
-		int maxScore=this.game.getMaxScore();
-		int maxNumber=this.game.getMaxNumber();
-		pref.edit().putInt(MAX_SCORE, maxScore).putInt(MAX_NUMBER,maxNumber).remove( DATA ).commit();
+		saveGame();
+		pref.edit().remove( DATA ).commit();
 		
 		this.handler.post( new Runnable(){
 			@Override
@@ -282,7 +283,7 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 				Uri u = Uri.fromFile(fh.file());
 				intent.putExtra( Intent.EXTRA_STREAM, u);
 				//f.deleteOnExit();
-				String shareText = getString(R.string.share_text, game.getScore(), game.getNumber());
+				String shareText = getString(R.string.share_text, game.getScore(), game.getLevel());
 				intent.putExtra( Intent.EXTRA_TEXT, shareText );
 				intent.putExtra( "Kdescription", shareText );
 				intent.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
@@ -386,19 +387,24 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 	@Override
 	public void onGamePause()
 	{
-		int maxScore = this.game.getMaxScore();
-		int maxNumber=this.game.getMaxNumber();
-		int score = this.game.getScore();
-		int[] data = this.game.getData();
-		String ds = toString(data);
-		pref.edit().putInt(MAX_SCORE, maxScore).putString( DATA, ds ).putInt( SCORE, score ).putInt(MAX_NUMBER,maxNumber).commit();
+		saveGame();
 	}
 	
-	@Override
-	public void onGameResume()
+	private void saveGame()
+	{
+		int maxScore = this.game.getMaxScore();
+		int maxNumber=this.game.getMaxLevel();
+		int score = this.game.getScore();
+		int level = this.game.getLevel();
+		int[] data = this.game.getData();
+		String ds = toString(data);
+		pref.edit().putInt(MAX_SCORE, maxScore).putString( DATA, ds ).putInt( SCORE, score ).putInt(MAX_LEVEL,maxNumber).putInt( LEVEL, level ).commit();
+	}
+	
+	private void loadGame()
 	{
 		int maxScore = pref.getInt( MAX_SCORE, 0 );
-		int maxNumber = pref.getInt( MAX_NUMBER, 0 );
+		int maxNumber = pref.getInt( MAX_LEVEL, 0 );
 		int score = pref.getInt( SCORE, 0 );
 		String ds = pref.getString( DATA, null );
 		this.game.setMaxScore( maxScore );
@@ -409,6 +415,12 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 			int[] data = toArray(ds);
 			this.game.setData( data );
 		}
+	}
+	
+	@Override
+	public void onGameResume()
+	{
+		
 	}
 	
 	private int[] toArray(String value)
@@ -465,7 +477,7 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 		String leaderboardId = getString(R.string.leaderboard_high_score);
 		String leaderboardId2 = getString(R.string.leaderboard_max_number);
 		Games.Leaderboards.submitScore( mHelper.getApiClient(), leaderboardId, game.getMaxScore() );
-		Games.Leaderboards.submitScore( mHelper.getApiClient(), leaderboardId2, game.getMaxNumber() );
+		Games.Leaderboards.submitScore( mHelper.getApiClient(), leaderboardId2, game.getMaxLevel() );
 		//Intent intent = Games.Leaderboards.getLeaderboardIntent( mHelper.getApiClient(), leaderboardId );
 		Intent intent = Games.Leaderboards.getAllLeaderboardsIntent( mHelper.getApiClient());
 		startActivityForResult(intent, REQUEST_LEADERBOARD);
