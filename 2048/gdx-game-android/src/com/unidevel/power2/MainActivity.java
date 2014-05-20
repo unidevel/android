@@ -154,7 +154,6 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
     protected void onResume()
     {
     	super.onResume();
-        onGameResume();
         adView.resume();
 	}
     
@@ -164,7 +163,7 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 		SharedPreferences pref=PreferenceManager.getDefaultSharedPreferences(this);
 		int maxScore=this.game.getMaxScore();
 		int maxNumber=this.game.getMaxNumber();
-		pref.edit().putInt(MAX_SCORE, maxScore).putInt(MAX_NUMBER,maxNumber).remove( DATA ).remove( SCORE ).commit();
+		pref.edit().putInt(MAX_SCORE, maxScore).putInt(MAX_NUMBER,maxNumber).commit();
 		
 		this.handler.post( new Runnable(){
 			@Override
