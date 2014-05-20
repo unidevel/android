@@ -17,6 +17,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.utils.ScreenUtils;
+import java.nio.*;
+import com.badlogic.gdx.*;
 
 public class Power2Game extends InputAdapter implements ApplicationListener
 {
@@ -659,12 +661,37 @@ public class Power2Game extends InputAdapter implements ApplicationListener
         	//buffer.begin();
 //            render(); // Or however you normally draw it
             //buffer.end();
-            return ScreenUtils.getFrameBufferPixmap( 0, 0, w, h );
+            //return ScreenUtils.getFrameBufferPixmap( 0, 0, w, h );
+			return getScreenshot(0,0,w,h,false);
         } catch (final Exception e) {
         	Log.e( e );
         } finally {
             //buffer.dispose();
         }
         return null;
+    }
+	
+	private static Pixmap getScreenshot(int x, int y, int w, int h, boolean flipY){
+        Gdx.gl.glPixelStorei(GL20.GL_PACK_ALIGNMENT, 1);
+		
+        final Pixmap pixmap = new Pixmap(w, h, Pixmap.Format.RGBA8888);
+        ByteBuffer pixels = pixmap.getPixels();
+        Gdx.gl.glReadPixels(x, y, w, h, GL20.GL_RGBA, GL20.GL_UNSIGNED_BYTE, pixels);
+
+        final int numBytes = w * h * 4;
+        byte[] lines = new byte[numBytes];
+        if (flipY){
+            pixels.clear();
+            pixels.get(lines);
+        }else{
+            final int numBytesPerLine = w * 4;
+            for (int i = 0; i < h; i++){
+                pixels.position((h - i - 1) * numBytesPerLine);
+                pixels.get(lines, i * numBytesPerLine, numBytesPerLine);
+            }
+            pixels.clear();
+            pixels.put(lines);
+        }
+        return pixmap;
     }
 }

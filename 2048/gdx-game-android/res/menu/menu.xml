@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item android:id="@+id/newGame" android:title="@string/new_game" android:showAsAction="always"></item>
-    <item android:id="@+id/share" android:title="@string/share" android:visible="false"></item>
+    <item android:id="@+id/share" android:title="@string/share" android:visible="true"></item>
     <item android:id="@+id/submit" android:title="@string/submit_score" android:showAsAction="ifRoom"></item>
     <item android:id="@+id/rateApp" android:title="@string/rate" android:showAsAction="ifRoom"></item>
 	<!--group>

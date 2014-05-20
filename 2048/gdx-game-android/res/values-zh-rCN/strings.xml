@@ -6,7 +6,8 @@
     <string name="share_text">看，我在三角2048中得了%d高分. ^_^</string>
     <string name="game_over">游戏结束</string>
     <string name="new_game">新游戏</string>
-    <string name="submit_score">排行榜</string>
+	<string name="new_game_warning">确定重来？</string>
+	<string name="submit_score">排行榜</string>
     <string name="rate">赞一下</string>
 	<string name="exit">退出</string>  
     <string name="gamehelper_sign_in_failed">登录失败，请检查您的网络然后重试。</string>

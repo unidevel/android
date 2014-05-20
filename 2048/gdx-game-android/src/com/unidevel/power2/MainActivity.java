@@ -28,6 +28,8 @@ import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.games.Games;
 import com.unidevel.power2.GameHelper.SignInFailureReason;
+//import com.badlogic.gdx.graphics.g3d.*;
+import android.os.*;
 
 public class MainActivity extends AndroidApplication implements GameListener,GameHelper.GameHelperListener
 {
@@ -223,6 +225,23 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 		builder.create().show();		
 	}
 	
+	File getAppFile(String name){
+		String state=Environment.getExternalStorageState();
+		File f=null;
+		if (Environment.MEDIA_MOUNTED.equals(state)) {
+			// We can read and write the media
+			File dir=new File(Environment.getExternalStorageDirectory(),"Android/data/"+this.getPackageName());
+			if(!dir.exists())dir.mkdirs();
+			return new File(dir, name);
+		} else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+			// We can only read the media
+		} else {
+			// Something else is wrong. It may be one of many other states, but all we need
+			//  to know is we can neither read nor write
+		}
+		return f;
+	}
+	
 	private void shareScreen(){
 		game.addToRendererQueue( new Runnable(){
 			@Override
@@ -231,7 +250,11 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 				Pixmap pixmap = game.getScreenshot();
 				if ( pixmap == null ) 
 					return;
-				FileHandle fh = Gdx.files.local( "2048.png" );
+				File f = getAppFile("2048.png");
+				Log.i("Save screenshot to"+f.getPath());
+				if(f==null)
+					return;
+				FileHandle fh = Gdx.files.external( f.getPath() );
 				try
 				{
 					write(fh, pixmap);
@@ -293,13 +316,36 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 		return true;
 	}
 	
+	public void newGame(){
+		if(!game.over){
+			AlertDialog.Builder b=new AlertDialog.Builder(this);
+			b.setTitle(R.string.new_game);
+			b.setMessage(R.string.new_game_warning);
+			b.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener(){
+					@Override
+					public void onClick(DialogInterface d, int p2)
+					{
+						d.dismiss();
+						game.newGame();
+					}
+				});
+			b.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener(){
+					@Override
+					public void onClick(DialogInterface d, int p2)
+					{
+						d.dismiss();
+					}
+				});
+			b.create().show();
+		}
+	}
 
 	@Override
 	public boolean onOptionsItemSelected( MenuItem item )
 	{
 		if ( R.id.newGame == item.getItemId() )
 		{
-			game.newGame();
+			newGame();
 		}
 		else if ( R.id.rateApp == item.getItemId() )
 		{
@@ -325,6 +371,7 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 	//1 High score CgkImN3rmbgNEAIQAQ
 	//TRIANGLE 2048 461763178136
 	private void submitScore(){
+		Gdx.graphics.requestRendering();
 		login();
 	}
 	
