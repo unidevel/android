@@ -283,7 +283,7 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 				Uri u = Uri.fromFile(fh.file());
 				intent.putExtra( Intent.EXTRA_STREAM, u);
 				//f.deleteOnExit();
-				String shareText = getString(R.string.share_text, game.getScore());
+				String shareText = getString(R.string.share_text, game.getScore(), game.getNumber());
 				intent.putExtra( Intent.EXTRA_TEXT, shareText );
 				intent.putExtra( "Kdescription", shareText );
 				intent.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
