@@ -8,6 +8,8 @@
     <string name="new_game">New Game</string>
     <string name="new_game_warning">Do you want to cancel current and start a new game?</string>
     <string name="submit_score">Submit Score</string>
+    <string name="sdcard_error">Can\'t write screenshot! Ensure sdcard is mounted and writable.</string>
+    <string name="screenshot_error">Can\'t get screenshot!</string>
     <string name="rate">Feedback</string>
     <string name="exit">Exit</string>
     <string name="gamehelper_sign_in_failed">Failed to sign in. Please check your network connection and try again.</string>

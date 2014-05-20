@@ -2,6 +2,7 @@ package com.unidevel.power2;
 
 import java.io.File;
 import java.io.IOException;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.graphics.Bitmap.CompressFormat;
 import android.graphics.Bitmap.Config;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.view.Menu;
@@ -18,6 +20,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
@@ -29,8 +32,8 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.games.Games;
 import com.unidevel.power2.GameHelper.SignInFailureReason;
 //import com.badlogic.gdx.graphics.g3d.*;
-import android.os.*;
 
+@SuppressLint ("InlinedApi")
 public class MainActivity extends AndroidApplication implements GameListener,GameHelper.GameHelperListener
 {
 	static final String SCORE = "score";
@@ -68,7 +71,6 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
         super.onCreate(savedInstanceState);
         this.handler = new Handler();
 		mHelper = new GameHelper( this, mRequestedClients );
-		mHelper.enableDebugLog(true,"Games");
 		mHelper.setup( this );
 		pref=PreferenceManager.getDefaultSharedPreferences(this);
         AndroidApplicationConfiguration cfg = new AndroidApplicationConfiguration();
@@ -244,16 +246,23 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 	
 	private void shareScreen(){
 		game.addToRendererQueue( new Runnable(){
+			@SuppressWarnings ("unused")
 			@Override
 			public void run()
 			{
-				Pixmap pixmap = game.getScreenshot();
-				if ( pixmap == null ) 
-					return;
 				File f = getAppFile("2048.png");
 				Log.i("Save screenshot to"+f.getPath());
-				if(f==null)
+				if( f == null )
+				{
+					Toast.makeText( MainActivity.this, R.string.sdcard_error, Toast.LENGTH_LONG ).show();
 					return;
+				}
+				Pixmap pixmap = game.getScreenshot();
+				if ( pixmap == null )
+				{
+					Toast.makeText( MainActivity.this, R.string.screenshot_error, Toast.LENGTH_LONG ).show();
+					return;
+				}
 				FileHandle fh = Gdx.files.external( f.getPath() );
 				try
 				{
