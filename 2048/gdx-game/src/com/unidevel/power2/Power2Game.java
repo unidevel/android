@@ -37,12 +37,29 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 	boolean screenshot;
 	int maxScore,maxNumber;
 	GameListener listener;
+	int[] undoValues;
+	int undoScore;
 	protected ConcurrentLinkedQueue<Runnable> renderQueue;
 
 	public Power2Game()
 	{
 		this.blocks = new TriangleBlocks( SIZE );
 		this.renderQueue = new ConcurrentLinkedQueue<Runnable>();
+	}
+
+	public void undo()
+	{
+		for(int i=0;i<blocks.data.length;++i){
+			Box b=blocks.data[i];
+			b.value=undoValues[i];
+		}
+		blocks.score=undoScore;
+		Gdx.graphics.requestRendering();
+	}
+
+	public boolean canUndo()
+	{
+		return undoValues!=null&&!over;
 	}
 
 	public void setGameListener( GameListener l )
@@ -96,6 +113,7 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 			blocks.score = 0;
 			blocks.fill();
 		}
+		undoValues = null;
 		Gdx.graphics.requestRendering();
 	}
 
@@ -547,6 +565,11 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 				try
 				{
 					boolean moved = false;
+					int[] buf=new int[blocks.data.length];
+					for(int i=0;i<buf.length;++i){
+						buf[i]=blocks.data[i].value;
+					}
+					undoScore=blocks.score;
 					while ( blocks.move( dir, next ) )
 					{
 						Gdx.graphics.requestRendering();
@@ -561,6 +584,7 @@ public class Power2Game extends InputAdapter implements ApplicationListener
 					}
 					if ( moved )
 					{
+						undoValues=buf;
 						Log.i( "move(%d,%s)", 0, String.valueOf( next ) );
 						blocks.fill();
 					}

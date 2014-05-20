@@ -347,6 +347,9 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 				});
 			b.create().show();
 		}
+		else{
+			game.newGame();
+		}
 	}
 
 	@Override
@@ -374,7 +377,20 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 		{
 			this.finish();
 		}
+		else if ( R.id.undo == item.getItemId() )
+		{
+			this.undo();
+		}
 		return true;
+	}
+	
+	public void undo(){
+		if(game.canUndo()){
+			game.undo();
+		}
+		else{
+			Toast.makeText(this, R.string.cannot_undo, Toast.LENGTH_LONG).show();
+		}
 	}
 	
 	//1 High score CgkImN3rmbgNEAIQAQ

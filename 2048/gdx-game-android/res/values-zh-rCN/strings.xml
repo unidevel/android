@@ -10,6 +10,7 @@
 	<string name="submit_score">排行榜</string>
     <string name="sdcard_error">截屏写入文件失败，请确保SD卡插入并有足够的空间写入。</string>
     <string name="screenshot_error">获取屏幕截图失败。</string>	
+    <string name="undo">退一步</string>
     <string name="rate">赞一下</string>
 	<string name="exit">退出</string>  
     <string name="gamehelper_sign_in_failed">登录失败，请检查您的网络然后重试。</string>

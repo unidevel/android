@@ -12,6 +12,8 @@
     <string name="screenshot_error">Can\'t get screenshot!</string>
     <string name="rate">Feedback</string>
     <string name="exit">Exit</string>
+    <string name="undo">Undo</string>
+    <string name="cannot_undo">Can\'t undo for now.</string>
     <string name="gamehelper_sign_in_failed">Failed to sign in. Please check your network connection and try again.</string>
     <string name="gamehelper_app_misconfigured">The application is incorrectly configured. Check that the package name and signing certificate match the client ID created in Developer Console. Also, if the application is not yet published, check that the account you are trying to sign in with is listed as a tester account. See logs for more information.</string>
     <string name="gamehelper_license_failed">License check failed.</string>
