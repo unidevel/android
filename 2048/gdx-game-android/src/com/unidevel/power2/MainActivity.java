@@ -500,5 +500,11 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 		//Intent intent = Games.Leaderboards.getLeaderboardIntent( mHelper.getApiClient(), leaderboardId );
 		Intent intent = Games.Leaderboards.getAllLeaderboardsIntent( mHelper.getApiClient());
 		startActivityForResult(intent, REQUEST_LEADERBOARD);
+		
+//		128 	CgkImN3rmbgNEAIQAw		20
+//		256		CgkImN3rmbgNEAIQBA		40
+//		512		CgkImN3rmbgNEAIQBQ		80
+//		1024	CgkImN3rmbgNEAIQBg		100
+//		2048	CgkImN3rmbgNEAIQBw		120
 	}
 }
