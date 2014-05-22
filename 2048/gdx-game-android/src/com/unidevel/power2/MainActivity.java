@@ -490,10 +490,13 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 	@Override
 	public void onSignInSucceeded()
 	{
+		//CgkImN3rmbgNEAIQCQ 
 		String leaderboardId = getString(R.string.leaderboard_high_score);
 		String leaderboardId2 = getString(R.string.leaderboard_max_number);
+		String leaderboardId3 = "CgkImN3rmbgNEAIQCQ";
 		Games.Leaderboards.submitScore( mHelper.getApiClient(), leaderboardId, game.getMaxScore() );
 		Games.Leaderboards.submitScore( mHelper.getApiClient(), leaderboardId2, game.getMaxLevel() );
+		Games.Leaderboards.submitScore( mHelper.getApiClient(), leaderboardId3, game.getScore() );
 		//Intent intent = Games.Leaderboards.getLeaderboardIntent( mHelper.getApiClient(), leaderboardId );
 		Intent intent = Games.Leaderboards.getAllLeaderboardsIntent( mHelper.getApiClient());
 		startActivityForResult(intent, REQUEST_LEADERBOARD);
