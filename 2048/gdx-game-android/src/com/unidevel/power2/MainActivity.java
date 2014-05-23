@@ -31,6 +31,7 @@ import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.games.Games;
 import com.unidevel.power2.GameHelper.SignInFailureReason;
+import com.google.android.gms.games.achievement.*;
 //import com.badlogic.gdx.graphics.g3d.*;
 
 @SuppressLint ("InlinedApi")
@@ -41,13 +42,15 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 	static final String MAX_SCORE = "max_score";
 	static final String MAX_LEVEL = "max_number";
 	static final String DATA = "data";
+	static final String LEVELS = "levels";
 	
 	Handler handler;
 	Power2Game game;
 	SharedPreferences pref;
 	View gameView;
 	AdView adView;
-	
+	int[] levels;
+	int level;
 	protected GameHelper mHelper;
 
     // We expose these constants here because we don't want users of this class
@@ -64,6 +67,7 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
     public MainActivity()
 	{
     	super();
+		this.levels=new int[5];
 	}
     
 	//a15377fb6dcdf79 
@@ -406,15 +410,60 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 		saveGame();
 	}
 	
+	private String saveLevels(int level){
+		if(level>=2048){
+			levels[4]++;
+		}
+		else if(level>=1024){
+			levels[3]++;
+		}
+		else if(level>=512){
+			levels[2]++;
+		}
+		else if(level>=256){
+			levels[1]++;
+		}
+		else if(level>=128){
+			levels[0]++;
+		}
+		StringBuffer buf=new StringBuffer();
+		for(int i=0;i<levels.length;++i){
+			if(buf.length()>0){
+				buf.append(',');
+			}
+			buf.append(levels[i]);
+		}
+		return buf.toString();
+	}
+	
 	private void saveGame()
 	{
 		int maxScore = this.game.getMaxScore();
 		int maxNumber=this.game.getMaxLevel();
 		int score = this.game.getScore();
 		int level = this.game.getLevel();
+		this.level=level;
 		int[] data = this.game.getData();
 		String ds = toString(data);
-		pref.edit().putInt(MAX_SCORE, maxScore).putString( DATA, ds ).putInt( SCORE, score ).putInt(MAX_LEVEL,maxNumber).putInt( LEVEL, level ).commit();
+		String levels = saveLevels(level);
+		pref.edit().putInt(MAX_SCORE, maxScore)
+			.putString( DATA, ds )
+			.putInt( SCORE, score )
+			.putInt(MAX_LEVEL,maxNumber)
+			.putInt( LEVEL, level )
+			.putString(LEVELS, levels).commit();
+	}
+	
+	private void loadLevels()
+	{
+		String v=pref.getString(LEVELS,"");
+		String[] items= v.split(",");
+		for(int i=0;i<items.length&&i<levels.length;++i){
+			try{
+				levels[i]=Integer.valueOf(items[i]);
+			}
+			catch(Throwable ex){}
+		}
 	}
 	
 	private void loadGame()
@@ -426,6 +475,7 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 		this.game.setMaxScore( maxScore );
 		this.game.setMaxNumber( maxNumber );
 		this.game.setScore( score );
+		loadLevels();
 		if ( ds!= null && ds.length()>0 )
 		{
 			int[] data = toArray(ds);
@@ -486,21 +536,35 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 		SignInFailureReason result = mHelper.getSignInError();
 		android.util.Log.e( "MainActivity", "Login failed with error code "+result.mServiceErrorCode+", "+result.toString() );
 	}
-
+	
 	@Override
 	public void onSignInSucceeded()
 	{
 		//CgkImN3rmbgNEAIQCQ 
 		String leaderboardId = getString(R.string.leaderboard_high_score);
 		String leaderboardId2 = getString(R.string.leaderboard_max_number);
-		String leaderboardId3 = "CgkImN3rmbgNEAIQCQ";
+		String leaderboardId3 = getString(R.string.leaderboard_score_today);
 		Games.Leaderboards.submitScore( mHelper.getApiClient(), leaderboardId, game.getMaxScore() );
 		Games.Leaderboards.submitScore( mHelper.getApiClient(), leaderboardId2, game.getMaxLevel() );
 		Games.Leaderboards.submitScore( mHelper.getApiClient(), leaderboardId3, game.getScore() );
 		//Intent intent = Games.Leaderboards.getLeaderboardIntent( mHelper.getApiClient(), leaderboardId );
 		Intent intent = Games.Leaderboards.getAllLeaderboardsIntent( mHelper.getApiClient());
 		startActivityForResult(intent, REQUEST_LEADERBOARD);
-		
+		if(this.level>=2048){
+			Games.Achievements.increment(mHelper.getApiClient(),getString(R.string.level5),120);
+		}
+		else if(this.level>=1024){
+			Games.Achievements.increment(mHelper.getApiClient(),getString(R.string.level4),50);
+		}
+		else if(this.level>=512){
+			Games.Achievements.increment(mHelper.getApiClient(),getString(R.string.level3),20);
+		}
+		else if(this.level>=256){
+			Games.Achievements.increment(mHelper.getApiClient(),getString(R.string.level2),4);
+		}
+		else if(this.level>=128){
+			Games.Achievements.increment(mHelper.getApiClient(),getString(R.string.level1),1);
+		}
 //		128 	CgkImN3rmbgNEAIQAw		20
 //		256		CgkImN3rmbgNEAIQBA		40
 //		512		CgkImN3rmbgNEAIQBQ		80
