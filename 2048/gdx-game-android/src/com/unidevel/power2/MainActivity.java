@@ -31,7 +31,6 @@ import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.games.Games;
 import com.unidevel.power2.GameHelper.SignInFailureReason;
-import com.google.android.gms.games.achievement.*;
 //import com.badlogic.gdx.graphics.g3d.*;
 
 @SuppressLint ("InlinedApi")
@@ -42,14 +41,12 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 	static final String MAX_SCORE = "max_score";
 	static final String MAX_LEVEL = "max_number";
 	static final String DATA = "data";
-	static final String LEVELS = "levels";
-	
+	boolean showLeaderboard = true;
 	Handler handler;
 	Power2Game game;
 	SharedPreferences pref;
 	View gameView;
 	AdView adView;
-	int[] levels;
 	int level;
 	protected GameHelper mHelper;
 
@@ -63,11 +60,11 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
     // Requested clients. By default, that's just the games client.
     protected int mRequestedClients = CLIENT_GAMES;
     protected int REQUEST_LEADERBOARD = 100;
+    protected int REQUEST_ACHIEVEMENT = 200;
     
     public MainActivity()
 	{
     	super();
-		this.levels=new int[5];
 	}
     
 	//a15377fb6dcdf79 
@@ -222,7 +219,7 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 				{
 					dialog.dismiss();
 					//finish();
-					submitScore();
+					submitScore(true);
 				}
 			} );
 
@@ -375,7 +372,7 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 		}
 		else if ( R.id.submit == item.getItemId() )
 		{
-			this.submitScore();
+			this.submitScore(true);
 		}
 		else if ( R.id.exitApp == item.getItemId() )
 		{
@@ -384,6 +381,10 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 		else if ( R.id.undo == item.getItemId() )
 		{
 			this.undo();
+		}
+		else if ( R.id.achivement == item.getItemId() )
+		{
+			this.submitScore(false);
 		}
 		return true;
 	}
@@ -399,7 +400,8 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 	
 	//1 High score CgkImN3rmbgNEAIQAQ
 	//TRIANGLE 2048 461763178136
-	private void submitScore(){
+	private void submitScore( boolean showLeaderboard ){
+		this.showLeaderboard = showLeaderboard;
 		Gdx.graphics.requestRendering();
 		login();
 	}
@@ -408,32 +410,6 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 	public void onGamePause()
 	{
 		saveGame();
-	}
-	
-	private String saveLevels(int level){
-		if(level>=2048){
-			levels[4]++;
-		}
-		else if(level>=1024){
-			levels[3]++;
-		}
-		else if(level>=512){
-			levels[2]++;
-		}
-		else if(level>=256){
-			levels[1]++;
-		}
-		else if(level>=128){
-			levels[0]++;
-		}
-		StringBuffer buf=new StringBuffer();
-		for(int i=0;i<levels.length;++i){
-			if(buf.length()>0){
-				buf.append(',');
-			}
-			buf.append(levels[i]);
-		}
-		return buf.toString();
 	}
 	
 	private void saveGame()
@@ -445,25 +421,12 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 		this.level=level;
 		int[] data = this.game.getData();
 		String ds = toString(data);
-		String levels = saveLevels(level);
 		pref.edit().putInt(MAX_SCORE, maxScore)
 			.putString( DATA, ds )
 			.putInt( SCORE, score )
 			.putInt(MAX_LEVEL,maxNumber)
 			.putInt( LEVEL, level )
-			.putString(LEVELS, levels).commit();
-	}
-	
-	private void loadLevels()
-	{
-		String v=pref.getString(LEVELS,"");
-		String[] items= v.split(",");
-		for(int i=0;i<items.length&&i<levels.length;++i){
-			try{
-				levels[i]=Integer.valueOf(items[i]);
-			}
-			catch(Throwable ex){}
-		}
+			.commit();
 	}
 	
 	private void loadGame()
@@ -475,7 +438,6 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 		this.game.setMaxScore( maxScore );
 		this.game.setMaxNumber( maxNumber );
 		this.game.setScore( score );
-		loadLevels();
 		if ( ds!= null && ds.length()>0 )
 		{
 			int[] data = toArray(ds);
@@ -540,35 +502,45 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 	@Override
 	public void onSignInSucceeded()
 	{
-		//CgkImN3rmbgNEAIQCQ 
 		String leaderboardId = getString(R.string.leaderboard_high_score);
 		String leaderboardId2 = getString(R.string.leaderboard_max_number);
 		String leaderboardId3 = getString(R.string.leaderboard_score_today);
 		Games.Leaderboards.submitScore( mHelper.getApiClient(), leaderboardId, game.getMaxScore() );
 		Games.Leaderboards.submitScore( mHelper.getApiClient(), leaderboardId2, game.getMaxLevel() );
 		Games.Leaderboards.submitScore( mHelper.getApiClient(), leaderboardId3, game.getScore() );
-		//Intent intent = Games.Leaderboards.getLeaderboardIntent( mHelper.getApiClient(), leaderboardId );
-		Intent intent = Games.Leaderboards.getAllLeaderboardsIntent( mHelper.getApiClient());
-		startActivityForResult(intent, REQUEST_LEADERBOARD);
+		int levelId = 0;
 		if(this.level>=2048){
-			Games.Achievements.increment(mHelper.getApiClient(),getString(R.string.level5),120);
+			levelId = R.string.level5;
 		}
 		else if(this.level>=1024){
-			Games.Achievements.increment(mHelper.getApiClient(),getString(R.string.level4),50);
+			levelId = R.string.level4;
 		}
 		else if(this.level>=512){
-			Games.Achievements.increment(mHelper.getApiClient(),getString(R.string.level3),20);
+			levelId = R.string.level3;
 		}
 		else if(this.level>=256){
-			Games.Achievements.increment(mHelper.getApiClient(),getString(R.string.level2),4);
+			levelId = R.string.level2;
 		}
 		else if(this.level>=128){
-			Games.Achievements.increment(mHelper.getApiClient(),getString(R.string.level1),1);
+			levelId = R.string.level1;
 		}
-//		128 	CgkImN3rmbgNEAIQAw		20
-//		256		CgkImN3rmbgNEAIQBA		40
-//		512		CgkImN3rmbgNEAIQBQ		80
-//		1024	CgkImN3rmbgNEAIQBg		100
-//		2048	CgkImN3rmbgNEAIQBw		120
+		else if(this.level>=64){
+			levelId = R.string.level0;
+		}
+		if ( levelId != 0 )
+		{
+			Games.Achievements.unlock( mHelper.getApiClient(), getString(levelId) );
+		}
+		if ( showLeaderboard )
+		{
+			Intent intent = Games.Leaderboards.getAllLeaderboardsIntent( mHelper.getApiClient());
+			//Intent intent = Games.Leaderboards.getLeaderboardIntent( mHelper.getApiClient(), leaderboardId );
+			startActivityForResult(intent, REQUEST_LEADERBOARD);
+		}
+		else
+		{
+			Intent intent = Games.Achievements.getAchievementsIntent( mHelper.getApiClient() );
+			startActivityForResult(intent, REQUEST_ACHIEVEMENT);
+		}
 	}
 }

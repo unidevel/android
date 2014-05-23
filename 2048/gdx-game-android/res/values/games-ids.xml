@@ -8,6 +8,7 @@ Save this file as res/values/games-ids.xml in your project.
   <string name="leaderboard_high_score">CgkImN3rmbgNEAIQAQ</string>
   <string name="leaderboard_max_number">CgkImN3rmbgNEAIQCA</string>
 	<string name="leaderboard_score_today">CgkImN3rmbgNEAIQCQ</string>
+	<string name="level0">CgkImN3rmbgNEAIQCg</string>
 	<string name="level1">CgkImN3rmbgNEAIQAw</string>
 	<string name="level2">CgkImN3rmbgNEAIQBA</string>
 	<string name="level3">CgkImN3rmbgNEAIQBQ</string>

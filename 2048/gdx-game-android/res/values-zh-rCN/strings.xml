@@ -6,6 +6,7 @@
     <string name="share_text">号外号外，我在三角2048中得了%1$d分，突破了数字%2$d.^_^ https://play.google.com/store/apps/details?id=com.unidevel.power2</string>
     <string name="game_over">游戏结束</string>
     <string name="new_game">新游戏</string>
+    <string name="achievement">成就榜</string>
 	<string name="new_game_warning">确定重来？</string>
 	<string name="submit_score">排行榜</string>
     <string name="sdcard_error">截屏写入文件失败，请确保SD卡插入并有足够的空间写入。</string>
