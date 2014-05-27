@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item android:id="@+id/undo" android:title="@string/undo" android:showAsAction="ifRoom|withText" android:icon="@android:drawable/ic_menu_revert"></item>
-	    <item android:id="@+id/submit" android:title="@string/submit_score" android:showAsAction="ifRoom|withText" android:icon="@drawable/leaderboard"></item>
+	<item android:id="@+id/submit1" android:title="@string/submit_score" android:showAsAction="ifRoom|withText" android:icon="@drawable/leaderboard">
+	<menu>
+		<item android:id="@+id/submit" android:title="@string/submit_score" android:showAsAction="ifRoom|withText" android:icon="@drawable/leaderboard"></item>
 	    <item android:id="@+id/achivement" android:title="@string/achievement" android:showAsAction="ifRoom|withText" android:icon="@drawable/achievement"></item>
 	    <item android:id="@+id/share" android:title="@string/share" android:visible="true" android:showAsAction="ifRoom|withText" android:icon="@android:drawable/ic_menu_share"></item>
-    <item android:id="@+id/newGame" android:title="@string/new_game" android:showAsAction="ifRoom|withText" android:icon="@android:drawable/ic_menu_myplaces"></item>
+	</menu>
+	</item>
+	<item android:id="@+id/newGame" android:title="@string/new_game" android:showAsAction="ifRoom|withText" android:icon="@android:drawable/ic_menu_myplaces"></item>
     <item android:id="@+id/rateApp" android:title="@string/rate" android:showAsAction="ifRoom|withText" android:icon="@android:drawable/star_big_on"></item>
     <item android:id="@+id/exitApp" android:title="@string/exit" android:showAsAction="ifRoom|withText" android:icon="@android:drawable/ic_lock_power_off"></item>
     

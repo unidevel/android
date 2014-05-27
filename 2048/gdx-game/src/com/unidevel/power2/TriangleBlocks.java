@@ -50,7 +50,8 @@ public class TriangleBlocks
 	}
 	
 	public boolean fill(){
-		int r = random.nextInt()>100?2:4;
+		int r = random.nextInt(2048);
+		r=r<32?4:2;
 		int n = random.nextInt(data.length-1)+1;
 		int p=-1;
 		for(int i=0;i<n;i++){

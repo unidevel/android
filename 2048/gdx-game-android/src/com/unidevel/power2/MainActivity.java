@@ -187,6 +187,16 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 				game.newGame();
 			}
 		} );
+		builder.setNeutralButton( R.string.achievement, new DialogInterface.OnClickListener()
+			{
+				@Override
+				public void onClick( DialogInterface dialog, int which )
+				{
+					dialog.dismiss();
+					submitScore(false);
+				}
+			} );
+		
 		/*
 		builder.setNegativeButton( R.string.exit, new DialogInterface.OnClickListener()
 		{
@@ -228,21 +238,22 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 		builder.create().show();		
 	}
 	
-	File getAppFile(String name){
+	String  getAppFile(String name){
 		String state=Environment.getExternalStorageState();
 		File f=null;
 		if (Environment.MEDIA_MOUNTED.equals(state)) {
 			// We can read and write the media
-			File dir=new File(Environment.getExternalStorageDirectory(),"Android/data/"+this.getPackageName());
+			String p="Android/data/"+this.getPackageName();
+			File dir=new File(Environment.getExternalStorageDirectory(),p);
 			if(!dir.exists())dir.mkdirs();
-			return new File(dir, name);
+			return "/"+p+"/"+name;//new File(dir, name);
 		} else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
 			// We can only read the media
 		} else {
 			// Something else is wrong. It may be one of many other states, but all we need
 			//  to know is we can neither read nor write
 		}
-		return f;
+		return null;
 	}
 	
 	private void shareScreen(){
@@ -251,8 +262,8 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 			@Override
 			public void run()
 			{
-				File f = getAppFile("2048.png");
-				Log.i("Save screenshot to"+f.getPath());
+				String f = getAppFile("2048.png");
+				Log.i("Save screenshot to"+f);//.getPath());
 				if( f == null )
 				{
 					Toast.makeText( MainActivity.this, R.string.sdcard_error, Toast.LENGTH_LONG ).show();
@@ -264,7 +275,7 @@ public class MainActivity extends AndroidApplication implements GameListener,Gam
 					Toast.makeText( MainActivity.this, R.string.screenshot_error, Toast.LENGTH_LONG ).show();
 					return;
 				}
-				FileHandle fh = Gdx.files.external( f.getPath() );
+				FileHandle fh = Gdx.files.external( f);//.getPath() );
 				try
 				{
 					write(fh, pixmap);
