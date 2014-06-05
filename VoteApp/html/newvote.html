@@ -14,31 +14,36 @@
 		<div data-role="header" data-theme="b">
 			<h1>New vote</h1>
 			<a href="./home.html" data-icon="home" data-iconpos="notext"
-				data-direction="reverse">Home</a> 
-			<a href="./logout.html"
-				data-icon="power" data-iconpos="notext" data-rel="dialog"
-				data-transition="fade">Logout</a>
+				data-direction="reverse">Home</a> <a href="./logout.html"
+				data-icon="lock" data-iconpos="notext" data-transition="fade">Logout</a>
 		</div>
 		<!-- /header -->
 
 		<div data-role="content">
-			<!--div class="content-primary">
-				<h2>Vote application</h2>
-			</div-->
-			<!--/content-primary -->
-
+			<input type="text" name="title" id="title" value=""
+				placeholder="Overall title">
 			<!--div class="content-secondary"-->
 
-				<div data-role="collapsible" data-collapsed="false" data-theme="b"
-					data-content-theme="d">
+			<div data-role="collapsible" data-collapsed="false" data-theme="b"
+				data-content-theme="d">
 
-					<h3>Start here</h3>
+				<h3>Items</h3>
 
-					<ul data-role="listview" data-theme="c" data-dividertheme="d">
-						<li><a href="newvote.html">Create new vote</a></li>
-						<li><a href="voting.html">Your vote</a></li>
-					</ul>
-				</div>
+				<ul data-role="listview" data-theme="c" data-dividertheme="d">
+					<li>
+						<input type="checkbox" name="delete" checked=""/><input type="text" name="title" value="" placeholder="Title"/>
+						<div data-role="controlgroup" data-type="vertical"
+							data-mini="true">
+							<input type="checkbox" name="delete" checked=""/><input type="text" name="title" value="" placeholder="Title"/>
+						</div>
+
+					</li>
+					<li>
+						<button class="ui-shadow ui-btn ui-corner-all">Add new
+							one</button>
+					</li>
+				</ul>
+			</div>
 			<!--/div-->
 
 		</div>
