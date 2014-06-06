@@ -11,9 +11,17 @@
 
 	<div data-role="page">
 		<script>
-		
+			$(document).on("pageshow", function(event){
+				alert("bind");
+				$("[name='new_single']").on("click", function(event){
+					alert('test');
+				});				
+				$("[name='new_multi']").on("click", function(event){
+					alert('test');
+				});				
+			});
 		</script>
-		
+
 
 		<div data-role="header" data-theme="b">
 			<a href="index.html" data-icon="delete">Cancel</a>
@@ -25,23 +33,24 @@
 		<div data-role="content">
 			<!--textarea name="title" id="title" placeholder="Overall title"></textarea-->
 			<h2>Test vote for test purpose</h2>
-			<hr/>
-			   <h3>1. Vote one</h3>
-				<!--input type="text" name="title" value="" data-inline="true" placeholder="Title"/-->
-				<div data-role="controlgroup">
-					<input type="radio" name="option1" id="option1" value="1"  />
-    				<label for="option1">Option 1</label>
-					<input type="radio" name="option1" id="option2" value="1"  />
-    				<label for="option2">Option 2</label>
-					<input type="radio" name="option1" id="option3" value="1"  />
-    				<label for="option3">Option 3</label>
-				  
-				  <button class="ui-shadow ui-btn ui-corner-all">Add new option</button>
-				</div>
-			<Hr/>
+			<hr />
+			<h3 name="vote_title">1. Vote one</h3>
+			<!--input type="text" name="title" value="" data-inline="true" placeholder="Title"/-->
+			<div name="vote_options" data-role="controlgroup">
+				<input type="radio" name="vote_option" id="option1" value="1" /> <label
+					for="option1">Option 1</label> <input type="radio"
+					name="vote_option" id="option2" value="1" /> <label for="option2">Option
+					2</label> <input type="radio" name="vote_option" id="option3" value="1" />
+				<label for="option3">Option 3</label>
+				<button class="ui-shadow ui-btn ui-corner-all">Add new
+					option</button>
+			</div>
+			<Hr />
 			<div data-role="controlgroup" data-type="horizontal" data-mini="true">
-			<button class="ui-shadow ui-btn ui-corner-all">New single-choice vote</button>
-			<button class="ui-shadow ui-btn ui-corner-all">New multi-choice vote</button>
+				<button name="new_single" class="ui-shadow ui-btn ui-corner-all">New
+					single-choice vote</button>
+				<button name="new_multi" class="ui-shadow ui-btn ui-corner-all">New
+					multi-choice vote</button>
 			</div>
 			<!--/div-->
 
