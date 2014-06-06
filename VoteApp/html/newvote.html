@@ -6,6 +6,12 @@
 <link rel="stylesheet" href="../css/jquery.mobile-1.4.2.css" />
 <script src="../js/jquery.js"></script>
 <script src="../js/jquery.mobile-1.4.2.js"></script>
+<style>
+.hide 
+{
+	display:none !important
+}
+</style>
 </head>
 <body>
 
@@ -17,6 +23,18 @@
 			}
 			function editVoteTitle(obj){
 				alert("Edit");
+			}
+			function enterTitleEdit(){
+				$("#overall_title_edit").removeClass("hide");
+				$("#overall_title").addClass("hide");
+				$("#overall_title_edit").val(voteData.title);
+				$("#overall_title_edit").focus();
+			}
+			function leaveTitleEdit(){
+				voteData.title = $("#overall_title_edit").val();
+				$("#overall_title").removeClass("hide");
+				$("#overall_title").html(voteData.title);
+				$("#overall_title_edit").addClass("hide");
 			}
 			function addNewVote(multi) {
 				var vote = {title: "", type:multi?"checkbox":"radio", options:{}};
@@ -50,9 +68,9 @@
 		<!-- /header -->
 
 		<div data-role="content" id="vote_content">
-			<h2>Test vote for test purpose</h2>
+			<h2 id="overall_title" onclick="enterTitleEdit()">Test vote for test purpose</h2>
+			<textarea name="title" id="overall_title_edit" placeholder="Overall title" class="hide" onblur="leaveTitleEdit()"></textarea>
 			<hr />
-			<!--textarea name="title" id="title" placeholder="Overall title"></textarea-->
 			<div id="vote_template" style="display: none">
 				<h3 name="vote_title" onclick="editVoteTitle(this)">1. Vote one</h3>
 				<!--input type="text" name="title" value="" data-inline="true" placeholder="Title"/-->
