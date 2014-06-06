@@ -17,7 +17,27 @@
 
 	<div data-role="page">
 		<script>
-			var voteData = {title: "", votes:[]};
+			var voteData = {
+					title: "", 
+					votes:[],
+					getTitle: function(){
+						if(!this.title){
+							return "Change vote desciption by clicking on it";
+						}
+						return title;
+					},
+					getVoteTitle:function(vote){
+						var index = this.votes.indexOf(vote)+1;
+						if (vote&&vote.title)
+						{
+							return ""+index+". "+vote.title;
+						}
+						else
+						{
+							return ""+index+". New "+(vote.type=="radio"?"single choice":"multiple choices")+" vote";
+						}
+					}
+			};
 			function addNewOption(vote){
 				alert("new Option");
 			}
@@ -33,7 +53,7 @@
 			function leaveTitleEdit(){
 				voteData.title = $("#overall_title_edit").val();
 				$("#overall_title").removeClass("hide");
-				$("#overall_title").html(voteData.title);
+				$("#overall_title").html(voteData.getTitle());
 				$("#overall_title_edit").addClass("hide");
 			}
 			function addNewVote(multi) {
@@ -43,19 +63,22 @@
 				var dom = $(template);
 				dom.uniqueId();
 				dom.appendTo("#vote_content");
-				vote.domId = dom.attr("id");
-				$(dom).find("[name='new_option']").on("click", function(event){
+				var id = "#"+dom.attr("id");
+				vote.domId = id;
+				
+				var voteTitleDom = $(".title",id).html(voteData.getVoteTitle(vote));
+				$(".add_option", id).on("click", function(event){
 					addNewOption(vote);
 				});
 			};
 			$(document).on("pageshow", function(event) {
-				alert("bind");
 				$("[name='new_single']").on("click", function(event) {
 					addNewVote(false);
 				});
 				$("[name='new_multi']").on("click", function(event) {
 					addNewVote(true);
 				});
+				$("#overall_title").html(voteData.getTitle());
 			});
 		</script>
 
@@ -67,17 +90,20 @@
 		</div>
 		<!-- /header -->
 
-		<div data-role="content" id="vote_content">
-			<h2 id="overall_title" onclick="enterTitleEdit()">Test vote for test purpose</h2>
-			<textarea name="title" id="overall_title_edit" placeholder="Overall title" class="hide" onblur="leaveTitleEdit()"></textarea>
+		<div data-role="content">
+			<h2 id="overall_title" onclick="enterTitleEdit()"></h2>
+			<textarea name="title" id="overall_title_edit" placeholder="Input vote description" class="hide" onblur="leaveTitleEdit()"></textarea>
 			<hr />
+			<div id="vote_content"></div>
 			<div id="vote_template" style="display: none">
-				<h3 name="vote_title" onclick="editVoteTitle(this)">1. Vote one</h3>
+				<div>
+				<h3 class="title" onclick="editVoteTitle(this)">1. Vote one</h3>
 				<!--input type="text" name="title" value="" data-inline="true" placeholder="Title"/-->
-				<div name="vote_options" data-role="controlgroup">
-					<button class="ui-shadow ui-btn ui-corner-all" name="new_option">Add new option</button>
+				<div class="options" data-role="controlgroup">
+					<button class="ui-shadow ui-btn ui-corner-all" class="add_option">Add new option</button>
 				</div>
 				<hr />
+				</div>
 				<!--/div-->
 			</div>
 			<div data-role="controlgroup" data-type="horizontal" data-mini="true">
