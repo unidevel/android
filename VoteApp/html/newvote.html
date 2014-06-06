@@ -24,7 +24,7 @@
 						if(!this.title){
 							return "Change vote desciption by clicking on it";
 						}
-						return title;
+						return this.title;
 					},
 					getVoteTitle:function(vote){
 						var index = this.votes.indexOf(vote)+1;
@@ -36,10 +36,32 @@
 						{
 							return ""+index+". New "+(vote.type=="radio"?"single choice":"multiple choices")+" vote";
 						}
+					},
+					getOptionLabel: function(option){
+						if ( option && option.label )
+						{
+							return option.label;
+						}
+						else
+						{
+							return "Change the option by clicking on it";
+						}
 					}
+					
 			};
+			function nextId()
+			{
+				return new Date().getTime();
+			}
 			function addNewOption(vote){
-				alert("new Option");
+				var option = {id: nextId(), label:""};
+				vote.options.push(option);
+				var optionId = "opt"+option.id;
+				var label = voteData.getOptionLabel(option);
+				var node = $("<input type='"+vote.type+"' name='"+vote.id+"' id='"+optionId+"' value='' class='button'/><label class='label' for='"+optionId+"'>"+label+"</label>");
+				$(".add_option", vote.domId).before(node);
+				$("#"+optionId).checkboxradio().checkboxradio("refresh");
+				$(".options",vote.domId).trigger("create");
 			}
 			function editVoteTitle(obj){
 				alert("Edit");
@@ -57,7 +79,7 @@
 				$("#overall_title_edit").addClass("hide");
 			}
 			function addNewVote(multi) {
-				var vote = {title: "", type:multi?"checkbox":"radio", options:{}};
+				var vote = {title: "", type:multi?"checkbox":"radio", options:[]};
 				voteData.votes.push(vote);
 				var template = $("#vote_template").html();
 				var dom = $(template);
@@ -65,7 +87,7 @@
 				dom.appendTo("#vote_content");
 				var id = "#"+dom.attr("id");
 				vote.domId = id;
-				
+				vote.id = nextId();
 				var voteTitleDom = $(".title",id).html(voteData.getVoteTitle(vote));
 				$(".add_option", id).on("click", function(event){
 					addNewOption(vote);
@@ -100,7 +122,7 @@
 				<h3 class="title" onclick="editVoteTitle(this)">1. Vote one</h3>
 				<!--input type="text" name="title" value="" data-inline="true" placeholder="Title"/-->
 				<div class="options" data-role="controlgroup">
-					<button class="ui-shadow ui-btn ui-corner-all" class="add_option">Add new option</button>
+					<button class="ui-shadow ui-btn ui-corner-all add_option">Add new option</button>
 				</div>
 				<hr />
 				</div>
