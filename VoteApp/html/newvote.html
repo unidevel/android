@@ -10,39 +10,49 @@
 <body>
 
 	<div data-role="page">
-
+		<script>
+		
+		</script>
 		<div data-role="header" data-theme="b">
 			<h1>New vote</h1>
 			<a href="./home.html" data-icon="home" data-iconpos="notext"
-				data-direction="reverse">Home</a> <a href="./logout.html"
+				data-direction="reverse">Home</a> 
+			<a href="./logout.html"
 				data-icon="lock" data-iconpos="notext" data-transition="fade">Logout</a>
 		</div>
 		<!-- /header -->
 
 		<div data-role="content">
-			<input type="text" name="title" id="title" value=""
+			<textarea name="title" id="title" value=""
 				placeholder="Overall title">
+			</textarea>
 			<!--div class="content-secondary"-->
 
 			<div data-role="collapsible" data-collapsed="false" data-theme="b"
 				data-content-theme="d">
 
-				<h3>Items</h3>
+				<h3>Votes</h3>
 
 				<ul data-role="listview" data-theme="c" data-dividertheme="d">
 					<li>
-						<input type="checkbox" name="delete" checked=""/><input type="text" name="title" value="" placeholder="Title"/>
+					  	<div data-role="collapsible" data-collapsed="false" data-theme="a" data-content-theme="d">
+						<h3>
+						<table style="width:100%;padding:0px;margin:0px"><tr><td>
+							<input type="text" name="title" value="" data-inline="true" placeholder="Title"/>
+							  </td><td>
+							<a href="del" data-role="button" data-icon="delete" data-iconpos="notext" data-inline="true">Delete</a>
+						</td></tr></table></h3>
 						<div data-role="controlgroup" data-type="vertical"
 							data-mini="true">
 							<input type="checkbox" name="delete" checked=""/><input type="text" name="title" value="" placeholder="Title"/>
 						</div>
-
+						<button class="ui-shadow ui-btn ui-corner-all">Add new option</button>
+						</div>
 					</li>
 					<li>
-						<button class="ui-shadow ui-btn ui-corner-all">Add new
-							one</button>
 					</li>
 				</ul>
+				<button class="ui-shadow ui-btn ui-corner-all">Add new vote</button>
 			</div>
 			<!--/div-->
 
