@@ -11,14 +11,33 @@
 
 	<div data-role="page">
 		<script>
-			$(document).on("pageshow", function(event){
+			var voteData = {title: "", votes:[]};
+			function addNewOption(vote){
+				alert("new Option");
+			}
+			function editVoteTitle(obj){
+				alert("Edit");
+			}
+			function addNewVote(multi) {
+				var vote = {title: "", type:multi?"checkbox":"radio", options:{}};
+				voteData.votes.push(vote);
+				var template = $("#vote_template").html();
+				var dom = $(template);
+				dom.uniqueId();
+				dom.appendTo("#vote_content");
+				vote.domId = dom.attr("id");
+				$(dom).find("[name='new_option']").on("click", function(event){
+					addNewOption(vote);
+				});
+			};
+			$(document).on("pageshow", function(event) {
 				alert("bind");
-				$("[name='new_single']").on("click", function(event){
-					alert('test');
-				});				
-				$("[name='new_multi']").on("click", function(event){
-					alert('test');
-				});				
+				$("[name='new_single']").on("click", function(event) {
+					addNewVote(false);
+				});
+				$("[name='new_multi']").on("click", function(event) {
+					addNewVote(true);
+				});
 			});
 		</script>
 
@@ -30,29 +49,25 @@
 		</div>
 		<!-- /header -->
 
-		<div data-role="content">
-			<!--textarea name="title" id="title" placeholder="Overall title"></textarea-->
+		<div data-role="content" id="vote_content">
 			<h2>Test vote for test purpose</h2>
 			<hr />
-			<h3 name="vote_title">1. Vote one</h3>
-			<!--input type="text" name="title" value="" data-inline="true" placeholder="Title"/-->
-			<div name="vote_options" data-role="controlgroup">
-				<input type="radio" name="vote_option" id="option1" value="1" /> <label
-					for="option1">Option 1</label> <input type="radio"
-					name="vote_option" id="option2" value="1" /> <label for="option2">Option
-					2</label> <input type="radio" name="vote_option" id="option3" value="1" />
-				<label for="option3">Option 3</label>
-				<button class="ui-shadow ui-btn ui-corner-all">Add new
-					option</button>
+			<!--textarea name="title" id="title" placeholder="Overall title"></textarea-->
+			<div id="vote_template" style="display: none">
+				<h3 name="vote_title" onclick="editVoteTitle(this)">1. Vote one</h3>
+				<!--input type="text" name="title" value="" data-inline="true" placeholder="Title"/-->
+				<div name="vote_options" data-role="controlgroup">
+					<button class="ui-shadow ui-btn ui-corner-all" name="new_option">Add new option</button>
+				</div>
+				<hr />
+				<!--/div-->
 			</div>
-			<Hr />
 			<div data-role="controlgroup" data-type="horizontal" data-mini="true">
 				<button name="new_single" class="ui-shadow ui-btn ui-corner-all">New
 					single-choice vote</button>
 				<button name="new_multi" class="ui-shadow ui-btn ui-corner-all">New
 					multi-choice vote</button>
 			</div>
-			<!--/div-->
 
 		</div>
 		<!-- /content -->
