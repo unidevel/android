@@ -13,46 +13,35 @@
 		<script>
 		
 		</script>
+		
+
 		<div data-role="header" data-theme="b">
+			<a href="index.html" data-icon="delete">Cancel</a>
 			<h1>New vote</h1>
-			<a href="./home.html" data-icon="home" data-iconpos="notext"
-				data-direction="reverse">Home</a> 
-			<a href="./logout.html"
-				data-icon="lock" data-iconpos="notext" data-transition="fade">Logout</a>
+			<a href="index.html" data-icon="check" data-theme="b">Save</a>
 		</div>
 		<!-- /header -->
 
 		<div data-role="content">
-			<textarea name="title" id="title" value=""
-				placeholder="Overall title">
-			</textarea>
-			<!--div class="content-secondary"-->
-
-			<div data-role="collapsible" data-collapsed="false" data-theme="b"
-				data-content-theme="d">
-
-				<h3>Votes</h3>
-
-				<ul data-role="listview" data-theme="c" data-dividertheme="d">
-					<li>
-					  	<div data-role="collapsible" data-collapsed="false" data-theme="a" data-content-theme="d">
-						<h3>
-						<table style="width:100%;padding:0px;margin:0px"><tr><td>
-							<input type="text" name="title" value="" data-inline="true" placeholder="Title"/>
-							  </td><td>
-							<a href="del" data-role="button" data-icon="delete" data-iconpos="notext" data-inline="true">Delete</a>
-						</td></tr></table></h3>
-						<div data-role="controlgroup" data-type="vertical"
-							data-mini="true">
-							<input type="checkbox" name="delete" checked=""/><input type="text" name="title" value="" placeholder="Title"/>
-						</div>
-						<button class="ui-shadow ui-btn ui-corner-all">Add new option</button>
-						</div>
-					</li>
-					<li>
-					</li>
-				</ul>
-				<button class="ui-shadow ui-btn ui-corner-all">Add new vote</button>
+			<!--textarea name="title" id="title" placeholder="Overall title"></textarea-->
+			<h2>Test vote for test purpose</h2>
+			<hr/>
+			   <h3>1. Vote one</h3>
+				<!--input type="text" name="title" value="" data-inline="true" placeholder="Title"/-->
+				<div data-role="controlgroup">
+					<input type="radio" name="option1" id="option1" value="1"  />
+    				<label for="option1">Option 1</label>
+					<input type="radio" name="option1" id="option2" value="1"  />
+    				<label for="option2">Option 2</label>
+					<input type="radio" name="option1" id="option3" value="1"  />
+    				<label for="option3">Option 3</label>
+				  
+				  <button class="ui-shadow ui-btn ui-corner-all">Add new option</button>
+				</div>
+			<Hr/>
+			<div data-role="controlgroup" data-type="horizontal" data-mini="true">
+			<button class="ui-shadow ui-btn ui-corner-all">New single-choice vote</button>
+			<button class="ui-shadow ui-btn ui-corner-all">New multi-choice vote</button>
 			</div>
 			<!--/div-->
 
