@@ -108,13 +108,15 @@
 				$(".delete", node).on("click", function(event){
 					deleteOption(vote, option);
 				});
-				$(".option", node).on("click", function(event){
+				var onclick=function(event){
 					applyEdit(node, option.label, function(value){
 						option.label = value;
 						var label = voteData.getOptionLabel(option);
 						$(".label", node).html(label);
 					});
-				});
+				};
+				$(".option", node).on("tap", onclick);
+				$(".option", node).on("click", onclick);
 			}
 			function deleteOption(vote, option){
 				if(confirm("delete option "+option.label))
