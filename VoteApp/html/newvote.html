@@ -170,6 +170,15 @@
 						$(".title",id).html(voteData.getVoteTitle(vote));
 					})
 				});
+				$(".vote_delete", id).on("click", function(event){
+					deleteVote(vote);
+				});
+				$(".vote_up",id).on("click",function(event){
+					moveVoteUp(vote);
+				});
+				$(".vote_down",id).on("click",function(event){
+					moveVoteDown(vote);
+				});				
 			};
 			$(document).on("pageshow", function(event) {
 				$("[name='new_single']").on("click", function(event) {
@@ -199,9 +208,9 @@
 				<div>
 					<div data-role="controlgroup" data-type="horizontal" data-mini="true" class="vote_toolbar">
 						<button data-icon="plus" data-iconpos='notext' class="add_option">Add option</button>
-						<button data-icon="delete" data-iconpos='notext'>Delete</button>
-						<button data-icon="arrow-u" data-iconpos='notext'>Up</button>
-						<button data-icon="arrow-d" data-iconpos='notext'>Down</button>
+						<button data-icon="delete" data-iconpos='notext' class="vote_delete">Delete</button>
+						<button data-icon="arrow-u" data-iconpos='notext' class="vote_up">Up</button>
+						<button data-icon="arrow-d" data-iconpos='notext' class="vote_down">Down</button>
 			    	</div>
 			    	<h3 class="title">One vote</h3>
 					<div class="options" data-role="controlgroup">
