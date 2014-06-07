@@ -69,13 +69,30 @@
 				return new Date().getTime();
 			}
 			function applyEdit(obj, value, callback){
-				var node = $("<input type='text'/>");
-				node.val(value);
-				node.css("position", "absolute");
+				if ( $(obj).attr('edit') )
+					return;
+				$(obj).attr('edit', true);
+				var node = $("<input type='text' style='width:100%'/>");
+				node.trigger("create");
+				if ( typeof(value) == 'function' )
+				{
+					node.val(value(node));	
+				}
+				else
+				{
+					node.val(value);
+				}
+				node.insertBefore($(obj));
+				var oldDisplay = $(obj).css("display");
+				$(obj).css("display", "none");
 				node.on("blur", function(event){
-					callback(node.val());
+					var value = node.val();
+					callback(value);
+					obj.edit = false;
+					$(obj).css("display", oldDisplay);
 					node.remove();
 				});
+				node.focus();
 			}
 			function addNewOption(vote){
 				var option = {id: nextId(), label:""};
@@ -91,7 +108,13 @@
 				$(".delete", node).on("click", function(event){
 					deleteOption(vote, option);
 				});
-				
+				$(".label", node).on("click", function(event){
+					applyEdit(node, option.label, function(value){
+						option.label = value;
+						var label = voteData.getOptionLabel(option);
+						$(".label", node).html(label);
+					});
+				});
 			}
 			function deleteOption(vote, option){
 				if(confirm("delete option "+option.label))
@@ -103,9 +126,6 @@
 						$(option.domId).remove();
 					}
 				}
-			}
-			function editVoteTitle(obj){
-				alert("Edit");
 			}
 			function enterTitleEdit(){
 				$("#overall_title_edit").removeClass("hide");
@@ -129,9 +149,15 @@
 				var id = "#"+dom.attr("id");
 				vote.domId = id;
 				vote.id = nextId();
-				var voteTitleDom = $(".title",id).html(voteData.getVoteTitle(vote));
+				$(".title",id).html(voteData.getVoteTitle(vote));
 				$(".add_option", id).on("click", function(event){
 					addNewOption(vote);
+				});
+				$(".title", id).on("click", function(event){
+					applyEdit(this, vote.title, function(value){
+						vote.title = value;
+						$(".title",id).html(voteData.getVoteTitle(vote));
+					})
 				});
 			};
 			$(document).on("pageshow", function(event) {
@@ -160,7 +186,7 @@
 			<div id="vote_content"></div>
 			<div id="vote_template" style="display: none">
 				<div>
-					<h3 class="title" onclick="editVoteTitle(this)">1. Vote one</h3>
+					<h3 class="title">One vote</h3>
 					<div class="options" data-role="controlgroup">
 						<button class="ui-shadow ui-btn ui-corner-all add_option">Add new option</button>
 					</div>
