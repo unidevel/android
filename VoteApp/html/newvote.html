@@ -11,6 +11,21 @@
 {
 	display:none !important
 }
+.option
+{
+	width: 100%;
+	z-index: 1;
+}
+.delete-container {
+    position: relative;
+    float:right;  
+    margin-top: -0.21em !important;    
+    z-index: 2;
+}
+
+.delete-container .delete {
+    margin-top: -40px !important;
+}
 </style>
 </head>
 <body>
@@ -58,7 +73,7 @@
 				vote.options.push(option);
 				var optionId = "opt"+option.id;
 				var label = voteData.getOptionLabel(option);
-				var node = $("<input type='"+vote.type+"' name='"+vote.id+"' id='"+optionId+"' value='' class='button'/><label class='label' for='"+optionId+"'>"+label+"</label>");
+				var node = $("<div class='option'><input type='"+vote.type+"' name='"+vote.id+"' id='"+optionId+"' value='' class='button'/><label class='label' for='"+optionId+"'>"+label+"</label></div><div class='delete-container'><button class='delete' data-icon='delete' data-iconpos='notext' data-mini='true'>Delete</button></div>");
 				$(".add_option", vote.domId).before(node);
 				$("#"+optionId).checkboxradio().checkboxradio("refresh");
 				$(".options",vote.domId).trigger("create");
@@ -74,7 +89,7 @@
 			}
 			function leaveTitleEdit(){
 				voteData.title = $("#overall_title_edit").val();
-				$("#overall_title").removeClass("hide");
+				$h("#overall_title").removeClass("hide");
 				$("#overall_title").html(voteData.getTitle());
 				$("#overall_title_edit").addClass("hide");
 			}
@@ -119,14 +134,12 @@
 			<div id="vote_content"></div>
 			<div id="vote_template" style="display: none">
 				<div>
-				<h3 class="title" onclick="editVoteTitle(this)">1. Vote one</h3>
-				<!--input type="text" name="title" value="" data-inline="true" placeholder="Title"/-->
-				<div class="options" data-role="controlgroup">
-					<button class="ui-shadow ui-btn ui-corner-all add_option">Add new option</button>
+					<h3 class="title" onclick="editVoteTitle(this)">1. Vote one</h3>
+					<div class="options" data-role="controlgroup">
+						<button class="ui-shadow ui-btn ui-corner-all add_option">Add new option</button>
+					</div>
+					<hr />
 				</div>
-				<hr />
-				</div>
-				<!--/div-->
 			</div>
 			<div data-role="controlgroup" data-type="horizontal" data-mini="true">
 				<button name="new_single" class="ui-shadow ui-btn ui-corner-all">New
