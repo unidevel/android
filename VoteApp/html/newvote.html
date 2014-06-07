@@ -108,7 +108,7 @@
 				$(".delete", node).on("click", function(event){
 					deleteOption(vote, option);
 				});
-				$(".label", node).on("click", function(event){
+				$(".option", node).on("click", function(event){
 					applyEdit(node, option.label, function(value){
 						option.label = value;
 						var label = voteData.getOptionLabel(option);
