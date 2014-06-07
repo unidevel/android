@@ -59,7 +59,7 @@
 						}
 						else
 						{
-							return "Change the option text by clicking on it";
+							return "Click to change";
 						}
 					}
 					
@@ -67,6 +67,15 @@
 			function nextId()
 			{
 				return new Date().getTime();
+			}
+			function applyEdit(obj, value, callback){
+				var node = $("<input type='text'/>");
+				node.val(value);
+				node.css("position", "absolute");
+				node.on("blur", function(event){
+					callback(node.val());
+					node.remove();
+				});
 			}
 			function addNewOption(vote){
 				var option = {id: nextId(), label:""};
@@ -106,7 +115,7 @@
 			}
 			function leaveTitleEdit(){
 				voteData.title = $("#overall_title_edit").val();
-				$h("#overall_title").removeClass("hide");
+				$("#overall_title").removeClass("hide");
 				$("#overall_title").html(voteData.getTitle());
 				$("#overall_title_edit").addClass("hide");
 			}
