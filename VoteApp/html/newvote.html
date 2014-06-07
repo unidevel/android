@@ -16,6 +16,13 @@
 	width: 100%;
 	z-index: 1;
 }
+
+.vote_toolbar {
+    position: relative;
+    float:right;  
+    margin-top: -0.21em !important;    
+}
+
 .delete-container {
     position: relative;
     float:right;  
@@ -190,13 +197,13 @@
 			<div id="vote_content"></div>
 			<div id="vote_template" style="display: none">
 				<div>
-			    	<h3 class="title">One vote</h3>
-					<div data-role="controlgroup" data-type="horizontal" data-mini="true">
-						<button data-icon="plus" class="add_option">Add option</button>
-						<button data-icon="delete">Delete</button>
+					<div data-role="controlgroup" data-type="horizontal" data-mini="true" class="vote_toolbar">
+						<button data-icon="plus" data-iconpos='notext' class="add_option">Add option</button>
+						<button data-icon="delete" data-iconpos='notext'>Delete</button>
 						<button data-icon="arrow-u" data-iconpos='notext'>Up</button>
 						<button data-icon="arrow-d" data-iconpos='notext'>Down</button>
 			    	</div>
+			    	<h3 class="title">One vote</h3>
 					<div class="options" data-role="controlgroup">
 					</div>
 					<hr />
