@@ -102,7 +102,8 @@
 				vote.options.push(option);
 				var label = voteData.getOptionLabel(option);
 				var node = $("<div id='"+domId+"'><div class='option'><input type='"+vote.type+"' name='"+vote.id+"' id='"+optionId+"' value='' class='button'/><label class='label' for='"+optionId+"'>"+label+"</label></div><div class='delete-container'><button class='delete' data-icon='delete' data-iconpos='notext' data-mini='true'>Delete</button></div></div>");
-				$(".add_option", vote.domId).before(node);
+				//$(".add_option", vote.domId).before(node);
+				$(".options",vote.domId).controlgroup( "container" ).append(node);
 				$("#"+optionId).checkboxradio().checkboxradio("refresh");
 				$(".options",vote.domId).trigger("create");
 				$(".delete", node).on("click", function(event){
@@ -150,6 +151,8 @@
 				var id = "#"+dom.attr("id");
 				vote.domId = id;
 				vote.id = nextId();
+				$(".options",vote.domId).trigger("create");
+				$(".options",vote.domId).controlgroup();
 				$(".title",id).html(voteData.getVoteTitle(vote));
 				$(".add_option", id).on("click", function(event){
 					addNewOption(vote);
@@ -187,9 +190,14 @@
 			<div id="vote_content"></div>
 			<div id="vote_template" style="display: none">
 				<div>
-					<h3 class="title">One vote</h3>
+			    	<h3 class="title">One vote</h3>
+					<div data-role="controlgroup" data-type="horizontal" data-mini="true">
+						<button data-icon="plus" class="add_option">Add option</button>
+						<button data-icon="delete">Delete</button>
+						<button data-icon="arrow-u">Up</button>
+						<button data-icon="arrow-d">Down</button>
+			    	</div>
 					<div class="options" data-role="controlgroup">
-						<button class="ui-shadow ui-btn ui-corner-all add_option">Add new option</button>
 					</div>
 					<hr />
 				</div>
