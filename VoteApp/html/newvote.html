@@ -69,7 +69,7 @@
 				return new Date().getTime();
 			}
 			function applyEdit(obj, value, callback){
-				if ( $(obj).attr('edit') )
+				if ( $(obj).attr('edit') == true)
 					return;
 				$(obj).attr('edit', true);
 				var node = $("<input type='text' style='width:100%'/>");
@@ -88,7 +88,7 @@
 				node.on("blur", function(event){
 					var value = node.val();
 					callback(value);
-					obj.edit = false;
+					$(obj).attr('edit', false);
 					$(obj).css("display", oldDisplay);
 					node.remove();
 				});
