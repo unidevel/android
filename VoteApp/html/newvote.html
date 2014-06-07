@@ -20,7 +20,8 @@
 .vote_toolbar {
     position: relative;
     float:right;  
-    margin-top: -1.63em !important;    
+    margin-top: -0.78em !important;    
+#    margin-top: -1.63em !important;    
 }
 
 .delete-container {
@@ -148,6 +149,40 @@
 				$("#overall_title").html(voteData.getTitle());
 				$("#overall_title_edit").addClass("hide");
 			}
+			function deleteVote(vote){
+			    if(confirm("Delete vote "+vote.title+"?")){
+				    var pos=voteData.votes.indexOf(vote);
+					if(pos>=0){
+					    voteData.votes.splice(pos,1);
+				        $(vote.domId).remove();
+					}
+				}
+			}
+			function moveVote(vote, up){
+			    var votes=voteData.votes;
+				var pos=votes.indexOf(vote);
+				var next=-1;
+				if(up&&pos>0){
+				    next=pos-1;
+				}
+				else if(!up&&pos>=0&&pos<votes.length-1){
+				    next=pos+1;
+				}
+				if(next<0)return;
+				var nv=votes[next];
+				if(up){
+				    $(nv.domId).detach().insertAfter($(vote.domId));
+				    //$(vote.domId).detach().insertBefore($(nv.voteId));
+				}
+				else{
+				    //$(vote.domId).detach().insertBefore($(nv.voteId));
+				    $(nv.domId).detach().insertBefore($(vote.domId));
+				}
+				votes[pos]=votes[next];
+				votes[next]=vote;
+				$(".title",vote.domId).html(voteData.getVoteTitle(vote));
+				$(".title",nv.domId).html(voteData.getVoteTitle(nv));
+			}
 			function addNewVote(multi) {
 				var vote = {title: "", type:multi?"checkbox":"radio", options:[]};
 				voteData.votes.push(vote);
@@ -174,10 +209,10 @@
 					deleteVote(vote);
 				});
 				$(".vote_up",id).on("click",function(event){
-					moveVoteUp(vote);
+					moveVote(vote,true);
 				});
 				$(".vote_down",id).on("click",function(event){
-					moveVoteDown(vote);
+					moveVote(vote,false);
 				});				
 			};
 			$(document).on("pageshow", function(event) {
@@ -207,9 +242,9 @@
 			<div id="vote_template" style="display: none">
 				<div>
 					<div data-role="controlgroup" data-type="horizontal" data-mini="true" class="vote_toolbar">
-						<button data-icon="delete" data-iconpos='notext' class="vote_delete">Delete</button>
 						<button data-icon="arrow-u" data-iconpos='notext' class="vote_up">Up</button>
 						<button data-icon="arrow-d" data-iconpos='notext' class="vote_down">Down</button>
+						<button data-icon="delete" data-iconpos='notext' class="vote_delete">Delete</button>
 			    	</div>
 			    	<h3 class="title">One vote</h3>
 					<div class="options" data-role="controlgroup">
