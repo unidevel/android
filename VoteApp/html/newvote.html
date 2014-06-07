@@ -59,7 +59,7 @@
 						}
 						else
 						{
-							return "Change the option by clicking on it";
+							return "Change the option text by clicking on it";
 						}
 					}
 					
@@ -70,13 +70,30 @@
 			}
 			function addNewOption(vote){
 				var option = {id: nextId(), label:""};
-				vote.options.push(option);
 				var optionId = "opt"+option.id;
+				var domId = "opt_div"+optionId;
+				option.domId = "#"+domId;
+				vote.options.push(option);
 				var label = voteData.getOptionLabel(option);
-				var node = $("<div class='option'><input type='"+vote.type+"' name='"+vote.id+"' id='"+optionId+"' value='' class='button'/><label class='label' for='"+optionId+"'>"+label+"</label></div><div class='delete-container'><button class='delete' data-icon='delete' data-iconpos='notext' data-mini='true'>Delete</button></div>");
+				var node = $("<div id='"+domId+"'><div class='option'><input type='"+vote.type+"' name='"+vote.id+"' id='"+optionId+"' value='' class='button'/><label class='label' for='"+optionId+"'>"+label+"</label></div><div class='delete-container'><button class='delete' data-icon='delete' data-iconpos='notext' data-mini='true'>Delete</button></div></div>");
 				$(".add_option", vote.domId).before(node);
 				$("#"+optionId).checkboxradio().checkboxradio("refresh");
 				$(".options",vote.domId).trigger("create");
+				$(".delete", node).on("click", function(event){
+					deleteOption(vote, option);
+				});
+				
+			}
+			function deleteOption(vote, option){
+				if(confirm("delete option "+option.label))
+				{
+					var index = vote.options.indexOf(option);
+					if ( index >= 0 )
+					{
+						vote.options.splice(index, 1);
+						$(option.domId).remove();
+					}
+				}
 			}
 			function editVoteTitle(obj){
 				alert("Edit");
