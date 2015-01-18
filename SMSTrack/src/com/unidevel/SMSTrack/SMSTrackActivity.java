@@ -12,9 +12,7 @@ import android.util.Log;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.google.ads.AdRequest;
-import com.google.ads.AdSize;
-import com.google.ads.AdView;
+import com.google.android.gms.ads.*;
 import com.unidevel.SMSTrack.CalendarWrapper.QueryCalendarCallback;
 
 public class SMSTrackActivity extends PreferenceActivity {
@@ -31,13 +29,15 @@ public class SMSTrackActivity extends PreferenceActivity {
 	        final List<String> names = new ArrayList<String>();
 	        wrapper.queryCalender(new QueryCalendarCallback() {
 				public void onCalendar(int id, String name) {
+					if(name==null)return;
 					ids.add(String.valueOf(id));
 					names.add(name);
 				}
 			});
 	        pref.setEntries(names.toArray(new CharSequence[0]));
 	        pref.setEntryValues(ids.toArray(new CharSequence[0]));
-	        
+	        Log.e("names",names.toString());
+	        Log.e("ids",names.toString());
 	        String value = pref.getValue();
 	        int position = ids.indexOf(value);
 	        if ( position >= 0  ){
@@ -51,10 +51,12 @@ public class SMSTrackActivity extends PreferenceActivity {
 				}
 			});
 	        
-			AdView adView = new AdView(this, AdSize.BANNER, "a14f66de3127bd0");
+			AdView adView = new AdView(this);
+			adView.setAdUnitId("ca-app-pub-2348443469199344/2400394112");
+			adView.setAdSize(AdSize.BANNER);
 			LinearLayout layout = (LinearLayout) findViewById(R.id.adLayout);
 			layout.addView(adView);
-			AdRequest req  = new AdRequest();
+			AdRequest req = new AdRequest.Builder().build();
 			adView.loadAd(req);
         }
         catch(Throwable ex){

@@ -11,6 +11,7 @@ import android.preference.PreferenceManager;
 import android.provider.ContactsContract.PhoneLookup;
 import android.util.Log;
 import android.widget.Toast;
+import java.util.*;
 
 public class CalendarWrapper {
 //    <string name="calendar_events_uri">content://calendar/events</string>
@@ -88,6 +89,7 @@ public class CalendarWrapper {
 		    value.put("dtstart", timestamp);
 		    value.put("dtend", timestamp);
 		    value.put("hasExtendedProperties", Boolean.FALSE);
+			value.put("eventTimezone", TimeZone.getDefault().getID());
 		    resolver.insert(CALENDAR_EVENTS_URI, value);
 		}
 		catch(Throwable ex){
