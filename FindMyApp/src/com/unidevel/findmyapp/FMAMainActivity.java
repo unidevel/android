@@ -179,6 +179,7 @@ public class FMAMainActivity extends TabActivity implements OnTabChangeListener 
 			AppInfo app = (AppInfo) appView.getAdapter().getItem(info.position);
 			String APP_MARKET_URL = "market://details?id="+ app.packageName;
 			Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(APP_MARKET_URL));
+			intent.setPackage("com.android.vending");
 			startActivity(intent);
 		}
 		else if ( item.getItemId() == R.id.menuRun ) {
