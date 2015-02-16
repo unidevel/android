@@ -1,0 +1,97 @@
+#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  Internal Error (classFileParser.cpp:3470), pid=14728, tid=9796
+#  Error: ShouldNotReachHere()
+#
+# JRE version: 7.0-b147
+# Java VM: Java HotSpot(TM) 64-Bit Server VM (21.0-b17 mixed mode windows-amd64 compressed oops)
+# Failed to write core dump. Minidumps are not enabled by default on client versions of Windows
+#
+# If you would like to submit a bug report, please visit:
+#   http://bugreport.sun.com/bugreport/crash.jsp
+#
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x0000000001fdc000):  JavaThread "Unknown thread" [_thread_in_vm, id=9796, stack(0x0000000002a00000,0x0000000002b00000)]
+
+Stack: [0x0000000002a00000,0x0000000002b00000]
+
+---------------  P R O C E S S  ---------------
+
+Java Threads: ( => current thread )
+
+Other Threads:
+
+=>0x0000000001fdc000 (exited) JavaThread "Unknown thread" [_thread_in_vm, id=9796, stack(0x0000000002a00000,0x0000000002b00000)]
+
+VM state:not at safepoint (not fully initialized)
+
+VM Mutex/Monitor currently owned by a thread: None
+
+Dynamic libraries:
+0x000000013fa60000 - 0x000000013fa93000 	D:\ProgramZ\eclipse_luna\jre\bin\javaw.exe
+0x0000000077740000 - 0x00000000778e9000 	C:\windows\SYSTEM32\ntdll.dll
+0x0000000077620000 - 0x000000007773f000 	C:\windows\system32\kernel32.dll
+0x000007fefd850000 - 0x000007fefd8bb000 	C:\windows\system32\KERNELBASE.dll
+0x0000000075220000 - 0x00000000752a7000 	C:\windows\System32\SYSFER.DLL
+0x000007feff820000 - 0x000007feff8fb000 	C:\windows\system32\ADVAPI32.dll
+0x000007feff780000 - 0x000007feff81f000 	C:\windows\system32\msvcrt.dll
+0x000007fefd8c0000 - 0x000007fefd8df000 	C:\windows\SYSTEM32\sechost.dll
+0x000007fefdf80000 - 0x000007fefe0ad000 	C:\windows\system32\RPCRT4.dll
+0x0000000077520000 - 0x000000007761a000 	C:\windows\system32\USER32.dll
+0x000007fefe3a0000 - 0x000007fefe407000 	C:\windows\system32\GDI32.dll
+0x000007feff2c0000 - 0x000007feff2ce000 	C:\windows\system32\LPK.dll
+0x000007fefde50000 - 0x000007fefdf19000 	C:\windows\system32\USP10.dll
+0x000007fefc530000 - 0x000007fefc724000 	C:\windows\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.7601.17514_none_fa396087175ac9ac\COMCTL32.dll
+0x000007fefe410000 - 0x000007fefe481000 	C:\windows\system32\SHLWAPI.dll
+0x000007feff910000 - 0x000007feff93e000 	C:\windows\system32\IMM32.DLL
+0x000007feff940000 - 0x000007feffa49000 	C:\windows\system32\MSCTF.dll
+0x000007fefd430000 - 0x000007fefd470000 	C:\windows\system32\nvinitx.dll
+0x000000000f000000 - 0x000000000f006000 	C:\Program Files\NVIDIA Corporation\CoProcManager\_etoured.dll
+0x000007fef9990000 - 0x000007fef99e6000 	C:\Program Files\NVIDIA Corporation\CoProcManager\nvd3d9wrapx.dll
+0x000007feff2d0000 - 0x000007feff4a7000 	C:\windows\system32\SETUPAPI.dll
+0x000007fefd530000 - 0x000007fefd566000 	C:\windows\system32\CFGMGR32.dll
+0x000007fefdb40000 - 0x000007fefdc17000 	C:\windows\system32\OLEAUT32.dll
+0x000007fefd930000 - 0x000007fefdb33000 	C:\windows\system32\ole32.dll
+0x000007fefd570000 - 0x000007fefd58a000 	C:\windows\system32\DEVOBJ.dll
+0x000007fef9950000 - 0x000007fef998d000 	C:\Program Files\NVIDIA Corporation\CoProcManager\nvdxgiwrapx.dll
+0x000000005f970000 - 0x000000005fa41000 	D:\ProgramZ\eclipse_luna\jre\bin\msvcr100.dll
+0x00000000511b0000 - 0x000000005187e000 	D:\ProgramZ\eclipse_luna\jre\bin\server\jvm.dll
+0x000007fef9b30000 - 0x000007fef9b39000 	C:\windows\system32\WSOCK32.dll
+0x000007fefd8e0000 - 0x000007fefd92d000 	C:\windows\system32\WS2_32.dll
+0x000007feff900000 - 0x000007feff908000 	C:\windows\system32\NSI.dll
+0x000007fefa130000 - 0x000007fefa16b000 	C:\windows\system32\WINMM.dll
+0x0000000077900000 - 0x0000000077907000 	C:\windows\system32\PSAPI.DLL
+0x0000000073980000 - 0x000000007398f000 	D:\ProgramZ\eclipse_luna\jre\bin\verify.dll
+0x0000000072f20000 - 0x0000000072f48000 	D:\ProgramZ\eclipse_luna\jre\bin\java.dll
+0x000000006f500000 - 0x000000006f515000 	D:\ProgramZ\eclipse_luna\jre\bin\zip.dll
+
+VM Arguments:
+jvm_args: -Dfile.encoding=GBK -Xbootclasspath:D:\ProgramZ\google\android-sdk-windows\platforms\android-17\android.jar 
+java_command: com.unidevek.andevtools.model.Project
+Launcher Type: SUN_STANDARD
+
+Environment Variables:
+CLASSPATH=.;C:\PROGRA~1\IBM\SQLLIB\java\db2java.zip;C:\PROGRA~1\IBM\SQLLIB\java\db2jcc.jar;C:\PROGRA~1\IBM\SQLLIB\java\sqlj.zip;C:\PROGRA~1\IBM\SQLLIB\java\db2jcc_license_cu.jar;C:\PROGRA~1\IBM\SQLLIB\bin;C:\PROGRA~1\IBM\SQLLIB\java\common.jar;C:\Program Files (x86)\Java\jre7\lib\ext\QTJava.zip
+PATH=D:/ProgramZ/eclipse_luna/jre/bin/server;D:/ProgramZ/eclipse_luna/jre/bin;D:/ProgramZ/eclipse_luna/jre/lib/amd64;C:\PROGRAM FILES\COMMON FILES\MICROSOFT SHARED\WINDOWS LIVE;C:\PROGRAM FILES (X86)\COMMON FILES\MICROSOFT SHARED\WINDOWS LIVE;C:\windows\SYSTEM32;C:\windows;C:\windows\SYSTEM32\WBEM;C:\windows\SYSTEM32\WINDOWSPOWERSHELL\V1.0\;C:\PROGRAM FILES\IBM\INFOPRINT SELECT;C:\PROGRAM FILES\INTEL\WIFI\BIN\;C:\PROGRAM FILES\COMMON FILES\INTEL\WIRELESSCOMMON\;C:\PROGRAM FILES (X86)\LENOVO\ACCESS CONNECTIONS\;C:\PROGRAM FILES (X86)\IBM\PERSONAL COMMUNICATIONS\;C:\PROGRAM FILES (X86)\IBM\TRACE FACILITY\;C:\PROGRAM FILES (X86)\WINDOWS LIVE\SHARED;C:\PROGRAM FILES (X86)\UNIVERSAL EXTRACTOR;C:\PROGRAM FILES (X86)\UNIVERSAL EXTRACTOR\BIN;C:\PROGRAM FILES\IBM\GSK8\LIB64;C:\PROGRAM FILES (X86)\IBM\GSK8\LIB;C:\PROGRA~1\IBM\SQLLIB\BIN;C:\PROGRA~1\IBM\SQLLIB\FUNCTION;C:\PROGRA~1\IBM\SQLLIB\SAMPLES\REPL;C:\IBM\DB2TOOLS\HIGHPERFORMANCEUNLOAD41\LIB;C:\IBM\DB2TOOLS\HIGHPERFORMANCEUNLOAD41\BIN;C:\NOTES;C:\PROGRAM FILES (X86)\QUICKTIME\QTSYSTEM\;C:\PROGRAM FILES\THINKPAD\BLUETOOTH SOFTWARE\;C:\PROGRAM FILES\THINKPAD\BLUETOOTH SOFTWARE\SYSWOW64;C:\IBM\CloudFoundry;c:\cfmftp\bin;D:\cygwin\bin;D:\cygwin\sbin;D:\ProgramZ\eclipse_luna;
+USERNAME=jerry
+OS=Windows_NT
+PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 42 Stepping 7, GenuineIntel
+
+
+
+---------------  S Y S T E M  ---------------
+
+OS: Windows 7 , 64 bit Build 7601 Service Pack 1
+
+CPU:total 4 (2 cores per cpu, 2 threads per core) family 6 model 42 stepping 7, cmov, cx8, fxsr, mmx, sse, sse2, sse3, ssse3, sse4.1, sse4.2, popcnt, ht
+
+Memory: 4k page, physical 12463344k(3378520k free), swap 24924828k(13928436k free)
+
+vm_info: Java HotSpot(TM) 64-Bit Server VM (21.0-b17) for windows-amd64 JRE (1.7.0-b147), built on Jun 27 2011 02:19:45 by "java_re" with unknown MS VC++:1600
+
+time: Sun Feb 15 10:25:20 2015
+elapsed time: 0 seconds
+
