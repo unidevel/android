@@ -35,6 +35,28 @@
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
+		
+		<service android:name=".NotifcationLogService41" android:enabled="@bool/is_jelly_bean"
+			android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+			<intent-filter >
+				<action android:name="android.accessibilityservice.AccessibilityService" />
+			</intent-filter>
+
+			<meta-data
+				android:name="android.accessibilityservice"
+				android:resource="@xml/accessibilityservice" />
+		</service>
+
+		<service android:name=".NotifcationLogService" 
+			android:enabled="@bool/is_not_jelly_bean">
+			<intent-filter >
+				<action android:name="android.accessibilityservice.AccessibilityService" />
+			</intent-filter>
+
+			<meta-data
+				android:name="android.accessibilityservice"
+				android:resource="@xml/accessibilityservice" />
+		</service>
     </application>
 
 </manifest>

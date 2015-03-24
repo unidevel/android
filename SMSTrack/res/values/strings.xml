@@ -12,4 +12,18 @@
     <string name="key_sms_option">Only SMS From Contacts</string>
     <string name="summary_contact_only">Only From Contacts</string>
     <string name="summary_all_sms">All SMS</string>
+
+	<string name="cat_sms">SMS Settings</string>
+	<string name="cat_call">Call Settings</string>
+	<string name="cat_event">Notification Settings</string>
+	<string name="key_apps">Log apps</string>
+	<string name="summary_apps">Click to select</string>
+	<string name="add_app">Add</string>
+	
+    <string name="log_service">Notification to calendar service</string>
+
+	<string name="progress_title_loadapps">Loading</string>
+    <string name="progress_msg_loadapps">Loading apps, please wait.</string>
+    <string name="category_apps">App Settings</string>
+	<string name="error_max_apps">You have selected %d apps, please unselect old ones first and then select some new ones!</string>
 </resources>

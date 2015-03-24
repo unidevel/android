@@ -14,6 +14,9 @@ import android.widget.Toast;
 
 import com.google.android.gms.ads.*;
 import com.unidevel.SMSTrack.CalendarWrapper.QueryCalendarCallback;
+import android.content.*;
+import android.content.pm.*;
+import android.preference.*;
 
 public class SMSTrackActivity extends PreferenceActivity {
     /** Called when the activity is first created. */
@@ -50,7 +53,37 @@ public class SMSTrackActivity extends PreferenceActivity {
 					return true;
 				}
 			});
-	        
+			final PreferenceCategory appCat=(PreferenceCategory)getPreferenceScreen().findPreference("cat_event");
+			final SelectAppPreference2 appPrefs = new SelectAppPreference2(this);
+			//String titleSelectApp = String.format(getString(R.string.title_select_app), 10);
+			//appPrefs.setTitle(titleSelectApp);
+			appPrefs.setTitle("Apps");
+			appPrefs.setMaxApps(10);
+			appPrefs.setDialogTitle("");
+			appPrefs.setOnPreferenceChangeListener(new OnPreferenceChangeListener(){
+					public boolean onPreferenceChange(Preference preference, Object newValue) {
+					//	appListView.setApps(appPrefs.getSelectedApps());
+						//appPrefs.setSelectedApps(
+						return true;
+					}
+				});
+			appCat.addPreference(appPrefs);
+
+			/*
+			android.preference.Preference appPref=getPreferenceScreen().findPreference("appKeys");
+			appPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener(){
+
+					@Override
+					public boolean onPreferenceClick(Preference p1)
+					{
+						// TODO: Implement this method
+						//SMSTrackActivity.this.selectApp();
+						return false;
+					}
+
+				
+			});
+	        */
 			AdView adView = new AdView(this);
 			adView.setAdUnitId("ca-app-pub-2348443469199344/2400394112");
 			adView.setAdSize(AdSize.BANNER);
@@ -65,4 +98,29 @@ public class SMSTrackActivity extends PreferenceActivity {
         	this.finish();
         }
     }
+	/*
+	public boolean selectApp(){
+		if ( className == null ) {
+			allApps.add(dummyApp);
+		}
+		else {
+	        Intent intent = new Intent(Intent.ACTION_MAIN, null);
+	        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+	        intent.setClassName(packageName, className);
+	        final List<ResolveInfo> pkgs = context.getPackageManager().queryIntentActivities( intent, 0);
+	        if ( pkgs.size() > 0 ){
+	        	AppInfo app = new AppInfo();
+	        	app.packageName = packageName;
+	        	app.activityName = className;
+	        	app.iconFile = iconFile;
+	        	app.name = pkgs.get(0).loadLabel(context.getPackageManager()).toString();
+	        	app.icon = pkgs.get(0).loadIcon(context.getPackageManager());
+	        	allApps.add(app);
+	        }
+		}
+    	if ( notifyChanged ) adapter.notifyDataSetChanged();
+        return true;
+	}
+	*/
+
 }

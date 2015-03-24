@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2010 WiYun Inc.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+  
+          http://www.apache.org/licenses/LICENSE-2.0
+  
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+ 
+<resources>
+	<declare-styleable name="com.wiyun.ad.AdView">
+		<!--
+			广告位id, 这个属性必须要设置, 即使testMode是true 	
+		 -->
+		<attr name="resId" format="string" />
+		
+		<!-- 
+			背景色, 如果没有设置, 则背景色根据广告实际内容改变, 如果
+			应用程序本身具有一个特定的色调, 可以通过指定背景色来使广告
+			条更加匹配应用界面风格
+		 -->
+		<attr name="backgroundColor" format="color" />
+		
+		<!--
+			广告上的文字颜色, 对横幅和文字广告有效, 一般如果指定了
+			backgroundColor属性, 则一般也需要对textColor进行设置, 
+			否则文字颜色会根据广告实际内容改变
+		 -->
+		<attr name="textColor" format="color" />
+		
+		<!--
+			广告刷新间隔, 单位是秒, 如果不指定, 则默认不刷新. 如果指定, 必须指定
+			一个大于30的值
+		 -->
+		<attr name="refreshInterval" format="integer" />
+		
+		<!-- 设置为true时表示广告条会在没有广告的情况下隐藏 -->
+		<attr name="goneIfFail" format="boolean" />
+		
+		<!-- 
+			设置为true时, 会在下载广告内容时显示一个提示. 一般对于下载比较费时间且占用界面面积比较大的广告
+			形式(比如全屏广告), 建议设置为true, 这样用户不至于面对一个空屏幕而不知所指. 
+		-->
+		<attr name="showLoadingHint" format="boolean" />
+		
+		<!-- 
+			设置为true时, 广告组件会自动载入广告, 而不用开发者写一行代码. 在纯XML
+			方式的使用微云广告sdk时, 可以设置为该属性true, 这样就不用在代码中先找到
+			广告组件, 然后再调用requestAd方法. 
+		 -->
+		<attr name="autoStart" format="boolean" />
+		
+		<!-- 设置为true, 微云广告sdk采用调试模式, 方便开发者在没有网络的情况下查看嵌入广告的效果 -->
+		<attr name="testMode" format="boolean" />
+		
+		<!--
+			 如果testMode为true, 则可以附带设置testAdType属性来设置广告条类型, 
+			 如果不设置, 默认为banner
+		 -->
+		<attr name="testAdType" format="enum">
+			<enum name="text" value="1"/>
+			<enum name="banner" value="2"/>
+			<enum name="fullscreen" value="3"/>
+		</attr>
+		
+		<!--
+			设置transition来改变切换广告时的动画效果，缺省是flipX 
+			注意：如果showLoadingHint是true，则这个属性会被忽略
+		 -->
+		<attr name="transition" format="enum">
+			<enum name="random" value="0"/>
+			<enum name="flipX" value="1"/>
+			<enum name="flipY" value="2"/>
+			<enum name="leftPush" value="3"/>
+			<enum name="rightPush" value="4"/>
+			<enum name="topPush" value="5"/>
+			<enum name="bottomPush" value="6"/>
+			<enum name="fade" value="7"/>
+		</attr>
+	</declare-styleable>
+</resources>
