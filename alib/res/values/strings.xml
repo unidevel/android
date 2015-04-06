@@ -5,5 +5,5 @@
     <string name="loading_app_message">Loading application list ...</string>
     <string name="app_list_title">Select application</string>
     <string name="empty_app">Empty</string>
-
+	<string name="loading_activities">Loading activities.</string>
 </resources>
