@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:orientation="vertical">
+
+	<GridLayout
+		android:layout_height="wrap_content"
+		android:layout_width="match_parent"
+		rowCount="1"
+		columnCount="1"
+		android:id="@+id/gridView"
+		android:layout_weight="100"/>
+
+	<ExpandableListView
+		android:layout_height="wrap_content"
+		android:layout_width="match_parent"
+		android:id="@+id/listView"
+		android:layout_weight="100"/>
+
+	<RelativeLayout
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:id="@+id/searchView">
+
+		<ImageButton
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:src="@android:drawable/ic_menu_close_clear_cancel"
+			android:id="@+id/viewMode"/>
+
+		<TextView
+			android:layout_height="wrap_content"
+			android:text="Text"
+			android:layout_width="wrap_content"
+			android:id="@+id/searchText"
+			android:layout_alignRight="@id/viewMode"
+			android:layout_alignParentRight="true"
+			android:layout_alignStart="@id/viewMode"/>
+
+		<ImageButton
+			android:layout_height="wrap_content"
+			style="?android:attr/buttonBarButtonStyle"
+			android:layout_width="wrap_content"
+			android:src="@android:drawable/ic_menu_close_clear_cancel"
+			android:layout_toRightOf="@id/searchText"/>
+
+	</RelativeLayout>
+
+</LinearLayout>
+

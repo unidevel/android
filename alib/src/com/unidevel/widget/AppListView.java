@@ -33,6 +33,9 @@ public class AppListView extends LinearLayout {
 		}
 		this.adapter = new AppListAdapter(this.getContext(), this.itemView);
 		this.listView.setAdapter(this.adapter);
+	}
+	
+	public void listApp(){
 		AsyncTask<Void, Integer, Void> task = new AsyncTask<Void, Integer, Void>() {
 
 			@Override
