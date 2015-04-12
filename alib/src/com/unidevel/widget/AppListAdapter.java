@@ -77,18 +77,11 @@ public class AppListAdapter extends BaseAdapter implements ListAdapter {
 			convertView = this.itemView;
 		}
 		ActivityItem item = items.get(position);
-		this.labelView.setText(item.name);
-		if (item.icon == null) {
-			ComponentName cname = new ComponentName(item.packageName,
-					item.className);
-			try {
-				item.icon = manager.getActivityIcon(cname);
-				this.iconView.setImageDrawable(item.icon);
-			} catch (NameNotFoundException e) {
-				Log.e("Load icon", "Package:" + item.packageName + ", Class:"
-						+ item.className, e);
-			}
+		if ( item.name != null )
+		{
+			this.labelView.setText(item.name);
 		}
+		this.iconView.setImageDrawable(item.icon);
 		return convertView;
 	}
 
@@ -123,20 +116,24 @@ public class AppListAdapter extends BaseAdapter implements ListAdapter {
 		int count = 0;
 		for (ApplicationInfo app : apps) {
 			ActivityItem item = new ActivityItem();
+			if ( app.packageName == null || app.className == null )
+				continue;
 			item.packageName = app.packageName;
 			item.className = app.className;
 			item.name = app.loadLabel(this.manager).toString();
+			item.icon = app.loadIcon(this.manager);
 			items.add(item);
 			count++;
-			if (count > 32) {
-				this.notifyDataSetInvalidated();
-			}
 		}
-		this.notifyDataSetInvalidated();
 	}
 
 	@Override
 	protected void finalize() throws Throwable {
 		super.finalize();
+	}
+	
+	public void refresh()
+	{
+		this.notifyDataSetInvalidated();
 	}
 }

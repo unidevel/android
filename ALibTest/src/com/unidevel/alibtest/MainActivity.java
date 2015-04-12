@@ -1,12 +1,11 @@
 package com.unidevel.alibtest;
 
-import android.app.*;
-import android.os.*;
-import android.view.*;
-import android.widget.*;
-import com.unidevel.widget.*;
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 
-public class MainActivity extends Activity
+import com.unidevel.widget.AppListView;
+
+public class MainActivity extends FragmentActivity
 {
 	AppListView list;
     /** Called when the activity is first created. */
