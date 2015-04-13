@@ -31,10 +31,6 @@ public class AppListAdapter extends BaseAdapter implements ListAdapter {
 		Drawable icon;
 	}
 
-	class AppObserver extends DataSetObserver {
-
-	}
-
 	List<ActivityItem> items;
 	PackageManager manager;
 	LayoutInflater inflater;
@@ -67,11 +63,6 @@ public class AppListAdapter extends BaseAdapter implements ListAdapter {
 	}
 
 	@Override
-	public int getItemViewType(int position) {
-		return 0;
-	}
-
-	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		if (convertView == null) {
 			convertView = this.itemView;
@@ -86,23 +77,8 @@ public class AppListAdapter extends BaseAdapter implements ListAdapter {
 	}
 
 	@Override
-	public int getViewTypeCount() {
-		return 1;
-	}
-
-	@Override
-	public boolean hasStableIds() {
-		return true;
-	}
-
-	@Override
 	public boolean isEmpty() {
 		return this.items.isEmpty();
-	}
-
-	@Override
-	public boolean areAllItemsEnabled() {
-		return true;
 	}
 
 	@Override
@@ -114,6 +90,8 @@ public class AppListAdapter extends BaseAdapter implements ListAdapter {
 		List<ApplicationInfo> apps = this.manager
 				.getInstalledApplications(PackageManager.GET_ACTIVITIES);
 		int count = 0;
+		this.items = new ArrayList<AppListAdapter.ActivityItem>();
+		
 		for (ApplicationInfo app : apps) {
 			ActivityItem item = new ActivityItem();
 			if ( app.packageName == null || app.className == null )
